@@ -23,7 +23,7 @@ public class DirectoryProcessor {
 	
 	DirectoryFilter dirfilter = new DirectoryFilter();
 	ZipFilenameFilter zipfilter = new ZipFilenameFilter();
-//	GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
+	GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
 	FileFilter filefilter = new FileFilter();
 	
 	public DirectoryProcessor(File dir){
@@ -55,20 +55,18 @@ public class DirectoryProcessor {
 		
 		System.out.println(files.toString());
 		File[] zipfiles = dir.listFiles(zipfilter);		// Get all the zip files
-//		File[] gzipfiles = dir.listFiles(gzipfilter);	// Get all the gzip files
+		File[] gzipfiles = dir.listFiles(gzipfilter);	// Get all the gzip files
 		
-		
-		Collection<File> zip = Arrays.asList(zipfiles) ;
-//		Collection<File> gzip = Arrays.asList(zipfiles) ;
-		
+		// If there are zipped files that need extracting, extract them
 		if ( zipfiles.length > 0 ) {
 			System.out.println("Got some zipped files");
-			
 			ExtractionContext es_zip = new ExtractionContext(new ZipHandler(), zipfiles, destination);
 		}
-//		if ( gzipfiles.length > 0 ) {
-//			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles);
-//		}
+		// If there are gzipped files that need extracting, extract them
+		if ( gzipfiles.length > 0 ) {
+			System.out.println("Got some Gzipped files");
+			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles, destination);
+		}
 		System.out.println(System.getProperty("user.home"));
 //		Store all of the files in the pre-processing directory as originals
 		

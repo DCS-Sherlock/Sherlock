@@ -4,18 +4,14 @@ import java.io.*;
 import java.util.zip.*;
 
 
-public class ZipHandler implements ExtractionStrategy {
+class ZipHandler implements ExtractionStrategy {
 
 	@Override
 	public void extract(File[] dir, String destination) {
 		System.out.println("Extraction Strategy: \t ZipHandler");
 		for ( File f : dir ) {										// For each file in the zip directory
 			System.out.println("The filename \t" + f);
-			try {
-				unzip( f, destination);								// Unzip the file
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			unzip( f, destination);								// Unzip the file
 		}
 	}
 	
@@ -24,7 +20,7 @@ public class ZipHandler implements ExtractionStrategy {
 	 * @param zipFile
 	 * @throws IOException
 	 */
-	private static void unzip(File zipFile, String destination) throws IOException{
+	private static void unzip(File zipFile, String destination){
 		System.out.println("Unzipping using the ZipHandler");
 
 		FileInputStream is ;
@@ -50,10 +46,10 @@ public class ZipHandler implements ExtractionStrategy {
 					filename = filename.substring(slashIndex+1);	
 
 					if (!filename.startsWith("_") && !filename.startsWith(".")) {							// If the entry is not a hidden file
-						File file = new File(destination + File.separator + filename);
-						System.out.println("Unzipping to "+ file.getAbsolutePath());
+						File dest = new File(destination + File.separator + filename);
+						System.out.println("Unzipping to "+ dest.getAbsolutePath());
 
-						FileOutputStream fos = new FileOutputStream(file);
+						FileOutputStream fos = new FileOutputStream(dest);
 						int len;
 						while ((len = zip_is.read(buffer)) > 0) {
 							fos.write(buffer, 0, len);

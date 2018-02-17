@@ -3,7 +3,7 @@ package sherlock.extraction;
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class ZipFilenameFilter implements FilenameFilter {
+class ZipFilenameFilter implements FilenameFilter {
 	/* 
 	 * 	Return true if and only if file ends with one of the extension names:
 	 * 	zip
