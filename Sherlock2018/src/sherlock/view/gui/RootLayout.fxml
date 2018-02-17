@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.RootController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Sherlock">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Minimise Sherlock" />
+                  <MenuItem mnemonicParsing="false" text="Quit Sherlock" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Start New Session" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Load Saved Session" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Add input files" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Delete Session" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="View">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Overview" />
+                  <MenuItem mnemonicParsing="false" text="Match Graph" />
+                  <MenuItem mnemonicParsing="false" text="Side by Side Comparison" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="Sherlock Help" />
+               </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="overviewButton" mnemonicParsing="false" onMouseClicked="#selectOverviewScene" prefHeight="38.0" prefWidth="104.0" text="Overview" />
+            <Button fx:id="matchGraphButton" mnemonicParsing="false" onMouseClicked="#selectMatchGraphScene" prefHeight="38.0" prefWidth="104.0" text="Match Graph" />
+            <Button fx:id="comparisonButton" mnemonicParsing="false" onMouseClicked="#selectSideComparisonScene" prefHeight="38.0" prefWidth="104.0" text="Side by Side Comparison" />
+            <Button fx:id="reportButton" mnemonicParsing="false" onMouseClicked="#selectReportScene" prefHeight="38.0" prefWidth="104.0" text="Report" />
+         </children>
+      </VBox>
+   </left>
+</BorderPane>
