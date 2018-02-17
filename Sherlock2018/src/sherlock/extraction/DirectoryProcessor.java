@@ -50,7 +50,7 @@ public class DirectoryProcessor {
 		System.out.println(System.getProperty("user.home"));
 //		Store all of the files in the pre-processing directory as originals
 		
-		return null;
+		return Arrays.asList(files);
 	}
 	
 	
