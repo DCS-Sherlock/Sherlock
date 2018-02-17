@@ -26,16 +26,30 @@ public class DirectoryProcessor {
 	GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
 	FileFilter filefilter = new FileFilter();
 	
-	public DirectoryProcessor(File dir){
+	public DirectoryProcessor(File dir, String sourceDirectoryName){
 		this.dir = dir ;
-		processDirectory();
+		processDirectory(sourceDirectoryName);
 	}
 	
 	/**
 	 * ProcessDirectory method which extracts all files from different types of compressed files.
 	 */
-	private void processDirectory(){
-		String destination = System.getProperty("user.home") + File.separator + "Sherlock";
+	private void processDirectory(String sourceDirectoryName){
+		// Create the source directory in the Sherlock directory
+		// Create the Preprocessing directory
+		// Create the Original directory - this is where the files are to be stored
+		String destination = System.getProperty("user.home") + File.separator + "Sherlock" + File.separator + sourceDirectoryName + File.separator + "preprocessing" + File.separator + "Original";
+		if ( ! new File(destination).exists() ) {
+			if (new File(destination).mkdirs() ) {
+				System.out.println("Success Making " + destination + " Directory");
+			} else {
+				System.out.println("Failed to create directory!");
+			}
+		} else {
+			System.out.println("Directory Exists");
+		}
+		
+		System.out.println("Source Destination" + destination);
 		File[] files = dir.listFiles(filefilter);
 		
 		// For each file in the selected directory, copy it to the Sherlock Directory using the same name
@@ -68,8 +82,6 @@ public class DirectoryProcessor {
 			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles, destination);
 		}
 		System.out.println(System.getProperty("user.home"));
-//		Store all of the files in the pre-processing directory as originals
-		
 	}
 	
 	
