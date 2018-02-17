@@ -2,8 +2,7 @@ package sherlock.view.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.Collection;
 
 import javafx.event.ActionEvent;
@@ -42,11 +41,13 @@ public class SelectDirectoryController {
 	     		Path dest = (new File(destination)).toPath();
 
 				try {
-					Files.copy(source, dest.resolve(f.getName()));
+					Files.copy(source, dest.resolve(f.getName()), StandardCopyOption.REPLACE_EXISTING);
+				} catch ( FileAlreadyExistsException ae ){
+					System.out.println("The file already exists in "+ destination);
 				} catch (IOException e) {
 					System.out.println("Unable to copy File to "+ destination);
 					e.printStackTrace();
-				}
+				} 
 			}
 			
 			
