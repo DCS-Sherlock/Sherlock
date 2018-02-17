@@ -31,6 +31,11 @@ class GZipHandler implements ExtractionStrategy {
 	    dotindex = tarname.lastIndexOf('.');
 	    filename = tarname.substring(0, dotindex);
 	    
+	    int slashIndex = filename.lastIndexOf(File.separator);
+		System.out.println("File Separator index: " + slashIndex);
+		System.out.println("Entry name length " + filename.length());
+		String name = filename.substring(slashIndex+1);
+		
 	   try {
 		   // Create a file input stream to read the source file
 		   FileInputStream fis = new FileInputStream(f);
@@ -43,7 +48,7 @@ class GZipHandler implements ExtractionStrategy {
            int length;
            
            // Define the location to store the extracted files
-           File dest = new File(destination + File.separator + filename);
+           File dest = new File(destination + File.separator + name);
            System.out.println("Unzipping to "+ dest.getAbsolutePath());
            
            // Create file output stream where the extracted result is to be stored
@@ -51,7 +56,7 @@ class GZipHandler implements ExtractionStrategy {
 
            // Extract the GZip file to the destination 
            while ((length = gzis.read(buffer)) > 0) {
-               fos.write(buffer, 0, length);
+        	   		fos.write(buffer, 0, length);
            }
            
            // Close all the input and output streams
