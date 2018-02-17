@@ -12,22 +12,23 @@ class ExtractionContext implements ExtractionStrategy {
 	
 	/**
 	 * The DetectionContext Constructor
-	 * @param ex			- The extraction strategy to be used
-	 * @param dir		- The source directory
+	 * @param ex				- The extraction strategy to be used
+	 * @param dir			- The source directory
+	 * @param destination	- The destination the files are to be extracted to
 	 */
-	ExtractionContext(ExtractionStrategy ex, File[] dir){
+	ExtractionContext(ExtractionStrategy ex, File[] dir, String destination){
 		this.ex = ex;
-		extract(dir);
+		extract(dir, destination);
 	}
 	
 	/**
 	 * Calls the correct decompression method.
-	 * @param dir 	- The input directory to be extracted
-	 * @return 		- A collection of files that are to be passed on to the parsing phase
+	 * @param dir 			- The input directory to be extracted
+	 * @param destination 	- The destination the files are to be extracted to   	
 	 */
 	@Override
-	public void extract(File[] dir) {
-		ex.extract(dir) ;
+	public void extract(File[] dir, String destination) {
+		ex.extract(dir, destination) ;
 	}
 
 	/**
@@ -40,12 +41,13 @@ class ExtractionContext implements ExtractionStrategy {
 
 	/**
 	 * Method to set the Extraction strategy. This method will also call the extraction process to update the files
-	 * @param ex			- The new extraction strategy to be used.
-	 * @param dir		- The source directory
+	 * @param ex				- The new extraction strategy to be used.
+	 * @param dir			- The source directory
+	 * @param destination	- The destination the files are to be extracted to
 	 */
-	void setEx(ExtractionStrategy ex, File[] dir) {
+	void setEx(ExtractionStrategy ex, File[] dir, String destination) {
 		this.ex = ex;
-		extract(dir);
+		extract(dir, destination);
 	}
 	
 }

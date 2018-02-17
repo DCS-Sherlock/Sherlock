@@ -29,6 +29,7 @@ public class DirectoryProcessor {
 	 * ProcessDirectory method which extracts all files from different types of compressed files.
 	 */
 	public Collection<File> processDirectory(){
+		String destination = System.getProperty("user.home") + File.separator + "Sherlock";
 		File[] files = dir.listFiles(filefilter);
 		
 		System.out.println(files.toString());
@@ -42,7 +43,7 @@ public class DirectoryProcessor {
 		if ( zipfiles.length > 0 ) {
 			System.out.println("Got some zipped files");
 			
-			ExtractionContext es_zip = new ExtractionContext(new ZipHandler(), zipfiles);
+			ExtractionContext es_zip = new ExtractionContext(new ZipHandler(), zipfiles, destination);
 		}
 //		if ( gzipfiles.length > 0 ) {
 //			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles);

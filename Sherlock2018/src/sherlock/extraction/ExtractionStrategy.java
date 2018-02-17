@@ -3,9 +3,10 @@ package sherlock.extraction;
 import java.io.File;
 
 public interface ExtractionStrategy {
+
 	/**
-	 * @param dir	The input directory
-	 * @return		A collection of files that are to be passed on to the parsing phase
+	 * @param dir 			- The file to be extracted
+	 * @param destination	- The destination the files are to extracted to
 	 */
-	void extract(File[] dir);
+	void extract(File[] dir, String destination);
 }

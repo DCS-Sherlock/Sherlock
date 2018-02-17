@@ -34,7 +34,6 @@ public class SelectDirectoryController {
 			DirectoryProcessor dp = new DirectoryProcessor(selectedFile);
 			Collection<File> files = dp.processDirectory();												// Determine whether the file needs extracting
 			
-			
 			// For each file in the selected directory, copy it to the Sherlock Directory using the same name
 			for (File f : files) {
 				Path source = f.toPath();
@@ -49,10 +48,6 @@ public class SelectDirectoryController {
 					e.printStackTrace();
 				} 
 			}
-			
-			
-
-//			Files.createDirectory(userHome);
 		} else {
 			System.out.println("Not chosen a file");
 		}
