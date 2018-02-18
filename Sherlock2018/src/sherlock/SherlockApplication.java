@@ -24,7 +24,7 @@ public class SherlockApplication extends Application {
 	// This instance of the Sherlock Application
     private static SherlockApplication instance;
     
-    private AnchorPane rootLayout;
+    private static BorderPane rootLayout;
 
 
     /**
@@ -68,7 +68,14 @@ public class SherlockApplication extends Application {
 	
 	public static void goToMain(){
 		try {
-			replaceSceneContent("view/gui/MainLayout.fxml");
+			Parent root = replaceSceneContent("view/gui/MainLayout.fxml");
+			
+			FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(SherlockApplication.class.getResource("view/gui/Overview.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+            System.out.println("Overview " + overview);
+            ((BorderPane) root).setCenter(overview);
+			System.out.println("The root "+ root);
 		} catch ( Exception e ){
 			System.out.println("Unable replace scene with Root Layout");
 			e.printStackTrace();
