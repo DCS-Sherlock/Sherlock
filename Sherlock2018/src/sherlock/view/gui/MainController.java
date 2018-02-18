@@ -3,7 +3,7 @@ package sherlock.view.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class RootController {
+public class MainController {
 	@FXML
 	private Button overviewButton;
 	@FXML

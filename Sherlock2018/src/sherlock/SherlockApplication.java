@@ -5,10 +5,11 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import sherlock.view.gui.DirectorySelectorController;
 
 /**
  * The main class to run the sherlock application. This class references the sherlock.viw.gui package 
@@ -17,87 +18,85 @@ import javafx.stage.Stage;
  */
 public class SherlockApplication extends Application {
 
-	private Stage primaryStage;
-//	private BorderPane rootLayout;
-	private AnchorPane rootLayout;
-	
+	// The Window the Application is presented in
+	private static Stage stage;
+
+	// This instance of the Sherlock Application
+    private static SherlockApplication instance;
+    
+    private AnchorPane rootLayout;
+
+
+    /**
+	 * Return this instance of the Sherlock Application
+     */
+    public static SherlockApplication getInstance(){
+    	return instance;
+
+    }
+
+    public static void main (String[] args){
+    		launch(args);		   		 		// Calls the start method and runs other set up code
+    }
+
+	/**
+	 *	The Entry point for the Sherlock Application
+	 */
 	@Override
-	public void start(Stage primaryStage) {
-		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("Sherlock 2018");
-		
-		initRootLayout();
-		
-//		showOverview();
-	}
-	
-	private void initRootLayout() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(SherlockApplication.class.getResource("view/gui/SelectDirectory.fxml"));
-            rootLayout = (AnchorPane) loader.load();
-            
-            establishWorkingDirectory();								// Create the Sherlock folder in the Users home directory if not already existing
-            
-            // Show the scene containing the root layout.
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-		} catch (IOException e) {
+	public void start(Stage primaryStage) throws Exception {
+		System.out.println("Starting the Sherlock Application");
+
+		try{
+			stage = primaryStage;
+			goToDirectorySelector();				// Set up the directory Selection window
+			primaryStage.setTitle("Sherlock 2018");
+			primaryStage.show();					// Present this window to the User
+		} catch ( Exception e ){
+			System.out.println("Unable open Directory Selector");
 			e.printStackTrace();
 		}
 	}
 
-//	private void showOverview() {
-//		try {
-//			FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(SherlockApplication.class.getResource("view/gui/OverviewScene.fxml"));
-//            AnchorPane overviewScene = (AnchorPane) loader.load();
-//
-//            rootLayout.setCenter(overviewScene);
-//		} catch (IOException e ) {
-//			e.printStackTrace();
-//		}
-//		
-//	}
-//	
-    /**
-     * Returns the main stage.
-     * @return
-     */
-    public Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-	public static void main(String[] args) {
-		launch(args);
-	}
-	
-	/**
-	 * Ensures that the Sherlock Directory exists in the users home directory. 
-	 * @return			- True if the Sherlock directory exists in the users home directory
-	 * 					- False if the Sherlock directory has failed to have been created in the users home directory
-	 */
-	private boolean establishWorkingDirectory() {
-		String userHome = System.getProperty("user.home");
-		String newDirectory = "Sherlock";
-		
-		String path = userHome + File.separator + newDirectory ;
-		
-		if ( ! new File(path).exists() ) {
-			if (new File(path).mkdir() ) {
-				System.out.println("Success Making Sherlock");
-				return true;
-			} else {
-				System.out.println("Failed to create directory!");
-			}
-		} else {
-			System.out.println("Directory Exists");
-			return true ;
+	public static void goToDirectorySelector(){
+		try {
+			replaceSceneContent("view/gui/DirectorySelector.fxml");
+		} catch ( Exception e ){
+			System.out.println("Unable replace scene with Directory Selector");
+			e.printStackTrace();
 		}
+	}	
+	
+	public static void goToMain(){
+		try {
+			replaceSceneContent("view/gui/MainLayout.fxml");
+		} catch ( Exception e ){
+			System.out.println("Unable replace scene with Root Layout");
+			e.printStackTrace();
+		}
+	}	
+
+	private static Parent replaceSceneContent( String fxml ) throws Exception{
+		System.out.println(fxml);
 		
-		return false ;
+		FXMLLoader loader = new FXMLLoader();
+		Parent root = (Parent) loader.load(SherlockApplication.class.getResource(fxml), null, new JavaFXBuilderFactory());			// Get the root node of the scene replacement 
+        Scene scene = stage.getScene();
+
+        if ( scene == null ){
+		 	System.out.println("Scene is null");
+		 	
+		 	// Create the scene with the new root node 
+		 	scene = new Scene(root, 300, 200);
+		 	
+		 	// Set the scene to the stage
+		 	stage.setScene(scene);
+		} else {
+		 	System.out.println("Scene is not null");
+		 	System.out.println(root);
+		 	stage.getScene().setRoot(root);
+		}
+        stage.sizeToScene();							// Set the size of the stage (the window) to fit the contents
+        stage.centerOnScreen(); 						// Centre the stage so it is in the centre of the user screen
+        return root;
 	}
-	
-	
 }

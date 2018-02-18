@@ -2,11 +2,15 @@ package sherlock.view.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -14,14 +18,33 @@ import javafx.stage.Stage;
 import sherlock.SherlockApplication;
 import sherlock.extraction.DirectoryProcessor;
 
-public class SelectDirectoryController {
+public class DirectorySelectorController implements Initializable{
 	@FXML
-	private Button startSession;
+	private Button startSession ;
 	@FXML
-	private Button loadSession;
+	private Button loadSession ;
 	
-	@FXML
-	protected void selectSource() {
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		startSession.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				selectDirectory();
+			}
+		});
+		
+		loadSession.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				loadDirectory();
+			}
+		});
+	}
+	
+	
+	private void selectDirectory() {
+		System.out.println("Start Session button clicked");
+		
 		String userHome = System.getProperty("user.home");
 		String destination = userHome + File.separator + "Sherlock" ;
 
@@ -35,17 +58,16 @@ public class SelectDirectoryController {
 			System.out.println("Chosen a file " + selectedFile.getName());
 			// Put all the files in source directory into the Sherlock Directory
 			DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
-			Stage window = null;
-//			SherlockApplication.showOverview();
 			
+			SherlockApplication.goToMain();
 		} else {
 			System.out.println("Not chosen a file");
 		}
 	}
 	
-	@FXML
-	protected void loadResult() {
-		System.out.println("The load button was clicked");
+	private void loadDirectory() {
+		System.out.println("Load Session button clicked");
+		
 		String userHome = System.getProperty("user.home");
 		String destination = userHome + File.separator + "Sherlock" ;
 		
@@ -59,6 +81,5 @@ public class SelectDirectoryController {
 		} else {
 			System.out.println("Not chosen a file");
 		}
-	}
-	
+	}	
 }
