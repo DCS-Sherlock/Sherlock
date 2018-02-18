@@ -48,10 +48,10 @@
    <left>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="overviewButton" mnemonicParsing="false" onMouseClicked="#selectOverviewScene" prefHeight="38.0" prefWidth="104.0" text="Overview" />
-            <Button fx:id="matchGraphButton" mnemonicParsing="false" onMouseClicked="#selectMatchGraphScene" prefHeight="38.0" prefWidth="104.0" text="Match Graph" />
-            <Button fx:id="comparisonButton" mnemonicParsing="false" onMouseClicked="#selectSideComparisonScene" prefHeight="38.0" prefWidth="104.0" text="Side by Side Comparison" />
-            <Button fx:id="reportButton" mnemonicParsing="false" onMouseClicked="#selectReportScene" prefHeight="38.0" prefWidth="104.0" text="Report" />
+            <Button fx:id="overviewButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Overview" />
+            <Button fx:id="matchGraphButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Match Graph" />
+            <Button fx:id="comparisonButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Side by Side Comparison" />
+            <Button fx:id="reportButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Report" />
          </children>
       </VBox>
    </left>
