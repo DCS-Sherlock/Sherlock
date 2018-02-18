@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sherlock.extraction;
 
 import java.io.File;
@@ -16,16 +13,49 @@ import sherlock.extraction.ExtractionContext;
 
 /**
  * @author Aliyah
- *
+ *	Processes the directory input by extracting any files from compressed files and copying them into the Sherlock 
+ *	Directory that exists in the Users home directory. 
  */
 public class DirectoryProcessor {
+	
+	/*
+	 * The directory to be processed by this instance
+	 */
 	private File dir ;
 	
+	/*
+	 * A filter that determines whether a file object is a directory
+	 */
 	DirectoryFilter dirfilter = new DirectoryFilter();
+	
+	/*
+	 * A filter that determines whether a file object is a zip object
+	 * that ends with extension:
+	 * 		.zip
+	 *		.ZIP
+	 */	
 	ZipFilenameFilter zipfilter = new ZipFilenameFilter();
+
+	/*
+	 * A filter that determines whether a file object is a gzip object
+	 * that ends with extension:
+	 * 		.gz
+	 * 		.GZ
+	 * 		.tgz
+	 * 		.TGZ
+	 */
 	GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
+
+	/*
+	 * A filter that determines whether a file object is a file
+	 */
 	FileFilter filefilter = new FileFilter();
 	
+	/*
+	 * DirectoryProcessor Contstructor
+	 * @param dir 						- 	The directory selected by the user contining files
+	 * @param sourceDirectoryName 		- 	
+	 */
 	public DirectoryProcessor(File dir, String sourceDirectoryName){
 		this.dir = dir ;
 		processDirectory(sourceDirectoryName);

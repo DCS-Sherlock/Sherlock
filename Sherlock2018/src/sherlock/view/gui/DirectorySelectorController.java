@@ -56,10 +56,19 @@ public class DirectorySelectorController implements Initializable{
 		
 		if ( selectedFile != null ) {
 			System.out.println("Chosen a file " + selectedFile.getName());
-			// Put all the files in source directory into the Sherlock Directory
-			DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
 			
-			SherlockApplication.goToMain();
+			try(DirectoryStream<Path> dirStream = Files.newDirectoryStream(selectedFile.toPath())) {
+		       if ( !dirStream.iterator().hasNext() ) {
+		    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
+		       } else {
+		    	   		// Put all the files in source directory into the Sherlock Directory
+					DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
+					
+					SherlockApplication.goToMain();
+		       }
+		    } catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("Not chosen a file");
 		}
