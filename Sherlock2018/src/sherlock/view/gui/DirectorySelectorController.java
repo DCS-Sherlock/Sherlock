@@ -77,7 +77,15 @@ public class DirectorySelectorController implements Initializable{
 		
 		File selectedFile = directoryChooser.showDialog(null);
 		if ( selectedFile != null ) {
-			System.out.println("Chosen a file " + selectedFile.getName());			
+			System.out.println("Chosen a file " + selectedFile.getName());	
+			
+			// Perform check that the directory is of the expected format
+			if ( true ) {
+				SherlockApplication.goToMain();	
+			} else {
+				System.out.println("Not chosen a directory of the correct format");
+			}
+
 		} else {
 			System.out.println("Not chosen a file");
 		}
