@@ -57,7 +57,7 @@ public class DirectorySelectorController implements Initializable{
 		if ( selectedFile != null ) {
 			System.out.println("Chosen a file " + selectedFile.getName());
 			
-			try(DirectoryStream<Path> dirStream = Files.newDirectoryStream(selectedFile.toPath())) {
+			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream( selectedFile.toPath() ) ) {
 		       if ( !dirStream.iterator().hasNext() ) {
 		    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
 		       } else {
@@ -88,13 +88,20 @@ public class DirectorySelectorController implements Initializable{
 		if ( selectedFile != null ) {
 			System.out.println("Chosen a file " + selectedFile.getName());	
 			
-			// Perform check that the directory is of the expected format
-			if ( true ) {
-				SherlockApplication.goToMain();	
-			} else {
-				System.out.println("Not chosen a directory of the correct format");
-			}
-
+			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream( selectedFile.toPath() ) ) {
+			       if ( !dirStream.iterator().hasNext() ) {
+			    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
+			       } else {
+			    	   		// Perform check that the directory is of the expected format
+						if ( true ) {
+							SherlockApplication.goToMain();	
+						} else {
+							System.out.println("Not chosen a directory of the correct format");
+						}
+			       }
+			    } catch (IOException e) {
+					e.printStackTrace();
+				}
 		} else {
 			System.out.println("Not chosen a file");
 		}

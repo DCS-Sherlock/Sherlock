@@ -3,9 +3,20 @@ package sherlock.extraction;
 import java.io.*;
 import java.util.zip.*;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
+
+/**
+ * @author Aliyah
+ * Handles the extraction of files from Zip formats.
+ */
 class ZipHandler implements ExtractionStrategy {
 
+	/**
+	 * For each GZip file, extract its contents
+	 * @param dir 				- The file to be extracted
+	 * @param destination 		- The destination the files are to extracted to
+	 */
 	@Override
 	public void extract(File[] dir, String destination) {
 		System.out.println("Extraction Strategy: \t ZipHandler");
@@ -22,30 +33,35 @@ class ZipHandler implements ExtractionStrategy {
 	 */
 	private static void unzip(File zipFile, String destination){
 		System.out.println("Unzipping using the ZipHandler");
-
+		
 		FileInputStream is ;
 
 		// Buffer for reading and writing data to file
 		byte[] buffer = new byte[1024];
 
 		try {
+			/** Create a file input stream to read the source file **/
 			is = new FileInputStream(zipFile);
+			
+			/** Create a zip input stream to read the input stream **/
 			ZipInputStream zip_is = new ZipInputStream(is);
+			
 			ZipEntry ze = zip_is.getNextEntry();
 
-			// While there are more entries in the zip file
-			while ( ze != null ){
+			
+			/** While there are more entries in the zip file **/
+			while ( (ze = (ZipEntry) zip_is.getNextEntry()) != null ){
 				String filename = ze.getName();
 				System.out.println("Zip filename: " + filename);
 
-				if (!ze.isDirectory()) {	// If the entry is a file
+				if (!ze.isDirectory()) {															// If the entry is a file
 					int slashIndex = filename.lastIndexOf(File.separator);
 					System.out.println("File Separator index: " + slashIndex);
 					System.out.println("Entry name length " + filename.length());
 					
 					filename = filename.substring(slashIndex+1);	
 
-					if (!filename.startsWith("_") && !filename.startsWith(".")) {							// If the entry is not a hidden file
+					if (!filename.startsWith("_") && !filename.startsWith(".")) {					// If the entry is not a hidden file
 						File dest = new File(destination + File.separator + filename);
 						System.out.println("Unzipping to "+ dest.getAbsolutePath());
 
@@ -57,13 +73,11 @@ class ZipHandler implements ExtractionStrategy {
 						fos.close();
 					} else {
 						System.out.println("Entry is a hidden file: \t" + ze.toString() + "\n"); 
-						ze = zip_is.getNextEntry();	
 						continue;
 					}	
 				} else {
 					System.out.println("Entry is a directory: \t" + ze.toString() + "\n");
-				}
-				ze = zip_is.getNextEntry();				
+				}				
 			}
 			zip_is.closeEntry();
         	zip_is.close();
