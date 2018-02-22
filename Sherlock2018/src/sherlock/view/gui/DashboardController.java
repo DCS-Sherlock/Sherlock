@@ -56,17 +56,43 @@ public class DashboardController implements Initializable{
 			}
 		});
 		
-		
-		
 		loadSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
 				loadDirectory();
 			}
 		});
+		
+		advancedSettings.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				chooseAdvancedSettings();
+			}
+		});
+		
+		completeSearch.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				startCompleteSearch();
+			}
+		});
+		
+		startPreProcessing.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				startPreProcessing();
+			}
+		});
+		
+		startDetection.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				startDetection();
+			}
+		});
+		
 	}
 	
-
 	private void selectDirectory() {
 		System.out.println("Start Session button clicked");
 		
@@ -135,4 +161,21 @@ public class DashboardController implements Initializable{
 			System.out.println("Not chosen a file");
 		}
 	}	
+	
+	private void chooseAdvancedSettings() {
+		System.out.println("Choosing Advanced Settings");
+	}
+	
+	private void startCompleteSearch() {
+		System.out.println("Starting Complete Search");
+	}
+	
+	private void startPreProcessing() {
+		System.out.println("Starting Pre-processing");
+	}
+	
+	private void startDetection() {
+		System.out.println("Starting Detection");
+	}
+	
 }
