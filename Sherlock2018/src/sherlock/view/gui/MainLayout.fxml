@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.MainController">
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" >
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -46,12 +46,12 @@
       </MenuBar>
    </top>
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="372.0" prefWidth="125.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="overviewButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Overview" />
-            <Button fx:id="matchGraphButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Match Graph" />
-            <Button fx:id="comparisonButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Side by Side Comparison" />
-            <Button fx:id="reportButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" text="Report" />
+            <Button fx:id="dashboardButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="70.0" prefWidth="125.0" text="Dashboard" />
+            <Button fx:id="matchGraphButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="70.0" prefWidth="125.0" text="Match Graph" />
+            <Button fx:id="comparisonButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="70.0" prefWidth="125.0" text="Side by Side Comparison" />
+            <Button fx:id="reportButton" mnemonicParsing="false" prefHeight="70.0" prefWidth="125.0" text="Report" />
          </children>
       </VBox>
    </left>

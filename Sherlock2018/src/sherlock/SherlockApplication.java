@@ -48,7 +48,8 @@ public class SherlockApplication extends Application {
 
 		try{
 			stage = primaryStage;
-			goToDirectorySelector();				// Set up the directory Selection window
+//			goToDirectorySelector();				// Set up the directory Selection window
+			goToMain();				// Set up the directory Selection window
 			primaryStage.setTitle("Sherlock 2018");
 			primaryStage.show();					// Present this window to the User
 		} catch ( Exception e ){
@@ -57,21 +58,21 @@ public class SherlockApplication extends Application {
 		}
 	}
 
-	public static void goToDirectorySelector(){
-		try {
-			replaceSceneContent("view/gui/DirectorySelector.fxml");
-		} catch ( Exception e ){
-			System.out.println("Unable replace scene with Directory Selector");
-			e.printStackTrace();
-		}
-	}	
-	
+//	public static void goToDirectorySelector(){
+//		try {
+//			replaceSceneContent("view/gui/DirectorySelector.fxml");
+//		} catch ( Exception e ){
+//			System.out.println("Unable replace scene with Directory Selector");
+//			e.printStackTrace();
+//		}
+//	}	
+//	
 	public static void goToMain(){
 		try {
-			Parent root = replaceSceneContent("view/gui/MainLayout.fxml");
+			Parent root = replaceSceneContent("view/gui/GUILayout.fxml");
 			
 			FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(SherlockApplication.class.getResource("view/gui/Overview.fxml"));
+            loader.setLocation(SherlockApplication.class.getResource("view/gui/Dashboard.fxml"));
             AnchorPane overview = (AnchorPane) loader.load();
             System.out.println("Overview " + overview);
             ((BorderPane) root).setCenter(overview);
@@ -81,6 +82,20 @@ public class SherlockApplication extends Application {
 			e.printStackTrace();
 		}
 	}	
+	
+	public static void replaceCentre( String fxml ){ 
+		try {
+			FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(SherlockApplication.class.getResource(fxml));
+            AnchorPane overview = (AnchorPane) loader.load();
+            
+            ((BorderPane) rootLayout).setCenter(overview);
+		} catch ( Exception e ){
+			System.out.println("Unable replace scene with Root Layout");
+			e.printStackTrace();
+		}
+	}	
+	
 
 	private static Parent replaceSceneContent( String fxml ) throws Exception{
 		System.out.println(fxml);
@@ -93,17 +108,21 @@ public class SherlockApplication extends Application {
 		 	System.out.println("Scene is null");
 		 	
 		 	// Create the scene with the new root node 
-		 	scene = new Scene(root, 300, 200);
+		 	scene = new Scene(root, 800, 600);
 		 	
 		 	// Set the scene to the stage
 		 	stage.setScene(scene);
 		} else {
 		 	System.out.println("Scene is not null");
 		 	System.out.println(root);
-		 	stage.getScene().setRoot(root);
+		 	scene = new Scene(root, 800, 600);
+		 	stage.setScene(scene);
+//		 	stage.getScene().setRoot(root);
+		 	stage.sizeToScene();	
 		}
         stage.sizeToScene();							// Set the size of the stage (the window) to fit the contents
         stage.centerOnScreen(); 						// Centre the stage so it is in the centre of the user screen
+        rootLayout = (BorderPane) root;
         return root;
 	}
 }

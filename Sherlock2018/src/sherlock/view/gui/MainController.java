@@ -8,8 +8,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import sherlock.SherlockApplication;
 
 public class MainController implements Initializable{
+	@FXML
+	private Button dashboardButton;
 	@FXML
 	private Button overviewButton;
 	@FXML
@@ -21,6 +24,13 @@ public class MainController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		dashboardButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				selectDashboardScene();
+			}
+		});
+		
 		overviewButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -51,19 +61,29 @@ public class MainController implements Initializable{
 		
 	}
 	
+	public void selectDashboardScene() {
+		System.out.println("Select the Dashboard scene");
+		SherlockApplication.replaceCentre("view/gui/Dashboard.fxml");
+	}
+	
+	
 	public void selectOverviewScene() {
 		System.out.println("Select the overview scene");
+		SherlockApplication.replaceCentre("view/gui/Overview.fxml");
 	}
 	
 	public void selectMatchGraphScene() {
 		System.out.println("Select the Match graph scene");
+		SherlockApplication.replaceCentre("view/gui/MatchGraph.fxml");
 	}
 	
 	public void selectReportScene() {
 		System.out.println("Select the report scene");
+//		SherlockApplication.replaceCentre("");
 	}
 	
 	public void selectComparisonScene() {
 		System.out.println("Select the Side by Side comparison scene");
+//		SherlockApplication.replaceCentre("");
 	}
 }

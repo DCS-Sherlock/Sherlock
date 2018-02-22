@@ -3,30 +3,53 @@ package sherlock.view.gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.*;
-import java.util.Collection;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
+
+import com.sun.prism.paint.Color;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import sherlock.SherlockApplication;
 import sherlock.extraction.DirectoryProcessor;
 
-public class DirectorySelectorController implements Initializable{
+/**
+ * @author Aliyah
+ * The controller for the Dashboard scene
+ */
+public class DashboardController implements Initializable{
 	@FXML
-	private Button startSession ;
+	private Button newSession ;
 	@FXML
 	private Button loadSession ;
+	@FXML
+	private RadioButton cPlus;
+	@FXML
+	private RadioButton plainText;
+	@FXML
+	private RadioButton java ;
+	@FXML
+	private Button advancedSettings ;
+	@FXML
+	private Button completeSearch;
+	@FXML
+	private Button startPreProcessing;
+	@FXML
+	private Button startDetection ;
+	@FXML
+	private Label sessionChoice;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		startSession.setOnAction(new EventHandler<ActionEvent>() {
+		newSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
 				selectDirectory();
@@ -43,7 +66,7 @@ public class DirectorySelectorController implements Initializable{
 		});
 	}
 	
-	
+
 	private void selectDirectory() {
 		System.out.println("Start Session button clicked");
 		
@@ -64,7 +87,11 @@ public class DirectorySelectorController implements Initializable{
 		    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
 		       } else {
 		    	   		// Put all the files in source directory into the Sherlock Directory
+		    	   		
 					DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
+					System.out.println("the file to put in the label is " + selectedFile.getName());
+					sessionChoice.setText(selectedFile.getName());
+				
 					
 					SherlockApplication.goToMain();
 		       }
