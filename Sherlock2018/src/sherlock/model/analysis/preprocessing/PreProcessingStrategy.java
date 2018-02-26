@@ -9,6 +9,6 @@ package sherlock.model.analysis.preprocessing;
  */
 interface PreProcessingStrategy {
 
-	void preProcessFiles();
+	void preProcessFiles(String[] filePaths, String targetDirectory);
 
 }
