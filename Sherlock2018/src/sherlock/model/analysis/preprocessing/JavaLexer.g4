@@ -7,6 +7,7 @@ lexer grammar JavaLexer;
 /*
  * Keywords
  */
+ 
 ABSTRACT : 'abstract';
 ASSERT : 'assert';
 BOOLEAN : 'boolean';
@@ -58,6 +59,38 @@ VOID : 'void';
 VOLATILE : 'volatile';
 WHILE : 'while';
 UNDER_SCORE : '_';
+
+
+/* Class Modifiers */
+ClassModifier
+ 	:	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	ABSTRACT
+	|	STATIC
+	|	FINAL
+	|	STRICTFP
+ 	;
+
+/* Field Modifiers */
+FieldModifier 
+	:	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	STATIC
+	|	FINAL
+	|	TRANSIENT
+	|	VOLATILE
+	;
+
+/* Primitive Type */
+IntegralType
+	:	BYTE
+	|	SHORT
+	|	INT
+	|	LONG
+	|	CHAR 
+	;
 
 /*
  * Integer Literals
@@ -369,13 +402,13 @@ GT : '>';
 LT : '<';
 BANG : '!';
 TILDE : '~';
-QUESTION : '?';
+HOOK : '?';
 COLON : ':';
 ARROW : '->';
-EQUAL : '==';
+EQ : '==';
 LE : '<=';
 GE : '>=';
-NOTEQUAL : '!=';
+NE : '!=';
 AND : '&&';
 OR : '||';
 INC : '++';
@@ -386,11 +419,9 @@ MUL : '*';
 DIV : '/';
 BITAND : '&';
 BITOR : '|';
-CARET : '^';
+XOR : '^';
 MOD : '%';
-LSHIFT : '<<';
-RSHIFT : '>>';
-URSHIFT : '>>>';
+SHIFT : '<<' | '>>' | '>>>';
 
 ADD_ASSIGN : '+=';
 SUB_ASSIGN : '-=';
@@ -436,8 +467,7 @@ JavaLetterOrDigit
  *  Whitespace
  *-------------------------*/
 
-WS  :  [ \t\u000C]+ -> skip
-    ;
+WS  :  [ \t\u000C]+ -> channel(2)    ;
     
 NEWLINE : [\r\n]+ -> skip
 	;

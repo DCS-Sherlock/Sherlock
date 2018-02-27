@@ -37,11 +37,7 @@ numericType
 	;
 
 integralType
-	:	'byte'
-	|	'short'
-	|	'int'
-	|	'long'
-	|	'char'
+	:	IntegralType
 	;
 
 floatingPointType
@@ -271,13 +267,7 @@ normalClassDeclaration
 
 classModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'final'
-	|	'strictfp'
+	|	ClassModifier
 	;
 
 typeParameters
@@ -325,13 +315,7 @@ fieldDeclaration
 
 fieldModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'static'
-	|	'final'
-	|	'transient'
-	|	'volatile'
+	|	FieldModifier
 	;
 
 variableDeclaratorList
