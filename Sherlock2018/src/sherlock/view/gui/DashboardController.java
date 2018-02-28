@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -21,11 +22,16 @@ import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
 import sherlock.extraction.DirectoryProcessor;
 
+
+import sherlock.model.analysis.preprocessing.Settings;
 /**
  * @author Aliyah
  * The controller for the Dashboard scene
  */
 public class DashboardController implements Initializable{
+	
+	Settings setting = new Settings();
+	
 	@FXML
 	private Button newSession ;
 	@FXML
@@ -115,11 +121,10 @@ public class DashboardController implements Initializable{
 		    	   		// Put all the files in source directory into the Sherlock Directory
 		    	   		
 					DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
-					System.out.println("the file to put in the label is " + selectedFile.getName());
-					sessionChoice.setText(selectedFile.getName());
-				
 					
-					SherlockApplication.goToMain();
+					sessionChoice.setText(selectedFile.toString());
+					
+					setting.setSourceDirectory( new File(dp.returnNewSourcePathname(selectedFile.getName())) );
 		       }
 		    } catch (IOException e) {
 				e.printStackTrace();
@@ -147,9 +152,10 @@ public class DashboardController implements Initializable{
 			       if ( !dirStream.iterator().hasNext() ) {
 			    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
 			       } else {
-			    	   		// Perform check that the directory is of the expected format
+			    	   		// Perform check that the directory is of the expected format - must contain pre-processing folder (none-empty)
 						if ( true ) {
-							SherlockApplication.goToMain();	
+							sessionChoice.setText(selectedFile.toString());
+							setting.setSourceDirectory( selectedFile);
 						} else {
 							System.out.println("Not chosen a directory of the correct format");
 						}
@@ -170,8 +176,19 @@ public class DashboardController implements Initializable{
 		System.out.println("Starting Complete Search");
 	}
 	
+	/**
+	 * Method to run when the pre-processing button has been pressed
+	 * 
+	 * Using the setting choices selected by the user, this method will run the specified
+	 * pre-processing techniques. The setting choices are stored in the Settings and 
+	 * SettingProfile classes.
+	 *
+	 */
 	private void startPreProcessing() {
 		System.out.println("Starting Pre-processing");
+		
+		
+		
 	}
 	
 	private void startDetection() {

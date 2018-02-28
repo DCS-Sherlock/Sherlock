@@ -94,7 +94,11 @@ public class SherlockApplication extends Application {
 			System.out.println("Unable replace scene with Root Layout");
 			e.printStackTrace();
 		}
-	}	
+	}
+	
+	public static void showCentre() {
+		
+	}
 	
 
 	private static Parent replaceSceneContent( String fxml ) throws Exception{

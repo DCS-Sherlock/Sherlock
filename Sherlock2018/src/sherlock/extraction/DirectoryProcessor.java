@@ -68,15 +68,12 @@ public class DirectoryProcessor {
 		/**
 		 * Set the target destination to store a copy of the input directory.
 		 * Set this to:
-		 * 		$userhome$/Sherlock/$sourceDirectoryName$/preprocessing/original
+		 * 		$userhome$/Sherlock/$sourceDirectoryName$/Preprocessing/Original
 		 *	
 		 * 	where $userhome$ is the users home directory
 		 * 	and $sourceDirectory$ is the name of the directory selected by the user through the file chooser facility
 		 */
-		String destination = System.getProperty("user.home") + File.separator +
-							"Sherlock" + File.separator + 
-							sourceDirectoryName + File.separator + 
-							"preprocessing" + File.separator + "original";
+		String destination = returnNewSourcePathname(sourceDirectoryName);
 							
 		if ( ! new File(destination).exists() ) {
 			if (new File(destination).mkdirs() ) {
@@ -124,4 +121,33 @@ public class DirectoryProcessor {
 			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles, destination);
 		}
 	}
+	
+	public String returnNewSourcePathname(String sourceDirectoryName) {
+		return getUserHomeDir() + getFileSeparator()
+				+ getSherlockDir() + getFileSeparator()
+				+ sourceDirectoryName + getFileSeparator()
+				+ getPreprocessingDir() + getFileSeparator()
+				+ getOriginalDir() + getFileSeparator() ;
+	}
+	
+	private String getUserHomeDir() {
+		return System.getProperty("user.home");
+	}
+	
+	private String getSherlockDir() {
+		return "Sherlock" ;
+	}
+	
+	private String getPreprocessingDir() {
+		return "Preprocessing" ;
+	}
+	
+	private String getOriginalDir() {
+		return "Original" ;
+	}
+	
+	private String getFileSeparator() {
+		return File.separator;
+	}
+
 }

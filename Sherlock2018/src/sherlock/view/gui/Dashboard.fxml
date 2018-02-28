@@ -62,7 +62,12 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label fx:id="sessionChoice" layoutY="43.0" prefHeight="27.0" prefWidth="209.0" text="Hello" textFill="#657b83">
+                  <Label layoutY="43.0" prefHeight="27.0" prefWidth="146.0" text="Selected Directory:" textFill="#657b83">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="sessionChoice" layoutX="149.0" layoutY="43.0" prefHeight="27.0" prefWidth="204.0" text="No Directory Selected" textFill="#657b83">
                      <padding>
                         <Insets left="10.0" />
                      </padding>
