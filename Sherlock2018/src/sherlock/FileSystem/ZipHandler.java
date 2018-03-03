@@ -1,4 +1,4 @@
-package sherlock.extraction;
+package sherlock.FileSystem;
 
 import java.io.*;
 import java.util.zip.*;

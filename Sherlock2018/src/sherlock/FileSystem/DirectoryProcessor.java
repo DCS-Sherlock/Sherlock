@@ -1,6 +1,7 @@
-package sherlock.extraction;
+package sherlock.FileSystem;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -9,7 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collection;
 
-import sherlock.extraction.ExtractionContext;
+import sherlock.FileSystem.ExtractionContext;
 
 /**
  * @author Aliyah
@@ -23,7 +24,7 @@ public class DirectoryProcessor {
 	 */
 	private File dir ;
 	
-	/*
+	/**
 	 * A filter that determines whether a file object is a directory
 	 */
 	DirectoryFilter dirfilter = new DirectoryFilter();
@@ -49,22 +50,34 @@ public class DirectoryProcessor {
 	/**
 	 * A filter that determines whether a file object is a file
 	 */
-	FileFilter filefilter = new FileFilter();
+	AcceptedFileFilter filefilter = new AcceptedFileFilter();
+	
+	private File[] inputFiles;
+	
 	
 	/**
-	 * DirectoryProcessor Contstructor
+	 * DirectoryProcessor Constructor 	- 	Used when a new session is being created and files may need decompressing
 	 * @param dir 						- 	The non-empty directory selected by the user
 	 * @param sourceDirectoryName 		- 	The name of the directory to copy the files to
 	 */
 	public DirectoryProcessor(File dir, String sourceDirectoryName){
 		this.dir = dir ;
-		processDirectory(sourceDirectoryName);
+		extractFiles(sourceDirectoryName);
+	}
+	
+	/**
+	 * DirectoryProcessor Constructor 	- 	Used to collect all of the files in the /Preprocessing/Original directory 
+	 * @param dir
+	 */
+	public DirectoryProcessor( File dir, FileFilter f ) {
+		this.dir = dir;
+		this.inputFiles = getInputFiles(dir, f);
 	}
 	
 	/**
 	 * ProcessDirectory method which extracts all files from different types of compressed files.
 	 */
-	private void processDirectory(String sourceDirectoryName){
+	private void extractFiles(String sourceDirectoryName){
 		/**
 		 * Set the target destination to store a copy of the input directory.
 		 * Set this to:
@@ -122,6 +135,26 @@ public class DirectoryProcessor {
 		}
 	}
 	
+	/**
+	 * Return all of the files that are to be detected over as a result of the applied filter.
+	 * This method is called by the DirectoryProcessory constructor which is called in the 
+	 * Preprocessor class prior to pre-processing
+	 * @param dir	- The Preprocessing/Original directory containing all the extracted files that are to be detected over
+	 * @param f 		- The file filter to apply to the 'dir' parameter
+	 * @return 		- An array of files that are consistent with the file filter
+	 */
+	private File[] getInputFiles(File dir, FileFilter f) {
+		return dir.listFiles(f);
+	}
+	
+	/**
+	 * Return all of the files that are to be detected over
+	 * @return 		- File paths to be detected over
+	 */
+	public File[] getInputFiles() {
+		return inputFiles;
+	}
+
 	public String returnNewSourceDirectory(String sourceDirectoryName) {
 		return getUserHomeDir() + getFileSeparator()
 				+ getSherlockDir() + getFileSeparator()
@@ -130,7 +163,7 @@ public class DirectoryProcessor {
 	
 	public String returnOriginalDirectory(String sourceDirectoryName) {
 		return returnNewSourceDirectory(sourceDirectoryName) + getFileSeparator()
-		+ getPreprocessingDir() + getFileSeparator()
+		+ getPreprocessingDirName() + getFileSeparator()
 		+ getOriginalDir() + getFileSeparator() 
 		;
 	}
@@ -143,7 +176,7 @@ public class DirectoryProcessor {
 		return "Sherlock" ;
 	}
 	
-	private String getPreprocessingDir() {
+	private String getPreprocessingDirName() {
 		return "Preprocessing" ;
 	}
 	

@@ -1,4 +1,4 @@
-package sherlock.extraction;
+package sherlock.FileSystem;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -14,7 +14,7 @@ class GZipFilenameFilter implements FilenameFilter{
 	 @Override
 	public boolean accept(File dir, String name) {
 		 File f = new File(dir, name);
-		 FileFilter ff = new FileFilter();
+		 AcceptedFileFilter ff = new AcceptedFileFilter();
 
 		 return (!ff.accept(f) && !f.isDirectory()								// File is not a regular file, is not a directory
 				 && (name.endsWith(".gz") || name.endsWith(".GZ")					// and ends with a .gz, .GZ,

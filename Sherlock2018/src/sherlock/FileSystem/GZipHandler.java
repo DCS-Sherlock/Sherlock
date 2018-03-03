@@ -1,4 +1,4 @@
-package sherlock.extraction;
+package sherlock.FileSystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
