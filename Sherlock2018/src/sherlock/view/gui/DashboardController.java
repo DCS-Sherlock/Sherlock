@@ -6,6 +6,8 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sun.prism.paint.Color;
@@ -15,15 +17,16 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
-import sherlock.extraction.DirectoryProcessor;
-
-
+import sherlock.FileSystem.DirectoryProcessor;
+import sherlock.model.analysis.preprocessing.Preprocessor;
 import sherlock.model.analysis.preprocessing.Settings;
 /**
  * @author Aliyah
@@ -45,6 +48,8 @@ public class DashboardController implements Initializable{
 	private CheckBox NoWSComsOpt ;
 	@FXML
 	private CheckBox NoComOpt ;
+	@FXML
+	private CheckBox CommentsOpt ;
 	@FXML
 	private CheckBox tokenOpt ;
 	@FXML
@@ -84,10 +89,12 @@ public class DashboardController implements Initializable{
 		originalOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				if ( originalOpt.isSelected() ) {
-					System.out.println("Original Option selected");
-				} else {
-					System.out.println("Original Option is not selected");
+				try {
+					setting.getOriginalProfile().setInUse( originalOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					originalOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 		});
@@ -95,10 +102,12 @@ public class DashboardController implements Initializable{
 		NoWSOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				if ( NoWSOpt.isSelected() ) {
-					System.out.println("No WS selected");
-				} else {
-					System.out.println("No WS is not selected");
+				try{
+					setting.getNoWSProfile().setInUse( NoWSOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					NoWSOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 		});
@@ -106,10 +115,12 @@ public class DashboardController implements Initializable{
 		NoWSComsOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				if ( NoWSComsOpt.isSelected() ) {
-					System.out.println("No WS or Comms selected");
-				} else {
-					System.out.println("No WS or Comms is not selected");
+				try {
+					setting.getNoCWSProfile().setInUse( NoWSComsOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					NoWSComsOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 		});
@@ -117,10 +128,25 @@ public class DashboardController implements Initializable{
 		NoComOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {	
-				if ( NoComOpt.isSelected() ) {
-					System.out.println("No Comments selected");
-				} else {
-					System.out.println("No Comments is notselected");
+				try {
+					setting.getNoCommentsProfile().setInUse( NoComOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					NoComOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
+				}
+			}
+		});
+		
+		CommentsOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {	
+				try {
+					setting.getCommentsProfile().setInUse( CommentsOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					CommentsOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 		});
@@ -128,10 +154,12 @@ public class DashboardController implements Initializable{
 		tokenOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				if ( tokenOpt.isSelected() ) {
-					System.out.println("Tokeniser selected");
-				} else {
-					System.out.println("Tokeniser is not selected");
+				try {
+					setting.getTokenisedProfile().setInUse( tokenOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					tokenOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 				
@@ -140,14 +168,15 @@ public class DashboardController implements Initializable{
 		WSPatternOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				if ( WSPatternOpt.isSelected() ) {	
-					System.out.println("WS pattern selected");
-				} else {
-					System.out.println("WS pattern not selected");
+				try{
+					setting.getWSPatternProfile().setInUse( WSPatternOpt.isSelected() );
+				} catch ( IndexOutOfBoundsException e ) {
+					WSPatternOpt.setSelected(false);
+					Alert alert = new Alert(AlertType.ERROR, "Please select a session to use before choosing settings!");
+					alert.showAndWait();
 				}
 			}
 		});
-		
 		
 		advancedSettings.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -235,7 +264,7 @@ public class DashboardController implements Initializable{
 			    	   		// Perform check that the directory is of the expected format - must contain pre-processing folder (none-empty)
 						if ( true ) {
 							sessionChoice.setText(selectedFile.toString());
-							setting.setSourceDirectory( selectedFile);
+							setting.setSourceDirectory( selectedFile );
 						} else {
 							System.out.println("Not chosen a directory of the correct format");
 						}
@@ -254,7 +283,9 @@ public class DashboardController implements Initializable{
 		} else {
 			System.out.println("Load Previous Settings");
 			setting.loadSettings();
+
 		}
+		updateSettingDisplay();
 	}
 	
 	private void chooseAdvancedSettings() {
@@ -275,13 +306,43 @@ public class DashboardController implements Initializable{
 	 */
 	private void startPreProcessing() {
 		System.out.println("Starting Pre-processing");
-		
-		
-		
+		Preprocessor p = new Preprocessor(setting);
 	}
 	
 	private void startDetection() {
 		System.out.println("Starting Detection");
+	}
+	
+	/**
+	 * When a session has been loaded, the setting configuration (which may differ from default) must be displayed
+	 * in the GUIs check-boxes
+	 */
+	private void updateSettingDisplay() {
+		System.out.println("Update Setting Display");
+		List<Boolean> statuses = setting.getInUseStatus();
+		
+		List<CheckBox> checkboxes = getAllSettingsCheckboxes();
+		System.out.println("Checkboxes: " + checkboxes.size());
+		/* For each setting profile, set the respective checkbox to the actual status */
+		for ( int i = 0; i < statuses.size() - 1; i++ ) {
+			boolean b = statuses.get(i);
+			System.out.println("Status: " + b);
+			CheckBox setting = checkboxes.get(i);
+			setting.setSelected(b);
+		}
+	}
+	
+	private List<CheckBox> getAllSettingsCheckboxes(){
+		List<CheckBox> cb = new LinkedList<CheckBox>();
+		
+		cb.add(originalOpt);
+		cb.add(NoWSOpt);
+		cb.add(NoWSComsOpt);
+		cb.add(NoComOpt);
+		cb.add(CommentsOpt);
+		cb.add(tokenOpt);
+		cb.add(WSPatternOpt);
+		return cb;
 	}
 	
 }

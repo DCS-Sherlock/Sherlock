@@ -3,12 +3,14 @@
  */
 package sherlock.model.analysis.preprocessing;
 
+import java.io.File;
+
 /**
  * @author Aliyah
  *
  */
 interface PreProcessingStrategy {
 
-	void preProcessFiles(String[] filePaths, String targetDirectory);
+	void preProcessFiles(File[] filePaths, File targetDirectory);
 
 }

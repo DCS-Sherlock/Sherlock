@@ -26,7 +26,7 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * Constructor for the JavaStrategy
 	 * @param commentsIncluded		- Boolean to indicating whether the comments should be written to file or not
 	 */
-	public JavaStrategy(String[] filePaths, String targetDirectory, List<Boolean> settings) {
+	public JavaStrategy(File[] filePaths, File targetDirectory, List<Boolean> settings) {
 		this.settings = settings;
 		preProcessFiles(filePaths, targetDirectory);
 	}
@@ -35,10 +35,10 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * @see sherlock.model.analysis.preprocessing.PreProcessingStrategy#preProcessFiles()
 	 */
 	@Override
-	public void preProcessFiles(String[] filePaths, String targetDirectory ) {
+	public void preProcessFiles(File[] filePaths, File targetDirectory ) {
 		
 			//For each file to be parsed
-			for( String filepath : filePaths ) { 
+			for( File filepath : filePaths ) { 
 				// Call the pre-processing method depending on settings
 				
 			}

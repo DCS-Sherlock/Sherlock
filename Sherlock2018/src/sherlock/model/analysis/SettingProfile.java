@@ -3,7 +3,7 @@
  */
 package sherlock.model.analysis;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
@@ -32,6 +32,11 @@ public class SettingProfile {
 		thisProfile = new Properties(createDefaults(setting));
 		
 		File settingsDirectory = new File(sourceDirectory.getAbsolutePath() + File.separator + "Settings");
+		
+		if ( !settingsDirectory.exists() ) {
+			System.out.println("Directory doesn't exist");
+			settingsDirectory.mkdirs();
+		}
 		
 		setPropertiesFile( new File (settingsDirectory, thisProfile.getProperty("outputDir") + ".txt")) ;
 		
@@ -94,17 +99,17 @@ public class SettingProfile {
 		/* Original */
 		{"Original", "Original", "", "true"},
 		/* No WhiteSpace */
-		{"No Whitespace", "NoWhitespace", "", "false"},
+		{"No Whitespace", "NoWhitespace", "NoWhiteSpaceStrategy", "false"},
 		/* No Comments */
-		{"No Comments", "NoComments", "", "false"},
+		{"No Comments", "NoComments", "JavaStrategy", "false"},
 		/* No Whitespace & no Comments */
-		{"No Comments & No Whitespace", "NoWS_NoComment", "", "true"},
+		{"No Comments & No Whitespace", "NoWS_NoComment", "JavaStrategy", "true"},
 		/* Comments */
-		{"Comments only", "Comments", "", "false"},
+		{"Comments only", "Comments", "JavaStrategy", "false"},
 		/* Tokenised */
-		{"Tokenised", "Tokenised", "", "true"},
+		{"Tokenised", "Tokenised", "JavaStrategy", "true"},
 		/* Whitespace Pattern */
-		{"Whitespace Pattern", "WSPattern", "", "false"}	
+		{"Whitespace Pattern", "WSPattern", "WhitespacePattern", "false"}	
 	} ;
 	
 	/**
@@ -178,7 +183,7 @@ public class SettingProfile {
 	 *
 	 * @return the output directory
 	 */
-	public String getDirectory() {
+	public String getOutputDir() {
 		return thisProfile.getProperty("outputDir");
 	}
 	
@@ -220,7 +225,7 @@ public class SettingProfile {
 	 * Set the in use parameter of this setting profile
 	 * @param s 		- The new in use status
 	 */
-	public void setInUser(Boolean b) {
+	public void setInUse(Boolean b) {
 		thisProfile.setProperty("inUse", String.valueOf(b));
 	}
 	

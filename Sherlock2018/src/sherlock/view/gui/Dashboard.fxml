@@ -42,7 +42,7 @@
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                </VBox.margin>
                <children>
-                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="70.0" prefWidth="550.0" style="-fx-background-color: #073642#073642;">
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="62.0" prefWidth="550.0" style="-fx-background-color: #073642#073642;">
                      <children>
                         <Button fx:id="newSession" mnemonicParsing="false" style="-fx-background-color: #586e75#586e75; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="New Session" textFill="#002b36">
                            <HBox.margin>
@@ -62,19 +62,19 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label layoutY="43.0" prefHeight="27.0" prefWidth="146.0" text="Selected Directory:" textFill="#657b83">
+                  <Label layoutY="43.0" prefHeight="17.0" prefWidth="146.0" text="Selected Directory:" textFill="#657b83">
                      <padding>
-                        <Insets left="10.0" />
+                        <Insets bottom="5.0" left="10.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="sessionChoice" layoutX="149.0" layoutY="43.0" prefHeight="27.0" prefWidth="204.0" text="No Directory Selected" textFill="#657b83">
+                  <Label fx:id="sessionChoice" layoutX="149.0" layoutY="43.0" prefHeight="17.0" prefWidth="204.0" text="No Directory Selected" textFill="#657b83">
                      <padding>
-                        <Insets left="10.0" />
+                        <Insets bottom="5.0" left="10.0" />
                      </padding>
                   </Label>
                </children>
             </Pane>
-            <Pane prefHeight="362.0" prefWidth="550.0" style="-fx-background-color: #073642#073642 #073642#073642;">
+            <Pane prefHeight="429.0" prefWidth="550.0" style="-fx-background-color: #073642#073642 #073642#073642;">
                <opaqueInsets>
                   <Insets top="10.0" />
                </opaqueInsets>
@@ -85,7 +85,7 @@
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                </VBox.margin>
                <children>
-                  <SplitPane prefHeight="307.0" prefWidth="280.0" style="-fx-background-color: #073642#073642 #073642#073642;">
+                  <SplitPane prefHeight="420.0" prefWidth="280.0" style="-fx-background-color: #073642#073642 #073642#073642;">
                      <items>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
@@ -173,6 +173,28 @@
                                     </Label>
                                  </children>
                               </HBox>
+                              <CheckBox fx:id="CommentsOpt" mnemonicParsing="false" text="Comments" textFill="#657b83">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="10.0" top="5.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <HBox prefHeight="22.0" prefWidth="278.0">
+                                 <children>
+                                    <Label text="Output Directory:" textFill="#657b83">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label text="Comments" textFill="#657b83">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="15.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
                               <CheckBox fx:id="tokenOpt" mnemonicParsing="false" text="Tokenised" textFill="#657b83">
                                  <VBox.margin>
                                     <Insets bottom="5.0" left="10.0" top="5.0" />
@@ -221,14 +243,17 @@
                         </VBox>
                      </items>
                   </SplitPane>
-                  <SplitPane layoutX="286.0" prefHeight="363.0" prefWidth="264.0" style="-fx-background-color: #073642#073642 #073642#073642;">
+                  <SplitPane layoutX="286.0" prefHeight="420.0" prefWidth="264.0" style="-fx-background-color: #073642#073642 #073642#073642;">
                      <items>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        <VBox prefHeight="413.0" prefWidth="262.0">
                            <children>
                               <Button fx:id="advancedSettings" alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: #586e75#586e75; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Advanced Settings" textFill="#002b36">
                                  <effect>
                                     <DropShadow blurType="GAUSSIAN" />
                                  </effect>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="10.0" top="10.0" />
+                                 </VBox.margin>
                               </Button>
                            </children>
                         </VBox>

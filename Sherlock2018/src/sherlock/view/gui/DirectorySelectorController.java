@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import sherlock.SherlockApplication;
-import sherlock.extraction.DirectoryProcessor;
+import sherlock.FileSystem.DirectoryProcessor;
 
 public class DirectorySelectorController implements Initializable{
 	@FXML
