@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
@@ -37,11 +38,17 @@ public class DashboardController implements Initializable{
 	@FXML
 	private Button loadSession ;
 	@FXML
-	private RadioButton cPlus;
+	private CheckBox originalOpt;
 	@FXML
-	private RadioButton plainText;
+	private CheckBox NoWSOpt;
 	@FXML
-	private RadioButton java ;
+	private CheckBox NoWSComsOpt ;
+	@FXML
+	private CheckBox NoComOpt ;
+	@FXML
+	private CheckBox tokenOpt ;
+	@FXML
+	private CheckBox WSPatternOpt ;
 	@FXML
 	private Button advancedSettings ;
 	@FXML
@@ -59,6 +66,8 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				selectDirectory();
+				//	Initialise Settings
+				initialiseSettings(true);
 			}
 		});
 		
@@ -66,8 +75,79 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				loadDirectory();
+				//	Load Settings
+				initialiseSettings(false);
+				
 			}
 		});
+		
+		originalOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				if ( originalOpt.isSelected() ) {
+					System.out.println("Original Option selected");
+				} else {
+					System.out.println("Original Option is not selected");
+				}
+			}
+		});
+		
+		NoWSOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				if ( NoWSOpt.isSelected() ) {
+					System.out.println("No WS selected");
+				} else {
+					System.out.println("No WS is not selected");
+				}
+			}
+		});
+		
+		NoWSComsOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				if ( NoWSComsOpt.isSelected() ) {
+					System.out.println("No WS or Comms selected");
+				} else {
+					System.out.println("No WS or Comms is not selected");
+				}
+			}
+		});
+		
+		NoComOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {	
+				if ( NoComOpt.isSelected() ) {
+					System.out.println("No Comments selected");
+				} else {
+					System.out.println("No Comments is notselected");
+				}
+			}
+		});
+		
+		tokenOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				if ( tokenOpt.isSelected() ) {
+					System.out.println("Tokeniser selected");
+				} else {
+					System.out.println("Tokeniser is not selected");
+				}
+			}
+				
+		});
+		
+		WSPatternOpt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				if ( WSPatternOpt.isSelected() ) {	
+					System.out.println("WS pattern selected");
+				} else {
+					System.out.println("WS pattern not selected");
+				}
+			}
+		});
+		
 		
 		advancedSettings.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -124,7 +204,7 @@ public class DashboardController implements Initializable{
 					
 					sessionChoice.setText(selectedFile.toString());
 					
-					setting.setSourceDirectory( new File(dp.returnNewSourcePathname(selectedFile.getName())) );
+					setting.setSourceDirectory( new File(dp.returnNewSourceDirectory(selectedFile.getName())) );
 		       }
 		    } catch (IOException e) {
 				e.printStackTrace();
@@ -167,6 +247,15 @@ public class DashboardController implements Initializable{
 			System.out.println("Not chosen a file");
 		}
 	}	
+	
+	private void initialiseSettings(boolean isNewSession) {
+		if ( isNewSession ) {
+			setting.initialiseDefault();
+		} else {
+			System.out.println("Load Previous Settings");
+			setting.loadSettings();
+		}
+	}
 	
 	private void chooseAdvancedSettings() {
 		System.out.println("Choosing Advanced Settings");

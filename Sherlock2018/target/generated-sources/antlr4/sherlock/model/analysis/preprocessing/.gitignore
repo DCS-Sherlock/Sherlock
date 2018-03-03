@@ -6,3 +6,11 @@
 /JavaParserListener.java
 /JavaLexer.interp
 /JavaParser.interp
+/NowhitespaceLexer.interp
+/NowhitespaceLexer.java
+/NowhitespaceLexer.tokens
+/NowhitespaceParser.interp
+/NowhitespaceParser.java
+/NowhitespaceParser.tokens
+/NowhitespaceParserBaseListener.java
+/NowhitespaceParserListener.java

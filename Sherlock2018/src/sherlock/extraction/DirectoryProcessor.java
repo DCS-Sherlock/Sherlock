@@ -73,7 +73,7 @@ public class DirectoryProcessor {
 		 * 	where $userhome$ is the users home directory
 		 * 	and $sourceDirectory$ is the name of the directory selected by the user through the file chooser facility
 		 */
-		String destination = returnNewSourcePathname(sourceDirectoryName);
+		String destination = returnOriginalDirectory(sourceDirectoryName);
 							
 		if ( ! new File(destination).exists() ) {
 			if (new File(destination).mkdirs() ) {
@@ -122,12 +122,17 @@ public class DirectoryProcessor {
 		}
 	}
 	
-	public String returnNewSourcePathname(String sourceDirectoryName) {
+	public String returnNewSourceDirectory(String sourceDirectoryName) {
 		return getUserHomeDir() + getFileSeparator()
 				+ getSherlockDir() + getFileSeparator()
-				+ sourceDirectoryName + getFileSeparator()
-				+ getPreprocessingDir() + getFileSeparator()
-				+ getOriginalDir() + getFileSeparator() ;
+				+ sourceDirectoryName ;
+	}
+	
+	public String returnOriginalDirectory(String sourceDirectoryName) {
+		return returnNewSourceDirectory(sourceDirectoryName) + getFileSeparator()
+		+ getPreprocessingDir() + getFileSeparator()
+		+ getOriginalDir() + getFileSeparator() 
+		;
 	}
 	
 	private String getUserHomeDir() {

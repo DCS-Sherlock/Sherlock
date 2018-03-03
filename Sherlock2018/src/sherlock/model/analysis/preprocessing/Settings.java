@@ -3,42 +3,48 @@ package sherlock.model.analysis.preprocessing;
 import java.io.File;
 import java.util.List;
 
+import sherlock.model.analysis.SettingProfile;
+
 public class Settings {
-	private enum SettingChoice{
+	public enum SettingChoice{
 		/**
 		 * Numeric value for the original.
 		 */
-		ORIGINAL(0),
+		ORI(0),
 		
 		/**
 		 * Numeric value for no-whitespace.
 		 */
-		NO_WS(1),
+		NWS(1),
 		
 		/**
 		 * Numeric value for no comment.
 		 */
-		NOCOMMENT(2),
+		NOC(2),
 		
 		/**
 		 * Numerical value for no comment no white.
 		 */
-		NOCOM_NOWS(3),
+		NCW(3),
 		
-
 		/**
  		* Numeric value for comment.
  		*/
-		COMMENT(4),
+		COM(4),
 		
 		/**
 		 * Numeric value for the tokenised files.
 		 */
-		TOKENS(5);
+		TOK(5),
+		
+		/**
+		 * Numeric value for the whitespace pattern.
+		 */
+		WSP(6);
 		
 		private int value;
 		
-		private SettingChoice(int value) {
+		SettingChoice(int value) {
 			this.value = value;
 		}
 		
@@ -52,6 +58,14 @@ public class Settings {
 		
 	}
 	
+//	Settings.SettingChoice original = Settings.SettingChoice.ORI;
+//	Settings.SettingChoice noWhiteSpace = Settings.SettingChoice.NWS; 
+//	Settings.SettingChoice noComments = Settings.SettingChoice.NOC; 
+//	Settings.SettingChoice noWS_NoComments = Settings.SettingChoice.NCW; 
+//	Settings.SettingChoice comments = Settings.SettingChoice.COM; 
+//	Settings.SettingChoice tokenised = Settings.SettingChoice.TOK;
+//	Settings.SettingChoice whitespacePattern = Settings.SettingChoice.WSP;
+	
 	/**
 	 * The directory that holds the source code to be compared.
 	 */
@@ -62,20 +76,17 @@ public class Settings {
 	 *  
 	 *  Example:
 	 *  
-	 *  [(0, Profile), (4, profile)... ]
+	 *  [(profile0), (profile1)... (profile2) ]
 	 *  where numbers relate to file_type enums 
-	 * 	not all file types are included - if not selected by user
-	 * 
-	 * 	[SettingProfile1, SettingProfile2, SettingProfile3 ]
-	 * 	
-	 * where profiles contain setting type and other information relating 
+	 * 	File types that aren't being used are set to false in the profile
 	 */
-//	private List<> settingList = null;
+	private List<SettingProfile> settingList = null;
 	
 	/**
 	 * Setting Constructor
 	 */
-	public Settings(){}
+	public Settings(){
+	}
 	
 	public File getSourceDirectory() {
 		return sourceDirectory;
@@ -85,9 +96,25 @@ public class Settings {
 		this.sourceDirectory = sourceDirectory;
 		System.out.println("Source Directory: " + sourceDirectory);
 	}
+	
+	public void initialiseDefault() {
+		System.out.println("Initialising default");
+		System.out.println(getSourceDirectory());
 
-//	public void addSetting(SettingChoice s /*, SettingProfile sp*/) {
-//		
-//	}
+		for (int setting = 0; setting < SettingChoice.getNumberOfFileTypes(); setting++) {
+			System.out.println(Settings.SettingChoice.values()[setting].toString());
+			new SettingProfile( setting, getSourceDirectory(), false );
+		}
+	}
+	
+	public void loadSettings() {
+		System.out.println("Loading previous settings");
+		System.out.println(getSourceDirectory());
+		
+		for (int setting = 0; setting < SettingChoice.getNumberOfFileTypes(); setting++) {
+			System.out.println(Settings.SettingChoice.values()[setting].toString());
+			new SettingProfile( setting, getSourceDirectory(), true );
+		}
+	}
 	
 }
