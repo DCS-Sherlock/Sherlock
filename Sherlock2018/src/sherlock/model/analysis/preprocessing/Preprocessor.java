@@ -6,7 +6,9 @@ import java.util.List;
 import sherlock.FileSystem.AcceptedFileFilter;
 import sherlock.FileSystem.DirectoryProcessor;
 import sherlock.FileSystem.JavaFileFilter;
+import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.SettingProfile;
+import sherlock.model.analysis.Settings;
 
 /**
  * Determines which pre-processing technique is to be used a result of the Setting profile properties.
@@ -47,7 +49,7 @@ public class Preprocessor {
 		 * If Whitespace pattern - call the whitespace pattern strategy
 		 * */
 		
-		List<Boolean> statuses = s.getInUseStatus();
+		s.getInUseStatus();
 		
 		System.out.println("------------------");
 		if ( s.getOriginalProfile().isInUse() ) {
@@ -72,7 +74,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 				
-			PreProcessingContext noWS = new PreProcessingContext(new NoWhiteSpaceStrategy(), filePaths , target );
+			new PreProcessingContext(new NoWhiteSpaceStrategy(), filePaths , target );
 			
 		}
 		
@@ -93,7 +95,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext noComments = new PreProcessingContext(new JavaStrategy( FileTypes.NOC.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.NOC.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getNoCWSProfile().isInUse() ) {
@@ -113,7 +115,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext noCWS = new PreProcessingContext(new JavaStrategy( FileTypes.NCW.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.NCW.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getCommentsProfile().isInUse() ) {
@@ -133,7 +135,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext comments = new PreProcessingContext(new JavaStrategy( FileTypes.COM.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.COM.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getTokenisedProfile().isInUse() ) {
@@ -153,7 +155,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext tokens = new PreProcessingContext(new JavaStrategy( FileTypes.TOK.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.TOK.getValue() ), filePaths , target );
 			
 		}
 		
@@ -174,7 +176,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext wsPattern = new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
+			new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
 		}
 	}
 	

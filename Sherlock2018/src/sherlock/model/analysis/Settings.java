@@ -1,10 +1,8 @@
-package sherlock.model.analysis.preprocessing;
+package sherlock.model.analysis;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-
-import sherlock.model.analysis.SettingProfile;
 
 public class Settings {	
 	/**
