@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sherlock.FileSystem;
 
 import java.io.File;
@@ -8,12 +5,12 @@ import java.io.FileFilter;
 
 /**
  * @author Aliyah
- *
+ *	Filters on whether the file is a plain text file
  */
 public class PlainTextFilter implements FileFilter {
 
 	/* 
-	 * Filters on whether the file is a file that ends with extension:
+	 * Filters on whether the file is a file that is not hidden and ends with extension:
 	 * 		.txt
 	 */
 	@Override

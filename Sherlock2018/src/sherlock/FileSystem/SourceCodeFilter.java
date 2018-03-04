@@ -1,13 +1,14 @@
 package sherlock.FileSystem;
 
 import java.io.File;
-import java.io.FileFilter;
 
 /**
  * @author Aliyah
- *	Filters on whether the file is non hidden java file
+ *
+ * Filter to collect all Source code files that are accepted by the Sherlock Plagiarism detector
+ * Filters on whether the file is a .java file
  */
-public class JavaFileFilter implements FileFilter {
+public class SourceCodeFilter implements java.io.FileFilter {
 
 	/* 
 	 * Filters on whether the file is a file that ends with extension:
@@ -20,6 +21,7 @@ public class JavaFileFilter implements FileFilter {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 

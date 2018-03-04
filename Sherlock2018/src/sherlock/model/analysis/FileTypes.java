@@ -1,14 +1,14 @@
 /**
  * 
  */
-package sherlock.model.analysis.preprocessing;
+package sherlock.model.analysis;
 
 /**
  * @author Aliyah
  *
  *	The possible file types to be used in the detection strategy
  */
-enum FileTypes {
+public enum FileTypes {
 	/**
 	 * Numeric value for the original.
 	 */
@@ -50,7 +50,7 @@ enum FileTypes {
 		this.value = value;
 	}
 	
-	int getValue() {
+	public int getValue() {
         return value;
     }
 	

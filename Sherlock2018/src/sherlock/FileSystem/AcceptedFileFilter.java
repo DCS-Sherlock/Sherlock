@@ -5,7 +5,8 @@ import java.io.File;
 /**
  * @author Aliyah
  *
- * Filters on whether the file is a .java or .txt file
+ * Filter to collect all files that are accepted by the Sherlock Plagiarism detector
+ * Filters on whether the file is a .java or .txt file. Hidden files are not accepted.
  */
 public class AcceptedFileFilter implements java.io.FileFilter {
 
