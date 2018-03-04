@@ -1,4 +1,4 @@
-package sherlock.FileSystem;
+package sherlock.FileSystem.Filters;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -7,7 +7,7 @@ import java.io.FileFilter;
  * @author Aliyah
  *	Filters on whether the file is a directory
  */
-class DirectoryFilter implements FileFilter {
+public class DirectoryFilter implements FileFilter {
 
 	@Override
 	public boolean accept(File name) {

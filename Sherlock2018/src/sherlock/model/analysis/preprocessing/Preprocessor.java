@@ -3,9 +3,10 @@ package sherlock.model.analysis.preprocessing;
 import java.io.File;
 import java.util.List;
 
-import sherlock.FileSystem.AcceptedFileFilter;
 import sherlock.FileSystem.DirectoryProcessor;
-import sherlock.FileSystem.JavaFileFilter;
+import sherlock.FileSystem.Filters.AcceptedFileFilter;
+import sherlock.FileSystem.Filters.JavaFileFilter;
+import sherlock.FileSystem.Filters.SourceCodeFilter;
 import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.SettingProfile;
 import sherlock.model.analysis.Settings;
@@ -162,7 +163,7 @@ public class Preprocessor {
 		if ( s.getWSPatternProfile().isInUse() ) {
 			System.out.println("WS Pattern Pre-processing");
 			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new SourceCodeFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getWSPatternProfile().getOutputDir() ;

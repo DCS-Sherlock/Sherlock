@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import sherlock.FileSystem.ExtractionContext;
+import sherlock.FileSystem.Filters.AcceptedFileFilter;
+import sherlock.FileSystem.Filters.DirectoryFilter;
+import sherlock.FileSystem.Filters.GZipFilenameFilter;
+import sherlock.FileSystem.Filters.ZipFilenameFilter;
 
 /**
  * @author Aliyah

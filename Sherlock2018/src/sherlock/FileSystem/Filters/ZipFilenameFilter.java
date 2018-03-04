@@ -1,9 +1,9 @@
-package sherlock.FileSystem;
+package sherlock.FileSystem.Filters;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-class ZipFilenameFilter implements FilenameFilter {
+public class ZipFilenameFilter implements FilenameFilter {
 	/* 
 	 * 	Return true if and only if file ends with one of the extension names:
 	 * 	zip
