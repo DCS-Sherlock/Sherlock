@@ -74,22 +74,103 @@ public class Preprocessor {
 		
 		if ( s.getNoCommentsProfile().isInUse() ) {
 			System.out.println("No Comments Pre-processing");
+			
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			File[] filePaths = dp.getInputFiles();
+			
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoCommentsProfile().getOutputDir() ;
+			
+			System.out.println("Target directory: \t" +targetDirectory);
+			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
+			
+			PreProcessingContext noComments = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.NOC.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getNoCWSProfile().isInUse() ) {
 			System.out.println("No Comments, No WS Pre-processing");
+			
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			File[] filePaths = dp.getInputFiles();
+			
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoCWSProfile().getOutputDir() ;
+			
+			System.out.println("Target directory: \t" +targetDirectory);
+			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
+			
+			PreProcessingContext noCWS = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.NCW.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getCommentsProfile().isInUse() ) {
 			System.out.println("Comments Pre-processing");
+			
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			File[] filePaths = dp.getInputFiles();
+			
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getCommentsProfile().getOutputDir() ;
+			
+			System.out.println("Target directory: \t" +targetDirectory);
+			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
+			
+			PreProcessingContext comments = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.COM.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getTokenisedProfile().isInUse() ) {
 			System.out.println("Token Pre-processing");
+			
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			File[] filePaths = dp.getInputFiles();
+			
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getTokenisedProfile().getOutputDir() ;
+			
+			System.out.println("Target directory: \t" +targetDirectory);
+			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
+			
+			PreProcessingContext tokens = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.TOK.getValue() ), filePaths , target );
+			
 		}
 		
 		if ( s.getWSPatternProfile().isInUse() ) {
 			System.out.println("WS Pattern Pre-processing");
+			
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+			File[] filePaths = dp.getInputFiles();
+			
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getWSPatternProfile().getOutputDir() ;
+			
+			System.out.println("Target directory: \t" +targetDirectory);
+			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
+			
+			PreProcessingContext wsPattern = new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
 		}
 	}
 	

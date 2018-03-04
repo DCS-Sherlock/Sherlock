@@ -13,6 +13,7 @@ import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * @author Aliyah
@@ -20,15 +21,22 @@ import org.antlr.v4.runtime.Vocabulary;
  */
 class JavaStrategy implements PreProcessingStrategy {
 	
-	private List<Boolean> settings ;
+	private int setting ;
 	
 	/**
-	 * Constructor for the JavaStrategy
-	 * @param commentsIncluded		- Boolean to indicating whether the comments should be written to file or not
+	 * The Java strategy Constructor
+	 * @param setting 		- The pre-processing setting to be run
+	 * 
+	 *  Where: 
+	 * 	2	- No comments
+	 *  3	- No comments no white space
+	 *  4	- Comments 
+	 * 	5 	- Tokenised
+	 * 
+	 * These values relate to the definitions of the enumeration SettingChoice in the settings class
 	 */
-	public JavaStrategy(File[] filePaths, File targetDirectory, List<Boolean> settings) {
-		this.settings = settings;
-		preProcessFiles(filePaths, targetDirectory);
+	public JavaStrategy(int setting) {
+		this.setting = setting;
 	}
 	
 	/* (non-Javadoc)
@@ -37,28 +45,158 @@ class JavaStrategy implements PreProcessingStrategy {
 	@Override
 	public void preProcessFiles(File[] filePaths, File targetDirectory ) {
 		
-			//For each file to be parsed
-			for( File filepath : filePaths ) { 
-				// Call the pre-processing method depending on settings
+		switch( setting ) {
+			case 2:
+				System.out.println("No Comments");
+				for( File file : filePaths ) { 
+					System.out.println("File " + file.getAbsolutePath() );
+					
+					String filename = FilenameUtils.removeExtension(file.getName());
+					String finalDestination = targetDirectory + File.separator + filename + ".txt";
+					System.out.println("finalDestination " + finalDestination);
+			        FileInputStream fis = null;
+			        
+			        try {
+				        	/* Open the input file stream */
+				    		fis = new FileInputStream(file);
+				    		
+				    		/* Create a CharStream that reads in the file */
+				        	ANTLRInputStream input = new ANTLRInputStream(fis);
+				        		
+				        	/* Create the Java Lexer and feed it the input */
+				        JavaLexer lexer = new JavaLexer(input);
+			       
+				        	List<? extends Token> list = lexer.getAllTokens();
+				        	Vocabulary vocab = lexer.getVocabulary();
+				        	
+				        	removeComments(list, vocab, finalDestination);
+				        	
+				        	/* Close the input stream */
+				    		fis.close();    	
+			        } catch (IOException e) {
+			    			e.printStackTrace();
+			        }
+				}
+				break;
+			case 3:
+				System.out.println("No comments no white space");
 				
-			}
-	}
+				for( File file : filePaths ) { 
+					System.out.println("File " + file.getAbsolutePath() );
+					
+					String filename = FilenameUtils.removeExtension(file.getName());
+					String finalDestination = targetDirectory + File.separator + filename + ".txt";
+					System.out.println("finalDestination " + finalDestination);
+			        FileInputStream fis = null;
+			        
+			        try {
+				        	/* Open the input file stream */
+				    		fis = new FileInputStream(file);
+				    		
+				    		/* Create a CharStream that reads in the file */
+				        	ANTLRInputStream input = new ANTLRInputStream(fis);
+				        		
+				        	/* Create the Java Lexer and feed it the input */
+				        JavaLexer lexer = new JavaLexer(input);
+			       
+				        	List<? extends Token> list = lexer.getAllTokens();
+				        	Vocabulary vocab = lexer.getVocabulary();
+				        	
+				        	removeComments_Whitespace(list, finalDestination);
+				        	
+				        	/* Close the input stream */
+				    		fis.close();    	
+			        } catch (IOException e) {
+			    			e.printStackTrace();
+			        }
+				}
+				
+				break;
+			case 4:
+				System.out.println("Comments");
+				
+				for( File file : filePaths ) { 
+					System.out.println("File " + file.getAbsolutePath() );
+					
+					String filename = FilenameUtils.removeExtension(file.getName());
+					String finalDestination = targetDirectory + File.separator + filename + ".txt";
+					System.out.println("finalDestination " + finalDestination);
+			        FileInputStream fis = null;
+			        
+			        try {
+				        	/* Open the input file stream */
+				    		fis = new FileInputStream(file);
+				    		
+				    		/* Create a CharStream that reads in the file */
+				        	ANTLRInputStream input = new ANTLRInputStream(fis);
+				        		
+				        	/* Create the Java Lexer and feed it the input */
+				        JavaLexer lexer = new JavaLexer(input);
+			       
+				        	List<? extends Token> list = lexer.getAllTokens();
+				        	Vocabulary vocab = lexer.getVocabulary();
+				        	
+				        	extractComments(list, finalDestination);
+				        	
+				        	/* Close the input stream */
+				    		fis.close();    	
+			        } catch (IOException e) {
+			    			e.printStackTrace();
+			        }
+				}
+				
+				break;
+			case 5:
+				System.out.println("Tokenised!");
+				
+				//For each file to be parsed
+				for( File file : filePaths ) { 
+					System.out.println("File " + file.getAbsolutePath() );
+					
+					String filename = FilenameUtils.removeExtension(file.getName());
+					String finalDestination = targetDirectory + File.separator + filename + ".txt";
+					System.out.println("finalDestination " + finalDestination);
+			        FileInputStream fis = null;
+			        
+			        try {
+				        	/* Open the input file stream */
+				    		fis = new FileInputStream(file);
+				    		
+				    		/* Create a CharStream that reads in the file */
+				        	ANTLRInputStream input = new ANTLRInputStream(fis);
+				        		
+				        	/* Create the Java Lexer and feed it the input */
+				        JavaLexer lexer = new JavaLexer(input);
+			       
+				        	List<? extends Token> list = lexer.getAllTokens();
+				        	Vocabulary vocab = lexer.getVocabulary();
+				        	
+				        	tokenise(list, vocab, finalDestination);
+				        	
+				        	/* Close the input stream */
+				    		fis.close();    	
+			        } catch (IOException e) {
+			    			e.printStackTrace();
+			        }
+				}
+				break;
+			default :
+				System.out.println("No settings");
+		}
 	
-//	private List<Integer> getSettings() {
-//		return settings;
-//	}
+	}
 	
 	/**
 	 * Remove the comments without changing the format of the rest of the code
 	 * @throws IOException 
 	 */
-	private void removeComments(List<? extends Token> list, Vocabulary vocab) throws IOException{
+	private void removeComments(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException{
 		System.out.println("Remove Comments");
 		
-		String destination = System.getProperty("user.home") + File.separator + "noComments.txt" ;
+		System.out.println("Target File: " + outputFile);
 		
 		/*Create a buffered writer to store all the tokens in a file */
-		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( destination )));
+		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( outputFile )));
 		
 		int currentLine = 1 ;
 		for( Token t : list ) {
@@ -80,12 +218,11 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * Write the comments to file 
 	 * @throws IOException 
 	 */
-	private void extractComments(List<? extends Token> list) throws IOException{
+	private void extractComments(List<? extends Token> list, String outputFile) throws IOException{
 		System.out.println("Extract Comments");
-		String destination = System.getProperty("user.home") + File.separator + "Comments.txt" ;
 		
 		/*Create a buffered writer to store all the tokens in a file */
-		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( destination )));
+		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( outputFile )));
 		
 		int currentLine = 1 ;
 		for( Token t : list ) {
@@ -109,13 +246,13 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * Tokenise the input and remove comments
 	 * @throws IOException 
 	 */
-	private void tokenise(List<? extends Token> list, Vocabulary vocab) throws IOException{
+	private void tokenise(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException{
 		System.out.println("Tokenise");
 		
-		String destination = System.getProperty("user.home") + File.separator + "Tokens.txt" ;
+		System.out.println("Target File: " + outputFile);
 		
 		/*Create a buffered writer to store all the tokens in a file */
-		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( destination )));
+		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( outputFile )));
 		
 		/* For all tokens in the list, add them to the new file created */
 		int currentLine = 1 ;
@@ -173,12 +310,12 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * Remove the comments and unnecessary spaces and indentation
 	 * @throws IOException 
 	 */
-	private void removeComments_WhiteSpace(List<? extends Token> list) throws IOException{
+	private void removeComments_Whitespace(List<? extends Token> list, String outputFile) throws IOException{
 		System.out.println("Remove WS and Comments");
-		String destination = System.getProperty("user.home") + File.separator + "NoWS_Comments.txt" ;
+		System.out.println("Target File: " + outputFile);
 		
 		/*Create a buffered writer to store all the tokens in a file */
-		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( destination )));
+		BufferedWriter bw = new BufferedWriter(new FileWriter( new File( outputFile )));
 		
 		/* For all tokens in the list, add them to the new file created */
 		int currentLine = 1 ;

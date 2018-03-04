@@ -49,7 +49,7 @@ public class Settings {
 			this.value = value;
 		}
 		
-		private int getValue() {
+		int getValue() {
 	        return value;
 	    }
 		

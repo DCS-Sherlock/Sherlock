@@ -71,8 +71,6 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				selectDirectory();
-				//	Initialise Settings
-				initialiseSettings(true);
 			}
 		});
 		
@@ -80,9 +78,6 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				loadDirectory();
-				//	Load Settings
-				initialiseSettings(false);
-				
 			}
 		});
 		
@@ -234,6 +229,9 @@ public class DashboardController implements Initializable{
 					sessionChoice.setText(selectedFile.toString());
 					
 					setting.setSourceDirectory( new File(dp.returnNewSourceDirectory(selectedFile.getName())) );
+
+					//	Initialise Settings
+					initialiseSettings(true);
 		       }
 		    } catch (IOException e) {
 				e.printStackTrace();
@@ -265,6 +263,9 @@ public class DashboardController implements Initializable{
 						if ( true ) {
 							sessionChoice.setText(selectedFile.toString());
 							setting.setSourceDirectory( selectedFile );
+
+							//	Load Settings
+							initialiseSettings(false);
 						} else {
 							System.out.println("Not chosen a directory of the correct format");
 						}
