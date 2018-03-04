@@ -27,6 +27,7 @@ import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
 import sherlock.FileSystem.DirectoryProcessor;
 import sherlock.model.analysis.Settings;
+import sherlock.model.analysis.detection.DetectionHandler;
 import sherlock.model.analysis.preprocessing.Preprocessor;
 /**
  * @author Aliyah
@@ -308,10 +309,23 @@ public class DashboardController implements Initializable{
 	private void startPreProcessing() {
 		System.out.println("Starting Pre-processing");
 		Preprocessor p = new Preprocessor(setting);
+		
+		/*
+		 * Update GUI to say that pre-processing is complete
+		 */
 	}
 	
 	private void startDetection() {
-		System.out.println("Starting Detection");
+		
+		/*Check that preprocessing has completed */
+		if ( setting.isPreprocessingComplete() ) {
+			System.out.println("Starting Detection");
+			
+			DetectionHandler dh = new DetectionHandler(setting);
+		} else {
+			Alert alert = new Alert(AlertType.ERROR, "Please ensure pre-processing has completed before attempting to run detection");
+			alert.showAndWait();
+		}
 	}
 	
 	/**

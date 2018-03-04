@@ -3,6 +3,10 @@
  */
 package sherlock.model.analysis.detection;
 
+import java.io.File;
+
+import sherlock.model.analysis.SettingProfile;
+
 /**
  * This class stores which detection strategy is to be used and provides functionality to execute the algorithm.
  * @author Aliyah
@@ -23,7 +27,7 @@ class DetectionContext {
 	 * Calls the correct detection method.
 	 * @param workingDirectory 	- a collection of the tokenised files to perform the detection over
 	 */
-	void executeDetection() {
-		ds.doDetection();
+	void executeDetection(File[] filesToCompare, SettingProfile sp) {
+		ds.doDetection(filesToCompare, sp);
 	}
 }

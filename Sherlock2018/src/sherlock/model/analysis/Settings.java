@@ -12,6 +12,8 @@ public class Settings {
 	
 	private boolean settingIntitialised = false ;
 	
+	private boolean preprocessingComplete = false ;
+	
 	/**
 	 * A list of settings selected by the user
 	 *  
@@ -26,8 +28,7 @@ public class Settings {
 	/**
 	 * Setting Constructor
 	 */
-	public Settings(){
-	}
+	public Settings(){}
 	
 	public File getSourceDirectory() {
 		return sourceDirectory;
@@ -50,7 +51,14 @@ public class Settings {
 	private void resetSettingList() {
 		settingList.clear();
 	}
+
+	public void setPreprocessingStatus( boolean status ) {
+		this.preprocessingComplete = status ;
+	}
 	
+	public boolean isPreprocessingComplete() {
+		return preprocessingComplete ;
+	}
 
 	/**
 	 * Returns the Setting profile for the original setting

@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import sherlock.FileSystem.DirectoryProcessor;
-import sherlock.FileSystem.Filters.AcceptedFileFilter;
-import sherlock.FileSystem.Filters.JavaFileFilter;
-import sherlock.FileSystem.Filters.SourceCodeFilter;
+import sherlock.FileSystem.Filters.*;
 import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.SettingProfile;
 import sherlock.model.analysis.Settings;
@@ -55,9 +53,10 @@ public class Preprocessor {
 		System.out.println("------------------");
 		if ( s.getOriginalProfile().isInUse() ) {
 			System.out.println("Original Pre-processing");
+			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getOriginalProfile().getOutputDir() ;
 			
+			s.getOriginalProfile().setOutputDir(targetDirectory);
 		}
-		
 		
 		if ( s.getNoWSProfile().isInUse() ) {
 			System.out.println("No WS Pre-processing");
@@ -74,9 +73,9 @@ public class Preprocessor {
 			} else {
 				target.mkdir();
 			}
+			s.getNoWSProfile().setOutputDir(target.getAbsolutePath());
 				
 			new PreProcessingContext(new NoWhiteSpaceStrategy(), filePaths , target );
-			
 		}
 		
 		if ( s.getNoCommentsProfile().isInUse() ) {
@@ -95,6 +94,7 @@ public class Preprocessor {
 			} else {
 				target.mkdir();
 			}
+			s.getNoCommentsProfile().setOutputDir(target.getAbsolutePath());
 			
 			new PreProcessingContext(new JavaStrategy( FileTypes.NOC ), filePaths , target );
 		}
@@ -115,6 +115,7 @@ public class Preprocessor {
 			} else {
 				target.mkdir();
 			}
+			s.getNoCWSProfile().setOutputDir(target.getAbsolutePath());
 			
 			new PreProcessingContext(new JavaStrategy( FileTypes.NCW ), filePaths , target );
 		}
@@ -135,7 +136,7 @@ public class Preprocessor {
 			} else {
 				target.mkdir();
 			}
-			
+			s.getCommentsProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.COM ), filePaths , target );
 		}
 		
@@ -155,7 +156,7 @@ public class Preprocessor {
 			} else {
 				target.mkdir();
 			}
-			
+			s.getTokenisedProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.TOK ), filePaths , target );
 			
 		}
@@ -177,8 +178,12 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
+			s.getWSPatternProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
 		}
+		
+		System.out.println("Pre-processing complete");
+		s.setPreprocessingStatus(true);
 	}
 	
 
