@@ -1,7 +1,7 @@
 lexer grammar WhitespaceLexer;
 
-
 @header {
+	package sherlock.model.analysis.preprocessing;
 }
 
 /*-------------------------

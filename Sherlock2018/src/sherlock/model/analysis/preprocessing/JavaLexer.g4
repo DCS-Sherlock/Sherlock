@@ -1,5 +1,9 @@
 lexer grammar JavaLexer;
 
+@header {
+	package sherlock.model.analysis.preprocessing;
+}
+
 /*
  * Keywords
  */

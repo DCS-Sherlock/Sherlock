@@ -1,7 +1,5 @@
 lexer grammar NowhitespaceLexer;
 
-// import NowhitespaceFragments;
-
 @header {
 	package sherlock.model.analysis.preprocessing;
 }

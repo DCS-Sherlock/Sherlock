@@ -26,8 +26,8 @@ import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
 import sherlock.FileSystem.DirectoryProcessor;
+import sherlock.model.analysis.Settings;
 import sherlock.model.analysis.preprocessing.Preprocessor;
-import sherlock.model.analysis.preprocessing.Settings;
 /**
  * @author Aliyah
  * The controller for the Dashboard scene

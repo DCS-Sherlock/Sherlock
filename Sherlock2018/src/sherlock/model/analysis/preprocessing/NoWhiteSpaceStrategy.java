@@ -25,8 +25,6 @@ public class NoWhiteSpaceStrategy implements PreProcessingStrategy {
 			String filename = FilenameUtils.removeExtension(file.getName());
 			String finalDestination = targetDirectory + File.separator + filename + ".txt";
 			System.out.println("finalDestination " + finalDestination);
-//			String fileName = System.getProperty("user.home") + "/test_Zip/helloWorld.java";
-//	        File file = new File(fileName);
 	        FileInputStream fis = null;
 	        
 	        try {

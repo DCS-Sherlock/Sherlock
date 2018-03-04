@@ -3,6 +3,11 @@ parser grammar JavaParser;
 options {
 	tokenVocab = JavaLexer;
 }
+
+@header {
+	package sherlock.model.analysis.preprocessing;
+}
+
 literal
 	:	IntegerLiteral
 	|	FloatingPointLiteral
