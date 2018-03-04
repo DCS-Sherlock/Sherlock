@@ -17,16 +17,20 @@ import sherlock.model.analysis.SettingProfile;
 public class Preprocessor {
 	
 	private Settings s ; 
+	
 	/**
-	 * Pre-processor Constructor
+	 * Pre-processor constructor.
+	 * This constructor initiates the pre-processing strategies by calling the runPreprocessingStrategies method.
+	 *
+	 * @param s 		- The file types requested by the user for this detection
 	 */
 	public Preprocessor(Settings s){
 		this.s = s ;
 		
-		selectPreprocessingStrategies();
+		runPreprocessingStrategies();
 	}
 	
-	private void selectPreprocessingStrategies() {
+	private void runPreprocessingStrategies() {
 		/*
 		 * If original is to be used - do nothing
 		 * 
@@ -89,7 +93,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext noComments = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.NOC.getValue() ), filePaths , target );
+			PreProcessingContext noComments = new PreProcessingContext(new JavaStrategy( FileTypes.NOC.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getNoCWSProfile().isInUse() ) {
@@ -109,7 +113,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext noCWS = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.NCW.getValue() ), filePaths , target );
+			PreProcessingContext noCWS = new PreProcessingContext(new JavaStrategy( FileTypes.NCW.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getCommentsProfile().isInUse() ) {
@@ -129,7 +133,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext comments = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.COM.getValue() ), filePaths , target );
+			PreProcessingContext comments = new PreProcessingContext(new JavaStrategy( FileTypes.COM.getValue() ), filePaths , target );
 		}
 		
 		if ( s.getTokenisedProfile().isInUse() ) {
@@ -149,7 +153,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			PreProcessingContext tokens = new PreProcessingContext(new JavaStrategy( Settings.SettingChoice.TOK.getValue() ), filePaths , target );
+			PreProcessingContext tokens = new PreProcessingContext(new JavaStrategy( FileTypes.TOK.getValue() ), filePaths , target );
 			
 		}
 		

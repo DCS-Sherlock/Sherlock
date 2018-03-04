@@ -6,59 +6,7 @@ import java.util.List;
 
 import sherlock.model.analysis.SettingProfile;
 
-public class Settings {
-	public enum SettingChoice{
-		/**
-		 * Numeric value for the original.
-		 */
-		ORI(0),
-		
-		/**
-		 * Numeric value for no-whitespace.
-		 */
-		NWS(1),
-		
-		/**
-		 * Numeric value for no comment.
-		 */
-		NOC(2),
-		
-		/**
-		 * Numerical value for no comment no white.
-		 */
-		NCW(3),
-		
-		/**
- 		* Numeric value for comment.
- 		*/
-		COM(4),
-		
-		/**
-		 * Numeric value for the tokenised files.
-		 */
-		TOK(5),
-		
-		/**
-		 * Numeric value for the whitespace pattern.
-		 */
-		WSP(6);
-		
-		private int value;
-		
-		SettingChoice(int value) {
-			this.value = value;
-		}
-		
-		int getValue() {
-	        return value;
-	    }
-		
-		static int getNumberOfFileTypes() {
-			return values().length ;
-		}
-		
-	}
-	
+public class Settings {	
 	/**
 	 * The directory that holds the source code to be compared.
 	 */
@@ -111,31 +59,31 @@ public class Settings {
 	 * @return
 	 */
 	public SettingProfile getOriginalProfile() {
-		return settingList.get(Settings.SettingChoice.ORI.getValue());
+		return settingList.get(FileTypes.ORI.getValue());
 	}
 	
 	public SettingProfile getNoWSProfile() {
-		return settingList.get(Settings.SettingChoice.NWS.getValue());
+		return settingList.get(FileTypes.NWS.getValue());
 	}
 	
 	public SettingProfile getNoCommentsProfile() {
-		return settingList.get(Settings.SettingChoice.NOC.getValue());
+		return settingList.get(FileTypes.NOC.getValue());
 	}
 	
 	public SettingProfile getNoCWSProfile() {
-		return settingList.get(Settings.SettingChoice.NCW.getValue());
+		return settingList.get(FileTypes.NCW.getValue());
 	}
 	
 	public SettingProfile getCommentsProfile() {
-		return settingList.get(Settings.SettingChoice.COM.getValue());
+		return settingList.get(FileTypes.COM.getValue());
 	}
 	
 	public SettingProfile getTokenisedProfile() {
-		return settingList.get(Settings.SettingChoice.TOK.getValue());
+		return settingList.get(FileTypes.TOK.getValue());
 	}
 	
 	public SettingProfile getWSPatternProfile() {
-		return settingList.get(Settings.SettingChoice.WSP.getValue());
+		return settingList.get(FileTypes.WSP.getValue());
 	}
 	
 	public void initialiseDefault() {
@@ -145,8 +93,8 @@ public class Settings {
 			System.out.println("Initialising default");
 			System.out.println(getSourceDirectory());
 	
-			for (int setting = 0; setting < SettingChoice.getNumberOfFileTypes(); setting++) {
-				System.out.println(Settings.SettingChoice.values()[setting].toString());
+			for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
+				System.out.println(FileTypes.values()[setting].toString());
 				SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), false);
 				settingList.add(sp);
 			}
@@ -161,8 +109,8 @@ public class Settings {
 		System.out.println("Loading previous settings");
 		System.out.println(getSourceDirectory());
 		
-		for (int setting = 0; setting < SettingChoice.getNumberOfFileTypes(); setting++) {
-			System.out.println(Settings.SettingChoice.values()[setting].toString());
+		for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
+			System.out.println(FileTypes.values()[setting].toString());
 			SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), true );
 			settingList.add(sp);
 		}
