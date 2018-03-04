@@ -50,7 +50,7 @@ public enum FileTypes {
 		this.value = value;
 	}
 	
-	public int getValue() {
+	int getValue() {
         return value;
     }
 	

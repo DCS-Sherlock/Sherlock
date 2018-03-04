@@ -95,7 +95,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			new PreProcessingContext(new JavaStrategy( FileTypes.NOC.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.NOC ), filePaths , target );
 		}
 		
 		if ( s.getNoCWSProfile().isInUse() ) {
@@ -115,7 +115,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			new PreProcessingContext(new JavaStrategy( FileTypes.NCW.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.NCW ), filePaths , target );
 		}
 		
 		if ( s.getCommentsProfile().isInUse() ) {
@@ -135,7 +135,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			new PreProcessingContext(new JavaStrategy( FileTypes.COM.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.COM ), filePaths , target );
 		}
 		
 		if ( s.getTokenisedProfile().isInUse() ) {
@@ -155,7 +155,7 @@ public class Preprocessor {
 				target.mkdir();
 			}
 			
-			new PreProcessingContext(new JavaStrategy( FileTypes.TOK.getValue() ), filePaths , target );
+			new PreProcessingContext(new JavaStrategy( FileTypes.TOK ), filePaths , target );
 			
 		}
 		

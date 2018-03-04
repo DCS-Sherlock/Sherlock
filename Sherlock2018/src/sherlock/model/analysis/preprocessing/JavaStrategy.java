@@ -15,13 +15,15 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.apache.commons.io.FilenameUtils;
 
+import sherlock.model.analysis.FileTypes;
+
 /**
  * @author Aliyah
  *
  */
 class JavaStrategy implements PreProcessingStrategy {
 	
-	private int setting ;
+	private static FileTypes setting ;
 	
 	/**
 	 * The Java strategy Constructor
@@ -35,7 +37,7 @@ class JavaStrategy implements PreProcessingStrategy {
 	 * 
 	 * These values relate to the definitions of the enumeration SettingChoice in the settings class
 	 */
-	public JavaStrategy(int setting) {
+	public JavaStrategy(FileTypes setting) {
 		this.setting = setting;
 	}
 	
@@ -46,7 +48,7 @@ class JavaStrategy implements PreProcessingStrategy {
 	public void preProcessFiles(File[] filePaths, File targetDirectory ) {
 		
 		switch( setting ) {
-			case 2:
+			case NOC:
 				System.out.println("No Comments");
 				for( File file : filePaths ) { 
 					System.out.println("File " + file.getAbsolutePath() );
@@ -78,7 +80,7 @@ class JavaStrategy implements PreProcessingStrategy {
 			        }
 				}
 				break;
-			case 3:
+			case NCW:
 				System.out.println("No comments no white space");
 				
 				for( File file : filePaths ) { 
@@ -112,7 +114,7 @@ class JavaStrategy implements PreProcessingStrategy {
 				}
 				
 				break;
-			case 4:
+			case COM:
 				System.out.println("Comments");
 				
 				for( File file : filePaths ) { 
@@ -146,8 +148,8 @@ class JavaStrategy implements PreProcessingStrategy {
 				}
 				
 				break;
-			case 5:
-				System.out.println("Tokenised!");
+			case TOK :
+				System.out.println("Tokenise");
 				
 				//For each file to be parsed
 				for( File file : filePaths ) { 
