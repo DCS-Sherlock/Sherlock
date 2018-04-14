@@ -25,7 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
-import sherlock.FileSystem.DirectoryProcessor;
+import sherlock.fileSystem.DirectoryProcessor;
 import sherlock.model.analysis.Settings;
 import sherlock.model.analysis.detection.DetectionHandler;
 import sherlock.model.analysis.preprocessing.Preprocessor;

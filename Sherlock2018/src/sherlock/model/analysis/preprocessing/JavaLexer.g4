@@ -549,7 +549,6 @@ NEWLINE : [ \t]* [\r\n]+ [ \t]* -> skip
  *-------------------------*/
 BLOCK_COMMENT
     :   '/*' .*? '*/' [ ]* -> channel(HIDDEN)
-//	:   '/*' ~[\t\u000C]*? '*/' -> channel(HIDDEN)
     ;
 
 LINE_COMMENT

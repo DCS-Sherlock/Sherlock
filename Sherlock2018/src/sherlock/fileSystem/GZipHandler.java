@@ -1,4 +1,4 @@
-package sherlock.FileSystem;
+package sherlock.fileSystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -59,9 +59,6 @@ class GZipHandler implements ExtractionStrategy {
 				   
 				   /** If the entry is a directory, skip **/
 				   if (tarEntry.isDirectory()) {
-//					   System.out.println("A directory" + tarEntry.getName());
-//					   File file = new File(destination + File.pathSeparator + tarEntry.getName());
-//					   file.mkdirs();
 					   continue;
 				   } else { 
 					   int count;

@@ -1,4 +1,4 @@
-package sherlock.FileSystem.Filters;
+package sherlock.fileSystem.filters;
 
 import java.io.File;
 

@@ -50,7 +50,7 @@ public class SherlockApplication extends Application {
 			stage = primaryStage;
 //			goToDirectorySelector();				// Set up the directory Selection window
 			goToMain();				// Set up the directory Selection window
-			primaryStage.setTitle("Sherlock 2018");
+			primaryStage.setTitle("Sherlock V1.61");
 			primaryStage.show();					// Present this window to the User
 		} catch ( Exception e ){
 			System.out.println("Unable open Directory Selector");

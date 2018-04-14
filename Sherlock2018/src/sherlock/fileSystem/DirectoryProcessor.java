@@ -1,7 +1,8 @@
-package sherlock.FileSystem;
+package sherlock.fileSystem;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -10,11 +11,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collection;
 
-import sherlock.FileSystem.ExtractionContext;
-import sherlock.FileSystem.Filters.AcceptedFileFilter;
-import sherlock.FileSystem.Filters.DirectoryFilter;
-import sherlock.FileSystem.Filters.GZipFilenameFilter;
-import sherlock.FileSystem.Filters.ZipFilenameFilter;
+import sherlock.fileSystem.ExtractionContext;
+import sherlock.fileSystem.filters.AcceptedFileFilter;
+import sherlock.fileSystem.filters.DirectoryFilter;
+import sherlock.fileSystem.filters.GZipFilenameFilter;
+import sherlock.fileSystem.filters.ZipFilenameFilter;
 
 /**
  * @author Aliyah
@@ -70,10 +71,21 @@ public class DirectoryProcessor {
 	}
 	
 	/**
-	 * DirectoryProcessor Constructor 	- 	Used to collect all of the files in the /Preprocessing/Original directory 
-	 * @param dir
+	 * DirectoryProcessor Constructor 	- 	Used to filter the files by some file filter 
+	 * @param dir 						- 	The non-empty directory to be filtered
+	 * @param f							- 	The filter to be used
 	 */
 	public DirectoryProcessor( File dir, FileFilter f ) {
+		this.dir = dir;
+		this.inputFiles = getInputFiles(dir, f);
+	}
+	
+	/**
+	 * DirectoryProcessor Constructor 	- 	Used to filter the files by some filename filter 
+	 * @param dir 						- 	The non-empty directory to be filtered
+	 * @param f							- 	The filename filter to be used
+	 */
+	public DirectoryProcessor( File dir, FilenameFilter f ) {
 		this.dir = dir;
 		this.inputFiles = getInputFiles(dir, f);
 	}
@@ -91,7 +103,7 @@ public class DirectoryProcessor {
 		 * 	and $sourceDirectory$ is the name of the directory selected by the user through the file chooser facility
 		 */
 		String destination = returnOriginalDirectory(sourceDirectoryName);
-							
+		System.out.println(destination);					
 		if ( ! new File(destination).exists() ) {
 			if (new File(destination).mkdirs() ) {
 				System.out.println("Success Making " + destination + " Directory");
@@ -148,6 +160,16 @@ public class DirectoryProcessor {
 	 * @return 		- An array of files that are consistent with the file filter
 	 */
 	private File[] getInputFiles(File dir, FileFilter f) {
+		return dir.listFiles(f);
+	}
+	
+	/**
+	 * Return all of the files that adhere to the filtering option.
+	 * @param dir	- The Preprocessing/Original directory to filter
+	 * @param f 		- The filename filter to apply to the 'dir' parameter
+	 * @return 		- An array of files that are consistent with the filename filter
+	 */
+	private File[] getInputFiles(File dir, FilenameFilter f) {
 		return dir.listFiles(f);
 	}
 	

@@ -1,4 +1,4 @@
-package sherlock.FileSystem;
+package sherlock.fileSystem;
 
 import java.io.*;
 import java.util.zip.*;

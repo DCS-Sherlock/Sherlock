@@ -7,4 +7,4 @@
  * @author Aliyah
  *
  */
-package sherlock.FileSystem;
+package sherlock.fileSystem;

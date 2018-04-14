@@ -3,8 +3,8 @@ package sherlock.model.analysis.preprocessing;
 import java.io.File;
 import java.util.List;
 
-import sherlock.FileSystem.DirectoryProcessor;
-import sherlock.FileSystem.Filters.*;
+import sherlock.fileSystem.DirectoryProcessor;
+import sherlock.fileSystem.filters.*;
 import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.SettingProfile;
 import sherlock.model.analysis.Settings;

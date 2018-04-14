@@ -5,8 +5,8 @@ package sherlock.model.analysis.detection;
 
 import java.io.File;
 
-import sherlock.FileSystem.DirectoryProcessor;
-import sherlock.FileSystem.Filters.*;
+import sherlock.fileSystem.DirectoryProcessor;
+import sherlock.fileSystem.filters.*;
 import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.Settings;
 
@@ -47,8 +47,10 @@ public class DetectionHandler {
 			DirectoryProcessor text = new DirectoryProcessor(originalDirectory, new PlainTextFilter());
 			File[] plainTextFiles = text.getInputFiles();
 			
-			DirectoryProcessor sourceCode = new DirectoryProcessor(originalDirectory, new SourceCodeFilter());
+			DirectoryProcessor sourceCode = new DirectoryProcessor(originalDirectory, new JavaFileFilter());
 			File[] sourceCodeFiles = sourceCode.getInputFiles();
+			
+			NGramsStrategy ng = new NGramsStrategy(sourceCodeFiles, s.getOriginalProfile());
 		}
 		
 		if ( s.getNoWSProfile().isInUse() ) {
