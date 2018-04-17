@@ -95,7 +95,7 @@ public class SettingProfile {
    *   boolean concatanate
    *   int strictness
 	 */
-	final static String defaultProperties[][] = {
+	private final static String defaultProperties[][] = {
 		/* Original */
 		{"Original", "Original", "", "true"},
 		/* No WhiteSpace */
@@ -223,7 +223,7 @@ public class SettingProfile {
 	
 	/**
 	 * Set the in use parameter of this setting profile
-	 * @param s 		- The new in use status
+	 * @param b 		- The new in use status
 	 */
 	public void setInUse(Boolean b) {
 		thisProfile.setProperty("inUse", String.valueOf(b));

@@ -2,7 +2,7 @@ package sherlock.fileSystem;
 
 import java.io.File;
 
-public interface ExtractionStrategy {
+interface ExtractionStrategy {
 
 	/**
 	 * 	The extraction process

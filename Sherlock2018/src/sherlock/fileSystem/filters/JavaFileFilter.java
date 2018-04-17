@@ -16,9 +16,7 @@ public class JavaFileFilter implements FileFilter {
 	@Override
 	public boolean accept(File file) {
 		if ( file.getName().endsWith(".java") ) {
-			if ( !file.isHidden()) {
-				return true;
-			}
+			return !file.isHidden();
 		}
 		return false;
 	}

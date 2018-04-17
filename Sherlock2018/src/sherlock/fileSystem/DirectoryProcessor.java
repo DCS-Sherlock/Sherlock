@@ -50,7 +50,7 @@ public class DirectoryProcessor {
 	 * 		.tgz
 	 * 		.TGZ
 	 */
-	GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
+	 GZipFilenameFilter gzipfilter = new GZipFilenameFilter();
 
 	/**
 	 * A filter that determines whether a file object is a file

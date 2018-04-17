@@ -35,7 +35,7 @@ import sherlock.model.analysis.preprocessing.Preprocessor;
  */
 public class DashboardController implements Initializable{
 	
-	Settings setting = new Settings();
+	private Settings setting = new Settings();
 	
 	@FXML
 	private Button newSession ;

@@ -9,7 +9,6 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import sherlock.view.gui.DirectorySelectorController;
 
 /**
  * The main class to run the sherlock application. This class references the sherlock.viw.gui package 

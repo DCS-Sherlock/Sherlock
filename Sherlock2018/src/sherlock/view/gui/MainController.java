@@ -63,28 +63,28 @@ public class MainController implements Initializable{
 		
 	}
 	
-	public void selectDashboardScene() {
+	private void selectDashboardScene() {
 		System.out.println("Select the Dashboard scene");
 		SherlockApplication.replaceCentre("view/gui/Dashboard.fxml");
 	}
 	
 	
-	public void selectOverviewScene() {
+	private void selectOverviewScene() {
 		System.out.println("Select the overview scene");
 		SherlockApplication.replaceCentre("view/gui/Overview.fxml");
 	}
 	
-	public void selectMatchGraphScene() {
+	private void selectMatchGraphScene() {
 		System.out.println("Select the Match graph scene");
 		SherlockApplication.replaceCentre("view/gui/MatchGraph.fxml");
 	}
 	
-	public void selectReportScene() {
+	private void selectReportScene() {
 		System.out.println("Select the report scene");
 //		SherlockApplication.replaceCentre("");
 	}
 	
-	public void selectComparisonScene() {
+	private void selectComparisonScene() {
 		System.out.println("Select the Side by Side comparison scene");
 //		SherlockApplication.replaceCentre("");
 	}

@@ -16,9 +16,7 @@ public class PlainTextFilter implements FileFilter {
 	@Override
 	public boolean accept(File file) {
 		if ( file.getName().endsWith(".txt") ) {
-			if ( !file.isHidden()) {
-				return true;
-			}
+			return !file.isHidden();
 		}
 		return false;
 	}

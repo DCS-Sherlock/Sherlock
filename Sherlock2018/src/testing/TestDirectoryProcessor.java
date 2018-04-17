@@ -63,12 +63,42 @@ class TestDirectoryProcessor {
 	}
 
 	@Test
-	void testExtractSelectDirectory() {
+	void testSelectDirectory() {
 		// Extract test_Dir to directory stored in extractTo variable
 		DirectoryProcessor dp = new DirectoryProcessor(test_Dir, extractTo);
+		File[] sourceFiles = test_Dir.listFiles(new FileFilter() {
+		    @Override
+		    public boolean accept(File file) {
+		        return !file.isHidden();
+		    }
+		});
+		String target = System.getProperty("user.home") + File.separator + "Sherlock" +  File.separator + extractTo + "/Preprocessing/Original/";
+		System.out.println("target: "+ target);
+		File[] targetFiles = new File(target).listFiles(new FileFilter() {
+		    @Override
+		    public boolean accept(File file) {
+		        return !file.isHidden();
+		    }
+		});
 		
+		String[] sourceStrings = new String[sourceFiles.length] ;
+		String[] targetStrings = new String[targetFiles.length] ;
+		int i = 0;
+		for (File f : sourceFiles ) {
+			sourceStrings[i] = f.getName();
+			System.out.println("Name: "+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : targetFiles ) {
+			targetStrings[i] = f.getName();
+			System.out.println("Name: "+ f.getName());
+			i++;
+		}
+	
 		// Check the extractTo file is non-empty
-		assertTrue(!extractTo.isEmpty());
+		assertArrayEquals(sourceStrings, targetStrings);
 	}
 	
 	@Test

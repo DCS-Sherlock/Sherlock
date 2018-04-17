@@ -25,7 +25,8 @@ class DetectionContext {
 	
 	/**
 	 * Calls the correct detection method.
-	 * @param workingDirectory 	- a collection of the tokenised files to perform the detection over
+	 * @param filesToCompare 	- a collection of the tokenised files to perform the detection over
+	 * @param sp 				- The setting profile defining the pre-processed versions to detect over 
 	 */
 	void executeDetection(File[] filesToCompare, SettingProfile sp) {
 		ds.doDetection(filesToCompare, sp);

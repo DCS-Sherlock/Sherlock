@@ -45,4 +45,11 @@ public class ComparisonPair {
 		return similarityValue;
 	}
 	
+	File getF1() {
+		return f1;
+	}
+	
+	File getF2() {
+		return f2;
+	}
 }

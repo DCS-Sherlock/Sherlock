@@ -3,6 +3,7 @@ package testing;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -11,14 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sherlock.fileSystem.DirectoryProcessor;
+import sherlock.fileSystem.filters.JavaFileFilter;
 import sherlock.model.analysis.FileTypes;
 import sherlock.model.analysis.SettingProfile;
 import sherlock.model.analysis.Settings;
 import sherlock.model.analysis.preprocessing.Preprocessor;
 
+import org.apache.commons.io.FilenameUtils;
+
 class TestPreprocessing {
 	static Preprocessor p ;
 	static Settings s;
+	static String originalDirectory ;
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -31,6 +36,8 @@ class TestPreprocessing {
 		s = new Settings();
 		s.setSourceDirectory(new File(sourceDirectory));
 		s.initialiseDefault();
+		
+		originalDirectory = System.getProperty("user.home") + File.separator + "Sherlock" +  File.separator + "test_Input" + File.separator + "Preprocessing" +File.separator + "Original" ;
 	}
 
 	@AfterAll
@@ -48,8 +55,6 @@ class TestPreprocessing {
 	
 	@Test
 	void testNoWS() {
-		System.out.println("Here");
-		
 		s.getNoWSProfile().setInUse( true );
 		p = new Preprocessor(s);
 		String outputDirectory = s.getNoWSProfile().getOutputDir();
@@ -63,6 +68,36 @@ class TestPreprocessing {
 		}
 		assertFalse(isEmpty);
 	}
+	
+	@Test
+	void testEachNoWSExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
+	}
+	
 	
 	@Test
 	void testNoComments() {
@@ -79,6 +114,36 @@ class TestPreprocessing {
 		}
 		assertFalse(isEmpty);
 	}
+	
+	@Test
+	void testEachNoComExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
+	}
+	
 	
 	@Test
 	void testNoCommentsNoWS() {
@@ -98,6 +163,35 @@ class TestPreprocessing {
 	}
 	
 	@Test
+	void testEachNoComWSExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
+	}
+	
+	@Test
 	void testComments() {
 		s.getCommentsProfile().setInUse( true );
 		p = new Preprocessor(s);
@@ -111,6 +205,35 @@ class TestPreprocessing {
 			}
 		}
 		assertFalse(isEmpty);
+	}
+	
+	@Test
+	void testEachComExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
 	}
 	
 	@Test
@@ -128,6 +251,35 @@ class TestPreprocessing {
 		}
 		assertFalse(isEmpty);
 	}
+	
+	@Test
+	void testEachTokenisedExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
+	}
 
 	@Test
 	void testWSPattern() {
@@ -143,5 +295,34 @@ class TestPreprocessing {
 			}
 		}
 		assertFalse(isEmpty);
+	}
+	
+	@Test
+	void testEachWSExists() {
+		s.getNoWSProfile().setInUse( true );
+		p = new Preprocessor(s);
+		String outputDirectory = s.getNoWSProfile().getOutputDir();
+		File od = new File(outputDirectory);
+		File[] files = od.listFiles();
+		
+		File[] originalFiles = new File(originalDirectory).listFiles(new JavaFileFilter());
+		
+		String[] originalStrings = new String[originalFiles.length] ;
+		String[] fileStrings = new String[files.length] ;
+		int i = 0;
+		for (File f : originalFiles ) {
+			originalStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		i = 0;
+		for (File f : files ) {
+			fileStrings[i] = FilenameUtils.removeExtension(f.getName());
+			System.out.println("Name: \n \n"+ f.getName());
+			i++;
+		}
+		
+		assertArrayEquals(originalStrings, fileStrings);
 	}
 }
