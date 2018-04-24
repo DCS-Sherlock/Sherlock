@@ -26,3 +26,6 @@
     AVAILABLE FOR DOWNLOAD AT: http://www.oracle.com/technetwork/java/javafx/install-javafx-sdk-1-2-139156.html
     MANDATORY
     VERSION: 1.2.1
+
+# Building and compiling the code:
+It is recommended that an IDE such as Eclipse or IntelliJ is used to continue the development of the system. These IDEs are integratable with Scene builder for developing the GUI and ANTLR.
