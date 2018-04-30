@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="694.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.DashboardController">
+<AnchorPane prefHeight="694.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.DashboardController">
    <children>
       <VBox prefHeight="437.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -272,7 +273,7 @@
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                </VBox.margin>
                <children>
-                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="123.0" prefWidth="550.0" style="-fx-background-color: #073642#073642 #073642#073642;">
+                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="106.0" prefWidth="227.0" style="-fx-background-color: #073642#073642 #073642#073642;">
                      <children>
                         <Button fx:id="completeSearch" alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: #586e75#586e75; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Start Complete Search" textFill="#002b36">
                            <VBox.margin>
@@ -300,6 +301,7 @@
                         </Button>
                      </children>
                   </VBox>
+                  <ProgressIndicator id="loadingIndicator" fx:id="loadingIndicator" layoutX="262.0" layoutY="41.0" prefHeight="39.0" prefWidth="42.0" stylesheets="@styles.css" visible="false" />
                </children>
             </Pane>
          </children>

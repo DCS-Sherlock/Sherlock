@@ -22,13 +22,19 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
+import javafx.scene.input.MouseEvent;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
 import sherlock.fileSystem.DirectoryProcessor;
 import sherlock.model.analysis.Settings;
 import sherlock.model.analysis.detection.DetectionHandler;
 import sherlock.model.analysis.preprocessing.Preprocessor;
+
 /**
  * @author Aliyah
  * The controller for the Dashboard scene
@@ -65,7 +71,8 @@ public class DashboardController implements Initializable{
 	private Button startDetection ;
 	@FXML
 	private Label sessionChoice;
-	
+	@FXML
+	ProgressIndicator loadingIndicator;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		newSession.setOnAction(new EventHandler<ActionEvent>() {
@@ -187,12 +194,46 @@ public class DashboardController implements Initializable{
 				startCompleteSearch();
 			}
 		});
-		
-		startPreProcessing.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle( ActionEvent event ) {
-				startPreProcessing();
-			}
+//		startPreProcessing.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+//		    @Override
+//		    public void handle(MouseEvent mouseEvent) {
+//		    	double size = startPreProcessing.getHeight();
+//				loadingIndicator.setPrefSize(size, size);
+//				setProgressVisibility(true);
+//				Platform.runLater(new Runnable() {
+//
+//		                // runnable for that thread
+//		                public void run() {
+//		                	startPreProcessing();
+//		                }
+//		       });
+//
+//				
+//		    }
+//		});
+		startPreProcessing.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+		    @Override
+		    public void handle(MouseEvent mouseEvent) {
+		    	
+		    	double size = startPreProcessing.getHeight();
+				loadingIndicator.setPrefSize(size, size);
+				setProgressVisibility(true);
+		    	Task<Void> task = new Task<Void>() {
+		    	    @Override
+		    	    public Void call() throws Exception {
+		    	        startPreProcessing();
+		    	        return null ;
+		    	    }
+		    	};
+		    	task.setOnSucceeded(e -> {
+
+					double size2 = startPreProcessing.getHeight()*1.5;
+					loadingIndicator.setPrefSize(size2, size2);
+					loadingIndicator.setProgress(1.0f);
+		    	});
+		    	new Thread(task).start();
+		    	
+		    }
 		});
 		
 		startDetection.setOnAction(new EventHandler<ActionEvent>() {
@@ -309,7 +350,6 @@ public class DashboardController implements Initializable{
 	private void startPreProcessing() {
 		System.out.println("Starting Pre-processing");
 		Preprocessor p = new Preprocessor(setting);
-		
 		/*
 		 * Update GUI to say that pre-processing is complete
 		 */
@@ -358,6 +398,12 @@ public class DashboardController implements Initializable{
 		cb.add(tokenOpt);
 		cb.add(WSPatternOpt);
 		return cb;
+	}
+	public void setProgress(float p) {
+		loadingIndicator.setProgress(p);
+	}
+	public void setProgressVisibility(boolean b) {
+		loadingIndicator.setVisible(b);
 	}
 	
 }
