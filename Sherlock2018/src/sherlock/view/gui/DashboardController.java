@@ -21,12 +21,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.stage.DirectoryChooser;
 import sherlock.SherlockApplication;
@@ -42,7 +47,7 @@ import sherlock.model.analysis.preprocessing.Preprocessor;
 public class DashboardController implements Initializable{
 	
 	private Settings setting = new Settings();
-	
+	private ObservableList<String> similarityMetricList = FXCollections.observableArrayList("# Similar lines", "Longest Run Length");
 	@FXML
 	private Button newSession ;
 	@FXML
@@ -72,9 +77,22 @@ public class DashboardController implements Initializable{
 	@FXML
 	private Label sessionChoice;
 	@FXML
-	ProgressIndicator loadingIndicator;
+	private ProgressIndicator preprocessingIndicator;
+	@FXML
+	private ProgressIndicator generateReportIndicator;
+	@FXML
+	private GridPane advancedSettingsList;
+	private boolean advancedSettingsVisibility = false;
+	@FXML
+	private ChoiceBox similarityMetricChooser;
+	@FXML
+	private void initialize() {
+		
+	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		similarityMetricChooser.setValue("# Similar lines");
+		similarityMetricChooser.setItems(similarityMetricList);
 		newSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -181,43 +199,35 @@ public class DashboardController implements Initializable{
 			}
 		});
 		
-		advancedSettings.setOnAction(new EventHandler<ActionEvent>() {
+		advancedSettings.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle( ActionEvent event ) {
+			public void handle(MouseEvent mouseEvent) {
+				if (advancedSettingsVisibility == false) {
+					advancedSettingsList.setVisible(true);
+					advancedSettingsVisibility = true;
+				}else {
+					advancedSettingsList.setVisible(false);
+					advancedSettingsVisibility = false;
+				}
 				chooseAdvancedSettings();
 			}
 		});
 		
-		completeSearch.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle( ActionEvent event ) {
-				startCompleteSearch();
-			}
-		});
-//		startPreProcessing.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-//		    @Override
-//		    public void handle(MouseEvent mouseEvent) {
-//		    	double size = startPreProcessing.getHeight();
-//				loadingIndicator.setPrefSize(size, size);
-//				setProgressVisibility(true);
-//				Platform.runLater(new Runnable() {
-//
-//		                // runnable for that thread
-//		                public void run() {
-//		                	startPreProcessing();
-//		                }
-//		       });
-//
-//				
-//		    }
+//		completeSearch.setOnAction(new EventHandler<ActionEvent>() {
+//			@Override
+//			public void handle( ActionEvent event ) {
+//				startCompleteSearch();
+//			}
 //		});
+		
 		startPreProcessing.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
 		    	
 		    	double size = startPreProcessing.getHeight();
-				loadingIndicator.setPrefSize(size, size);
-				setProgressVisibility(true);
+		    	preprocessingIndicator.setProgress(-1.0f);
+				preprocessingIndicator.setPrefSize(size, size);
+				preprocessingIndicator.setVisible(true);
 		    	Task<Void> task = new Task<Void>() {
 		    	    @Override
 		    	    public Void call() throws Exception {
@@ -228,8 +238,8 @@ public class DashboardController implements Initializable{
 		    	task.setOnSucceeded(e -> {
 
 					double size2 = startPreProcessing.getHeight()*1.5;
-					loadingIndicator.setPrefSize(size2, size2);
-					loadingIndicator.setProgress(1.0f);
+					preprocessingIndicator.setPrefSize(size2, size2);
+					preprocessingIndicator.setProgress(1.0f);
 		    	});
 		    	new Thread(task).start();
 		    	
@@ -239,7 +249,25 @@ public class DashboardController implements Initializable{
 		startDetection.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
-				startDetection();
+				double size = startDetection.getHeight();
+				generateReportIndicator.setProgress(-1.0f);
+				generateReportIndicator.setPrefSize(size, size);
+				generateReportIndicator.setVisible(true);;
+		    	Task<Void> task = new Task<Void>() {
+		    	    @Override
+		    	    public Void call() throws Exception {
+		    	    	startDetection();
+		    	        return null ;
+		    	    }
+		    	};
+		    	task.setOnSucceeded(e -> {
+
+					double size2 = startDetection.getHeight()*1.5;
+					generateReportIndicator.setPrefSize(size2, size2);
+					generateReportIndicator.setProgress(1.0f);
+		    	});
+		    	new Thread(task).start();
+				
 			}
 		});
 		
@@ -308,8 +336,6 @@ public class DashboardController implements Initializable{
 
 							//	Load Settings
 							initialiseSettings(false);
-						} else {
-							System.out.println("Not chosen a directory of the correct format");
 						}
 			       }
 			    } catch (IOException e) {
@@ -398,12 +424,6 @@ public class DashboardController implements Initializable{
 		cb.add(tokenOpt);
 		cb.add(WSPatternOpt);
 		return cb;
-	}
-	public void setProgress(float p) {
-		loadingIndicator.setProgress(p);
-	}
-	public void setProgressVisibility(boolean b) {
-		loadingIndicator.setVisible(b);
 	}
 	
 }

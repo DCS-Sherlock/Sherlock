@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sherlock.view.gui.MainController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -36,21 +36,21 @@
       </MenuBar>
    </top>
    <left>
-      <AnchorPane prefHeight="379.0" prefWidth="156.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="379.0" prefWidth="156.0" style="-fx-background-color: #0b0c10;" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="373.0" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox id="vbox" stylesheets="@styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Pane prefHeight="66.0" prefWidth="150.0" style="-fx-background-color: #002b36#002b36;">
+                  <Pane prefHeight="66.0" style="-fx-background-color: #0b0c10;">
                      <children>
-                        <Label alignment="CENTER" prefHeight="66.0" prefWidth="152.0" text="Sherlock 2018" textFill="#657b83">
+                        <Label id="title" alignment="CENTER" prefHeight="69.0" prefWidth="150.0" style="-fx-background-color: #0b0c10;" stylesheets="@styles.css" text="Sherlock 2018" textFill="#007e50">
                            <font>
-                              <Font name="Noteworthy Light" size="21.0" />
+                              <Font name="System Bold" size="22.0" />
                            </font>
                         </Label>
-                        <Separator layoutX="-1.0" layoutY="66.0" prefHeight="2.0" prefWidth="157.0" />
+                        <Separator layoutX="-1.0" layoutY="66.0" prefHeight="3.0" prefWidth="157.0" style="-fx-background-color: #0b0c10;" />
                      </children>
                   </Pane>
-                  <Button fx:id="dashboardButton" alignment="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="152.0" style="-fx-background-color: #002b36#002b36; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" text="Dashboard" textFill="#657b83">
+                  <Button fx:id="dashboardButton" alignment="CENTER" mnemonicParsing="false" prefHeight="0.0" prefWidth="0.0" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Dashboard" textFill="#c5c6c7">
                      <VBox.margin>
                         <Insets left="2.0" right="2.0" top="5.0" />
                      </VBox.margin>
@@ -58,7 +58,7 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="overviewButton" alignment="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="152.0" style="-fx-background-color: #002b36#002b36; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" text="Overview" textFill="#657b83">
+                  <Button fx:id="overviewButton" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Overview" textFill="#c5c6c7">
                      <VBox.margin>
                         <Insets left="2.0" right="2.0" top="5.0" />
                      </VBox.margin>
@@ -66,7 +66,7 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="matchGraphButton" alignment="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="152.0" style="-fx-background-color: #002b36#002b36; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" text="Match Graph" textFill="#657b83">
+                  <Button fx:id="matchGraphButton" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Match Graph" textFill="#c5c6c7">
                      <VBox.margin>
                         <Insets left="2.0" right="2.0" top="5.0" />
                      </VBox.margin>
@@ -74,7 +74,7 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="comparisonButton" alignment="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="152.0" style="-fx-background-color: #002b36#002b36; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" text="Comparison Viewer" textFill="#657b83" textOverrun="CLIP">
+                  <Button fx:id="comparisonButton" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Comparison Viewer" textFill="#c5c6c7" textOverrun="CLIP">
                      <VBox.margin>
                         <Insets left="2.0" right="2.0" top="5.0" />
                      </VBox.margin>
@@ -82,7 +82,7 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="reportButton" alignment="CENTER" mnemonicParsing="false" prefHeight="42.0" prefWidth="152.0" style="-fx-background-color: #002b36#002b36; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" text="Generate Report" textFill="#657b83" textOverrun="CLIP">
+                  <Button fx:id="reportButton" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Generate Report" textFill="#c5c6c7" textOverrun="CLIP">
                      <padding>
                         <Insets bottom="5.0" top="5.0" />
                      </padding>
@@ -93,7 +93,7 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
-                  <Pane prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #000000;" />
+                  <Pane prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #0b0c10;" />
                </children>
             </VBox>
          </children>

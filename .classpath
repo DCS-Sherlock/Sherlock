@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="target/generated-sources/antlr4/sherlock/model/analysis/preprocessing"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-test-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-io-2.6/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-io-2.6/commons-io-2.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-io-2.6/commons-io-2.6-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-io-2.6/commons-io-2.6-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-io-2.6/commons-io-2.6-test-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ming/Downloads/antlr-4.7.1-complete.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
