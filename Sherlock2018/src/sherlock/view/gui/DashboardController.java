@@ -86,9 +86,7 @@ public class DashboardController implements Initializable{
 	@FXML
 	private ChoiceBox similarityMetricChooser;
 	@FXML
-	private void initialize() {
-		
-	}
+	private Label selectFilePrompt;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		similarityMetricChooser.setValue("# Similar lines");
@@ -204,9 +202,11 @@ public class DashboardController implements Initializable{
 			public void handle(MouseEvent mouseEvent) {
 				if (advancedSettingsVisibility == false) {
 					advancedSettingsList.setVisible(true);
+					selectFilePrompt.setVisible(false);
 					advancedSettingsVisibility = true;
 				}else {
 					advancedSettingsList.setVisible(false);
+					selectFilePrompt.setVisible(true);
 					advancedSettingsVisibility = false;
 				}
 				chooseAdvancedSettings();

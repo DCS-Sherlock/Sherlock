@@ -4,6 +4,7 @@
 package sherlock.model.analysis.detection;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import sherlock.fileSystem.DirectoryProcessor;
 import sherlock.fileSystem.filters.*;
@@ -38,12 +39,18 @@ public class DetectionHandler {
 			/* Get the files located in the Original Directory */
 			File originalDirectory = new File (s.getOriginalProfile().getOutputDir() );
 			System.out.println(originalDirectory.getPath());
-			
+			File parent = originalDirectory.getParentFile().getParentFile();
+			String targetDirectory = parent.getAbsolutePath() + File.separator + "Report" + File.separator + "Original";
 			/* 
 			 * Original File can be either source code or plain text, so we must 
 			 * filter the two before performing detection
 			 */
-			
+			File target = new File (targetDirectory);
+			if ( target.exists() && target.isDirectory() ) {
+				System.out.println("The target exists");
+			} else {
+				target.mkdir();
+			}
 			DirectoryProcessor text = new DirectoryProcessor(originalDirectory, new PlainTextFilter());
 			File[] plainTextFiles = text.getInputFiles();
 			

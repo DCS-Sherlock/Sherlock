@@ -3,10 +3,12 @@
  */
 package sherlock.model.analysis.detection;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.io.IOException;	
 import java.util.*;
@@ -24,30 +26,90 @@ class NGramsStrategy implements DetectionStrategy {
 	@Override
 	public void doDetection(File[] filesToCompare, SettingProfile sp) {
 		System.out.println("Detection Strategy: \t Samelines Detection");
-		
+		String outputDir = sp.getOutputDir();
 		String description = sp.getDescription();
+		
+		String parent = filesToCompare[0].getParentFile().getParentFile().getParent();
+		System.out.println("------Trying to make a report directory " + parent);
+		String targetDirectory = parent+"\\Report\\" +description;
+		System.out.println("------Target directory " + targetDirectory);
+		File target = new File (targetDirectory);
+		if ( target.exists() && target.isDirectory() ) {
+			System.out.println("The target exists");
+		} else {
+			target.mkdir();
+		}
+		targetDirectory = parent+"\\Report\\" +description;
+		
+		target = new File (targetDirectory);
+		if ( target.exists() && target.isDirectory() ) {
+			System.out.println("The target exists");
+		} else {
+			target.mkdir();
+		}
 		
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
 				
-				ArrayList<Tuple<Ngram, Ngram>> matches = findMatches(filesToCompare[i].getAbsolutePath(), filesToCompare[j].getAbsolutePath(), 10, 1);
-				System.out.println("maches are : " + matches);
+				ArrayList<Tuple<Ngram, Ngram>> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
+				String name1 = filesToCompare[i].getName();
+				name1 = name1.replaceAll(" ", "_");
+				name1 = name1.replaceAll(".java", "");
+				String name2 = filesToCompare[j].getName();
+				name2 = name2.replaceAll(" ", "_");
+				name2 = name2.replaceAll(".java", "");
+				File f = new File(targetDirectory+"\\"+name1+"__"+name2+".txt");
+				try {
+					f.createNewFile();
+					System.out.println("In NGgramStrategy: File was created");
+					
+				} catch (IOException e) {
+					System.out.println("In NGgramStrategy: File already exists");
+				}
+				writeToFile(f, matches, name1, name2);
+				
 				
 			}
 		}	
 	}
-	
-	private ArrayList<Tuple<Ngram, Ngram>> findMatches (String p1, String p2, int nSize, int anomalies){
-			String f1 = readFile(p1, Charset.defaultCharset());
-			String f2 = readFile(p2, Charset.defaultCharset());
-			ArrayList<Tuple> l = generateList(f1);
-			ArrayList<Tuple> l2 = generateList(f2);
+	private void writeToFile(File f, ArrayList<Tuple<Ngram, Ngram>> list, String name1, String name2) {
+		try {
+			String intro = "Similarities between: " + name1 + " and " + name2;
+			BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+			writer.write(intro);
+			writer.newLine();
+			writer.newLine();
+			for (int i = 0; i < list.size(); i ++) {
+				writer.write("File1");
+				writer.newLine();
+				String ngram1 = list.get(i).getKey().toString();
+				writer.write(ngram1);
+				writer.newLine();
+				writer.write("File2");
+				writer.newLine();
+				String ngram2 = list.get(i).getValue().toString();
+				writer.write(ngram2);
+				writer.newLine();
+				writer.newLine();
+			}
+			
+			writer.close();
+		} catch (IOException e) {
+			System.out.println("FAILED TO WRITE TO FILE");
+		}
+	}
+	private ArrayList<Tuple<Ngram, Ngram>> findMatches (File f1, File f2, int nSize, int anomalies){
+			String s1 = readFile(f1.getAbsolutePath(), Charset.defaultCharset());
+			String s2 = readFile(f2.getAbsolutePath(), Charset.defaultCharset());
+			String file1Name = f1.getName();
+			String file2Name = f2.getName();
+			ArrayList<Tuple> l = generateList(s1);
+			ArrayList<Tuple> l2 = generateList(s2);
 			ArrayList<Ngram> n = generateNgram(l, nSize);
 			ArrayList<Ngram> n2 = generateNgram(l2, nSize);
 			ArrayList<Tuple<Ngram, Ngram>> matches = compareList(n, n2, anomalies);
 			return matches;
-		}
-		
+		}	
 	private String readFile(String path, Charset encoding){
 			byte[] encoded = new byte[1];
 			try{
@@ -165,8 +227,8 @@ class NGramsStrategy implements DetectionStrategy {
 		}
 		@Override
 		public String toString(){
-			return this.content + " (" + String.valueOf(this.start)+
-						","+String.valueOf(this.end) + ")\n";
+			return " LOCATION: (" + String.valueOf(this.start)+
+					","+String.valueOf(this.end) + ")" + "   CONTENT: " + this.content+ "\n";
 	    }
 
 	}

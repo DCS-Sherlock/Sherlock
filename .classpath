@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="Sherlock2018/src"/>
+	<classpathentry kind="src" path="target/generated-sources/antlr4/sherlock/model/analysis/preprocessing"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
@@ -17,5 +18,7 @@
 	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-tests.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ming/Downloads/commons-compress-1.16.1/commons-compress-1.16.1-test-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.xtend.XTEND_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

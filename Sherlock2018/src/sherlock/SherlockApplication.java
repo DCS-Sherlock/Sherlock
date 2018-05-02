@@ -106,14 +106,14 @@ public class SherlockApplication extends Application {
 		 	System.out.println("Scene is null");
 		 	
 		 	// Create the scene with the new root node 
-		 	scene = new Scene(root, 1000, 800);
+		 	scene = new Scene(root, 810, 680);
 		 	
 		 	// Set the scene to the stage
 		 	stage.setScene(scene);
 		} else {
 		 	System.out.println("Scene is not null");
 		 	System.out.println(root);
-		 	scene = new Scene(root, 1000, 800);
+		 	scene = new Scene(root, 810, 680);
 		 	stage.setScene(scene);
 //		 	stage.getScene().setRoot(root);
 		 	stage.sizeToScene();	
