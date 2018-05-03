@@ -95,6 +95,8 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				selectDirectory();
+				startPreProcessing.setDisable(false);
+				startDetection.setDisable(false);
 			}
 		});
 		
@@ -102,6 +104,8 @@ public class DashboardController implements Initializable{
 			@Override
 			public void handle( ActionEvent event ) {
 				loadDirectory();
+				startPreProcessing.setDisable(false);
+				startDetection.setDisable(false);
 			}
 		});
 		

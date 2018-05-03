@@ -31,7 +31,7 @@ class NGramsStrategy implements DetectionStrategy {
 		
 		String parent = filesToCompare[0].getParentFile().getParentFile().getParent();
 		System.out.println("------Trying to make a report directory " + parent);
-		String targetDirectory = parent+"\\Report\\" +description;
+		String targetDirectory = parent+"\\Report\\" ;
 		System.out.println("------Target directory " + targetDirectory);
 		File target = new File (targetDirectory);
 		if ( target.exists() && target.isDirectory() ) {
@@ -51,7 +51,7 @@ class NGramsStrategy implements DetectionStrategy {
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
 				
-				ArrayList<Tuple<Ngram, Ngram>> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
+				ArrayList<Tuple<Ngram, Ngram>> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 2);
 				String name1 = filesToCompare[i].getName();
 				name1 = name1.replaceAll(" ", "_");
 				name1 = name1.replaceAll(".java", "");
@@ -59,6 +59,7 @@ class NGramsStrategy implements DetectionStrategy {
 				name2 = name2.replaceAll(" ", "_");
 				name2 = name2.replaceAll(".java", "");
 				File f = new File(targetDirectory+"\\"+name1+"__"+name2+".txt");
+				System.out.println("*********" + targetDirectory+"\\"+name1+"__"+name2+".txt");
 				try {
 					f.createNewFile();
 					System.out.println("In NGgramStrategy: File was created");

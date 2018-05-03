@@ -4,8 +4,7 @@
 }
 #title{
 	-fx-pref-width: 150px;	
-	-fx-pref-height: 70px;
-	-fx-background-color: #0b0c10;
+	-fx-background-color: #000000;
 	-fx-text-fill: #007e50;
 	
 }
@@ -13,7 +12,7 @@
 }
 #vbox{
 	-fx-pref-width: 100%;
-	-fx-background-color: #0b0c10;
+	-fx-background-color: #000000;
 }
 .navigationButtons {
 	-fx-border-width: 1px;

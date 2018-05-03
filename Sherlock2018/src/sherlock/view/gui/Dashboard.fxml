@@ -175,7 +175,7 @@
                         </VBox>
                      </children>
                   </GridPane>
-                  <Button fx:id="advancedSettings" alignment="CENTER" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Advanced Settings" textFill="#c5c6c7">
+                  <Button fx:id="advancedSettings" alignment="CENTER" layoutX="8.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Advanced Settings" textFill="#c5c6c7">
                      <effect>
                         <DropShadow blurType="GAUSSIAN" />
                      </effect>
@@ -202,12 +202,12 @@
                   <RowConstraints maxHeight="47.20001220703125" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="startPreProcessing" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Start Pre-processing" textFill="#c5c6c7">
+                  <Button fx:id="startPreProcessing" alignment="CENTER" disable="true" minWidth="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text="Start Pre-processing" textFill="#c5c6c7">
                      <effect>
                         <DropShadow blurType="GAUSSIAN" />
                      </effect>
                   </Button>
-                  <Button fx:id="startDetection" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text=" Generate Report  " textFill="#c5c6c7" GridPane.rowIndex="1">
+                  <Button fx:id="startDetection" alignment="CENTER" disable="true" minWidth="140.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #116466; -fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0 0,1,2,00,1,2,0;" text=" Generate Report  " textFill="#c5c6c7" GridPane.rowIndex="1">
                      <effect>
                         <DropShadow blurType="GAUSSIAN" />
                      </effect>

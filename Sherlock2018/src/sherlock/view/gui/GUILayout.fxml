@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
@@ -40,14 +39,13 @@
          <children>
             <VBox id="vbox" stylesheets="@styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Pane prefHeight="66.0" style="-fx-background-color: #0b0c10;">
+                  <Pane prefHeight="80.0" style="-fx-background-color: #000000;">
                      <children>
-                        <Label id="title" alignment="CENTER" prefHeight="69.0" prefWidth="150.0" style="-fx-background-color: #0b0c10;" stylesheets="@styles.css" text="Sherlock 2018" textFill="#007e50">
+                        <Label id="title" alignment="CENTER" contentDisplay="CENTER" prefHeight="80.0" prefWidth="150.0" style="-fx-background-color: #000000;" stylesheets="@styles.css" text="Sherlock 2018" textFill="#007e50">
                            <font>
                               <Font name="System Bold" size="22.0" />
                            </font>
                         </Label>
-                        <Separator layoutX="-1.0" layoutY="66.0" prefHeight="3.0" prefWidth="157.0" style="-fx-background-color: #0b0c10;" />
                      </children>
                   </Pane>
                   <Button fx:id="dashboardButton" alignment="CENTER" mnemonicParsing="false" prefHeight="0.0" prefWidth="0.0" style="-fx-background-radius: 0,0,0,0; -fx-background-insets: 0,1,2,00,1,2,0; -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1  three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );" styleClass="navigationButtons" stylesheets="@styles.css" text="Dashboard" textFill="#c5c6c7">
