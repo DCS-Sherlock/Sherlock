@@ -65,14 +65,8 @@ public class Preprocessor {
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoWSProfile().getOutputDir() ;
 			
-			System.out.println(targetDirectory);
+			File target = makeDirectory(targetDirectory);
 			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
 			s.getNoWSProfile().setOutputDir(target.getAbsolutePath());
 				
 			new PreProcessingContext(new NoWhiteSpaceStrategy(), filePaths , target );
@@ -86,14 +80,8 @@ public class Preprocessor {
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoCommentsProfile().getOutputDir() ;
 			
-			System.out.println("Target directory: \t" +targetDirectory);
+			File target = makeDirectory(targetDirectory);
 			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
 			s.getNoCommentsProfile().setOutputDir(target.getAbsolutePath());
 			
 			new PreProcessingContext(new JavaStrategy( FileTypes.NOC ), filePaths , target );
@@ -109,12 +97,8 @@ public class Preprocessor {
 			
 			System.out.println("Target directory: \t" +targetDirectory);
 			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
+			File target = makeDirectory(targetDirectory);
+			
 			s.getNoCWSProfile().setOutputDir(target.getAbsolutePath());
 			
 			new PreProcessingContext(new JavaStrategy( FileTypes.NCW ), filePaths , target );
@@ -128,14 +112,8 @@ public class Preprocessor {
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getCommentsProfile().getOutputDir() ;
 			
-			System.out.println("Target directory: \t" +targetDirectory);
+			File target = makeDirectory(targetDirectory);
 			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
 			s.getCommentsProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.COM ), filePaths , target );
 		}
@@ -148,14 +126,8 @@ public class Preprocessor {
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getTokenisedProfile().getOutputDir() ;
 			
-			System.out.println("Target directory: \t" +targetDirectory);
+			File target = makeDirectory(targetDirectory);
 			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
 			s.getTokenisedProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.TOK ), filePaths , target );
 			
@@ -164,19 +136,12 @@ public class Preprocessor {
 		if ( s.getWSPatternProfile().isInUse() ) {
 			System.out.println("WS Pattern Pre-processing");
 			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new SourceCodeFilter() );
+			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
 			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getWSPatternProfile().getOutputDir() ;
 			
-			System.out.println("Target directory: \t" +targetDirectory);
-			
-			File target = new File (targetDirectory);
-			if ( target.exists() && target.isDirectory() ) {
-				System.out.println("The target exists");
-			} else {
-				target.mkdir();
-			}
+			File target = makeDirectory(targetDirectory);
 			
 			s.getWSPatternProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
@@ -186,6 +151,16 @@ public class Preprocessor {
 		s.setPreprocessingStatus(true);
 	}
 	
-
+	private File makeDirectory(String targetDirectory) {
+		System.out.println("Target directory: \t" +targetDirectory);
+		
+		File target = new File (targetDirectory);
+		if ( target.exists() && target.isDirectory() ) {
+			System.out.println("The target exists");
+		} else {
+			target.mkdir();
+		}
+		return target;
+	}
 	
 }

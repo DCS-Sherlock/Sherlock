@@ -69,10 +69,13 @@ public class DetectionHandler {
 		}
 		
 		if ( s.getNoCommentsProfile().isInUse() ) {
-			System.out.println("No Comments Detection");
+			System.out.println("***************No Comments Detection");
 			File noCommentsDirectory = new File (s.getNoCommentsProfile().getOutputDir() );
 			System.out.println(noCommentsDirectory.getPath());
 			File[] noCommentsFiles = noCommentsDirectory.listFiles();
+			for (int i=0; i < noCommentsFiles.length; i++) {
+				System.out.println(noCommentsFiles[i].toString());
+			}
 		}
 		
 		if ( s.getNoCWSProfile().isInUse() ) {
