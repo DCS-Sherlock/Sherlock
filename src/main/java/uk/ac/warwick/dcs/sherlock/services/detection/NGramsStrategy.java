@@ -7,13 +7,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.io.IOException;	
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import uk.ac.warwick.dcs.sherlock.services.detection.Run;
 
 import uk.ac.warwick.dcs.sherlock.SettingProfile;
 
@@ -26,12 +24,11 @@ class NGramsStrategy implements DetectionStrategy {
 	@Override
 	public void doDetection(File[] filesToCompare, SettingProfile sp) {
 		System.out.println("Detection Strategy: \t Samelines Detection");
-		String outputDir = sp.getOutputDir();
 		String description = sp.getDescription();
 		
 		String parent = filesToCompare[0].getParentFile().getParentFile().getParent();
 		System.out.println("------Trying to make a report directory " + parent);
-		String targetDirectory = parent+"\\Report\\" ;
+		String targetDirectory = parent+"\\Report\\" +description;
 		System.out.println("------Target directory " + targetDirectory);
 		File target = new File (targetDirectory);
 		if ( target.exists() && target.isDirectory() ) {
@@ -51,7 +48,7 @@ class NGramsStrategy implements DetectionStrategy {
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
 				
-				ArrayList<Tuple<Ngram, Ngram>> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 2);
+				ArrayList<Run> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
 				String name1 = filesToCompare[i].getName();
 				name1 = name1.replaceAll(" ", "_");
 				name1 = name1.replaceAll(".java", "");
@@ -59,7 +56,6 @@ class NGramsStrategy implements DetectionStrategy {
 				name2 = name2.replaceAll(" ", "_");
 				name2 = name2.replaceAll(".java", "");
 				File f = new File(targetDirectory+"\\"+name1+"__"+name2+".txt");
-				System.out.println("*********" + targetDirectory+"\\"+name1+"__"+name2+".txt");
 				try {
 					f.createNewFile();
 					System.out.println("In NGgramStrategy: File was created");
@@ -73,7 +69,7 @@ class NGramsStrategy implements DetectionStrategy {
 			}
 		}	
 	}
-	private void writeToFile(File f, ArrayList<Tuple<Ngram, Ngram>> list, String name1, String name2) {
+	private void writeToFile(File f, ArrayList<Run> list, String name1, String name2) {
 		try {
 			String intro = "Similarities between: " + name1 + " and " + name2;
 			BufferedWriter writer = new BufferedWriter(new FileWriter(f));
@@ -81,14 +77,15 @@ class NGramsStrategy implements DetectionStrategy {
 			writer.newLine();
 			writer.newLine();
 			for (int i = 0; i < list.size(); i ++) {
+				Run listElement = list.get(i);
 				writer.write("File1");
 				writer.newLine();
-				String ngram1 = list.get(i).getKey().toString();
+				String ngram1 = listElement.getFile1().getContent().toString();
 				writer.write(ngram1);
 				writer.newLine();
 				writer.write("File2");
 				writer.newLine();
-				String ngram2 = list.get(i).getValue().toString();
+				String ngram2 = listElement.getFile2().getContent().toString();
 				writer.write(ngram2);
 				writer.newLine();
 				writer.newLine();
@@ -99,17 +96,13 @@ class NGramsStrategy implements DetectionStrategy {
 			System.out.println("FAILED TO WRITE TO FILE");
 		}
 	}
-	private ArrayList<Tuple<Ngram, Ngram>> findMatches (File f1, File f2, int nSize, int anomalies){
+	private ArrayList<Run> findMatches (File f1, File f2, int nSize, int anomalies){
 			String s1 = readFile(f1.getAbsolutePath(), Charset.defaultCharset());
 			String s2 = readFile(f2.getAbsolutePath(), Charset.defaultCharset());
-			String file1Name = f1.getName();
-			String file2Name = f2.getName();
-			ArrayList<Tuple> l = generateList(s1);
-			ArrayList<Tuple> l2 = generateList(s2);
-			ArrayList<Ngram> n = generateNgram(l, nSize);
-			ArrayList<Ngram> n2 = generateNgram(l2, nSize);
-			ArrayList<Tuple<Ngram, Ngram>> matches = compareList(n, n2, anomalies);
-			return matches;
+			ArrayList<Tuple<String, Integer>> l1 = generateList(s1);
+			ArrayList<Tuple<String, Integer>> l2 = generateList(s2);
+			ArrayList<Run> runList = getRuns(l1, l2, nSize, anomalies);
+			return runList;
 		}	
 	private String readFile(String path, Charset encoding){
 			byte[] encoded = new byte[1];
@@ -121,8 +114,8 @@ class NGramsStrategy implements DetectionStrategy {
 			return new String(encoded, encoding);
 		}
 	
-	private ArrayList<Tuple> generateList (String s){
-			ArrayList<Tuple> fileBreakdown = new ArrayList<Tuple>();
+	private ArrayList<Tuple<String, Integer>> generateList (String s){
+			ArrayList<Tuple<String, Integer>> fileBreakdown = new ArrayList<Tuple<String, Integer>>();
 			int currentLine = 1;
 			String[] wordList = s.replace("\n", " \n ").split("[ \t]+");
 			for (int i = 0; i < wordList.length; i++){
@@ -138,7 +131,7 @@ class NGramsStrategy implements DetectionStrategy {
 			return fileBreakdown;
 			
 		}
-		public static int numOfEOL (String s) {
+		public int numOfEOL (String s) {
 			return (s.length()-s.replace("\n", "").length());
 		}
 		public static String unEscapeString(String s){
@@ -152,108 +145,76 @@ class NGramsStrategy implements DetectionStrategy {
 				}
 			return sb.toString();
 		}
-		
-		public static ArrayList<Ngram> generateNgram(ArrayList<Tuple> wordLineTup, int n){
-			ArrayList<Ngram> ngramList = new ArrayList<Ngram>();
-			for (int i = 0; i < (wordLineTup.size()-n+1); i++){
-				String ngramContent = "";
-				int start = (int) wordLineTup.get(i).getValue();
-				int end = (int) wordLineTup.get(i+n-1).getValue();
-				int endI = i+n-1;
-				for (int j = i; j < i+n; j++){
-					ngramContent = ngramContent + " " + wordLineTup.get(j).getKey();
+		public ArrayList<Run> getRuns(ArrayList<Tuple<String, Integer>> file1List, ArrayList<Tuple<String, Integer>> file2List, int minNgramLength, int anomalies){
+			ArrayList<Run> runList = new ArrayList<Run>();
+			for (int i = 0; i < file1List.size(); i++){
+				int differences = 0;
+				for (int j = 0; j < file2List.size(); j++){
+					if (file1List.get(i).getKey().equals(file2List.get(j).getKey())){
+						
+						int counter = 0;
+						//find the length of sequence of similar words
+						while(differences <= anomalies && i+counter+1 < file1List.size() && j+counter+1 < file2List.size()){
+							counter++;
+							//stop when differences exceed the number of allows anomalies
+							if (!file1List.get(i+counter).getKey().equals(file2List.get(j+counter).getKey())){
+								differences++;
+							}
+						}
+						//check the run is long enough
+						if (counter< minNgramLength){
+							continue;
+						}
+						//check if the run is already included in another run
+						if (isEncompassed(runList, i, i+counter-1, j, j+counter-1)){
+//	 						System.out.println("encompassed is called");
+							continue;
+						}
+						System.out.println("Ready to generate run");
+						//generate the run object
+						Run r = generateRun(file1List, file2List, counter, i, j);
+						runList.add(r);
+					}
 				}
-				Ngram ngram = new Ngram(ngramContent, start, end);
-				ngramList.add(ngram);
+				
 			}
-			
-			return ngramList;
+			return runList;
 		}
-		public static ArrayList<Tuple<Ngram, Ngram>> compareList(ArrayList<Ngram> l1, ArrayList<Ngram> l2, int anomalies){
-			//return arraylist of tuples of ngrams
-			ArrayList<Tuple<Ngram, Ngram>> matches = new ArrayList<Tuple<Ngram, Ngram>>();
-			for (int i= 0; i < l1.size(); i++){
-				for (int j = 0 ; j< l2.size(); j++){
-					if (compareString(l1.get(i).getContent(), l2.get(j).getContent(), anomalies)){
-						Tuple<Ngram, Ngram> temp = new Tuple<Ngram, Ngram>(l1.get(i), l2.get(j));
-						matches.add(temp);
+		
+		public Run generateRun(ArrayList<Tuple<String, Integer>> file1List, ArrayList<Tuple<String, Integer>> file2List, int counter, int i, int j){
+			Tuple<Integer, Integer> file1Indicies = new Tuple<Integer, Integer>(i, i+counter-1);
+			Tuple<Integer, Integer> file2Indicies = new Tuple<Integer, Integer>(j, j+counter-1);
+			String content1 = "";
+			int start1 = file1List.get(i).getValue();
+			int end1 = start1;
+			for (Tuple<String,Integer> t : file1List.subList(i, i+counter-1)){
+				content1 += t.getKey() +" ";
+				end1 = t.getValue();
+			}
+			String content2 = "";
+			int start2 = file2List.get(j).getValue();
+			int end2 = start2;
+			for (Tuple<String,Integer> t : file2List.subList(j, j+counter-1)){
+				content2 += t.getKey() +" ";
+				end2 = t.getValue();
+			}
+			Ngram n1 = new Ngram(content1, start1, end1);
+			Ngram n2 = new Ngram(content2, start2, end2);
+			return new Run(n1, n2, file1Indicies, file2Indicies, counter);
+		}
+		
+		//function to determine if 2 ranges are encompassed by some run that is already in the list
+		public boolean isEncompassed (ArrayList<Run> runList, int f1start, int f1end, int f2start, int f2end){
+			for(int i = 0; i < runList.size(); i++){
+				if ((f1start>=runList.get(i).getFile1Indicies().getKey()) && 
+							(f1end <= runList.get(i).getFile1Indicies().getValue())){
+					if ((f2start>=runList.get(i).getFile2Indicies().getKey()) && 
+							(f2end <= runList.get(i).getFile2Indicies().getValue())){
+						return true;
 					}
 				}
 			}
-			return matches;
-		
-		}
-		public static Boolean compareString (String s1, String s2, int anomalies){
-			String[] s1Split = s1.split(" ");
-			String[] s2Split = s2.split(" ");
-			int mismatches = 0;
-			for (int i = 0; i < s1Split.length; i++){
-				
-				if (s1Split[i].equals(s2Split[i]) == false){
-					mismatches++;
-				}
-				if (mismatches > anomalies){
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-	class Ngram{
-		private String content;
-		private int start;
-		private int end;
-		public Ngram(String c, int s, int e){
-			this.content = c;
-			this.start = s;
-			this.end = e;
-		}
-		public int getStart(){
-			return this.start;
-		}
-		public int getEnd(){
-			return this.end;
-		}
-		public String getContent(){
-			return this.content;
-		}
-		public void setStart(int s){
-			this.start = s;
-		}
-		public void setEnd(int e){
-			this.end = e;
-		}
-		public void setContent (String c){
-			this.content = c;
-		}
-		@Override
-		public String toString(){
-			return " LOCATION: (" + String.valueOf(this.start)+
-					","+String.valueOf(this.end) + ")" + "   CONTENT: " + this.content+ "\n";
-	    }
-
-	}
-	class Tuple <K, V>{
-		private K key;
-		private V value;
-		public Tuple(K  k, V v){
-			this.key = k;
-			this.value = v;
-		}
-		public K getKey(){
-			return this.key;
-		}
-		public V getValue(){
-			return this.value;
-		}
-		public void setKey(K k){
-			this.key = k;
-		}
-		public void setValue(V v){
-			this.value = v;
-		}
-		@Override
-		public String toString(){
-			return String.valueOf(this.key) + ", " + String.valueOf(this.value) + "\n";
-	    }
+			return false;
+		} 
 }
+

@@ -3,6 +3,8 @@ package uk.ac.warwick.dcs.sherlock.services.preprocessing;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
+
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.*;
 import uk.ac.warwick.dcs.sherlock.FileTypes;
@@ -53,8 +55,13 @@ public class Preprocessor {
 		System.out.println("------------------");
 		if ( s.getOriginalProfile().isInUse() ) {
 			System.out.println("Original Pre-processing");
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getOriginalProfile().getOutputDir() ;
-			
+			String targetDirectory;
+			if (!s.getOriginalProfile().isOutputDirSet()) {
+				s.getOriginalProfile().setIsOutputDirSet(true);
+				targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getOriginalProfile().getOutputDir() ;
+			}else {
+				targetDirectory = s.getOriginalProfile().getOutputDir();
+			}
 			s.getOriginalProfile().setOutputDir(targetDirectory);
 		}
 		
@@ -63,9 +70,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoWSProfile().getOutputDir() ;
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getNoWSProfile(), s.getSourceDirectory());
 			
 			s.getNoWSProfile().setOutputDir(target.getAbsolutePath());
 				
@@ -78,9 +83,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoCommentsProfile().getOutputDir() ;
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getNoCommentsProfile(), s.getSourceDirectory());
 			
 			s.getNoCommentsProfile().setOutputDir(target.getAbsolutePath());
 			
@@ -93,11 +96,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getNoCWSProfile().getOutputDir() ;
-			
-			System.out.println("Target directory: \t" +targetDirectory);
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getNoCWSProfile(), s.getSourceDirectory());
 			
 			s.getNoCWSProfile().setOutputDir(target.getAbsolutePath());
 			
@@ -110,9 +109,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getCommentsProfile().getOutputDir() ;
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getCommentsProfile(), s.getSourceDirectory());
 			
 			s.getCommentsProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.COM ), filePaths , target );
@@ -124,9 +121,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getTokenisedProfile().getOutputDir() ;
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getTokenisedProfile(), s.getSourceDirectory());
 			
 			s.getTokenisedProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new JavaStrategy( FileTypes.TOK ), filePaths , target );
@@ -139,9 +134,7 @@ public class Preprocessor {
 			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
 			File[] filePaths = dp.getInputFiles();
 			
-			String targetDirectory = s.getSourceDirectory().getAbsolutePath() + File.separator + "Preprocessing" + File.separator + s.getWSPatternProfile().getOutputDir() ;
-			
-			File target = makeDirectory(targetDirectory);
+			File target = getTargetDir(s.getWSPatternProfile(), s.getSourceDirectory());
 			
 			s.getWSPatternProfile().setOutputDir(target.getAbsolutePath());
 			new PreProcessingContext(new WhitespacePatternStrategy(), filePaths , target );
@@ -152,7 +145,6 @@ public class Preprocessor {
 	}
 	
 	private File makeDirectory(String targetDirectory) {
-		System.out.println("Target directory: \t" +targetDirectory);
 		
 		File target = new File (targetDirectory);
 		if ( target.exists() && target.isDirectory() ) {
@@ -160,6 +152,17 @@ public class Preprocessor {
 		} else {
 			target.mkdir();
 		}
+		return target;
+	}
+	private File getTargetDir(SettingProfile profile, File sourceDir) {
+		String targetDirectory;
+		if (!profile.isOutputDirSet()) {
+			profile.setIsOutputDirSet(true);
+			targetDirectory = sourceDir.getAbsolutePath() + File.separator + "Preprocessing" + File.separator + profile.getOutputDir() ;
+		}else {
+			targetDirectory = profile.getOutputDir();
+		}
+		File target = makeDirectory(targetDirectory);
 		return target;
 	}
 	

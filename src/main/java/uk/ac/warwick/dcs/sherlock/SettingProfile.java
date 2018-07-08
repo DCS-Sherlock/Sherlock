@@ -81,8 +81,8 @@ public class SettingProfile {
 	 *	String description
 	 *	String Output directory
 	 *	String Tokeniser Name
-	 *	boolean inUse
-	 *
+	 *	Boolean inUse
+	 *	Boolean if output directory has been set
 	 *
 	 *
 	 *
@@ -97,19 +97,19 @@ public class SettingProfile {
 	 */
 	private final static String defaultProperties[][] = {
 		/* Original */
-		{"Original", "Original", "", "true"},
+		{"Original", "Original", "", "true", "false"},
 		/* No WhiteSpace */
-		{"No Whitespace", "NoWhitespace", "NoWhiteSpaceStrategy", "false"},
+		{"No Whitespace", "NoWhitespace", "NoWhiteSpaceStrategy", "false", "false"},
 		/* No Comments */
-		{"No Comments", "NoComments", "JavaStrategy", "true"},
+		{"No Comments", "NoComments", "JavaStrategy", "true", "false"},
 		/* No Whitespace & no Comments */
-		{"No Comments & No Whitespace", "NoWS_NoComment", "JavaStrategy", "false"},
+		{"No Comments & No Whitespace", "NoWS_NoComment", "JavaStrategy", "false", "false"},
 		/* Comments */
-		{"Comments only", "Comments", "JavaStrategy", "false"},
+		{"Comments only", "Comments", "JavaStrategy", "false", "false"},
 		/* Tokenised */
-		{"Tokenised", "Tokenised", "JavaStrategy", "true"},
+		{"Tokenised", "Tokenised", "JavaStrategy", "true", "false"},
 		/* Whitespace Pattern */
-		{"Whitespace Pattern", "WSPattern", "WhitespacePattern", "false"}	
+		{"Whitespace Pattern", "WSPattern", "WhitespacePattern", "false", "false"}	
 	} ;
 	
 	/**
@@ -126,6 +126,7 @@ public class SettingProfile {
 	    p.setProperty("outputDir", settingDefault[1]);
 	    p.setProperty("tokeniserName", settingDefault[2]);
 	    p.setProperty("inUse", settingDefault[3]);
+	    p.setProperty("isOutputDirSet", settingDefault[4]);
 		return p;
 	}
 	
@@ -228,6 +229,10 @@ public class SettingProfile {
 	public void setInUse(Boolean b) {
 		thisProfile.setProperty("inUse", String.valueOf(b));
 	}
-	
-
+	public boolean isOutputDirSet() {
+		return Boolean.valueOf(thisProfile.getProperty("isOutputDirSet")).booleanValue();
+	}
+	public void setIsOutputDirSet(Boolean b) {
+		thisProfile.setProperty("isOutputDirSet", String.valueOf(b));
+	}
 }
