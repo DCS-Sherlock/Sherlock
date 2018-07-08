@@ -23,7 +23,7 @@ public class MainController implements Initializable{
 	private Button comparisonButton;
 	@FXML
 	private Button reportButton;
-	
+	private static final String FXMLLocation = "/fxml/";
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dashboardButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -65,18 +65,18 @@ public class MainController implements Initializable{
 	
 	private void selectDashboardScene() {
 		System.out.println("Select the Dashboard scene");
-		SherlockApplication.replaceCentre("view/gui/Dashboard.fxml");
+		SherlockApplication.replaceCentre(FXMLLocation + "Dashboard.fxml");
 	}
 	
 	
 	private void selectOverviewScene() {
 		System.out.println("Select the overview scene");
-		SherlockApplication.replaceCentre("view/gui/Overview.fxml");
+		SherlockApplication.replaceCentre(FXMLLocation + "Overview.fxml");
 	}
 	
 	private void selectMatchGraphScene() {
 		System.out.println("Select the Match graph scene");
-		SherlockApplication.replaceCentre("view/gui/MatchGraph.fxml");
+		SherlockApplication.replaceCentre(FXMLLocation + "MatchGraph.fxml");
 	}
 	
 	private void selectReportScene() {

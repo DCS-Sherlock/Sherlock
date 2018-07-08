@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<?import javafx.geometry.Insets?> 
+<?import javafx.scene.control.Label?> 
+<?import javafx.scene.layout.AnchorPane?> 
+<?import javafx.scene.layout.Pane?> 
+<?import javafx.scene.layout.VBox?> 
+<?import javafx.scene.text.Font?> 
+ 
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"> 
+   <children> 
+      <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"> 
+         <children> 
+            <Pane prefHeight="94.0" prefWidth="600.0" style="-fx-background-color: #002b36#002b36;"> 
+               <children> 
+                  <Label prefHeight="94.0" prefWidth="198.0" text="Overview" textFill="#657b83"> 
+                     <font> 
+                        <Font size="35.0" /> 
+                     </font> 
+                     <padding> 
+                        <Insets left="10.0" /> 
+                     </padding> 
+                  </Label> 
+               </children> 
+               <VBox.margin> 
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" /> 
+               </VBox.margin> 
+            </Pane> 
+         </children> 
+      </VBox> 
+   </children> 
+</AnchorPane> 
