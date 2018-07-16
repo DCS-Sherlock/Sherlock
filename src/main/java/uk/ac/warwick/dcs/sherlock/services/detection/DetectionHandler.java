@@ -58,7 +58,10 @@ public class DetectionHandler {
 			DirectoryProcessor sourceCode = new DirectoryProcessor(originalDirectory, new JavaFileFilter());
 			File[] sourceCodeFiles = sourceCode.getInputFiles();
 			
-			NGramsStrategy ng = new NGramsStrategy(sourceCodeFiles, s.getOriginalProfile());
+			NGramsStrategy ng = new NGramsStrategy();
+			ArrayList<Edge> edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile());
+			System.out.println(edges);
+
 		}
 		
 		if ( s.getNoWSProfile().isInUse() ) {

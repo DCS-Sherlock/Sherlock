@@ -1,6 +1,3 @@
-/**
- * 
- */
 package uk.ac.warwick.dcs.sherlock.services.detection;
 
 import java.io.BufferedWriter;
@@ -11,18 +8,15 @@ import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.io.IOException;	
 import java.util.*;
-import uk.ac.warwick.dcs.sherlock.services.detection.Run;
 
 import uk.ac.warwick.dcs.sherlock.SettingProfile;
 
 class NGramsStrategy implements DetectionStrategy {
 
-	NGramsStrategy(File[] filesToCompare, SettingProfile sp){
-		doDetection(filesToCompare, sp);
-	}
+	NGramsStrategy(){}
 	
 	@Override
-	public void doDetection(File[] filesToCompare, SettingProfile sp) {
+	public ArrayList<Edge> doDetection(File[] filesToCompare, SettingProfile sp) {
 		System.out.println("Detection Strategy: \t Samelines Detection");
 		String description = sp.getDescription();
 		
@@ -44,11 +38,11 @@ class NGramsStrategy implements DetectionStrategy {
 		} else {
 			target.mkdir();
 		}
-		
+        ArrayList<Edge> edges = new ArrayList<Edge>();
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
-				
-				ArrayList<Run> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
+
+                ArrayList<Run> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
 				String name1 = filesToCompare[i].getName();
 				name1 = name1.replaceAll(" ", "_");
 				name1 = name1.replaceAll(".java", "");
@@ -64,11 +58,29 @@ class NGramsStrategy implements DetectionStrategy {
 					System.out.println("In NGgramStrategy: File already exists");
 				}
 				writeToFile(f, matches, name1, name2);
-				
-				
+                Edge edge = generateEdge(matches, name1, name2);
+                edges.add(edge);
 			}
-		}	
+
+		}
+		return edges;
+
 	}
+    public Edge generateEdge(ArrayList<Run> matches, String filename1, String filename2){
+        int totalRunLength = 0;
+        int largestRun = 0;
+
+        for (int i =0; i<matches.size(); i++){
+            int currentRunLength = matches.get(i).getRunLength();
+            System.out.println(currentRunLength);
+            if (largestRun<currentRunLength){
+                largestRun = currentRunLength;
+            }
+            totalRunLength += currentRunLength;
+        }
+        Edge edge = new Edge(filename1, filename2, totalRunLength*largestRun);
+	    return edge;
+    }
 	private void writeToFile(File f, ArrayList<Run> list, String name1, String name2) {
 		try {
 			String intro = "Similarities between: " + name1 + " and " + name2;
@@ -172,7 +184,7 @@ class NGramsStrategy implements DetectionStrategy {
 						}
 						System.out.println("Ready to generate run");
 						//generate the run object
-						Run r = generateRun(file1List, file2List, counter, i, j);
+						Run r = generateRun(file1List, file2List, counter-1, i, j);
 						runList.add(r);
 					}
 				}
@@ -182,19 +194,19 @@ class NGramsStrategy implements DetectionStrategy {
 		}
 		
 		public Run generateRun(ArrayList<Tuple<String, Integer>> file1List, ArrayList<Tuple<String, Integer>> file2List, int counter, int i, int j){
-			Tuple<Integer, Integer> file1Indicies = new Tuple<Integer, Integer>(i, i+counter-1);
-			Tuple<Integer, Integer> file2Indicies = new Tuple<Integer, Integer>(j, j+counter-1);
+			Tuple<Integer, Integer> file1Indicies = new Tuple<Integer, Integer>(i, i+counter);
+			Tuple<Integer, Integer> file2Indicies = new Tuple<Integer, Integer>(j, j+counter);
 			String content1 = "";
 			int start1 = file1List.get(i).getValue();
 			int end1 = start1;
-			for (Tuple<String,Integer> t : file1List.subList(i, i+counter-1)){
+			for (Tuple<String,Integer> t : file1List.subList(i, i+counter)){
 				content1 += t.getKey() +" ";
 				end1 = t.getValue();
 			}
 			String content2 = "";
 			int start2 = file2List.get(j).getValue();
 			int end2 = start2;
-			for (Tuple<String,Integer> t : file2List.subList(j, j+counter-1)){
+			for (Tuple<String,Integer> t : file2List.subList(j, j+counter)){
 				content2 += t.getKey() +" ";
 				end2 = t.getValue();
 			}
