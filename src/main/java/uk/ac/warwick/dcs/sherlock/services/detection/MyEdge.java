@@ -1,11 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.services.detection;
 
-public class Edge {
+public class MyEdge {
     private String node1;
     private String node2;
     private int distance;
 
-    public Edge(String n1, String n2, int s){
+    public MyEdge(String n1, String n2, int s){
         this.node1 = n1;
         this.node2 = n2;
         this.distance = s;

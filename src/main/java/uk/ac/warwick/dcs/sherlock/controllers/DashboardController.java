@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -35,7 +36,11 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.stage.DirectoryChooser;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.MultiGraph;
 import uk.ac.warwick.dcs.sherlock.SherlockApplication;
+import uk.ac.warwick.dcs.sherlock.services.detection.MyEdge;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 
 import uk.ac.warwick.dcs.sherlock.Settings;
@@ -90,6 +95,8 @@ public class DashboardController implements Initializable{
 	private ChoiceBox similarityMetricChooser;
 	@FXML
 	private Label selectFilePrompt;
+
+	private  ArrayList<MyEdge> edgeList;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		similarityMetricChooser.setValue("# Similar lines");
@@ -395,12 +402,39 @@ public class DashboardController implements Initializable{
 			System.out.println("Starting Detection");
 			
 			DetectionHandler dh = new DetectionHandler(setting);
+			System.out.println("created detection handler");
+			edgeList = dh.runDetectionStrategies();
+
+			MultiGraph graph = createGraph(edgeList);
+			graph.display();
 		} else {
 			Alert alert = new Alert(AlertType.ERROR, "Please ensure pre-processing has completed before attempting to run detection");
 			alert.showAndWait();
 		}
 	}
-	
+	public static MultiGraph createGraph(ArrayList<MyEdge> edgeList){
+		MultiGraph similarityGraph = new MultiGraph("returnGraph");
+		similarityGraph.addAttribute("ui.stylesheet", "url('file:///C:/Users/MingXiu/IdeaProjects/test/src/main/java/styling.css')");
+		similarityGraph.setStrict(false);
+		similarityGraph.setAutoCreate(true);
+		for (int i = 0; i < edgeList.size(); i++){
+			MyEdge edge = edgeList.get(i);
+			String edgeID = Integer.toString(i);
+			//add graph creates nodes if they do not exist
+			similarityGraph.addEdge(edgeID, edge.getNode1(), edge.getNode2());
+			// we create the edges and then get them from the graph so we don't need to make the nodes
+			Edge e = similarityGraph.getEdge(edgeID);
+			double weight = (double) Math.max(1000-edge.getDistance(), 1)/1000.0;
+			System.out.println("edge distances  are: " + edge.getDistance());
+			e.addAttribute("ui.label",weight);
+			e.addAttribute("layout.weight",weight);
+		}
+		for (Node node : similarityGraph) {
+			node.addAttribute("ui.label", node.getId());
+			node.addAttribute("ui.class",  "important");
+		}
+		return similarityGraph;
+	}
 	/**
 	 * When a session has been loaded, the setting configuration (which may differ from default) must be displayed
 	 * in the GUIs check-boxes

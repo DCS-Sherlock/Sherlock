@@ -27,13 +27,12 @@ public class DetectionHandler {
 	 */
 	public DetectionHandler(Settings s){
 		this.s = s ;
-		
-		runDetectionStrategies();
+
 	}
 	
-	private void runDetectionStrategies() {
+	public  ArrayList<MyEdge> runDetectionStrategies() {
 		System.out.println("----Running detection strategy----");
-		
+		ArrayList<MyEdge> edges;
 		if ( s.getOriginalProfile().isInUse() ) {
 			System.out.println("Original Detection");
 			
@@ -57,10 +56,13 @@ public class DetectionHandler {
 			
 			DirectoryProcessor sourceCode = new DirectoryProcessor(originalDirectory, new JavaFileFilter());
 			File[] sourceCodeFiles = sourceCode.getInputFiles();
-			
+			if (sourceCodeFiles.length == 0){
+				return null;
+			}
 			NGramsStrategy ng = new NGramsStrategy();
-			ArrayList<Edge> edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile());
+			edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile());
 			System.out.println(edges);
+			return edges;
 
 		}
 		
@@ -109,5 +111,6 @@ public class DetectionHandler {
 			System.out.println(wsPatternDirectory.getPath());
 			File[] wsPatternFiles = wsPatternDirectory.listFiles();
 		}
+		return null;
 	}
 }

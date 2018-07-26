@@ -16,14 +16,14 @@ class NGramsStrategy implements DetectionStrategy {
 	NGramsStrategy(){}
 	
 	@Override
-	public ArrayList<Edge> doDetection(File[] filesToCompare, SettingProfile sp) {
+	public ArrayList<MyEdge> doDetection(File[] filesToCompare, SettingProfile sp) {
 		System.out.println("Detection Strategy: \t Samelines Detection");
 		String description = sp.getDescription();
-		
+		//System.out.println("go the settings description" + filesToCompare.length);
 		String parent = filesToCompare[0].getParentFile().getParentFile().getParent();
 		System.out.println("------Trying to make a report directory " + parent);
-		String targetDirectory = parent+"\\Report\\" +description;
-		System.out.println("------Target directory " + targetDirectory);
+		String targetDirectory = parent+"\\Report\\";
+		//System.out.println("------Target directory " + targetDirectory);
 		File target = new File (targetDirectory);
 		if ( target.exists() && target.isDirectory() ) {
 			System.out.println("The target exists");
@@ -31,14 +31,14 @@ class NGramsStrategy implements DetectionStrategy {
 			target.mkdir();
 		}
 		targetDirectory = parent+"\\Report\\" +description;
-		
+
 		target = new File (targetDirectory);
 		if ( target.exists() && target.isDirectory() ) {
 			System.out.println("The target exists");
 		} else {
 			target.mkdir();
 		}
-        ArrayList<Edge> edges = new ArrayList<Edge>();
+        ArrayList<MyEdge> edges = new ArrayList<MyEdge>();
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
 
@@ -50,15 +50,18 @@ class NGramsStrategy implements DetectionStrategy {
 				name2 = name2.replaceAll(" ", "_");
 				name2 = name2.replaceAll(".java", "");
 				File f = new File(targetDirectory+"\\"+name1+"__"+name2+".txt");
+				System.out.println("file name is " + f.getName());
 				try {
 					f.createNewFile();
 					System.out.println("In NGgramStrategy: File was created");
 					
 				} catch (IOException e) {
-					System.out.println("In NGgramStrategy: File already exists");
+					System.out.println("In NGgramStrategy: File creation failed");
 				}
+				System.out.println("about to call write to file");
 				writeToFile(f, matches, name1, name2);
-                Edge edge = generateEdge(matches, name1, name2);
+                MyEdge edge = generateMyEdge(matches, name1, name2);
+				System.out.println("tried to generate e");
                 edges.add(edge);
 			}
 
@@ -66,7 +69,7 @@ class NGramsStrategy implements DetectionStrategy {
 		return edges;
 
 	}
-    public Edge generateEdge(ArrayList<Run> matches, String filename1, String filename2){
+    public MyEdge generateMyEdge(ArrayList<Run> matches, String filename1, String filename2){
         int totalRunLength = 0;
         int largestRun = 0;
 
@@ -78,7 +81,7 @@ class NGramsStrategy implements DetectionStrategy {
             }
             totalRunLength += currentRunLength;
         }
-        Edge edge = new Edge(filename1, filename2, totalRunLength*largestRun);
+        MyEdge edge = new MyEdge(filename1, filename2, totalRunLength*largestRun);
 	    return edge;
     }
 	private void writeToFile(File f, ArrayList<Run> list, String name1, String name2) {
