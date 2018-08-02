@@ -38,6 +38,7 @@ import javafx.stage.DirectoryChooser;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
+import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.graph.implementations.MultiGraph;
 import uk.ac.warwick.dcs.sherlock.SherlockApplication;
 import uk.ac.warwick.dcs.sherlock.services.detection.MyEdge;
@@ -101,12 +102,16 @@ public class DashboardController implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		similarityMetricChooser.setValue("# Similar lines");
 		similarityMetricChooser.setItems(similarityMetricList);
+		startPreProcessing.setDisable(true);
+		startDetection.setDisable(true);
+
 		newSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
 				selectDirectory();
 				startPreProcessing.setDisable(false);
 				startDetection.setDisable(false);
+				System.out.println("--------------------------TRied to set the buttons to be disabled");
 			}
 		});
 		
@@ -406,7 +411,8 @@ public class DashboardController implements Initializable{
 			edgeList = dh.runDetectionStrategies();
 
 			MultiGraph graph = createGraph(edgeList);
-			graph.display();
+			Viewer viewer = graph.display();
+			viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
 		} else {
 			Alert alert = new Alert(AlertType.ERROR, "Please ensure pre-processing has completed before attempting to run detection");
 			alert.showAndWait();

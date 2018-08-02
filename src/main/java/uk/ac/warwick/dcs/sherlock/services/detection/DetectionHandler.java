@@ -38,7 +38,6 @@ public class DetectionHandler {
 			
 			/* Get the files located in the Original Directory */
 			File originalDirectory = new File (s.getOriginalProfile().getOutputDir() );
-			System.out.println(originalDirectory.getPath());
 			File parent = originalDirectory.getParentFile().getParentFile();
 			String targetDirectory = parent.getAbsolutePath() + File.separator + "Report" + File.separator + "Original";
 			/* 
