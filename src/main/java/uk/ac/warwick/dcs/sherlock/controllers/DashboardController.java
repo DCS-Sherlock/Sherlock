@@ -24,7 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
@@ -78,25 +78,33 @@ public class DashboardController implements Initializable{
 	@FXML
 	private Button advancedSettings ;
 	@FXML
-	private Button completeSearch;
-	@FXML
 	private Button startPreProcessing;
 	@FXML
 	private Button startDetection ;
 	@FXML
 	private Label sessionChoice;
 	@FXML
+	private Button generateGraph;
+	@FXML
+	private Button showTopSimilarities;
+	@FXML
 	private ProgressIndicator preprocessingIndicator;
 	@FXML
 	private ProgressIndicator generateReportIndicator;
 	@FXML
+	private ProgressIndicator generateGraphIndicator;
+	@FXML
+	private ProgressIndicator topSimilarityIndicator;
+	@FXML
 	private GridPane advancedSettingsList;
+	@FXML
+	private TextField textField;
 	private boolean advancedSettingsVisibility = false;
 	@FXML
 	private ChoiceBox similarityMetricChooser;
 	@FXML
 	private Label selectFilePrompt;
-
+	private int ngramLength;
 	private  ArrayList<MyEdge> edgeList;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -104,6 +112,9 @@ public class DashboardController implements Initializable{
 		similarityMetricChooser.setItems(similarityMetricList);
 		startPreProcessing.setDisable(true);
 		startDetection.setDisable(true);
+		loadSession.setDisable(true);
+		showTopSimilarities.setDisable(true);
+		generateGraph.setDisable(true);
 
 		newSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -268,6 +279,8 @@ public class DashboardController implements Initializable{
 		startDetection.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
+				generateGraph.setDisable(false);
+				showTopSimilarities.setDisable(false);
 				double size = startDetection.getHeight();
 				generateReportIndicator.setProgress(-1.0f);
 				generateReportIndicator.setPrefSize(size, size);
@@ -289,7 +302,54 @@ public class DashboardController implements Initializable{
 				
 			}
 		});
-		
+
+		generateGraph.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				double size = generateGraph.getHeight();
+				generateGraphIndicator.setProgress(-1.0f);
+				generateGraphIndicator.setPrefSize(size, size);
+				generateGraphIndicator.setVisible(true);;
+				Task<Void> task = new Task<Void>() {
+					@Override
+					public Void call() throws Exception {
+						generateGraph();
+						return null ;
+					}
+				};
+				task.setOnSucceeded(e -> {
+
+					double size2 = generateGraph.getHeight()*1.5;
+					generateGraphIndicator.setPrefSize(size2, size2);
+					generateGraphIndicator.setProgress(1.0f);
+				});
+				new Thread(task).start();
+
+			}
+		});
+		showTopSimilarities.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle( ActionEvent event ) {
+				double size = showTopSimilarities.getHeight();
+				topSimilarityIndicator.setProgress(-1.0f);
+				topSimilarityIndicator.setPrefSize(size, size);
+				topSimilarityIndicator.setVisible(true);;
+				Task<Void> task = new Task<Void>() {
+					@Override
+					public Void call() throws Exception {
+						return null ;
+					}
+				};
+				task.setOnSucceeded(e -> {
+
+					double size2 = showTopSimilarities.getHeight()*1.5;
+					topSimilarityIndicator.setPrefSize(size2, size2);
+					topSimilarityIndicator.setProgress(1.0f);
+				});
+				new Thread(task).start();
+
+			}
+		});
 	}
 	
 	private void selectDirectory() {
@@ -405,11 +465,26 @@ public class DashboardController implements Initializable{
 		/*Check that preprocessing has completed */
 		if ( setting.isPreprocessingComplete() ) {
 			System.out.println("Starting Detection");
-			
-			DetectionHandler dh = new DetectionHandler(setting);
+			try {
+				String n = textField.getText();
+				ngramLength = Integer.parseInt(n);
+				System.out.println("***********************" + ngramLength);
+			}catch (Exception e){
+				System.out.println("text field is null");
+			}
+
+
+			DetectionHandler dh = new DetectionHandler(setting, ngramLength);
 			System.out.println("created detection handler");
 			edgeList = dh.runDetectionStrategies();
+		} else {
+			Alert alert = new Alert(AlertType.ERROR, "Please ensure pre-processing has completed before attempting to run detection");
+			alert.showAndWait();
+		}
+	}
 
+	private void generateGraph(){
+		if ( setting.isPreprocessingComplete() ) {
 			MultiGraph graph = createGraph(edgeList);
 			Viewer viewer = graph.display();
 			viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
@@ -418,6 +493,7 @@ public class DashboardController implements Initializable{
 			alert.showAndWait();
 		}
 	}
+
 	public static MultiGraph createGraph(ArrayList<MyEdge> edgeList){
 		MultiGraph similarityGraph = new MultiGraph("returnGraph");
 		similarityGraph.addAttribute("ui.stylesheet", "url('file:///C:/Users/MingXiu/IdeaProjects/test/src/main/java/styling.css')");

@@ -17,5 +17,5 @@ interface DetectionStrategy {
 	 * Method that performs the selected detection algorithm 
 	 * @return 
 	 */
-	ArrayList doDetection(File[] filesToCompare, SettingProfile sp);
+	ArrayList doDetection(File[] filesToCompare, SettingProfile sp, int ngramLength);
 }

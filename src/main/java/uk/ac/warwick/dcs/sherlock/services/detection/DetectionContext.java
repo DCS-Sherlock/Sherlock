@@ -29,6 +29,6 @@ class DetectionContext {
 	 * @param sp 				- The setting profile defining the pre-processed versions to detect over 
 	 */
 	void executeDetection(File[] filesToCompare, SettingProfile sp) {
-		ds.doDetection(filesToCompare, sp);
+		ds.doDetection(filesToCompare, sp, 30);
 	}
 }

@@ -16,7 +16,7 @@ class NGramsStrategy implements DetectionStrategy {
 	NGramsStrategy(){}
 	
 	@Override
-	public ArrayList<MyEdge> doDetection(File[] filesToCompare, SettingProfile sp) {
+	public ArrayList<MyEdge> doDetection(File[] filesToCompare, SettingProfile sp, int ngramLength) {
 		System.out.println("Detection Strategy: \t Samelines Detection");
 		String description = sp.getDescription();
 		String parent = filesToCompare[0].getParentFile().getParentFile().getParent();
@@ -32,7 +32,7 @@ class NGramsStrategy implements DetectionStrategy {
 		for (int i = 0; i < filesToCompare.length ; i++ ) {
 			for (int j = i+1; j < filesToCompare.length ; j++ ) {
 
-                ArrayList<Run> matches = findMatches(filesToCompare[i], filesToCompare[j], 10, 1);
+                ArrayList<Run> matches = findMatches(filesToCompare[i], filesToCompare[j], ngramLength, 1);
 				String name1 = cleanFilename(filesToCompare[i].getName());
 				String name2 = cleanFilename(filesToCompare[j].getName());
 				File f = new File(targetDirectory+"\\"+name1+"__"+name2+".txt");

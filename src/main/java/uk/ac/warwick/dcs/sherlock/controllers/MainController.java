@@ -26,6 +26,13 @@ public class MainController implements Initializable{
 	private static final String FXMLLocation = "/fxml/";
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		//disable all buttons apart from dashboard since they have no functionality in this iteration.
+		overviewButton.setDisable(true);
+		matchGraphButton.setDisable(true);
+		comparisonButton.setDisable(true);
+		reportButton.setDisable(true);
+
 		dashboardButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {

@@ -18,14 +18,15 @@ import uk.ac.warwick.dcs.sherlock.Settings;
  */
 public class DetectionHandler {
 	private Settings s ; 
-
+	private int n;
 	/**
 	 * DectionHandler constructor
 	 * This constructor initiates the detection strategies by calling the runDetectionStrategies method.
 	 *
 	 * @param s 		- The file types requested by the user for this detection
 	 */
-	public DetectionHandler(Settings s){
+	public DetectionHandler(Settings s, int ngramLength){
+		this.n = ngramLength;
 		this.s = s ;
 
 	}
@@ -59,10 +60,9 @@ public class DetectionHandler {
 				return null;
 			}
 			NGramsStrategy ng = new NGramsStrategy();
-			edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile());
+			edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile(), this.n);
 			System.out.println(edges);
 			return edges;
-
 		}
 		
 		if ( s.getNoWSProfile().isInUse() ) {
