@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-
+import java.util.Collections;
+import java.util.Comparator;
 import com.sun.prism.paint.Color;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -29,13 +31,17 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.Viewer;
@@ -54,7 +60,7 @@ import uk.ac.warwick.dcs.sherlock.services.preprocessing.Preprocessor;
  * The controller for the Dashboard scene
  */
 public class DashboardController implements Initializable{
-	
+
 	private Settings setting = new Settings();
 	private ObservableList<String> similarityMetricList = FXCollections.observableArrayList("# Similar lines", "Longest Run Length");
 	@FXML
@@ -125,7 +131,7 @@ public class DashboardController implements Initializable{
 				System.out.println("--------------------------TRied to set the buttons to be disabled");
 			}
 		});
-		
+
 		loadSession.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -134,7 +140,7 @@ public class DashboardController implements Initializable{
 				startDetection.setDisable(false);
 			}
 		});
-		
+
 		originalOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -147,7 +153,7 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		NoWSOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -160,7 +166,7 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		NoWSComsOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -173,10 +179,10 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		NoComOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle( ActionEvent event ) {	
+			public void handle( ActionEvent event ) {
 				try {
 					setting.getNoCommentsProfile().setInUse( NoComOpt.isSelected() );
 				} catch ( IndexOutOfBoundsException e ) {
@@ -186,10 +192,10 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		CommentsOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle( ActionEvent event ) {	
+			public void handle( ActionEvent event ) {
 				try {
 					setting.getCommentsProfile().setInUse( CommentsOpt.isSelected() );
 				} catch ( IndexOutOfBoundsException e ) {
@@ -199,7 +205,7 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		tokenOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -211,9 +217,9 @@ public class DashboardController implements Initializable{
 					alert.showAndWait();
 				}
 			}
-				
+
 		});
-		
+
 		WSPatternOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -226,7 +232,7 @@ public class DashboardController implements Initializable{
 				}
 			}
 		});
-		
+
 		advancedSettings.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
@@ -242,40 +248,40 @@ public class DashboardController implements Initializable{
 				chooseAdvancedSettings();
 			}
 		});
-		
+
 //		completeSearch.setOnAction(new EventHandler<ActionEvent>() {
 //			@Override
 //			public void handle( ActionEvent event ) {
 //				startCompleteSearch();
 //			}
 //		});
-		
+
 		startPreProcessing.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
-		    @Override
-		    public void handle(MouseEvent mouseEvent) {
-		    	
-		    	double size = startPreProcessing.getHeight();
-		    	preprocessingIndicator.setProgress(-1.0f);
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+
+				double size = startPreProcessing.getHeight();
+				preprocessingIndicator.setProgress(-1.0f);
 				preprocessingIndicator.setPrefSize(size, size);
 				preprocessingIndicator.setVisible(true);
-		    	Task<Void> task = new Task<Void>() {
-		    	    @Override
-		    	    public Void call() throws Exception {
-		    	        startPreProcessing();
-		    	        return null ;
-		    	    }
-		    	};
-		    	task.setOnSucceeded(e -> {
+				Task<Void> task = new Task<Void>() {
+					@Override
+					public Void call() throws Exception {
+						startPreProcessing();
+						return null ;
+					}
+				};
+				task.setOnSucceeded(e -> {
 
 					double size2 = startPreProcessing.getHeight()*1.5;
 					preprocessingIndicator.setPrefSize(size2, size2);
 					preprocessingIndicator.setProgress(1.0f);
-		    	});
-		    	new Thread(task).start();
-		    	
-		    }
+				});
+				new Thread(task).start();
+
+			}
 		});
-		
+
 		startDetection.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -285,21 +291,21 @@ public class DashboardController implements Initializable{
 				generateReportIndicator.setProgress(-1.0f);
 				generateReportIndicator.setPrefSize(size, size);
 				generateReportIndicator.setVisible(true);;
-		    	Task<Void> task = new Task<Void>() {
-		    	    @Override
-		    	    public Void call() throws Exception {
-		    	    	startDetection();
-		    	        return null ;
-		    	    }
-		    	};
-		    	task.setOnSucceeded(e -> {
+				Task<Void> task = new Task<Void>() {
+					@Override
+					public Void call() throws Exception {
+						startDetection();
+						return null ;
+					}
+				};
+				task.setOnSucceeded(e -> {
 
 					double size2 = startDetection.getHeight()*1.5;
 					generateReportIndicator.setPrefSize(size2, size2);
 					generateReportIndicator.setProgress(1.0f);
-		    	});
-		    	new Thread(task).start();
-				
+				});
+				new Thread(task).start();
+
 			}
 		});
 
@@ -333,11 +339,13 @@ public class DashboardController implements Initializable{
 				double size = showTopSimilarities.getHeight();
 				topSimilarityIndicator.setProgress(-1.0f);
 				topSimilarityIndicator.setPrefSize(size, size);
-				topSimilarityIndicator.setVisible(true);;
-				Task<Void> task = new Task<Void>() {
+				topSimilarityIndicator.setVisible(true);
+
+				Task<ArrayList<String>> task = new Task<ArrayList<String>>() {
 					@Override
-					public Void call() throws Exception {
-						return null ;
+					public ArrayList<String> call() throws Exception {
+						ArrayList<String> stringList = getTopSimilarities(edgeList);
+						return stringList;
 					}
 				};
 				task.setOnSucceeded(e -> {
@@ -345,86 +353,95 @@ public class DashboardController implements Initializable{
 					double size2 = showTopSimilarities.getHeight()*1.5;
 					topSimilarityIndicator.setPrefSize(size2, size2);
 					topSimilarityIndicator.setProgress(1.0f);
+					final Stage dialog = new Stage();
+					dialog.initModality(Modality.APPLICATION_MODAL);
+					VBox dialogVbox = new VBox(20);
+					for (int i = 0; i < task.getValue().size(); i++){
+						dialogVbox.getChildren().add(new Text(task.getValue().get(i)));
+					}
+					Scene dialogScene = new Scene(dialogVbox, 400, 200);
+					dialog.setScene(dialogScene);
+					dialog.show();
 				});
 				new Thread(task).start();
 
 			}
 		});
 	}
-	
+
 	private void selectDirectory() {
 		System.out.println("Start Session button clicked");
-		
+
 		String userHome = System.getProperty("user.home");
 		String destination = userHome + File.separator + "Sherlock" ;
 
 		System.out.println("The select source button was clicked");
-		
+
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		directoryChooser.setTitle("Open Resource File");
 		File selectedFile = directoryChooser.showDialog(null);
-		
+
 		if ( selectedFile != null ) {
 			System.out.println("Chosen a file " + selectedFile.getName());
-			
+
 			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream( selectedFile.toPath() ) ) {
-		       if ( !dirStream.iterator().hasNext() ) {
-		    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
-		       } else {
-		    	   		// Put all the files in source directory into the Sherlock Directory
-		    	   		
+				if ( !dirStream.iterator().hasNext() ) {
+					System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
+				} else {
+					// Put all the files in source directory into the Sherlock Directory
+
 					DirectoryProcessor dp = new DirectoryProcessor(selectedFile, selectedFile.getName());
-					
+
 					sessionChoice.setText(selectedFile.toString());
-					
+
 					setting.setSourceDirectory( new File(dp.returnNewSourceDirectory(selectedFile.getName())) );
 
 					//	Initialise Settings
 					initialiseSettings(true);
-		       }
-		    } catch (IOException e) {
+				}
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			System.out.println("Not chosen a file");
 		}
 	}
-	
+
 	private void loadDirectory() {
 		System.out.println("Load Session button clicked");
-		
+
 		String userHome = System.getProperty("user.home");
 		String destination = userHome + File.separator + "Sherlock" ;
-		
+
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		directoryChooser.setInitialDirectory(new File(destination));
 		directoryChooser.setTitle("Open Resource File");
-		
+
 		File selectedFile = directoryChooser.showDialog(null);
 		if ( selectedFile != null ) {
-			System.out.println("Chosen a file " + selectedFile.getName());	
-			
-			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream( selectedFile.toPath() ) ) {
-			       if ( !dirStream.iterator().hasNext() ) {
-			    	   		System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
-			       } else {
-			    	   		// Perform check that the directory is of the expected format - must contain pre-processing folder (none-empty)
-						if ( true ) {
-							sessionChoice.setText(selectedFile.toString());
-							setting.setSourceDirectory( selectedFile );
+			System.out.println("Chosen a file " + selectedFile.getName());
 
-							//	Load Settings
-							initialiseSettings(false);
-						}
-			       }
-			    } catch (IOException e) {
-					e.printStackTrace();
+			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream( selectedFile.toPath() ) ) {
+				if ( !dirStream.iterator().hasNext() ) {
+					System.out.println("Chosen a file " + selectedFile.getName() + " is empty");
+				} else {
+					// Perform check that the directory is of the expected format - must contain pre-processing folder (none-empty)
+					if ( true ) {
+						sessionChoice.setText(selectedFile.toString());
+						setting.setSourceDirectory( selectedFile );
+
+						//	Load Settings
+						initialiseSettings(false);
+					}
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("Not chosen a file");
 		}
-	}	
-	
+	}
+
 	private void initialiseSettings(boolean isNewSession) {
 		if ( isNewSession ) {
 			setting.initialiseDefault();
@@ -435,20 +452,20 @@ public class DashboardController implements Initializable{
 		}
 		updateSettingDisplay();
 	}
-	
+
 	private void chooseAdvancedSettings() {
 		System.out.println("Choosing Advanced Settings");
 	}
-	
+
 	private void startCompleteSearch() {
 		System.out.println("Starting Complete Search");
 	}
-	
+
 	/**
 	 * Method to run when the pre-processing button has been pressed
-	 * 
+	 *
 	 * Using the setting choices selected by the user, this method will run the specified
-	 * pre-processing techniques. The setting choices are stored in the Settings and 
+	 * pre-processing techniques. The setting choices are stored in the Settings and
 	 * SettingProfile classes.
 	 *
 	 */
@@ -459,9 +476,9 @@ public class DashboardController implements Initializable{
 		 * Update GUI to say that pre-processing is complete
 		 */
 	}
-	
+
 	private void startDetection() {
-		
+
 		/*Check that preprocessing has completed */
 		if ( setting.isPreprocessingComplete() ) {
 			System.out.println("Starting Detection");
@@ -471,8 +488,8 @@ public class DashboardController implements Initializable{
 				System.out.println("***********************" + ngramLength);
 			}catch (Exception e){
 				System.out.println("text field is null");
+				ngramLength = 20;
 			}
-
 
 			DetectionHandler dh = new DetectionHandler(setting, ngramLength);
 			System.out.println("created detection handler");
@@ -524,7 +541,7 @@ public class DashboardController implements Initializable{
 	private void updateSettingDisplay() {
 		System.out.println("Update Setting Display");
 		List<Boolean> statuses = setting.getInUseStatus();
-		
+
 		List<CheckBox> checkboxes = getAllSettingsCheckboxes();
 		System.out.println("Checkboxes: " + checkboxes.size());
 		/* For each setting profile, set the respective checkbox to the actual status */
@@ -535,10 +552,33 @@ public class DashboardController implements Initializable{
 			setting.setSelected(b);
 		}
 	}
-	
+	private ArrayList<String> getTopSimilarities(ArrayList<MyEdge> edgeList){
+		ArrayList<MyEdge> sortedList = sortByEdgeWeight(edgeList);
+		ArrayList<MyEdge> topSimilarities = new ArrayList<MyEdge>(sortedList.subList(0, Math.min(10, edgeList.size())));
+		ArrayList<String> stringRepresentation = new ArrayList<String>();
+		for (int i = 0; i<topSimilarities.size(); i++){
+			String s = topSimilarities.get(i).getNode1() + " && " + topSimilarities.get(i).getNode2() + ", similarity score: " + topSimilarities.get(i).getDistance();
+			stringRepresentation.add(s);
+		}
+		return stringRepresentation;
+	}
+	private ArrayList<MyEdge> sortByEdgeWeight(ArrayList<MyEdge> edgeList){
+		ArrayList<MyEdge> sortedList = new ArrayList<MyEdge>(edgeList);
+		Collections.sort(sortedList, new Comparator<MyEdge>() {
+			@Override
+			public int compare(MyEdge z1, MyEdge z2) {
+				if (z1.getDistance() < z2.getDistance())
+					return 1;
+				if (z1.getDistance() > z2.getDistance())
+					return -1;
+				return 0;
+			}
+		});
+		return sortedList;
+	}
 	private List<CheckBox> getAllSettingsCheckboxes(){
 		List<CheckBox> cb = new LinkedList<CheckBox>();
-		
+
 		cb.add(originalOpt);
 		cb.add(NoWSOpt);
 		cb.add(NoWSComsOpt);
@@ -548,5 +588,5 @@ public class DashboardController implements Initializable{
 		cb.add(WSPatternOpt);
 		return cb;
 	}
-	
+
 }
