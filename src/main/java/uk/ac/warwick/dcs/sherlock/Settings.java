@@ -100,7 +100,7 @@ public class Settings {
 			System.out.println(getSourceDirectory());
 	
 			for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
-				System.out.println(FileTypes.values()[setting].toString());
+				//System.out.println(FileTypes.values()[setting].toString());
 				SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), false);
 				settingList.add(sp);
 			}
@@ -116,7 +116,7 @@ public class Settings {
 		System.out.println(getSourceDirectory());
 		
 		for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
-			System.out.println(FileTypes.values()[setting].toString());
+			//System.out.println(FileTypes.values()[setting].toString());
 			SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), true );
 			settingList.add(sp);
 		}

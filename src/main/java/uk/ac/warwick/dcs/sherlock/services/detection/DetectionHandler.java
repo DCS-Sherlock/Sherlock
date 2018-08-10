@@ -74,7 +74,6 @@ public class DetectionHandler {
 		}
 		
 		if ( s.getNoCommentsProfile().isInUse() ) {
-			System.out.println("***************No Comments Detection");
 			File noCommentsDirectory = new File (s.getNoCommentsProfile().getOutputDir() );
 			System.out.println(noCommentsDirectory.getPath());
 			File[] noCommentsFiles = noCommentsDirectory.listFiles();

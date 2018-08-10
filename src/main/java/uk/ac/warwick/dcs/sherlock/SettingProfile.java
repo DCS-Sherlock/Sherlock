@@ -100,10 +100,10 @@ public class SettingProfile {
 		{"Original", "Original", "", "true", "false"},
 		/* No WhiteSpace */
 		{"No Whitespace", "NoWhitespace", "NoWhiteSpaceStrategy", "false", "false"},
-		/* No Comments */
-		{"No Comments", "NoComments", "JavaStrategy", "true", "false"},
 		/* No Whitespace & no Comments */
 		{"No Comments & No Whitespace", "NoWS_NoComment", "JavaStrategy", "false", "false"},
+		/* No Comments */
+		{"No Comments", "NoComments", "JavaStrategy", "true", "false"},
 		/* Comments */
 		{"Comments only", "Comments", "JavaStrategy", "false", "false"},
 		/* Tokenised */

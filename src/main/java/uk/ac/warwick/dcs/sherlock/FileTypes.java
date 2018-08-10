@@ -18,17 +18,17 @@ public enum FileTypes {
 	 * Numeric value for no-whitespace.
 	 */
 	NWS(1),
-	
-	/**
-	 * Numeric value for no comment.
-	 */
-	NOC(2),
-	
+
 	/**
 	 * Numerical value for no comment no white.
 	 */
-	NCW(3),
-	
+	NCW(2),
+
+	/**
+	 * Numeric value for no comment.
+	 */
+	NOC(3),
+
 	/**
 		* Numeric value for comment.
 		*/

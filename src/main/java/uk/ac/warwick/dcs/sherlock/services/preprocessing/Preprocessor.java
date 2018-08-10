@@ -97,7 +97,6 @@ public class Preprocessor {
 			File[] filePaths = dp.getInputFiles();
 			
 			File target = getTargetDir(s.getNoCWSProfile(), s.getSourceDirectory());
-			
 			s.getNoCWSProfile().setOutputDir(target.getAbsolutePath());
 			
 			new PreProcessingContext(new JavaStrategy( FileTypes.NCW ), filePaths , target );
@@ -158,10 +157,11 @@ public class Preprocessor {
 		String targetDirectory;
 		if (!profile.isOutputDirSet()) {
 			profile.setIsOutputDirSet(true);
-			targetDirectory = sourceDir.getAbsolutePath() + File.separator + "Preprocessing" + File.separator + profile.getOutputDir() ;
+			targetDirectory = sourceDir.getAbsolutePath() + File.separator + "Preprocessing" + File.separator + profile.getOutputDir();
 		}else {
 			targetDirectory = profile.getOutputDir();
 		}
+
 		File target = makeDirectory(targetDirectory);
 		return target;
 	}

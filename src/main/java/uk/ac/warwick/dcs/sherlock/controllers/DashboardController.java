@@ -485,7 +485,6 @@ public class DashboardController implements Initializable{
 			try {
 				String n = textField.getText();
 				ngramLength = Integer.parseInt(n);
-				System.out.println("***********************" + ngramLength);
 			}catch (Exception e){
 				System.out.println("text field is null");
 				ngramLength = 20;
