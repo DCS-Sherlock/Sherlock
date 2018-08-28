@@ -1,9 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.services.preprocessing;
 
 import java.io.File;
-import java.util.List;
-
-import org.apache.commons.io.FilenameUtils;
 
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.*;
@@ -79,9 +76,8 @@ public class Preprocessor {
 		
 		if ( s.getNoCommentsProfile().isInUse() ) {
 			System.out.println("No Comments Pre-processing");
-			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
-			File[] filePaths = dp.getInputFiles();
+
+			File[] filePaths = getFilePaths(s);
 			
 			File target = getTargetDir(s.getNoCommentsProfile(), s.getSourceDirectory());
 			
@@ -104,9 +100,8 @@ public class Preprocessor {
 		
 		if ( s.getCommentsProfile().isInUse() ) {
 			System.out.println("Comments Pre-processing");
-			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
-			File[] filePaths = dp.getInputFiles();
+
+			File[] filePaths = getFilePaths(s);
 			
 			File target = getTargetDir(s.getCommentsProfile(), s.getSourceDirectory());
 			
@@ -116,9 +111,8 @@ public class Preprocessor {
 		
 		if ( s.getTokenisedProfile().isInUse() ) {
 			System.out.println("Token Pre-processing");
-			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
-			File[] filePaths = dp.getInputFiles();
+
+			File[] filePaths = getFilePaths(s);
 			
 			File target = getTargetDir(s.getTokenisedProfile(), s.getSourceDirectory());
 			
@@ -129,9 +123,8 @@ public class Preprocessor {
 		
 		if ( s.getWSPatternProfile().isInUse() ) {
 			System.out.println("WS Pattern Pre-processing");
-			
-			DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
-			File[] filePaths = dp.getInputFiles();
+
+			File[] filePaths = getFilePaths(s);
 			
 			File target = getTargetDir(s.getWSPatternProfile(), s.getSourceDirectory());
 			
@@ -142,7 +135,11 @@ public class Preprocessor {
 		System.out.println("Pre-processing complete");
 		s.setPreprocessingStatus(true);
 	}
-	
+	private File[] getFilePaths (Settings s){
+		DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
+		File[] filePaths = dp.getInputFiles();
+		return filePaths;
+	}
 	private File makeDirectory(String targetDirectory) {
 		
 		File target = new File (targetDirectory);

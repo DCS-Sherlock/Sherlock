@@ -178,7 +178,6 @@ class NGramsStrategy implements DetectionStrategy {
 						}
 						//check if the run is already included in another run
 						if (isEncompassed(runList, i, i+counter-1, j, j+counter-1)){
-//	 						System.out.println("encompassed is called");
 							continue;
 						}
 						System.out.println("Ready to generate run");

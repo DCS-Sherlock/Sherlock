@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.*;
 
-import uk.ac.warwick.dcs.sherlock.FileTypes;
 import uk.ac.warwick.dcs.sherlock.Settings;
 
 /**
@@ -56,7 +55,7 @@ public class DetectionHandler {
 			
 			DirectoryProcessor sourceCode = new DirectoryProcessor(originalDirectory, new JavaFileFilter());
 			File[] sourceCodeFiles = sourceCode.getInputFiles();
-			if (sourceCodeFiles.length == 0){
+			    if (sourceCodeFiles.length == 0){
 				return null;
 			}
 			NGramsStrategy ng = new NGramsStrategy();
