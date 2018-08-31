@@ -1,14 +1,14 @@
 package uk.ac.warwick.dcs.sherlock;
 
-import java.io.File;
-import java.io.IOException;
-
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * The main class to run the sherlock application. This class references the sherlock.viw.gui package 
@@ -51,6 +51,16 @@ public class SherlockApplication extends Application {
 			goToMain();				// Set up the directory Selection window
 			primaryStage.setTitle("Sherlock V1.61");
 			primaryStage.show();					// Present this window to the User
+            // listen for close requests to close the Viewer
+            // this is needed because the View close policy is set to hidden instead of actually closing the Viewer
+            // inside the Dashboard controller.
+			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent t) {
+					Platform.exit();
+					System.exit(0);
+				}
+			});
 		} catch ( Exception e ){
 			System.out.println("Unable open Directory Selector");
 			e.printStackTrace();

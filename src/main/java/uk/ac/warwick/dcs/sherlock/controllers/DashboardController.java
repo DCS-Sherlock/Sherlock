@@ -12,13 +12,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Collections;
 import java.util.Comparator;
-import com.sun.prism.paint.Color;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -28,12 +26,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -111,6 +106,7 @@ public class DashboardController implements Initializable{
 	@FXML
 	private Label selectFilePrompt;
 	private int ngramLength;
+	private Viewer graphViewer;
 	private  ArrayList<MyEdge> edgeList;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -219,7 +215,6 @@ public class DashboardController implements Initializable{
 			}
 
 		});
-
 		WSPatternOpt.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle( ActionEvent event ) {
@@ -502,19 +497,22 @@ public class DashboardController implements Initializable{
 	private void generateGraph(){
 		if ( setting.isPreprocessingComplete() ) {
 			MultiGraph graph = createGraph(edgeList);
-			Viewer viewer = graph.display();
-			viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
+			graphViewer = graph.display();
+			// need to set the close policy to hide only to make it not close the entire application.
+			graphViewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
 		} else {
 			Alert alert = new Alert(AlertType.ERROR, "Please ensure pre-processing has completed before attempting to run detection");
 			alert.showAndWait();
 		}
 	}
 
-	public static MultiGraph createGraph(ArrayList<MyEdge> edgeList){
+	public MultiGraph createGraph(ArrayList<MyEdge> edgeList){
 		MultiGraph similarityGraph = new MultiGraph("returnGraph");
-		similarityGraph.addAttribute("ui.stylesheet", "url('file:///C:/Users/MingXiu/IdeaProjects/test/src/main/java/styling.css')");
 		similarityGraph.setStrict(false);
 		similarityGraph.setAutoCreate(true);
+		ArrayList<MyEdge> sortedList = sortByEdgeWeight(edgeList);
+		float largestEdge = (float) sortedList.get(0).getDistance()+ 1;
+
 		for (int i = 0; i < edgeList.size(); i++){
 			MyEdge edge = edgeList.get(i);
 			String edgeID = Integer.toString(i);
@@ -522,8 +520,7 @@ public class DashboardController implements Initializable{
 			similarityGraph.addEdge(edgeID, edge.getNode1(), edge.getNode2());
 			// we create the edges and then get them from the graph so we don't need to make the nodes
 			Edge e = similarityGraph.getEdge(edgeID);
-			double weight = (double) Math.max(1000-edge.getDistance(), 1)/1000.0;
-			System.out.println("edge distances  are: " + edge.getDistance());
+			double weight = (double) Math.max(largestEdge-edge.getDistance(), 1)/largestEdge;
 			e.addAttribute("ui.label",weight);
 			e.addAttribute("layout.weight",weight);
 		}
