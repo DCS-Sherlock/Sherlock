@@ -19,10 +19,11 @@ class Tuple <K, V>{
 	public void setValue(V v){
 		this.value = v;
 	}
-	public boolean same(Tuple<K,V> t2){
-		if (this.key.equals(t2.getKey()) && this.value.equals(t2.getValue())){
-			return true;
-		}return false;
+	public boolean same(Tuple<K,V> t2) {
+		return (this.key.equals(t2.getKey()) && this.value.equals(t2.getValue()));
+	}
+	public Tuple clone(){
+		return new Tuple<K,V>(this.key, this.value);
 	}
 	@Override
 	public String toString(){

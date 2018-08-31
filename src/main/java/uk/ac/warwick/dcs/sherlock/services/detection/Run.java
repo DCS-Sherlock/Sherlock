@@ -28,28 +28,31 @@ class Run {
 		this.runLength = l;
 	}
 	public Ngram getFile1(){
-		return f1;
+		return this.f1.clone();
 	}
 	public Ngram getFile2(){
-		return f2;
+		return this.f2.clone();
 	}
-	public Tuple<Integer, Integer> getFile1Indicies(){
-		return f1Indicies;
-	}
+	@SuppressWarnings("unchecked")
+	public Tuple<Integer, Integer> getFile1Indicies(){ return f1Indicies.clone();	}
+	@SuppressWarnings("unchecked")
 	public Tuple<Integer, Integer> getFile2Indicies(){
-		return f2Indicies;
-	}	
+		return this.f2Indicies.clone();
+	}
+
 	public void setFile1(Ngram file1){
-		this.f1 = file1;
+		this.f1 = file1.clone();
 	}
 	public void setFile2(Ngram file2){
-		this.f2 = file2;
+		this.f2 = file2.clone();
 	}
+	@SuppressWarnings("unchecked")
 	public void setFile1Indicies(Tuple<Integer, Integer> t1){
-		this.f1Indicies = t1;
+		this.f1Indicies = t1.clone();
 	}
+	@SuppressWarnings("unchecked")
 	public void setFile2Indicies(Tuple<Integer, Integer> t2){
-		this.f2Indicies = t2;
+		this.f2Indicies = t2.clone();
 	}
 	@Override
 	public String toString(){

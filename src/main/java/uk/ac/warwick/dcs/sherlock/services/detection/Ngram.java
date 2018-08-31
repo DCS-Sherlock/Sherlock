@@ -1,6 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.services.detection;
 
 class Ngram{
+	// since this object only contains primitives and immutable objects, we do not have to worry about returning
+	//references
 	private String content;
 	private int start;
 	private int end;
@@ -32,5 +34,8 @@ class Ngram{
 		return "Lines: (" + String.valueOf(this.start)+
 					","+String.valueOf(this.end) + ") Content: " +this.content;
     }
-	
+    @Override
+	public Ngram clone(){
+		return new Ngram(this.content, this.start, this.end);
+	}
 }
