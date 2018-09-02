@@ -137,8 +137,7 @@ public class Preprocessor {
 	}
 	private File[] getFilePaths (Settings s){
 		DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter() );
-		File[] filePaths = dp.getInputFiles();
-		return filePaths;
+		return dp.getInputFiles();
 	}
 	private File makeDirectory(String targetDirectory) {
 		
@@ -159,8 +158,7 @@ public class Preprocessor {
 			targetDirectory = profile.getOutputDir();
 		}
 
-		File target = makeDirectory(targetDirectory);
-		return target;
+		return makeDirectory(targetDirectory);
 	}
 	
 }

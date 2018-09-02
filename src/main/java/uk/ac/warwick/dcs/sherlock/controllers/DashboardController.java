@@ -231,7 +231,7 @@ public class DashboardController implements Initializable{
 		advancedSettings.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-				if (advancedSettingsVisibility == false) {
+				if (!advancedSettingsVisibility) {
 					advancedSettingsList.setVisible(true);
 					selectFilePrompt.setVisible(false);
 					advancedSettingsVisibility = true;
@@ -285,7 +285,7 @@ public class DashboardController implements Initializable{
 				double size = startDetection.getHeight();
 				generateReportIndicator.setProgress(-1.0f);
 				generateReportIndicator.setPrefSize(size, size);
-				generateReportIndicator.setVisible(true);;
+				generateReportIndicator.setVisible(true);
 				Task<Void> task = new Task<Void>() {
 					@Override
 					public Void call() throws Exception {
@@ -310,7 +310,7 @@ public class DashboardController implements Initializable{
 				double size = generateGraph.getHeight();
 				generateGraphIndicator.setProgress(-1.0f);
 				generateGraphIndicator.setPrefSize(size, size);
-				generateGraphIndicator.setVisible(true);;
+				generateGraphIndicator.setVisible(true);
 				Task<Void> task = new Task<Void>() {
 					@Override
 					public Void call() throws Exception {
@@ -339,8 +339,7 @@ public class DashboardController implements Initializable{
 				Task<ArrayList<String>> task = new Task<ArrayList<String>>() {
 					@Override
 					public ArrayList<String> call() throws Exception {
-						ArrayList<String> stringList = getTopSimilarities(edgeList);
-						return stringList;
+					return getTopSimilarities(edgeList);
 					}
 				};
 				task.setOnSucceeded(e -> {

@@ -77,8 +77,7 @@ class NGramsStrategy implements DetectionStrategy {
             }
             totalRunLength += currentRunLength;
         }
-        MyEdge edge = new MyEdge(filename1, filename2, totalRunLength*largestRun);
-	    return edge;
+        return = new MyEdge(filename1, filename2, totalRunLength*largestRun);
     }
 	private void writeToFile(File f, ArrayList<Run> list, String name1, String name2) {
 		try {
@@ -112,8 +111,7 @@ class NGramsStrategy implements DetectionStrategy {
 			String s2 = readFile(f2.getAbsolutePath(), Charset.defaultCharset());
 			ArrayList<Tuple<String, Integer>> l1 = generateList(s1);
 			ArrayList<Tuple<String, Integer>> l2 = generateList(s2);
-			ArrayList<Run> runList = getRuns(l1, l2, nSize, anomalies);
-			return runList;
+			return getRuns(l1, l2, nSize, anomalies);
 		}	
 	private String readFile(String path, Charset encoding){
 			byte[] encoded = new byte[1];
