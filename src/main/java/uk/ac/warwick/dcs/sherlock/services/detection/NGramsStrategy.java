@@ -77,7 +77,7 @@ class NGramsStrategy implements DetectionStrategy {
             }
             totalRunLength += currentRunLength;
         }
-        return = new MyEdge(filename1, filename2, totalRunLength*largestRun);
+        return new MyEdge(filename1, filename2, totalRunLength*largestRun);
     }
 	private void writeToFile(File f, ArrayList<Run> list, String name1, String name2) {
 		try {
