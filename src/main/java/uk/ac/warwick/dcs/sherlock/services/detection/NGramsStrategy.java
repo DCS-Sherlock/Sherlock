@@ -11,9 +11,9 @@ import java.util.*;
 
 import uk.ac.warwick.dcs.sherlock.SettingProfile;
 
-class NGramsStrategy implements DetectionStrategy {
+public class NGramsStrategy implements DetectionStrategy {
 
-	NGramsStrategy(){}
+	public NGramsStrategy(){}
 	
 	@Override
 	public ArrayList<MyEdge> doDetection(File[] filesToCompare, SettingProfile sp, int ngramLength) {
@@ -109,8 +109,8 @@ class NGramsStrategy implements DetectionStrategy {
 	private ArrayList<Run> findMatches (File f1, File f2, int nSize, int anomalies){
 			String s1 = readFile(f1.getAbsolutePath(), Charset.defaultCharset());
 			String s2 = readFile(f2.getAbsolutePath(), Charset.defaultCharset());
-			ArrayList<Tuple<String, Integer>> l1 = generateList(s1);
-			ArrayList<Tuple<String, Integer>> l2 = generateList(s2);
+			ArrayList<Tuple<String, Integer>> l1 = generateFileBreakdownList(s1);
+			ArrayList<Tuple<String, Integer>> l2 = generateFileBreakdownList(s2);
 			return getRuns(l1, l2, nSize, anomalies);
 		}	
 	private String readFile(String path, Charset encoding){
@@ -123,7 +123,7 @@ class NGramsStrategy implements DetectionStrategy {
 			return new String(encoded, encoding);
 		}
 	
-	private ArrayList<Tuple<String, Integer>> generateList (String s){
+	private ArrayList<Tuple<String, Integer>> generateFileBreakdownList(String s){
 			ArrayList<Tuple<String, Integer>> fileBreakdown = new ArrayList<Tuple<String, Integer>>();
 			int currentLine = 1;
 			String[] wordList = s.replace("\n", " \n ").split("[ \t]+");
@@ -143,17 +143,7 @@ class NGramsStrategy implements DetectionStrategy {
 		public int numOfEOL (String s) {
 			return (s.length()-s.replace("\n", "").length());
 		}
-		public static String unEscapeString(String s){
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<s.length(); i++)
-				switch (s.charAt(i)){
-					case '\n': sb.append("\\n"); break;
-					case '\t': sb.append("\\t"); break;
-					// ... rest of escape characters
-					default: sb.append(s.charAt(i));
-				}
-			return sb.toString();
-		}
+
 		public ArrayList<Run> getRuns(ArrayList<Tuple<String, Integer>> file1List, ArrayList<Tuple<String, Integer>> file2List, int minNgramLength, int anomalies){
 			ArrayList<Run> runList = new ArrayList<Run>();
 			for (int i = 0; i < file1List.size(); i++){
@@ -170,7 +160,6 @@ class NGramsStrategy implements DetectionStrategy {
 								differences++;
 							}
 						}
-						//check the run is long enough
 						if (counter< minNgramLength){
 							continue;
 						}
@@ -179,7 +168,6 @@ class NGramsStrategy implements DetectionStrategy {
 							continue;
 						}
 						System.out.println("Ready to generate run");
-						//generate the run object
 						Run r = generateRun(file1List, file2List, counter-1, i, j);
 						runList.add(r);
 					}
