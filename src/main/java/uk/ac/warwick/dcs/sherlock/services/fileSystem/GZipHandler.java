@@ -64,7 +64,7 @@ class GZipHandler implements ExtractionStrategy {
 					   int count;
 					   byte data[] = new byte[1024];
 					   
-					   System.out.println("Output Stream " + destination + File.separator + tarEntry.getName());
+					   //System.out.println("Output Stream " + destination + File.separator + tarEntry.getName());
 					   
 					   FileOutputStream fos = new FileOutputStream(destination + File.separator + tarEntry.getName() );
 					   BufferedOutputStream dest = new BufferedOutputStream(fos, 1024);

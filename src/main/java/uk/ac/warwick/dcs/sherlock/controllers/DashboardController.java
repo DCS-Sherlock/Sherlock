@@ -122,7 +122,6 @@ public class DashboardController implements Initializable{
 				selectDirectory();
 				startPreProcessing.setDisable(false);
 				startDetection.setDisable(false);
-				System.out.println("--------------------------TRied to set the buttons to be disabled");
 			}
 		});
 

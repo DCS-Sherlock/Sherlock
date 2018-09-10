@@ -41,11 +41,11 @@ public class SettingProfile {
 		setPropertiesFile( new File (settingsDirectory, thisProfile.getProperty("outputDir") + ".txt")) ;
 		
 		if ( ! loadSettings ) {
-			System.out.println("Storing defaults");
-			System.out.println("This profile: " + thisProfile.getProperty("description"));
-			System.out.println("This profile: " + thisProfile.getProperty("outputDir"));
-			System.out.println("This profile: " + thisProfile.getProperty("tokeniserName"));
-			System.out.println("This profile: " + thisProfile.getProperty("inUse"));
+//			System.out.println("Storing defaults");
+//			System.out.println("This profile: " + thisProfile.getProperty("description"));
+//			System.out.println("This profile: " + thisProfile.getProperty("outputDir"));
+//			System.out.println("This profile: " + thisProfile.getProperty("tokeniserName"));
+//			System.out.println("This profile: " + thisProfile.getProperty("inUse"));
 			store();
 		} else if ( loadSettings ) {
 			System.out.println("Loading Settings");

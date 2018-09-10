@@ -48,8 +48,7 @@ public class Preprocessor {
 		 * */
 		
 		s.getInUseStatus();
-		
-		System.out.println("------------------");
+
 		if ( s.getOriginalProfile().isInUse() ) {
 			System.out.println("Original Pre-processing");
 			String targetDirectory;
