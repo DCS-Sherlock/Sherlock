@@ -41,12 +41,10 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.graph.implementations.MultiGraph;
-import uk.ac.warwick.dcs.sherlock.SherlockApplication;
-import uk.ac.warwick.dcs.sherlock.services.detection.MyEdge;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
-
 import uk.ac.warwick.dcs.sherlock.Settings;
-
+import uk.ac.warwick.dcs.sherlock.services.detection.MyEdge;
+import uk.ac.warwick.dcs.sherlock.services.detection.NGramsStrategy;
 import uk.ac.warwick.dcs.sherlock.services.detection.DetectionHandler;
 import uk.ac.warwick.dcs.sherlock.services.preprocessing.Preprocessor;
 
@@ -99,7 +97,7 @@ public class DashboardController implements Initializable{
 	@FXML
 	private GridPane advancedSettingsList;
 	@FXML
-	private TextField textField;
+	private TextField minNgramLengthTextField;
 	private boolean advancedSettingsVisibility = false;
 	@FXML
 	private ChoiceBox similarityMetricChooser;
@@ -477,14 +475,14 @@ public class DashboardController implements Initializable{
 		if ( setting.isPreprocessingComplete() ) {
 			System.out.println("Starting Detection");
 			try {
-				String n = textField.getText();
+				String n = minNgramLengthTextField.getText();
 				ngramLength = Integer.parseInt(n);
 			}catch (Exception e){
 				System.out.println("text field is null");
 				ngramLength = 20;
 			}
-
-			DetectionHandler dh = new DetectionHandler(setting, ngramLength);
+			NGramsStrategy nGramsStrategy = new NGramsStrategy();
+			DetectionHandler dh = new DetectionHandler(setting, ngramLength, nGramsStrategy);
 			System.out.println("created detection handler");
 			edgeList = dh.runDetectionStrategies();
 		} else {

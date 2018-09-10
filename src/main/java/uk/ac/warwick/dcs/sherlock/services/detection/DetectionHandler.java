@@ -16,28 +16,32 @@ import uk.ac.warwick.dcs.sherlock.Settings;
  *
  */
 public class DetectionHandler {
-	private Settings s ; 
-	private int n;
+	private Settings userSettings;
+	private int ngramlength;
+	private DetectionStrategy strategy;
 	/**
 	 * DectionHandler constructor
 	 * This constructor initiates the detection strategies by calling the runDetectionStrategies method.
 	 *
-	 * @param s 		- The file types requested by the user for this detection
+	 * @param userSettings 		- The file types requested by the user for this detection
+	 * @param ngramLength      - The minimum length an Ngram has be to be considered a run
+	 * @param concreteStrategy         - The detection strategy that will be used in this detection handler
 	 */
-	public DetectionHandler(Settings s, int ngramLength){
-		this.n = ngramLength;
-		this.s = s ;
+	public DetectionHandler(Settings userSettings, int ngramLength, DetectionStrategy concreteStrategy){
+		this.ngramlength = ngramLength;
+		this.userSettings = userSettings ;
+		this.strategy = concreteStrategy;
 
 	}
 	
 	public  ArrayList<MyEdge> runDetectionStrategies() {
 		System.out.println("----Running detection strategy----");
 		ArrayList<MyEdge> edges;
-		if ( s.getOriginalProfile().isInUse() ) {
+		if ( userSettings.getOriginalProfile().isInUse() ) {
 			System.out.println("Original Detection");
 			
 			/* Get the files located in the Original Directory */
-			File originalDirectory = new File (s.getOriginalProfile().getOutputDir() );
+			File originalDirectory = new File (userSettings.getOriginalProfile().getOutputDir() );
 			File parent = originalDirectory.getParentFile().getParentFile();
 			String targetDirectory = parent.getAbsolutePath() + File.separator + "Report" + File.separator + "Original";
 			/* 
@@ -57,23 +61,26 @@ public class DetectionHandler {
 			File[] sourceCodeFiles = sourceCode.getInputFiles();
 			    if (sourceCodeFiles.length == 0){
 				return null;
+				}
+			if (this.strategy == null){
+			    System.out.println("strategy was not passed");
+			    return null;
 			}
-			NGramsStrategy ng = new NGramsStrategy();
-			edges = ng.doDetection(sourceCodeFiles, s.getOriginalProfile(), this.n);
+			edges = this.strategy.doDetection(sourceCodeFiles, userSettings.getOriginalProfile(), this.ngramlength);
 			System.out.println(edges);
 			return edges;
 		}
 		
-		if ( s.getNoWSProfile().isInUse() ) {
+		if ( userSettings.getNoWSProfile().isInUse() ) {
 			System.out.println("No WS Detection");
 			/* Get the files located in the NoWhitespace Directory */
-			File noWSDirectory = new File (s.getNoWSProfile().getOutputDir() );
+			File noWSDirectory = new File (userSettings.getNoWSProfile().getOutputDir() );
 			System.out.println(noWSDirectory.getPath());
 			File[] noWSFiles = noWSDirectory.listFiles();
 		}
 		
-		if ( s.getNoCommentsProfile().isInUse() ) {
-			File noCommentsDirectory = new File (s.getNoCommentsProfile().getOutputDir() );
+		if ( userSettings.getNoCommentsProfile().isInUse() ) {
+			File noCommentsDirectory = new File (userSettings.getNoCommentsProfile().getOutputDir() );
 			System.out.println(noCommentsDirectory.getPath());
 			File[] noCommentsFiles = noCommentsDirectory.listFiles();
 			for (int i=0; i < noCommentsFiles.length; i++) {
@@ -81,30 +88,30 @@ public class DetectionHandler {
 			}
 		}
 		
-		if ( s.getNoCWSProfile().isInUse() ) {
+		if ( userSettings.getNoCWSProfile().isInUse() ) {
 			System.out.println("No Comments, No WS Detection");
-			File noCWSDirectory = new File (s.getNoCWSProfile().getOutputDir() );
+			File noCWSDirectory = new File (userSettings.getNoCWSProfile().getOutputDir() );
 			System.out.println(noCWSDirectory.getPath());
 			File[] noCWSFiles = noCWSDirectory.listFiles();
 		}
 		
-		if ( s.getCommentsProfile().isInUse() ) {
+		if ( userSettings.getCommentsProfile().isInUse() ) {
 			System.out.println("Comments Detection");
-			File commentsDirectory = new File (s.getCommentsProfile().getOutputDir() );
+			File commentsDirectory = new File (userSettings.getCommentsProfile().getOutputDir() );
 			System.out.println(commentsDirectory.getPath());
 			File[] commentsFiles = commentsDirectory.listFiles();
 		}
 		
-		if ( s.getTokenisedProfile().isInUse() ) {
+		if ( userSettings.getTokenisedProfile().isInUse() ) {
 			System.out.println("Token Detection");
-			File tokDirectory = new File (s.getTokenisedProfile().getOutputDir() );
+			File tokDirectory = new File (userSettings.getTokenisedProfile().getOutputDir() );
 			System.out.println(tokDirectory.getPath());
 			File[] tokFiles = tokDirectory.listFiles();
 		}
 		
-		if ( s.getWSPatternProfile().isInUse() ) {
+		if ( userSettings.getWSPatternProfile().isInUse() ) {
 			System.out.println("WS Pattern Detection");
-			File wsPatternDirectory = new File (s.getWSPatternProfile().getOutputDir() );
+			File wsPatternDirectory = new File (userSettings.getWSPatternProfile().getOutputDir() );
 			System.out.println(wsPatternDirectory.getPath());
 			File[] wsPatternFiles = wsPatternDirectory.listFiles();
 		}
