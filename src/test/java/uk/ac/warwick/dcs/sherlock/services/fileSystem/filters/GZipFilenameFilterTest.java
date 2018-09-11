@@ -1,12 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.services.fileSystem.filters;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.Rule;
+
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.GZipFilenameFilter;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class GZipFilenameFilterTest {
 
