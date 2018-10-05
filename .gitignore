@@ -1,44 +1,37 @@
-# VS Code
-.vscode/
+# Java
+*.class
+*.jar
+*.war
+*.ear
 
 # Eclipse
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
+.project
+.classpath
+.settings
+
+# Idea
+.idea
+*.iml
+*.iws
+*.ipr
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Gradle
+.gradle
+!gradle-wrapper.jar
 
 # Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-\.classpath
+target
 
-\.idea/\.name
+# Build
+out
+build
+bin
 
-\.idea/misc\.xml
-
-\.idea/modules\.xml
-
-\.idea/vcs\.xml
-
-\.idea/workspace\.xml
-
-Sherlock\.iml
-
-\.idea/libraries/
-
-\.idea/dictionaries/ming\.xml
+# Other
+*.log
+*.swp
+*.bak
