@@ -1,10 +1,12 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
    id 'net.nemerosa.versioning' version '2.7.1'
 }
 
+apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'antlr'
-apply plugin: 'java'
 
 group = 'uk.ac.warwick.dcs.sherlock'
 version = versioning.info.full
@@ -51,11 +53,61 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version:'4.11'
 }
 
-generateGrammarSource << {
-    copy {
-        from "${buildDir}/generated-src/antlr/main"
-        into "${buildDir}/generated-src/antlr/main/java/uk/ac/warwick/dcs/sherlock/services/preprocessing"
+clean {
+    delete  "src/generated"
+}
+
+generateGrammarSource {
+    doLast {
+        delete  "$projectDir/src/generated/antlr/"
+        copy {
+            from "$buildDir/generated-src/antlr/main"
+            into "$projectDir/src/generated/antlr/uk/ac/warwick/dcs/sherlock/services/preprocessing"
+        }
     }
+}
+
+/** Token Replacement */
+task generateSources(type: Copy) {
+    from "src/main/java"
+    into "$buildDir/generated-src/java/main"
+    filter(ReplaceTokens, tokens: [
+            '$VERSION':  versioning.info.display,
+            'yyyy': 'bbbb'
+    ])
+}
+
+sourceSets.main.java.srcDirs = ["$buildDir/generated-src/java/main", "src/generated/antlr/"]
+compileJava.dependsOn generateSources
+
+jar {
+    println 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
+    manifest {
+        attributes (
+                'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
+                "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
+        )
+    }
+}
+
+task deps(type: Copy) {
+    doFirst {
+        mkdir("$buildDir/libs/lib")
+    }
+    from configurations.runtime
+    into "$buildDir/libs/lib"
+}
+
+task zip(type: Zip, dependsOn: deps) {
+    delete  "$buildDir/distributions"
+    from "$buildDir/libs"
+    into(project.name + '-' + project.version)
+}
+
+task distribution {
+    dependsOn 'jar'
+    dependsOn 'zip'
+    tasks.findByName('zip').mustRunAfter 'jar'
 }
 
 
