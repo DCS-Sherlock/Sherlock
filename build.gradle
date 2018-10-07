@@ -81,7 +81,7 @@ sourceSets.main.java.srcDirs = ["$buildDir/generated-src/java/main", "src/genera
 compileJava.dependsOn generateSources
 
 jar {
-    println 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
+    fileTree("$buildDir/libs") { include '*.jar' }
     manifest {
         attributes (
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
