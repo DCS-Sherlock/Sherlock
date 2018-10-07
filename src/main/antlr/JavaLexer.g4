@@ -1,5 +1,9 @@
 lexer grammar JavaLexer;
 
+@header {
+package uk.ac.warwick.dcs.sherlock.services.preprocessing;
+}
+
 /*
  * Keywords
  */

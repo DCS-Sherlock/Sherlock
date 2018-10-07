@@ -1,5 +1,9 @@
 lexer grammar NowhitespaceLexer;
 
+@header {
+package uk.ac.warwick.dcs.sherlock.services.preprocessing;
+}
+
 /*
  * White Space
  */
