@@ -1,5 +1,4 @@
 package uk.ac.warwick.dcs.sherlock.services.detection;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 
@@ -7,11 +6,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.Settings;
-import uk.ac.warwick.dcs.sherlock.services.detection.DetectionHandler;
 import uk.ac.warwick.dcs.sherlock.services.preprocessing.Preprocessor;
 
 class DetectionHandlerTest {

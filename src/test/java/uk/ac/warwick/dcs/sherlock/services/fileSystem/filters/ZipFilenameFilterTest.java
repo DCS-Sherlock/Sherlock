@@ -8,7 +8,6 @@ import java.nio.file.Path;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ZipFilenameFilterTest {
 
@@ -20,6 +19,7 @@ class ZipFilenameFilterTest {
 		ZipFilenameFilter filter = new ZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testAcceptzip() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.zip";
@@ -27,6 +27,7 @@ class ZipFilenameFilterTest {
 		ZipFilenameFilter filter = new ZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testRejectZOP() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.zop";

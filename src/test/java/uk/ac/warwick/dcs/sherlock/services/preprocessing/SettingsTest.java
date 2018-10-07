@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.services.preprocessing;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
+import static junit.framework.Assert.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,36 +21,36 @@ class SettingsTest {
 
 	@Test
 	void testOriginalProfileIndex() {
-		assertTrue(FileTypes.ORI.getValue() == 0);
+		assertEquals(0, FileTypes.ORI.getValue());
 	}
 	
 	@Test
 	void testNoWSProfileIndex() {
-		assertTrue(FileTypes.NWS.getValue() == 1);
+		assertEquals(1, FileTypes.NWS.getValue());
 	}
 	
 	@Test
 	void testNoCommentsProfileIndex() {
-		assertTrue(FileTypes.NOC.getValue() == 3);
+		assertEquals(3, FileTypes.NOC.getValue());
 	}
 	
 	@Test
 	void testNoCommentsWSProfileIndex() {
-		assertTrue(FileTypes.NCW.getValue() == 2);
+		assertEquals(2, FileTypes.NCW.getValue());
 	}
 	
 	@Test
 	void testCommentsProfileIndex() {
-		assertTrue(FileTypes.COM.getValue() == 4);
+		assertEquals(4, FileTypes.COM.getValue());
 	}
 	
 	@Test
 	void testTokenisedProfileIndex() {
-		assertTrue(FileTypes.TOK.getValue() == 5);
+		assertEquals(5, FileTypes.TOK.getValue());
 	}
 	
 	@Test
 	void testWSPatternProfileIndex() {
-		assertTrue(FileTypes.WSP.getValue() == 6);
+		assertEquals(6, FileTypes.WSP.getValue());
 	}
 }

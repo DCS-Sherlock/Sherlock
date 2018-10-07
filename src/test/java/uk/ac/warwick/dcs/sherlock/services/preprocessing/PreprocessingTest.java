@@ -3,7 +3,6 @@ import static junit.framework.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.io.FileFilter;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -13,17 +12,14 @@ import org.junit.jupiter.api.Test;
 
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.JavaFileFilter;
-import uk.ac.warwick.dcs.sherlock.FileTypes;
-import uk.ac.warwick.dcs.sherlock.SettingProfile;
 import uk.ac.warwick.dcs.sherlock.Settings;
-import uk.ac.warwick.dcs.sherlock.services.preprocessing.Preprocessor;
 
 import org.apache.commons.io.FilenameUtils;
 
 class PreprocessingTest {
-	static Preprocessor p ;
-	static Settings s;
-	static String originalDirectory ;
+	private static Preprocessor p ;
+	private static Settings s;
+	private static String originalDirectory ;
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {

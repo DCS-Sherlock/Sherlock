@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.services.fileSystem;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import uk.ac.warwick.dcs.sherlock.services.fileSystem.DirectoryProcessor;
 import uk.ac.warwick.dcs.sherlock.services.fileSystem.filters.*;
 
 /**
@@ -145,7 +144,7 @@ class DirectoryProcessorTest {
 	@Test
 	void testAcceptedFileFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir , new AcceptedFileFilter() );
-		assertTrue(dp.getInputFiles().length == 2);
+		assertEquals(2, dp.getInputFiles().length);
 	}
 	
 	/**
@@ -154,8 +153,8 @@ class DirectoryProcessorTest {
 	@Test
 	void testDirectoryFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir , new DirectoryFilter() );
-		
-		assertTrue(dp.getInputFiles().length == 0);
+
+		assertEquals(0, dp.getInputFiles().length);
 	}
 	
 	/**
@@ -164,8 +163,8 @@ class DirectoryProcessorTest {
 	@Test
 	void testGZipFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir, new GZipFilenameFilter() );
-		
-		assertTrue(dp.getInputFiles().length == 1);
+
+		assertEquals(1, dp.getInputFiles().length);
 	}
 	
 	/**
@@ -174,8 +173,8 @@ class DirectoryProcessorTest {
 	@Test
 	void testJavaFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir , new JavaFileFilter() );
-		
-		assertTrue(dp.getInputFiles().length == 1);
+
+		assertEquals(1, dp.getInputFiles().length);
 	}
 	
 	/**
@@ -184,8 +183,8 @@ class DirectoryProcessorTest {
 	@Test
 	void testPlainTextFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir , new PlainTextFilter() );
-		
-		assertTrue(dp.getInputFiles().length == 1);
+
+		assertEquals(1, dp.getInputFiles().length);
 	}
 	/**
 	 * Test for Zip files
@@ -193,7 +192,7 @@ class DirectoryProcessorTest {
 	@Test
 	void testZipFileFilter() {
 		DirectoryProcessor dp = new DirectoryProcessor( filterable_Dir, new ZipFilenameFilter() );
-		
-		assertTrue(dp.getInputFiles().length == 1);
+
+		assertEquals(1, dp.getInputFiles().length);
 	}
 }

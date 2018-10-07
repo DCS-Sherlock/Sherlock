@@ -31,30 +31,29 @@ configurations {
 }
 
 dependencies {  
-    antlr "org.antlr:antlr4:4.7.1"
-    compile "org.antlr:antlr4-runtime:4.7.1"
+    antlr 'org.antlr:antlr4:4.7.1'
+
+    compile(
+            'org.antlr:antlr4-runtime:4.7.1'
+    )
+
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    )
 
     compile group: 'com.miglayout', name: 'miglayout-javafx', version:'5.0'
     compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
     compile group: 'org.apache.commons', name: 'commons-compress', version:'1.5'
     compile group: 'commons-io', name: 'commons-io', version:'2.6'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version:'4.7.1'
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.12'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.12'
     compile group: 'log4j', name: 'log4j', version:'1.2.17'
     compile group: 'org.graphstream', name: 'gs-core', version:'1.0'
     compile group: 'org.graphstream', name: 'gs-ui', version:'1.1.2'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version:'5.1.0'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version:'5.1.0'
-    testCompile group: 'org.junit.vintage', name: 'junit-vintage-engine', version:'5.1.0'
-    testCompile group: 'org.junit.platform', name: 'junit-platform-launcher', version:'1.1.0'
-    testCompile group: 'org.junit.platform', name: 'junit-platform-runner', version:'1.1.0'
-    testCompile group: 'junit', name: 'junit', version:'4.11'
-}
-
-clean {
-    delete  "src/generated"
 }
 
 generateGrammarSource {
@@ -77,6 +76,7 @@ task generateSources(type: Copy) {
 sourceSets.main.java.srcDirs = ["$buildDir/src/main/java", "src/generated/antlr/"]
 compileJava.dependsOn generateSources
 
+/** Jar Maifest */
 jar {
     delete fileTree("$buildDir/libs") { include '*.jar' }
     manifest {
@@ -87,6 +87,7 @@ jar {
     }
 }
 
+/** Copy dependencies in lib folder */
 task deps(type: Copy) {
     doFirst {
         mkdir("$buildDir/libs/lib")
@@ -95,6 +96,7 @@ task deps(type: Copy) {
     into "$buildDir/libs/lib"
 }
 
+/** Create dist zip */
 task zip(type: Zip) {
     delete   fileTree("$buildDir/distributions") { include '*.zip' }
     from "$buildDir/libs"
@@ -109,6 +111,10 @@ task distribution {
     tasks.findByName('zip').mustRunAfter 'jar'
 }
 
+test {
+    useJUnitPlatform()
+}
 
-
-
+clean {
+    delete  "src/generated"
+}
