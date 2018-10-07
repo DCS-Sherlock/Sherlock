@@ -69,19 +69,16 @@ generateGrammarSource {
 
 /** Token Replacement */
 task generateSources(type: Copy) {
+    delete "$buildDir/src"
     from "src/main/java"
-    into "$buildDir/generated-src/java/main"
-    filter(ReplaceTokens, tokens: [
-            '$VERSION':  versioning.info.display,
-            'yyyy': 'bbbb'
-    ])
+    into "$buildDir/src/main/java"
+    filter(ReplaceTokens, tokens: [VERSION:  versioning.info.display])
 }
-
-sourceSets.main.java.srcDirs = ["$buildDir/generated-src/java/main", "src/generated/antlr/"]
+sourceSets.main.java.srcDirs = ["$buildDir/src/main/java", "src/generated/antlr/"]
 compileJava.dependsOn generateSources
 
 jar {
-    fileTree("$buildDir/libs") { include '*.jar' }
+    delete fileTree("$buildDir/libs") { include '*.jar' }
     manifest {
         attributes (
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
@@ -98,15 +95,17 @@ task deps(type: Copy) {
     into "$buildDir/libs/lib"
 }
 
-task zip(type: Zip, dependsOn: deps) {
-    delete  "$buildDir/distributions"
+task zip(type: Zip) {
+    delete   fileTree("$buildDir/distributions") { include '*.zip' }
     from "$buildDir/libs"
     into(project.name + '-' + project.version)
 }
 
 task distribution {
+    dependsOn 'deps'
     dependsOn 'jar'
     dependsOn 'zip'
+    tasks.findByName('jar').mustRunAfter 'deps'
     tasks.findByName('zip').mustRunAfter 'jar'
 }
 
