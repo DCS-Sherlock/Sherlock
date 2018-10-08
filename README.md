@@ -2,7 +2,7 @@
 
 Branch: gradle
 
-Version: 0.1.23
+Version: 0.1.24
 
 ### Pre-requisites for building and compiling the code:
   • Java Platform (JDK)
