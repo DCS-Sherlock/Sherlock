@@ -146,17 +146,15 @@ test {
 }
 
 task updateReadmeBranch {
-    ant.replaceregexp(match:'# Sherlock(.*)', replace:"# Sherlock  [![Build Status](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock)", flags:'s', byline:true) {
+    ant.replaceregexp(match:'# Sherlock(.*)', replace:"# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
     }
-    ant.replaceregexp(match:'Version:(.*)', replace:"Version: ${project.version}", flags:'s', byline:true) {
+    /*ant.replaceregexp(match:'(.*)Branch:(.*)', replace:"Branch: ${grgit.branch.current().name}", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
-    }
-    ant.replaceregexp(match:'Branch:(.*)', replace:"Branch: ${grgit.branch.current().name}", flags:'s', byline:true) {
+    }*/
+    /*ant.replaceregexp(match:'(.*)Version:(.*)', replace:"Version: ${project.version}", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
-    }
-
-    println grgit.branch.current().name
+    }*/
 }
 
 class TagSupport
