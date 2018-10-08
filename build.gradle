@@ -4,23 +4,24 @@ import net.nemerosa.versioning.ReleaseInfo
 
 plugins {
    id 'net.nemerosa.versioning' version '2.7.1'
+   id "org.ajoberstar.grgit" version "2.3.0"
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'antlr'
 
+project.ext.count = grgit.log {range(grgit.tag.list().find{ it.name == versioning.info.lastTag}.collect { it }[0].name, "HEAD")}.size()
+
 versioning {
-    releases = ['gradle', 'master']
-    
+    releases = ['ver']
     releaseParser = { SCMInfo scmInfo, String separator = '/' ->
-        List<String> part = scmInfo.lastTag.split(separator) + ''
-        new ReleaseInfo(type: part[0], base: part[1])
+        new ReleaseInfo(type: "ver", base: scmInfo.lastTag)
     }
 }
 
 group = 'uk.ac.warwick.dcs.sherlock'
-version = versioning.info.display
+version = "${versioning.info.lastTag}.${project.count}"
 
 description = """Sherlock"""
 
@@ -69,8 +70,9 @@ dependencies {
 
 task printVersion {
     println project.name + '-' + project.version
-    println versioning.info.tag
-    println versioning.info.lastTag
+
+    //println grgit.tag.list().find{ it.name == versioning.info.lastTag}.collect { it }[0]
+    //println grgit.log {range(grgit.tag.list().find{ it.name == versioning.info.lastTag}.collect { it }[0].name, "HEAD")}.size()
 }
 
 generateGrammarSource {
@@ -88,7 +90,7 @@ task generateSources(type: Copy) {
     delete "$buildDir/src"
     from "src/main/java"
     into "$buildDir/src/main/java"
-    filter(ReplaceTokens, tokens: [VERSION:  versioning.info.display])
+    filter(ReplaceTokens, tokens: [VERSION:  project.version])
 }
 sourceSets.main.java.srcDirs = ["$buildDir/src/main/java", "src/generated/antlr/"]
 compileJava.dependsOn generateSources
