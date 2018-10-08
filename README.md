@@ -1,30 +1,29 @@
-# Sherlock  [![Build Status: gradle](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=gradle)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=gradle)
+# Sherlock  [![Build Status: master](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=master)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=master)
 
 <!----- Branch: --->
 
 <!----- Version: --->
 
-### Pre-requisites for building and compiling the code:
-  • Java Platform (JDK)
-    AVAILABLE FOR DOWNLOAD AT: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-    MANDATORY
-    VERSION: 10
 
-  • Apache Maven
-    AVAILABLE FOR DOWNLOAD AT: https://maven.apache.org/download.cgi
-    MANDATORY
-    VERSION: 3.5.4
+## Requirements
+  - JDK 1.8
+  - Gradle (4.10.2 included in repo)
 
-  • Gluon scene builder toolkit
-    AVAILABLE FOR DOWNLOAD AT: http://gluonhq.com/products/scene-builder/
-    MANDATORY
-    VERSION: 9.0.1
 
-### Building and compiling the code:
-It is recommended that an IDE such as Eclipse or IntelliJ is used to continue the development of the system. These IDEs are integratable with Scene builder for developing the GUI and ANTLR.
+## IDEA support
+The gradle project comes with IntelliJ IDEA support. To use: 
 
-#### Commandline
+```New project from existing sources -> Import project -> Import project from external model -> gradle -> uncheck "Create seperate module per source set"```
 
-Run the maven project with: `mvn jfx:run`.
 
-Build a jar file to `./target/Sherlock.jar` with `mvn jfx:jar`.
+## Dependencies
+To download the project dependencies use: `gradlew(.bat) deps`. They can be found in `build/lib/`
+
+
+## Building
+To build WITH tests use `gradlew(.bat) build`
+
+To build WITHOUT tests use `gradlew(.bat) jar`
+
+To create a distribution zip including jar and dependencies use `gradlew(.bat) distribute`
+
