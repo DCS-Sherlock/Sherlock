@@ -1,7 +1,7 @@
 # Sherlock  [![Build Status](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=master)](https://travis-ci.org/DCS-Sherlock/Sherlock)
 
-Branch: master
-<!----- (Version: 0.1.22) --->
+<!----- Branch: master --->
+<!----- Version: 0.1.22  --->
 
 ### Pre-requisites for building and compiling the code:
   • Java Platform (JDK)
