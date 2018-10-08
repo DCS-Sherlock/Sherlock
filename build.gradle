@@ -1,4 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+import net.nemerosa.versioning.SCMInfo
+import net.nemerosa.versioning.ReleaseInfo
 
 plugins {
    id 'net.nemerosa.versioning' version '2.7.1'
@@ -9,7 +11,12 @@ apply plugin: 'maven'
 apply plugin: 'antlr'
 
 versioning {
-    releases = ['gradle']	
+    releases = ['gradle', 'master']
+    
+    releaseParser = { SCMInfo scmInfo, String separator = '/' ->
+        List<String> part = scmInfo.lastTag.split(separator) + ''
+        new ReleaseInfo(type: part[0], base: part[1])
+    }
 }
 
 group = 'uk.ac.warwick.dcs.sherlock'
@@ -62,6 +69,8 @@ dependencies {
 
 task printVersion {
     println project.name + '-' + project.version
+    println versioning.info.tag
+    println versioning.info.lastTag
 }
 
 generateGrammarSource {
