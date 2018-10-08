@@ -3,7 +3,7 @@ install: true
 jdk:
 - oraclejdk8
 script:
-- "./gradlew jar -s"
+- "./gradlew build -s"
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -11,18 +11,3 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
-
-deploy:
-  before_deploy:
-    # Set up git user name and tag this commit
-    - git config --local user.name "Travis"
-    - git config --local user.email "travis@dcs-sherlock"
-    - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-  provider: releases
-  api_key:
-    secure: D+FXYRe/vye7J4ciR9RteIqyNwGOcTOHIQM14Ci7Kxhv1oz2ZnBsHFQ3mFIoDyzelxCNss1gB1Usg0knDi2iDczt0WEQkPvNw/9gRQh82Ootd+KVi6XDCno7iAk134HRErU9g+JR2f2cNaoBMicYvQtHcMiDG83QspoSrXZdC5Rpkz9aDB3YjMNBJOGuIxvCtLvxeQHS7SZemRpdwH6kwECrrzHw7AscioyTFqR9omQnCXt4Bc4IUtI7eLB2jkJ2dc1oM1io4pL/9dq7Vsh8X2Kk8Du0vhCii86wJhC0TCXTA7P+e8p8D0PVahY0BuL4cOzsxROwqvRJXljPmO1/y61AnhUtT6LcqmQLKtcgyKOCFe5zIwOho1oZpGxdKxB0wElW60Pua9+wylJ0jIlekn0sp76g3IaBYFff4J1sezqaF/n8wIPjPbUynfok5/4/NKU6nro/0yXqiimsBweMOmcOSZrrF3yMeWW9h5oHryJ9cuOitaD8iboIEzBxFlzHaOY953xfy+VvWbDvp3IveOn9Z2jHaoOCrWr/rIY/MAxg7QiDo3cJqpVnwlTUlFa/NV6iIvy6XJWeAGKt5eD5LUg95zANHJSvh+hYgXKNUshGp6jbumse/e8Id98G46It7GRqzJl/Gb/8RL0Fjd1+PhY7kURxDy5bc425sdJ9mD4=
-  file: Sherlock-*.jar
-  skip_cleanup: true
-  on:
-    repo: DCS-Sherlock/Sherlock
-    branch: gradle
