@@ -8,8 +8,12 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'antlr'
 
+versioning {
+    releases = ['gradle']	
+}
+
 group = 'uk.ac.warwick.dcs.sherlock'
-version = versioning.info.full
+version = versioning.info.display
 
 description = """Sherlock"""
 
@@ -54,6 +58,10 @@ dependencies {
     compile group: 'log4j', name: 'log4j', version:'1.2.17'
     compile group: 'org.graphstream', name: 'gs-core', version:'1.0'
     compile group: 'org.graphstream', name: 'gs-ui', version:'1.1.2'
+}
+
+task printVersion {
+    println project.name + '-' + project.version
 }
 
 generateGrammarSource {
