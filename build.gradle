@@ -11,17 +11,19 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'antlr'
 
-project.ext.count = grgit.log {range(grgit.tag.list().find{ it.name == versioning.info.lastTag}.collect { it }[0].name, "HEAD")}.size()
-
 versioning {
+    lastTagPattern = /(version)\/[0-9.]+$/
     releases = ['ver']
     releaseParser = { SCMInfo scmInfo, String separator = '/' ->
-        new ReleaseInfo(type: "ver", base: scmInfo.lastTag)
+        List<String> part = scmInfo.lastTag.split(separator) + ''
+        new ReleaseInfo(type: "ver", base: part[1])
     }
 }
 
+project.ext.count = grgit.log {range(grgit.tag.list().find{ it.name == versioning.info.lastTag}.collect { it }[0].name, "HEAD")}.size()
+
 group = 'uk.ac.warwick.dcs.sherlock'
-version = "${versioning.info.lastTag}.${project.count}"
+version = "${versioning.info.base}.${project.count}"
 
 description = """Sherlock"""
 
