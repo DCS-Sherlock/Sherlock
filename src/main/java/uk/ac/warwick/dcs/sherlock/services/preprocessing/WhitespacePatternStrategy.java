@@ -15,26 +15,16 @@ import java.util.List;
 /**
  * @author Aliyah
  */
-class WhitespacePatternStrategy implements PreProcessingStrategy
-{
+class WhitespacePatternStrategy implements PreProcessingStrategy {
 
     @Override
-    public void preProcessFiles(File[] filePaths, File targetDirectory)
-    {
-        System.out.println("Extracting White Space Pattern");
-
-        for (File file : filePaths)
-        {
-            System.out.println("File " + file.getAbsolutePath());
-
+    public void preProcessFiles(File[] filePaths, File targetDirectory) {
+        for (File file : filePaths) {
             String filename = FilenameUtils.removeExtension(file.getName());
             String finalDestination = targetDirectory + File.separator + filename + ".txt";
-            System.out.println("finalDestination " + finalDestination);
-
             FileInputStream fis = null;
 
-            try
-            {
+            try {
                 /* Open the input file stream */
                 fis = new FileInputStream(file);
 
@@ -51,9 +41,7 @@ class WhitespacePatternStrategy implements PreProcessingStrategy
 
                 /* Close the input stream */
                 fis.close();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -65,29 +53,22 @@ class WhitespacePatternStrategy implements PreProcessingStrategy
      *
      * @throws IOException
      */
-    private static void extractWhitespacePattern(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException
-    {
-        System.out.println("Extract Whitespace");
-        System.out.println("Target File: " + outputFile);
-
+    private static void extractWhitespacePattern(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException {
         /*Create a buffered writer to store all the tokens in a file */
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFile)));
 
         /* For all tokens in the list, add them to the new file created */
         int currentLine = 1;
-        for (Token t : list)
-        {
+        for (Token t : list) {
             /* If at least 1 new line has been found, start a new line in the buffered writer */
-            if (t.getLine() > currentLine)
-            {
+            if (t.getLine() > currentLine) {
                 bw.newLine();                            // Start writing the tokens on the next line
 
                 /* When the token is a multiple line comment, more than one line can be found so we can't increment the value of currentLine */
                 currentLine = t.getLine();                    // Set the currentLine to the line of the token
             }
 
-            if (t.getChannel() == 0)
-            {
+            if (t.getChannel() == 0) {
                 bw.append(vocab.getSymbolicName(t.getType()) + " ");
             }
         }

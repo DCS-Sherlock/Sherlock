@@ -20,6 +20,7 @@ class GZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testAcceptGZ() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.GZ";
@@ -28,6 +29,7 @@ class GZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testAccepttgz() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.tgz";
@@ -36,6 +38,7 @@ class GZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testAcceptTGZ() throws Exception {
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.TGZ";
@@ -44,6 +47,7 @@ class GZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testRejectElse() throws Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.G";

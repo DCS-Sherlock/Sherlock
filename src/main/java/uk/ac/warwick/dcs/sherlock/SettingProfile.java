@@ -28,27 +28,15 @@ public class SettingProfile {
 	 * Constructor Method for Setting Profile
 	 */
 	public SettingProfile(int setting, File sourceDirectory, boolean loadSettings){
-		System.out.println("Adding a new profile for setting: " + setting);
 		thisProfile = new Properties(createDefaults(setting));
-		
 		File settingsDirectory = new File(sourceDirectory.getAbsolutePath() + File.separator + "Settings");
-		
 		if ( !settingsDirectory.exists() ) {
-			System.out.println("Directory doesn't exist");
 			settingsDirectory.mkdirs();
 		}
-		
 		setPropertiesFile( new File (settingsDirectory, thisProfile.getProperty("outputDir") + ".txt")) ;
-		
 		if ( ! loadSettings ) {
-//			System.out.println("Storing defaults");
-//			System.out.println("This profile: " + thisProfile.getProperty("description"));
-//			System.out.println("This profile: " + thisProfile.getProperty("outputDir"));
-//			System.out.println("This profile: " + thisProfile.getProperty("tokeniserName"));
-//			System.out.println("This profile: " + thisProfile.getProperty("inUse"));
 			store();
 		} else if ( loadSettings ) {
-			System.out.println("Loading Settings");
 			load();
 		}
 	}
@@ -67,7 +55,6 @@ public class SettingProfile {
 
 	private void setPropertiesFile(File propertiesFile) {
 		this.propertiesFile = propertiesFile;
-		System.out.println("Property path " + getPropertiesFile().getAbsolutePath());
 	}
 
 	private static String[][] getDefaultproperties() {
@@ -120,7 +107,6 @@ public class SettingProfile {
 	private Properties createDefaults(int setting) {
 		/* A string array containing the defaults for this particular setting*/
 		String settingDefault[] = defaultProperties[setting];
-		System.out.println("Setting Default Description " + settingDefault[0]);
 		Properties p = new Properties();
 	    p.setProperty("description", settingDefault[0]);
 	    p.setProperty("outputDir", settingDefault[1]);
@@ -147,7 +133,6 @@ public class SettingProfile {
 	 * Set this setting profile to a setting profile loaded from file .
 	 */
 	public void load() {
-		System.out.println("The loaded property file: " + getPropertiesFile());
 		try {
 			FileInputStream fis = new FileInputStream(getPropertiesFile());
 			thisProfile.load(fis);

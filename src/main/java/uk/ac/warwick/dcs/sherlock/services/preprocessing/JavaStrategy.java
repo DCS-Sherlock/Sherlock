@@ -42,14 +42,10 @@ class JavaStrategy implements PreProcessingStrategy
         switch (setting)
         {
             case NOC:
-                System.out.println("No Comments");
                 for (File file : filePaths)
                 {
-                    System.out.println("File " + file.getAbsolutePath());
-
                     String filename = FilenameUtils.removeExtension(file.getName());
                     String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    System.out.println("finalDestination " + finalDestination);
                     FileInputStream fis = null;
 
                     try
@@ -78,15 +74,12 @@ class JavaStrategy implements PreProcessingStrategy
                 }
                 break;
             case NCW:
-                System.out.println("No comments no white space");
 
                 for (File file : filePaths)
                 {
-                    System.out.println("File " + file.getAbsolutePath());
 
                     String filename = FilenameUtils.removeExtension(file.getName());
                     String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    System.out.println("finalDestination " + finalDestination);
                     FileInputStream fis = null;
 
                     try
@@ -116,15 +109,10 @@ class JavaStrategy implements PreProcessingStrategy
 
                 break;
             case COM:
-                System.out.println("Comments");
-
                 for (File file : filePaths)
                 {
-                    System.out.println("File " + file.getAbsolutePath());
-
                     String filename = FilenameUtils.removeExtension(file.getName());
                     String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    System.out.println("finalDestination " + finalDestination);
                     FileInputStream fis = null;
 
                     try
@@ -154,18 +142,12 @@ class JavaStrategy implements PreProcessingStrategy
 
                 break;
             case TOK:
-                System.out.println("Tokenise");
-
                 //For each file to be parsed
                 for (File file : filePaths)
                 {
-                    System.out.println("File " + file.getAbsolutePath());
-
                     String filename = FilenameUtils.removeExtension(file.getName());
                     String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    System.out.println("finalDestination " + finalDestination);
                     FileInputStream fis = null;
-
                     try
                     {
                         /* Open the input file stream */
@@ -204,10 +186,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void removeComments(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException
     {
-        System.out.println("Remove Comments");
-
-        System.out.println("Target File: " + outputFile);
-
         /*Create a buffered writer to store all the tokens in a file */
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFile)));
 
@@ -237,8 +215,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void extractComments(List<? extends Token> list, String outputFile) throws IOException
     {
-        System.out.println("Extract Comments");
-
         /*Create a buffered writer to store all the tokens in a file */
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFile)));
 
@@ -270,10 +246,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void tokenise(List<? extends Token> list, Vocabulary vocab, String outputFile) throws IOException
     {
-        System.out.println("Tokenise");
-
-        System.out.println("Target File: " + outputFile);
-
         /*Create a buffered writer to store all the tokens in a file */
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFile)));
 
@@ -308,7 +280,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void removeWhiteSpace(List<? extends Token> list) throws IOException
     {
-        System.out.println("Remove WS ");
         String destination = System.getProperty("user.home") + File.separator + "NoWhiteSpace.txt";
 
         /*Create a buffered writer to store all the tokens in a file */
@@ -344,9 +315,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void removeComments_Whitespace(List<? extends Token> list, String outputFile) throws IOException
     {
-        System.out.println("Remove WS and Comments");
-        System.out.println("Target File: " + outputFile);
-
         /*Create a buffered writer to store all the tokens in a file */
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFile)));
 
@@ -380,7 +348,6 @@ class JavaStrategy implements PreProcessingStrategy
      */
     private void extractWhitePattern(List<? extends Token> list, Vocabulary vocab) throws IOException
     {
-        System.out.println("Extract WS Pattern");
         String destination = System.getProperty("user.home") + File.separator + "WhitePattern.txt";
 
         /*Create a buffered writer to store all the tokens in a file */
@@ -416,13 +383,9 @@ class JavaStrategy implements PreProcessingStrategy
 
     private void storeTokenisedResult(String filepath, String targetDirectory, boolean commentsIncluded)
     {
-        System.out.println("Storing Tokens");
-        System.out.println("File: " + filepath);
-        System.out.println("Target: " + targetDirectory);
-
         String fileName = filepath.substring(filepath.lastIndexOf("/")) /*get name of file*/;
         /* Need to remove the .java extension and add .txt extension */
-        System.out.println("File name " + fileName);
+
         //        File newFile = new File(fileName);
         FileInputStream fis = null;
 
