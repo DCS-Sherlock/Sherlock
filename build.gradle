@@ -133,7 +133,7 @@ task zip(type: Zip) {
     into(project.name + '-' + project.version)
 }
 
-task distribution {
+task distribute {
     dependsOn 'deps'
     dependsOn 'build'
     dependsOn 'zip'
