@@ -152,11 +152,9 @@ task updateReadmeBranch {
     ant.replaceregexp(match:'(.*)Branch:(.*)', replace:"Branch: ${grgit.branch.current().name}", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
     }
-    ant.replaceregexp(match:'(.*)Version:(.*)', replace:"Version: ${project.version}", flags:'s', byline:true) {
+    /*ant.replaceregexp(match:'(.*)Version:(.*)', replace:"Version: ${project.version}", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
-    }
-
-    println grgit.branch.current().name
+    }*/
 }
 
 class TagSupport
