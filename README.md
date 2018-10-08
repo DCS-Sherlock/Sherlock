@@ -11,7 +11,7 @@
 
 
 ## IDEA support
-The project comes with out of the box IntelliJ IDEA support. To use: 
+The gradle project comes with IntelliJ IDEA support. To use: 
 
 ```New project from existing sources -> Import project -> Import project from external model -> gradle -> uncheck "Create seperate module per source set"```
 
