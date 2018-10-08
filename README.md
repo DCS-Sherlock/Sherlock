@@ -1,4 +1,6 @@
-# Sherlock2018
+[![Build Status](https://travis-ci.org/DCS-Sherlock/Sherlock.png?branch=b'gradle')][travis]
+
+Branch: master
 
 # Pre-requisites for building and compiling the code:
   • Java Platform (JDK)
