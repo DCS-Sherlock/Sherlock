@@ -9,6 +9,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'antlr'
+apply plugin: 'idea'
 
 project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }
     .sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
@@ -62,33 +63,47 @@ dependencies {
     compile group: 'org.graphstream', name: 'gs-ui', version:'1.1.2'
 }
 
+idea{
+    module {
+        contentRoot = file("$projectDir")
+
+        sourceDirs = new LinkedHashSet<File>()
+        sourceDirs += file("src/main/java")
+        sourceDirs += file("src/main/antlr")
+
+        testSourceDirs = new LinkedHashSet<File>()
+        testSourceDirs += file("src/test/java")
+
+        resourceDirs += file("src/main/resources")
+
+        generatedSourceDirs += file("${buildDir}/tmp/src/main/antlr")
+
+        excludeDirs += file("${buildDir}/tmp/src/main/java")
+    }
+}
+
 task printVersion {
     println project.name + '-' + project.version
 }
 
 generateGrammarSource {
-    doLast {
-        delete  "$projectDir/src/generated/antlr/"
-        copy {
-            from "$buildDir/generated-src/antlr/main"
-            into "$projectDir/src/generated/antlr/uk/ac/warwick/dcs/sherlock/services/preprocessing"
-        }
-    }
+    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/services/preprocessing")
 }
 
 /** Token Replacement */
 task generateSources(type: Copy) {
     delete "$buildDir/src"
     from "src/main/java"
-    into "$buildDir/src/main/java"
+    into "$buildDir/tmp/src/main/java"
     filter(ReplaceTokens, tokens: [VERSION:  project.version.toString()])
 }
-sourceSets.main.java.srcDirs = ["$buildDir/src/main/java", "src/generated/antlr/"]
+sourceSets.main.java.srcDirs = ["$buildDir/tmp/src/main/java", "$buildDir/tmp/src/main/antlr"]
 compileJava.dependsOn generateSources
 
-/** Jar Maifest */
+/** Jar*/
 jar {
-    delete fileTree("$buildDir/libs") { include '*.jar' }
+    destinationDir = file("$buildDir")
+    delete fileTree("$buildDir") { include '*.jar' }
     manifest {
         attributes (
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
@@ -100,49 +115,58 @@ jar {
 /** Copy dependencies in lib folder */
 task deps(type: Copy) {
     doFirst {
-        mkdir("$buildDir/libs/lib")
+        mkdir("$buildDir/lib")
     }
     from configurations.runtime
-    into "$buildDir/libs/lib"
+    into "$buildDir/lib"
 }
 
 /** Create dist zip */
 task zip(type: Zip) {
     delete   fileTree("$buildDir/distributions") { include '*.zip' }
-    from "$buildDir/libs"
+    from ("$buildDir") {
+        include "*.jar"
+    }
+    from("$buildDir/lib/") {
+        into('lib')
+    }
     into(project.name + '-' + project.version)
 }
 
 task distribution {
     dependsOn 'deps'
-    dependsOn 'jar'
+    dependsOn 'build'
     dependsOn 'zip'
-    tasks.findByName('jar').mustRunAfter 'deps'
-    tasks.findByName('zip').mustRunAfter 'jar'
+    tasks.findByName('build').mustRunAfter 'deps'
+    tasks.findByName('zip').mustRunAfter 'build'
 }
 
 test {
     useJUnitPlatform()
 }
 
-clean {
-    delete  "src/generated"
-}
-
-class TagSupport {
-
-    static int tagOrder(String tagPattern, String tagName) {
+class TagSupport
+{
+    static int tagOrder(String tagPattern, String tagName)
+    {
         Matcher m = tagName =~ tagPattern
-        if (m.find()) {
+
+        if (m.find())
+        {
             int ngroups = m.groupCount()
-            if (ngroups < 1) {
+
+            if (ngroups < 1)
+            {
                 throw new IllegalArgumentException("Tag pattern is expected to have at least one number grouping instruction: $tagPattern")
-            } else {
+            }
+            else
+            {
                 return m.group(1) as int
             }
-        } else {
+        }
+        else
+        {
             throw new IllegalStateException("Tag $tagName should have matched $tagPattern")
         }
     }
-
 }
