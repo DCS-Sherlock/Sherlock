@@ -8,7 +8,6 @@ import java.nio.file.Path;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
 
 class GZipFilenameFilterTest {
 
@@ -20,6 +19,7 @@ class GZipFilenameFilterTest {
 		GZipFilenameFilter filter = new GZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testAcceptGZ() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.GZ";
@@ -27,6 +27,7 @@ class GZipFilenameFilterTest {
 		GZipFilenameFilter filter = new GZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testAccepttgz() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.tgz";
@@ -34,6 +35,7 @@ class GZipFilenameFilterTest {
 		GZipFilenameFilter filter = new GZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testAcceptTGZ() throws Exception {
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.TGZ";
@@ -41,6 +43,7 @@ class GZipFilenameFilterTest {
 		GZipFilenameFilter filter = new GZipFilenameFilter();
 		assertTrue(filter.accept(fake, filename));
 	}
+
 	void testRejectElse() throws Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.G";

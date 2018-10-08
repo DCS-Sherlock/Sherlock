@@ -9,6 +9,7 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import uk.ac.warwick.dcs.sherlock.utils.Strings;
 
 /**
  * The main class to run the sherlock application. This class references the sherlock.viw.gui package 
@@ -43,7 +44,7 @@ public class SherlockApplication extends Application {
 	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		System.out.println("Starting the Sherlock Application");
+		System.out.println("Starting the Sherlock v" + Strings.version);
 
 		try{
 			stage = primaryStage;

@@ -1,5 +1,9 @@
 parser grammar JavaParser;
 
+@header {
+package uk.ac.warwick.dcs.sherlock.services.preprocessing;
+}
+
 options {
 	tokenVocab = JavaLexer;
 }

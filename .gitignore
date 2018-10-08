@@ -15,6 +15,9 @@
 *.iws
 *.ipr
 
+# VSCode
+.vscode
+
 # OS
 Thumbs.db
 .DS_Store
@@ -22,6 +25,7 @@ Thumbs.db
 # Gradle
 .gradle
 !gradle-wrapper.jar
+src/generated
 
 # Maven
 target
