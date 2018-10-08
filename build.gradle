@@ -90,7 +90,7 @@ task generateSources(type: Copy) {
     delete "$buildDir/src"
     from "src/main/java"
     into "$buildDir/src/main/java"
-    filter(ReplaceTokens, tokens: [VERSION:  project.version])
+    filter(ReplaceTokens, tokens: [VERSION:  project.version.toString()])
 }
 sourceSets.main.java.srcDirs = ["$buildDir/src/main/java", "src/generated/antlr/"]
 compileJava.dependsOn generateSources
