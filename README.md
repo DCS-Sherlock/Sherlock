@@ -2,6 +2,8 @@
 
 Branch: master
 
+[//]: <> (Version: 0.1.22)
+
 ### Pre-requisites for building and compiling the code:
   • Java Platform (JDK)
     AVAILABLE FOR DOWNLOAD AT: http://www.oracle.com/technetwork/java/javase/downloads/index.html
