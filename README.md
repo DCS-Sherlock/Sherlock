@@ -1,6 +1,8 @@
-# Sherlock2018
+# Sherlock  [![Build Status](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=master)](https://travis-ci.org/DCS-Sherlock/Sherlock)
 
-# Pre-requisites for building and compiling the code:
+Branch: master
+
+### Pre-requisites for building and compiling the code:
   • Java Platform (JDK)
     AVAILABLE FOR DOWNLOAD AT: http://www.oracle.com/technetwork/java/javase/downloads/index.html
     MANDATORY
@@ -16,10 +18,10 @@
     MANDATORY
     VERSION: 9.0.1
 
-# Building and compiling the code:
+### Building and compiling the code:
 It is recommended that an IDE such as Eclipse or IntelliJ is used to continue the development of the system. These IDEs are integratable with Scene builder for developing the GUI and ANTLR.
 
-## Commandline
+#### Commandline
 
 Run the maven project with: `mvn jfx:run`.
 
