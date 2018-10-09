@@ -36,7 +36,6 @@ public class Settings {
 
 	public void setSourceDirectory(File sourceDirectory) {
 		this.sourceDirectory = sourceDirectory;
-		System.out.println("Source Directory: " + sourceDirectory);
 	}
 	
 	public File getOriginalDirectory() {
@@ -96,11 +95,7 @@ public class Settings {
 		/* If settings have not been initialised */
 		if ( !settingIntitialised ) { 
 			settingIntitialised = true ;
-			System.out.println("Initialising default");
-			System.out.println(getSourceDirectory());
-	
 			for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
-				//System.out.println(FileTypes.values()[setting].toString());
 				SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), false);
 				settingList.add(sp);
 			}
@@ -112,11 +107,7 @@ public class Settings {
 	}
 	
 	public void loadSettings() {
-		System.out.println("Loading previous settings");
-		System.out.println(getSourceDirectory());
-		
 		for (int setting = 0; setting < FileTypes.getNumberOfFileTypes(); setting++) {
-			//System.out.println(FileTypes.values()[setting].toString());
 			SettingProfile sp = new SettingProfile( setting, getSourceDirectory(), true );
 			settingList.add(sp);
 		}
@@ -130,8 +121,6 @@ public class Settings {
 		for ( SettingProfile sp : getSettingList() ) {
 			statuses.add(sp.isInUse());
 		}
-		System.out.println("Length of list " + statuses.size());
-		
 		return statuses;
 	}
 	

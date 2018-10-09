@@ -139,14 +139,12 @@ public class DirectoryProcessor {
 		*  If there are zipped files that need extracting, extract them
 		*/
 		if ( zipfiles.length > 0 ) {
-			System.out.println("Got some zipped files");
 			ExtractionContext es_zip = new ExtractionContext(new ZipHandler(), zipfiles, destination);
 		}
 		/**
 		 * If there are gzipped files that need extracting, extract them
 		 */
 		if ( gzipfiles.length > 0 ) {
-			System.out.println("Got some Gzipped files");
 			ExtractionContext es_gzip = new ExtractionContext(new GZipHandler(), gzipfiles, destination);
 		}
 	}

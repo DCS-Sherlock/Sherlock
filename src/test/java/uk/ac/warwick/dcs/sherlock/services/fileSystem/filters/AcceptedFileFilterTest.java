@@ -13,12 +13,14 @@ class AcceptedFileFilterTest {
 		assertTrue(filter.accept(f));
 	}
 
+	@Test
 	void testAccept2() {
 		File f = new File("fake.txt");
 		AcceptedFileFilter filter = new AcceptedFileFilter();
 		assertTrue(filter.accept(f));
 	}
 
+	@Test
 	void testFail() {
 		File f = new File("fake.somethingelse");
 		AcceptedFileFilter filter = new AcceptedFileFilter();

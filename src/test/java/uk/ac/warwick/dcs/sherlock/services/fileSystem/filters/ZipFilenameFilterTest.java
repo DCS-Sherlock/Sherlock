@@ -20,6 +20,7 @@ class ZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testAcceptzip() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.zip";
@@ -28,6 +29,7 @@ class ZipFilenameFilterTest {
 		assertTrue(filter.accept(fake, filename));
 	}
 
+	@Test
 	void testRejectZOP() throws  Exception{
 		Path folder = Files.createTempFile("Fake", ".txt");
 		String filename = "fake.zop";
