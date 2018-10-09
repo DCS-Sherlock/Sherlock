@@ -2,7 +2,6 @@ import java.util.regex.Matcher
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-   //id 'net.nemerosa.versioning' version '2.7.1'
    id "org.ajoberstar.grgit" version "2.3.0"
 }
 
@@ -102,8 +101,11 @@ compileJava.dependsOn generateSources
 
 /** Jar*/
 jar {
-    destinationDir = file("$buildDir")
-    delete fileTree("$buildDir") { include '*.jar' }
+    destinationDir = file("$buildDir/out")
+    delete fileTree("$buildDir/out") {
+        include '*.jar'
+        exclude jar.archivePath.getName()
+    }
     manifest {
         attributes (
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
@@ -114,20 +116,17 @@ jar {
 
 /** Copy dependencies in lib folder */
 task deps(type: Copy) {
-    doFirst {
-        mkdir("$buildDir/lib")
-    }
     from configurations.runtime
-    into "$buildDir/lib"
+    into "$buildDir/out/lib"
 }
 
 /** Create dist zip */
 task zip(type: Zip) {
     delete   fileTree("$buildDir/distributions") { include '*.zip' }
-    from ("$buildDir") {
+    from ("$buildDir/out/") {
         include "*.jar"
     }
-    from("$buildDir/lib/") {
+    from("$buildDir/out/lib/") {
         into('lib')
     }
     into(project.name + '-' + project.version)
@@ -145,16 +144,10 @@ test {
     useJUnitPlatform()
 }
 
-task updateReadmeBranch {
+task branchSetup {
     ant.replaceregexp(match:'# Sherlock(.*)', replace:"# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags:'s', byline:true) {
         fileset(dir: project.projectDir, includes: 'README.md')
     }
-    /*ant.replaceregexp(match:'(.*)Branch:(.*)', replace:"Branch: ${grgit.branch.current().name}", flags:'s', byline:true) {
-        fileset(dir: project.projectDir, includes: 'README.md')
-    }*/
-    /*ant.replaceregexp(match:'(.*)Version:(.*)', replace:"Version: ${project.version}", flags:'s', byline:true) {
-        fileset(dir: project.projectDir, includes: 'README.md')
-    }*/
 }
 
 class TagSupport
