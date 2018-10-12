@@ -10,12 +10,22 @@ import java.util.List;
 public interface IModelResult {
 
 	/**
-	 * Adds a set of matching blocks of code to the results. TODO: What about more than 1 file, should this method take start/end lines for any number of files????
+	 * Adds a set of matching blocks of code to the results.
+	 *
+	 * @param blockPair Pair of matching code blocks
+	 */
+	void addPairedBlocks(IPairedBlocks blockPair);
+
+	/**
+	 * Adds a set of matching blocks of code to the results.
 	 *
 	 * @param block1 first matched block
 	 * @param block2 second matched block
+	 * @param percentageMatch the percentage the two block match, float between 0 and 1
 	 */
-	void addMatchedBlocks(IContentBlock block1, IContentBlock block2); // OR: void addMatchedBlocks(List<IContentBlock> blocks);
+	default void addPairedBlocks(IContentBlock block1, IContentBlock block2, float percentageMatch) {
+		this.addPairedBlocks(IPairedBlocks.of(block1, block2, percentageMatch));
+	}
 
 	/**
 	 * @return Detector class used to get result set
@@ -32,7 +42,7 @@ public interface IModelResult {
 
     Can then be used to run analysis on the results and rank the plagiarised sections in the core program
 
-     List<IMatchedBlocks> getMatchedBlocks();
+     List<IPairedBlocks> getMatchedBlocks();
      */
 
 }

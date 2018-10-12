@@ -4,6 +4,7 @@ public interface IPreProcessor {
 
 	/**
 	 * Allows the pre processor to specify a dependency which should first be run on the data before it is passed to this preprocessor
+	 *
 	 * @return the dependency
 	 */
 	default Class<? extends IPreProcessor> getDependencies() {
