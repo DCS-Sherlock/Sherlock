@@ -67,17 +67,23 @@ class JavaStrategy implements PreProcessingStrategy
 
                     switch (setting)
                     {
-                        case NOC:
-                            removeComments(list, vocab, finalDestination);
+                        case NWS:
+                            removeWhiteSpace(list);
                             break;
                         case NCW:
                             removeComments_Whitespace(list, finalDestination);
+                            break;
+                        case NOC:
+                            removeComments(list, vocab, finalDestination);
                             break;
                         case COM:
                             extractComments(list, finalDestination);
                             break;
                         case TOK:
                             tokenise(list, vocab, finalDestination);
+                            break;
+                        case WSP:
+                            extractWhitePattern(list, vocab);
                             break;
                     }
                     removeComments(list, vocab, finalDestination);
@@ -280,7 +286,7 @@ class JavaStrategy implements PreProcessingStrategy
                 currentLine = t.getLine();                    // Set the currentLine to the line of the token
             }
 
-            if (t.getChannel() == 2)
+            if (t.getChannel() == 0)        // 0 in origional 2 in this file, have changed to 1 for now TODO find out why number was changed
             {
                 bw.append(vocab.getSymbolicName(t.getType()) + " ");
             }
