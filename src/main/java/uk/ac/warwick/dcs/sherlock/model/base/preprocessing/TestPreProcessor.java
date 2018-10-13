@@ -1,10 +1,10 @@
-package uk.ac.warwick.dcs.sherlock.model.preprocessing;
+package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.model.LexerSpecification;
+import uk.ac.warwick.dcs.sherlock.model.base.StandardLexer;
 
 import java.util.stream.Stream;
 
@@ -23,7 +23,7 @@ public class TestPreProcessor implements IPreProcessor {
 		StringBuilder active = new StringBuilder(); //use string builder for much faster concatenation
 
 		for (Token t : lexer.getAllTokens()) {
-			switch (LexerSpecification.channels.values()[t.getChannel()]) {
+			switch (StandardLexer.channels.values()[t.getChannel()]) {
 				case LINE_ENDING:
 					builder.add(active.toString());
 					active.setLength(0); //clear the string builder

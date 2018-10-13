@@ -1,32 +1,37 @@
-package uk.ac.warwick.dcs.sherlock.api.model;
+package uk.ac.warwick.dcs.sherlock.model.base;
 
-import org.antlr.v4.runtime.Lexer;
+import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 
 /**
- * Provides a specification for all language lexers to conform to
+ * Provides a specification for all language lexers to conform to -- make this an api and allow for custom definitions, still with O(n) recall
  */
-public class LexerSpecification {
+public class StandardLexer implements ILexerSpecification {
 
 	private static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "HIDDEN", "LINE_ENDING", "WHITESPACE", "LONG_WHITESPACE", "COMMENT" };
+
+
+	public String[] getChannelNames() {
+		return channelNames;
+	}
 
 	/**
 	 * Checks a lexer conforms to the specification
 	 * @param lexer lexer instance to check
 	 * @return does it conform?
 	 */
-	public boolean checkLexer(Lexer lexer) {
+	/*public boolean checkLexer(Lexer lexer) {
 
-		if (lexer.getChannelNames().length != channelNames.length) return false;
+		if (lexer.getChannelNames().length < channelNames.length) return false;
 
 		for (int i = 0; i < channelNames.length; i++) {
 			if (!lexer.getChannelNames()[i].equals(channelNames[i])) return false;
 		}
 
 		return true;
-	}
+	}*/
 
 	/**
-	 * Channel reference enum
+	 * reference enum
 	 */
 	public enum channels {
 		DEFAULT, HIDDEN, LINE_ENDING, WHITESPACE, LONG_WHITESPACE, COMMENT

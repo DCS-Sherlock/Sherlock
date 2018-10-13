@@ -45,7 +45,7 @@ public interface IModelResult {
 	/*
 	TODO: extend this api to extract relevant information such as detected blocks, statistics (processing time??).
 
-	Can then be used to run analysis on the results and rank the plagiarised sections in the core program
+	Can then be used to run analysis on the results and rank the plagiarised sections in the base program
 	*/
 	List<IPairedBlocks> getAllPairedBlocks();
 
