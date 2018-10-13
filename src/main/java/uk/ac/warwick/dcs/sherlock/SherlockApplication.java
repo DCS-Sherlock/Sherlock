@@ -9,7 +9,7 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import uk.ac.warwick.dcs.sherlock.utils.Strings;
+import uk.ac.warwick.dcs.sherlock.lib.Reference;
 
 /**
  * The main class to run the sherlock application. This class references the sherlock.viw.gui package 
@@ -44,13 +44,14 @@ public class SherlockApplication extends Application {
 	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		System.out.println("Starting the Sherlock v" + Strings.version);
-
 		try{
 			stage = primaryStage;
 //			goToDirectorySelector();				// Set up the directory Selection window
 			goToMain();				// Set up the directory Selection window
-			primaryStage.setTitle("Sherlock V1.61");
+
+			if (Reference.isDevelEnv) primaryStage.setTitle(String.format("Sherlock vX.X.X [Development Version]"));
+			else primaryStage.setTitle(String.format("Sherlock v%s", Reference.version));
+
 			primaryStage.show();					// Present this window to the User
             // listen for close requests to close the Viewer
             // this is needed because the View close policy is set to hidden instead of actually closing the Viewer

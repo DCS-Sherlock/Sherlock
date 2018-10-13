@@ -17,13 +17,8 @@ public class ContentBlock implements IContentBlock {
 	}
 
 	@Override
-	public ISourceFile getFile() {
-		return this.file;
-	}
-
-	@Override
-	public int getStartLine() {
-		return this.start;
+	public int getEndCharacterPos() {
+		return this.endChar;
 	}
 
 	@Override
@@ -32,12 +27,17 @@ public class ContentBlock implements IContentBlock {
 	}
 
 	@Override
+	public ISourceFile getFile() {
+		return this.file;
+	}
+
+	@Override
 	public int getStartCharacterPos() {
 		return this.startChar;
 	}
 
 	@Override
-	public int getEndCharacterPos() {
-		return this.endChar;
+	public int getStartLine() {
+		return this.start;
 	}
 }
