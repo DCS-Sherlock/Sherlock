@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="570.0" minWidth="500.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.ac.warwick.dcs.sherlock.controllers.DashboardController">
+<AnchorPane minHeight="570.0" minWidth="500.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.ac.warwick.dcs.sherlock.deprecated.controllers.DashboardController">
    <children>
       <ImageView blendMode="ADD" fitHeight="604.0" fitWidth="700.0" opacity="0.75" rotate="180.0" AnchorPane.leftAnchor="-15.0" AnchorPane.rightAnchor="-5.0">
          <image>

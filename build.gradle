@@ -103,7 +103,7 @@ task printVersion {
 }
 
 generateGrammarSource {
-    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/services/preprocessing")
+    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/model/base/lang")
 }
 
 /** Token Replacement */
@@ -124,7 +124,7 @@ jar {
     }
     manifest {
         attributes(
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
+                'Main-Class': 'uk.ac.warwick.dcs.sherlock.deprecated.SherlockApplication',
                 "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
     }

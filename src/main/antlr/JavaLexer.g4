@@ -1,7 +1,7 @@
 lexer grammar JavaLexer;
 
 @header {
-package uk.ac.warwick.dcs.sherlock.services.preprocessing;
+package uk.ac.warwick.dcs.sherlock.model.base.lang;
 }
 
 channels { LINE_ENDING, WHITESPACE, LONG_WHITESPACE, COMMENT  }
