@@ -3,9 +3,9 @@ package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 
 /**
- * Provides a specification for all language lexers to conform to -- make this an api and allow for custom definitions, still with O(n) recall
+ * Provides a specification for a basic lexer for preprocessing
  */
-public class StandardLexer implements ILexerSpecification {
+public class StandardLexerSpecification implements ILexerSpecification {
 
 	private static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "HIDDEN", "WHITESPACE", "LONG_WHITESPACE", "COMMENT" };
 

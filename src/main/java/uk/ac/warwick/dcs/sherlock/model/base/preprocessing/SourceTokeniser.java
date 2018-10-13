@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.model.base.preprocessing.processors;
+package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardLexer;
 
 import java.util.stream.Stream;
 
@@ -14,7 +13,7 @@ public class SourceTokeniser implements IPreProcessor {
 
 	@Override
 	public Class<? extends ILexerSpecification> getLexerSpecification() {
-		return StandardLexer.class;
+		return StandardLexerSpecification.class;
 	}
 
 	/**
@@ -22,6 +21,7 @@ public class SourceTokeniser implements IPreProcessor {
 	 *
 	 * @param lexer input of lexer instance containing the unprocessed lines
 	 * @param lang  reference of the language of the lexer
+	 *
 	 * @return stream of tokenised source, 1 line per string
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class SourceTokeniser implements IPreProcessor {
 				lineCount++;
 			}
 
-			switch (StandardLexer.channels.values()[t.getChannel()]) {
+			switch (StandardLexerSpecification.channels.values()[t.getChannel()]) {
 				case DEFAULT:
 					active.append(vocab.getSymbolicName(t.getType())).append(" ");
 					break;

@@ -12,4 +12,7 @@ public interface ISourceFile {
 	 * do this only once and cache the files we are working on, however will we have enough memory to do this when we get large projects, how should we handle this???
 	 */
 
+	/* TODO: Temporary implementation, requires update */
+	String getFilename();
+
 }

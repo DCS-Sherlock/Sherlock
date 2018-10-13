@@ -23,7 +23,7 @@ public interface IDetector {
 
 	/**
 	 * Returns the appropriate lexer for this strategy and the language of the source files
-	 *
+	 * <p>
 	 * TODO: on return check that lexer conforms to the channel spec we defined, throw exception if it does not
 	 *
 	 * @param lang the language of the source files
@@ -46,7 +46,7 @@ public interface IDetector {
 	 *
 	 * @return returns a stream of IPreProcessor Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
 	 */
-	Stream<Class<? extends IPreProcessingStrategy>> getPreProcessors();
+	Stream<Class<? extends IPreProcessor>> getPreProcessors();
 
 	/**
 	 * @return Stream of the languages supported by the algorithm

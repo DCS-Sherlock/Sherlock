@@ -7,16 +7,22 @@ public class ModelUtils {
 
 	/**
 	 * Checks a lexer conforms to the specification
-	 * @param lexer lexer instance to check
+	 *
+	 * @param lexer         lexer instance to check
 	 * @param specification specification to check against
+	 *
 	 * @return does it conform?
 	 */
 	public static boolean checkLexerAgainstSpecification(Lexer lexer, ILexerSpecification specification) {
 
-		if (lexer.getChannelNames().length < specification.getChannelNames().length) return false;
+		if (lexer.getChannelNames().length < specification.getChannelNames().length) {
+			return false;
+		}
 
 		for (int i = 0; i < specification.getChannelNames().length; i++) {
-			if (!lexer.getChannelNames()[i].equals(specification.getChannelNames()[i]) && !specification.getChannelNames().equals("-")) return false;
+			if (!lexer.getChannelNames()[i].equals(specification.getChannelNames()[i]) && !specification.getChannelNames().equals("-")) {
+				return false;
+			}
 		}
 
 		return true;

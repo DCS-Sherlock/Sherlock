@@ -2,8 +2,13 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 public interface IModelData {
 
-	String /* or whatever we decide*/ getPreProcessedFileData(Class<? extends IPreProcessingStrategy> proc, ISourceFile file);
+	List<ISourceFile> getFileList();
+
+	Stream<String> getPreProcessedFileData(Class<? extends IPreProcessor> proc, ISourceFile file);
 
 }

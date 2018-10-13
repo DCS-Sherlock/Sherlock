@@ -6,7 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.processors.SourceTokeniser;
+import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.SourceTokeniser;
 import uk.ac.warwick.dcs.sherlock.model.core.ModelUtils;
 
 import java.io.IOException;
@@ -16,8 +16,12 @@ import java.util.stream.Stream;
 public class Sherlock {
 
 	public static void main(String[] args) {
-		if (Reference.isDevelEnv) System.out.println("Sherlock vX.X.X [Development Version]\n");
-		else  System.out.println(String.format("Sherlock v%s\n", Reference.version));
+		if (Reference.isDevelEnv) {
+			System.out.println("Sherlock vX.X.X [Development Version]\n");
+		}
+		else {
+			System.out.println(String.format("Sherlock v%s\n", Reference.version));
+		}
 
 		try {
 			Lexer lexer = new JavaLexer(CharStreams.fromFileName("test.java"));
@@ -32,9 +36,9 @@ public class Sherlock {
 
 			AtomicInteger atomicInteger = new AtomicInteger(0);
 			s.forEach(name -> {
-						atomicInteger.getAndIncrement();
-						System.out.println(atomicInteger + ": " + name);
-					});
+				atomicInteger.getAndIncrement();
+				System.out.println(atomicInteger + ": " + name);
+			});
 		}
 		catch (IOException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();

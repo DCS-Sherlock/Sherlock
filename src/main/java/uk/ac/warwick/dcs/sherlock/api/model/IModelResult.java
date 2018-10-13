@@ -27,6 +27,13 @@ public interface IModelResult {
 	 */
 	void addPairedBlocks(IPairedBlocks blockPair);
 
+	/*
+	TODO: extend this api to extract relevant information such as detected blocks, statistics (processing time??).
+
+	Can then be used to run analysis on the results and rank the plagiarised sections in the base program
+	*/
+	List<IPairedBlocks> getAllPairedBlocks();
+
 	/**
 	 * @return Detector class used to get result set
 	 */
@@ -36,17 +43,5 @@ public interface IModelResult {
 	 * @return the set of files in the result
 	 */
 	List<ISourceFile> getIncludedFiles();
-
-	/**
-	 * @param files the set of files in the result
-	 */
-	void setIncludedFiles(List<ISourceFile> files);
-
-	/*
-	TODO: extend this api to extract relevant information such as detected blocks, statistics (processing time??).
-
-	Can then be used to run analysis on the results and rank the plagiarised sections in the base program
-	*/
-	List<IPairedBlocks> getAllPairedBlocks();
 
 }
