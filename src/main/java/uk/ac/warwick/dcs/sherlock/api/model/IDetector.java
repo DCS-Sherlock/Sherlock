@@ -22,6 +22,15 @@ public interface IDetector {
 	String getDisplayName();
 
 	/**
+	 * Returns the appropriate lexer for this strategy and the language of the source files
+	 *
+	 * @param lang the language of the source files
+	 *
+	 * @return the lexer class to use
+	 */
+	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(Language lang);
+
+	/**
 	 * Allows implementation to override the default post processor if a different matching scheme is required
 	 *
 	 * @return the post processor to use, default null (triggers default scheme, overlapping pairs matching)
@@ -38,7 +47,7 @@ public interface IDetector {
 	Stream<Class<? extends IPreProcessingStrategy>> getPreProcessors();
 
 	/**
-	 * @return Stream of the languages the algorithm works with
+	 * @return Stream of the languages supported by the algorithm
 	 */
 	Stream<Language> getSupportedLanguages();
 
