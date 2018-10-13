@@ -17,28 +17,59 @@ public class CommentExtractor implements IPreProcessor {
 	}
 
 	/**
-	 * Extracts the comments in a sourcefile
+	 * Extracts the comments from a sourcefile
 	 *
 	 * @param lexer input of lexer instance containing the unprocessed lines
 	 * @param lang  reference of the language of the lexer
-	 *
 	 * @return stream of comments, 1 per string
 	 */
 	@Override
 	public Stream<String> process(Lexer lexer, Language lang) {
 		Stream.Builder<String> builder = Stream.builder();
+		StringBuilder active = new StringBuilder();
+		int lineCount = 1;
 
 		for (Token t : lexer.getAllTokens()) {
+			while (t.getLine() > lineCount) {
+				builder.add(active.toString());
+				active.setLength(0);
+				lineCount++;
+			}
+
 			switch (StandardLexer.channels.values()[t.getChannel()]) {
 				case COMMENT:
-					builder.add(t.toString());
+					lineCount = preserveCommentLines(builder, active, lineCount, t);
 					break;
 				default:
 					break;
 			}
 		}
+		builder.add(active.toString());
 
 		return builder.build();
+	}
+
+	/**
+	 * Method to split a comment out into its component lines if it spans more than one line to preserve the sourcefile line structure
+	 * @param builder stream builder instance in use
+	 * @param active current string
+	 * @param lineCount current lineCount
+	 * @param t token containing comment
+	 * @return new lineCount
+	 */
+	public static int preserveCommentLines(Stream.Builder<String> builder, StringBuilder active, int lineCount, Token t) {
+		String[] splitComment = t.getText().split("\\r?\\n|\\r");
+
+		for (int i = 0; i < splitComment.length; i++)
+		{
+			if (i != 0) {
+				builder.add(active.toString());
+				active.setLength(0);
+				lineCount++;
+			}
+			active.append(splitComment[i].trim());
+		}
+		return lineCount;
 	}
 
 }

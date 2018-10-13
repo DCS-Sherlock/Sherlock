@@ -4,7 +4,7 @@ lexer grammar JavaLexer;
 package uk.ac.warwick.dcs.sherlock.model.base.lang;
 }
 
-channels { LINE_ENDING, WHITESPACE, LONG_WHITESPACE, COMMENT  }
+channels { WHITESPACE, LONG_WHITESPACE, COMMENT  }
 
 /*
  * Keywords
@@ -543,7 +543,7 @@ TAB : [\t]+ -> skip
 	;
 
     
-NEWLINE : [ \t]* [\r\n]+ [ \t]* -> channel(LINE_ENDING)
+NEWLINE : [ \t]* [\r\n]+ [ \t]* -> skip
 	;
 
 /*-------------------------
