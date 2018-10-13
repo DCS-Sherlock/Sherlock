@@ -25,8 +25,9 @@ public interface IPreProcessor {
 	 *      input.forEach(output:add);
 	 *      return output
 	 *
-	 * @param input input stream of unprocessed lines
-	 * @return output stream of processed lines
+	 * @param lexer input of lexer instance containing the unprocessed lines
+	 * @param lang reference of the language of the lexer
+	 * @return output stream of processed lines, 1 String per line
 	 */
 	Stream<String> process(Lexer lexer, Language lang);
 

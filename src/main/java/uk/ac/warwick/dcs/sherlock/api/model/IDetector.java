@@ -24,6 +24,8 @@ public interface IDetector {
 	/**
 	 * Returns the appropriate lexer for this strategy and the language of the source files
 	 *
+	 * TODO: on return check that lexer conforms to the channel spec we defined, throw exception if it does not
+	 *
 	 * @param lang the language of the source files
 	 *
 	 * @return the lexer class to use
