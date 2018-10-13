@@ -8,7 +8,7 @@ public interface IPreProcessor {
 
 	/**
 	 * UNUSED - for future optimisations
-	 *
+	 * <p>
 	 * Should the result of this preprocessor be cached?
 	 */
 	default boolean cacheResult() {
@@ -16,17 +16,22 @@ public interface IPreProcessor {
 	}
 
 	/**
+	 * Specifies which channels must be present in the lexer for the preprocessor to function, this is a minimum specification, other channels may be present.
+	 *
+	 * @return LexerSpecification
+	 */
+	Class<? extends ILexerSpecification> getLexerSpecification();
+
+	/**
 	 * Method to perform preprocessing on a line by line stream of a file, this may have been processed by other preprocessors already.
-	 *
+	 * <p>
 	 * Use Stream.builder to construct the output stream
-	 *
-	 * Example:
-	 *      Stream.Builder<String> output = Stream.builder();
-	 *      input.forEach(output:add);
-	 *      return output
+	 * <p>
+	 * Example: Stream.Builder<String> output = Stream.builder(); input.forEach(output:add); return output
 	 *
 	 * @param lexer input of lexer instance containing the unprocessed lines
-	 * @param lang reference of the language of the lexer
+	 * @param lang  reference of the language of the lexer
+	 *
 	 * @return output stream of processed lines, 1 String per line
 	 */
 	Stream<String> process(Lexer lexer, Language lang);

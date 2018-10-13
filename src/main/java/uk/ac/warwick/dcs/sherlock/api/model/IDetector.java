@@ -54,7 +54,7 @@ public interface IDetector {
 	Stream<Language> getSupportedLanguages();
 
 	/**
-	 * Method to process the exit status returned by the
+	 * Method to tokenise the exit status returned by the
 	 *
 	 * @param exitStatus Implementation execution exit status
 	 */

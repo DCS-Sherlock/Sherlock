@@ -1,15 +1,10 @@
 package uk.ac.warwick.dcs.sherlock.deprecated.services.fileSystem;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+
+import java.io.*;
 
 /**
  * @author Aliyah
@@ -32,7 +27,7 @@ class GZipHandler implements ExtractionStrategy {
 	}
 
 	/**
-	 * The extraction process of the GZip handler. 
+	 * The extraction tokenise of the GZip handler.
 	 * @param f 					- The GZip file to unzip
 	 * @param destination		- The destination the extracted files are to be copied to 
 	 */

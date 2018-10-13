@@ -5,7 +5,7 @@ import java.io.File;
 interface ExtractionStrategy {
 
 	/**
-	 * 	The extraction process
+	 * 	The extraction tokenise
 	 * @param dir 			- The file to be extracted
 	 * @param destination	- The destination the files are to extracted to
 	 */

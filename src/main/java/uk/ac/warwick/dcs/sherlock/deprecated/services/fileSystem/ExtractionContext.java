@@ -40,7 +40,7 @@ class ExtractionContext implements ExtractionStrategy {
 	}
 
 	/**
-	 * Method to set the Extraction strategy. This method will also call the extraction process to update the files
+	 * Method to set the Extraction strategy. This method will also call the extraction tokenise to update the files
 	 * @param ex				- The new extraction strategy to be used.
 	 * @param dir			- The source directory
 	 * @param destination	- The destination the files are to be extracted to
