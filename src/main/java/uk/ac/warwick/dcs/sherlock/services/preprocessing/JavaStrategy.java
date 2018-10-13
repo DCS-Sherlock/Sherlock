@@ -39,142 +39,57 @@ class JavaStrategy implements PreProcessingStrategy
     public void preProcessFiles(File[] filePaths, File targetDirectory)
     {
 
-        switch (setting)
+        // catches no settings before any processing is done
+        if (setting == null)
         {
-            case NOC:
-                for (File file : filePaths)
+            System.out.println("No settings");
+        }
+        else
+        {
+            for (File file : filePaths)
+            {
+                String filename = FilenameUtils.removeExtension(file.getName());
+                String finalDestination = targetDirectory + File.separator + filename + ".txt";
+                FileInputStream fis = null;
+                try
                 {
-                    String filename = FilenameUtils.removeExtension(file.getName());
-                    String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    FileInputStream fis = null;
+                    /* Open the input file stream */
+                    fis = new FileInputStream(file);
 
-                    try
+                    /* Create a CharStream that reads in the file */
+                    CharStream input = CharStreams.fromStream(fis);
+
+                    /* Create the Java Lexer and feed it the input */
+                    JavaLexer lexer = new JavaLexer(input);
+
+                    List<? extends Token> list = lexer.getAllTokens();
+                    Vocabulary vocab = lexer.getVocabulary();
+
+                    switch (setting)
                     {
-                        /* Open the input file stream */
-                        fis = new FileInputStream(file);
-
-                        /* Create a CharStream that reads in the file */
-                        CharStream input = CharStreams.fromStream(fis);
-
-                        /* Create the Java Lexer and feed it the input */
-                        JavaLexer lexer = new JavaLexer(input);
-
-                        List<? extends Token> list = lexer.getAllTokens();
-                        Vocabulary vocab = lexer.getVocabulary();
-
-                        removeComments(list, vocab, finalDestination);
-
-                        /* Close the input stream */
-                        fis.close();
+                        case NOC:
+                            removeComments(list, vocab, finalDestination);
+                            break;
+                        case NCW:
+                            removeComments_Whitespace(list, finalDestination);
+                            break;
+                        case COM:
+                            extractComments(list, finalDestination);
+                            break;
+                        case TOK:
+                            tokenise(list, vocab, finalDestination);
+                            break;
                     }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    removeComments(list, vocab, finalDestination);
+
+                    /* Close the input stream */
+                    fis.close();
                 }
-                break;
-            case NCW:
-
-                for (File file : filePaths)
+                catch (IOException e)
                 {
-
-                    String filename = FilenameUtils.removeExtension(file.getName());
-                    String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    FileInputStream fis = null;
-
-                    try
-                    {
-                        /* Open the input file stream */
-                        fis = new FileInputStream(file);
-
-                        /* Create a CharStream that reads in the file */
-                        CharStream input = CharStreams.fromStream(fis);
-
-                        /* Create the Java Lexer and feed it the input */
-                        JavaLexer lexer = new JavaLexer(input);
-
-                        List<? extends Token> list = lexer.getAllTokens();
-                        Vocabulary vocab = lexer.getVocabulary();
-
-                        removeComments_Whitespace(list, finalDestination);
-
-                        /* Close the input stream */
-                        fis.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    e.printStackTrace();
                 }
-
-                break;
-            case COM:
-                for (File file : filePaths)
-                {
-                    String filename = FilenameUtils.removeExtension(file.getName());
-                    String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    FileInputStream fis = null;
-
-                    try
-                    {
-                        /* Open the input file stream */
-                        fis = new FileInputStream(file);
-
-                        /* Create a CharStream that reads in the file */
-                        CharStream input = CharStreams.fromStream(fis);
-
-                        /* Create the Java Lexer and feed it the input */
-                        JavaLexer lexer = new JavaLexer(input);
-
-                        List<? extends Token> list = lexer.getAllTokens();
-                        Vocabulary vocab = lexer.getVocabulary();
-
-                        extractComments(list, finalDestination);
-
-                        /* Close the input stream */
-                        fis.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-
-                break;
-            case TOK:
-                //For each file to be parsed
-                for (File file : filePaths)
-                {
-                    String filename = FilenameUtils.removeExtension(file.getName());
-                    String finalDestination = targetDirectory + File.separator + filename + ".txt";
-                    FileInputStream fis = null;
-                    try
-                    {
-                        /* Open the input file stream */
-                        fis = new FileInputStream(file);
-
-                        /* Create a CharStream that reads in the file */
-                        CharStream input = CharStreams.fromStream(fis);
-
-                        /* Create the Java Lexer and feed it the input */
-                        JavaLexer lexer = new JavaLexer(input);
-
-                        List<? extends Token> list = lexer.getAllTokens();
-                        Vocabulary vocab = lexer.getVocabulary();
-
-                        tokenise(list, vocab, finalDestination);
-
-                        /* Close the input stream */
-                        fis.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            default:
-                System.out.println("No settings");
+            }
         }
 
     }
