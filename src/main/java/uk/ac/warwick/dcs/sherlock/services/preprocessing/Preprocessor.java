@@ -62,7 +62,7 @@ public class Preprocessor {
             File[] filePaths = dp.getInputFiles();
             File target = getTargetDir(s.getNoWSProfile(), s.getSourceDirectory());
             s.getNoWSProfile().setOutputDir(target.getAbsolutePath());
-            new PreProcessingContext(new NoWhiteSpaceStrategy(), filePaths, target);
+            new PreProcessingContext(new JavaStrategy(FileTypes.NWS), filePaths, target);
         }
         if (s.getNoCommentsProfile().isInUse()) {
             File[] filePaths = getFilePaths(s);
@@ -93,7 +93,7 @@ public class Preprocessor {
             File[] filePaths = getFilePaths(s);
             File target = getTargetDir(s.getWSPatternProfile(), s.getSourceDirectory());
             s.getWSPatternProfile().setOutputDir(target.getAbsolutePath());
-            new PreProcessingContext(new WhitespacePatternStrategy(), filePaths, target);
+            new PreProcessingContext(new JavaStrategy(FileTypes.WSP), filePaths, target);
         }
         s.setPreprocessingStatus(true);
     }
