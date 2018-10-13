@@ -286,7 +286,7 @@ class JavaStrategy implements PreProcessingStrategy
                 currentLine = t.getLine();                    // Set the currentLine to the line of the token
             }
 
-            if (t.getChannel() == 0)        // 0 in origional 2 in this file, have changed to 1 for now TODO find out why number was changed
+            if (t.getChannel() == 2)
             {
                 bw.append(vocab.getSymbolicName(t.getType()) + " ");
             }

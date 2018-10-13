@@ -32,17 +32,7 @@ public class Preprocessor {
         /*
          * If original is to be used - do nothing
          *
-         * If No Whitespace - call the no whitespace strategy
-         *
-         * If No Comments - Java strategy
-         *
-         * If No Comments and No Whitespace
-         *
-         * If Comments - Java strategy
-         *
-         * If Tokenised - Java strategy
-         *
-         * If Whitespace pattern - call the whitespace pattern strategy
+         * otherwise call java strategy
          * */
 
         s.getInUseStatus();
@@ -58,8 +48,7 @@ public class Preprocessor {
             s.getOriginalProfile().setOutputDir(targetDirectory);
         }
         if (s.getNoWSProfile().isInUse()) {
-            DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter());
-            File[] filePaths = dp.getInputFiles();
+            File[] filePaths = getFilePaths(s);
             File target = getTargetDir(s.getNoWSProfile(), s.getSourceDirectory());
             s.getNoWSProfile().setOutputDir(target.getAbsolutePath());
             new PreProcessingContext(new JavaStrategy(FileTypes.NWS), filePaths, target);
@@ -71,8 +60,7 @@ public class Preprocessor {
             new PreProcessingContext(new JavaStrategy(FileTypes.NOC), filePaths, target);
         }
         if (s.getNoCWSProfile().isInUse()) {
-            DirectoryProcessor dp = new DirectoryProcessor(s.getOriginalDirectory(), new JavaFileFilter());
-            File[] filePaths = dp.getInputFiles();
+            File[] filePaths = getFilePaths(s);
             File target = getTargetDir(s.getNoCWSProfile(), s.getSourceDirectory());
             s.getNoCWSProfile().setOutputDir(target.getAbsolutePath());
             new PreProcessingContext(new JavaStrategy(FileTypes.NCW), filePaths, target);
