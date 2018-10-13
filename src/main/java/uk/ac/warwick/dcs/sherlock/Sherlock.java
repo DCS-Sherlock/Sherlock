@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.processors.SourceTokeniser;
+import uk.ac.warwick.dcs.sherlock.model.core.ModelUtils;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,6 +22,12 @@ public class Sherlock {
 		try {
 			Lexer lexer = new JavaLexer(CharStreams.fromFileName("test.java"));
 			IPreProcessor tmp = new SourceTokeniser();
+
+			if (!ModelUtils.checkLexerAgainstSpecification(lexer, tmp.getLexerSpecification().newInstance())) {
+				System.out.println("Not a valid lexer for the preprocessor");
+				System.exit(1);
+			}
+
 			Stream<String> s = tmp.process(lexer, Language.JAVA);
 
 			AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -29,7 +36,7 @@ public class Sherlock {
 						System.out.println(atomicInteger + ": " + name);
 					});
 		}
-		catch (IOException e) {
+		catch (IOException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
