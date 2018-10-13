@@ -24,8 +24,6 @@ public interface IDetector {
 	Stream<Class<? extends IPreProcessingStrategy>> getPreProcessors();
 
 	/**
-	 * TODO: For if we decide to do pairs returned from detector then match up overlaping pairs in post
-	 * <p>
 	 * Allows implementation to override the default post processor if a different matching scheme is required
 	 *
 	 * @return the post processor to use, default null (triggers default scheme, overlapping pairs matching)

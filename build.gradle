@@ -1,42 +1,43 @@
-import java.util.regex.Matcher
 import org.apache.tools.ant.filters.ReplaceTokens
+import java.util.regex.Matcher
+
+// https://cloud.google.com/appengine/docs/flexible/java/using-gradle
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.+'
+        classpath 'org.gretty:gretty:+'
+    }
+}
 
 plugins {
-   id "org.ajoberstar.grgit" version "2.3.0"
+    id "org.ajoberstar.grgit" version "2.3.0"
+}
+
+repositories {
+    maven {
+        url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
+    }
+    jcenter()
+    mavenCentral()
 }
 
 apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'antlr'
+apply plugin: 'org.gretty'
+apply plugin: 'com.google.cloud.tools.appengine'
 apply plugin: 'idea'
-
-project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }
-    .sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
-project.ext.count = grgit.log {range(grgit.tag.list().find{ it.name == project.lastTag.toString()}.collect { it }[0].name, "HEAD")}.size()
-
-group = 'uk.ac.warwick.dcs.sherlock'
-version = "${project.ext.lastTag}.${project.count}"
-
-description = """Sherlock"""
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
 
 /**
  * Without the next section Gradle will add a 'compile' dependency on Antlr3:
  * https://github.com/gradle/gradle/issues/820
  */
-configurations {
-    compile {
-        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
-    }
-}
+configurations.compile.extendsFrom = extendsFrom.findAll { it != configurations.antlr }
 
-dependencies {  
+dependencies {
     antlr 'org.antlr:antlr4:4.7.1'
 
     compile(
@@ -50,19 +51,19 @@ dependencies {
             'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     )
 
-    compile group: 'com.miglayout', name: 'miglayout-javafx', version:'5.0'
-    compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
-    compile group: 'org.apache.commons', name: 'commons-compress', version:'1.5'
-    compile group: 'commons-io', name: 'commons-io', version:'2.6'
-    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.12'
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.12'
-    compile group: 'log4j', name: 'log4j', version:'1.2.17'
-    compile group: 'org.graphstream', name: 'gs-core', version:'1.0'
-    compile group: 'org.graphstream', name: 'gs-ui', version:'1.1.2'
+    compile group: 'com.miglayout', name: 'miglayout-javafx', version: '5.0'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.5'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.12'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'org.graphstream', name: 'gs-core', version: '1.0'
+    compile group: 'org.graphstream', name: 'gs-ui', version: '1.1.2'
 }
 
-idea{
+idea {
     module {
         contentRoot = file("$projectDir")
 
@@ -81,6 +82,18 @@ idea{
     }
 }
 
+project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }
+        .sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
+project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
+
+group = 'uk.ac.warwick.dcs.sherlock'
+version = "${project.ext.lastTag}.${project.count}"
+
+description = """Sherlock"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 task printVersion {
     println project.name + '-' + project.version
 }
@@ -94,12 +107,11 @@ task generateSources(type: Copy) {
     delete "$buildDir/src"
     from "src/main/java"
     into "$buildDir/tmp/src/main/java"
-    filter(ReplaceTokens, tokens: [VERSION:  project.version.toString()])
+    filter(ReplaceTokens, tokens: [VERSION: project.version.toString()])
 }
 sourceSets.main.java.srcDirs = ["$buildDir/tmp/src/main/java", "$buildDir/tmp/src/main/antlr"]
 compileJava.dependsOn generateSources
 
-/** Jar*/
 jar {
     destinationDir = file("$buildDir/out")
     delete fileTree("$buildDir/out") {
@@ -107,14 +119,14 @@ jar {
         exclude jar.archivePath.getName()
     }
     manifest {
-        attributes (
+        attributes(
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
                 "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
     }
 }
 
-/** Copy dependencies in lib folder */
+/** Copy dependencies into output folder */
 task deps(type: Copy) {
     from configurations.runtime
     into "$buildDir/out/lib"
@@ -122,8 +134,8 @@ task deps(type: Copy) {
 
 /** Create dist zip */
 task zip(type: Zip) {
-    delete   fileTree("$buildDir/distributions") { include '*.zip' }
-    from ("$buildDir/out/") {
+    delete fileTree("$buildDir/distributions") { include '*.zip' }
+    from("$buildDir/out/") {
         include "*.jar"
     }
     from("$buildDir/out/lib/") {
@@ -145,32 +157,24 @@ test {
 }
 
 task branchSetup {
-    ant.replaceregexp(match:'# Sherlock(.*)', replace:"# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags:'s', byline:true) {
+    ant.replaceregexp(match: '# Sherlock(.*)', replace: "# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags: 's', byline: true) {
         fileset(dir: project.projectDir, includes: 'README.md')
     }
 }
 
-class TagSupport
-{
-    static int tagOrder(String tagPattern, String tagName)
-    {
+class TagSupport {
+    static int tagOrder(String tagPattern, String tagName) {
         Matcher m = tagName =~ tagPattern
 
-        if (m.find())
-        {
+        if (m.find()) {
             int ngroups = m.groupCount()
 
-            if (ngroups < 1)
-            {
+            if (ngroups < 1) {
                 throw new IllegalArgumentException("Tag pattern is expected to have at least one number grouping instruction: $tagPattern")
-            }
-            else
-            {
+            } else {
                 return m.group(1) as int
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalStateException("Tag $tagName should have matched $tagPattern")
         }
     }
