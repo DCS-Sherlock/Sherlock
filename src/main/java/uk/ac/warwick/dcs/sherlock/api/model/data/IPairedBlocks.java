@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
-import uk.ac.warwick.dcs.sherlock.api.model.internal.PairedBlocks;
+import uk.ac.warwick.dcs.sherlock.api.model.data.internal.PairedBlocks;
 
 public interface IPairedBlocks {
 

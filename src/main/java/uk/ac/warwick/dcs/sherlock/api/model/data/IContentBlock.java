@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.internal.ContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.model.data.internal.ContentBlock;
 
 public interface IContentBlock {
 

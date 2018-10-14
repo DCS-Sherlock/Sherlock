@@ -6,8 +6,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
-import uk.ac.warwick.dcs.sherlock.model.base.data.ModelResultItem;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentExtractor;
 
@@ -42,11 +40,6 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
-
-		@Override
-		public Class<? extends IModelResultItem> getResultItemClass() {
-			return ModelResultItem.class;
-		}
 
 		@Override
 		public void run() {

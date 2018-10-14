@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.internal.ModelResultItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +60,9 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 			return this;
 		}
 
-		public abstract Class<? extends IModelResultItem> getResultItemClass();
+		public Class<? extends IModelResultItem> getResultItemClass() {
+			return ModelResultItem.class;
+		}
 	}
 
 }

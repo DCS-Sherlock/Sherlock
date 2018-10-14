@@ -8,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.model.base.data.ModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.internal.ModelDataItem;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
