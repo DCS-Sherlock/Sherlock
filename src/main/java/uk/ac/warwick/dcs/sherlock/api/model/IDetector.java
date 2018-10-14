@@ -1,20 +1,16 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
-
+import java.util.List;
 import java.util.stream.Stream;
 
-public interface IDetector {
+interface IDetector {
 
 	/**
-	 * Main execution method for the detector
-	 *
-	 * @param data   Data set to run detection on
-	 * @param result Result set, append data to this
-	 *
-	 * @return exit status, 0 for okay. Return value is passed to processExitStatus method if > 0
+	 * Builds the set of workers on the passed dataset
+	 * @param data
+	 * @return
 	 */
-	int execute(IModelData data, IModelResult result);
+	List<IDetectorWorker> buildWorkers(List<IModelDataItem> data);
 
 	/**
 	 * @return UI display name of the algorithm
@@ -42,7 +38,7 @@ public interface IDetector {
 	}
 
 	/**
-	 * Allows implementation to specify preprocessors required. The full file set data processed with each of the returned preprocessors will be made available to the implementation via IModelData
+	 * Allows implementation to specify preprocessors required. The full file set data processed with each of the returned preprocessors will be made available to the implementation via IModelDataItem
 	 *
 	 * @return returns a stream of IPreProcessor Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
 	 */
@@ -54,12 +50,14 @@ public interface IDetector {
 	Stream<Language> getSupportedLanguages();
 
 	/**
-	 * Method to tokenise the exit status returned by the
 	 *
-	 * @param exitStatus Implementation execution exit status
 	 */
-	default void processExitStatus(int exitStatus) {
-		Logger.log("Detector error occurred. [Default MSG]");
+	interface IDetectorWorker {
+
+		void run();
+
+		IModelResultItem getResult();
+
 	}
 
 }

@@ -2,18 +2,17 @@ package uk.ac.warwick.dcs.sherlock.model.base.detection;
 
 import org.antlr.v4.runtime.Lexer;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
+import uk.ac.warwick.dcs.sherlock.model.base.data.ModelResultItem;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentExtractor;
 
 import java.util.stream.Stream;
 
-public class TestDetector implements IDetector {
+public class TestDetector extends AbstractPairwiseDetector {
 
 	@Override
-	public int execute(IModelData data, IModelResult result) {
-
-		// Do stuff here
-		return 0;
+	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
+		return new TestDetectorWorker();
 	}
 
 	@Override
@@ -34,5 +33,18 @@ public class TestDetector implements IDetector {
 	@Override
 	public Stream<Language> getSupportedLanguages() {
 		return Stream.of(Language.JAVA);
+	}
+
+	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
+
+		@Override
+		public Class<? extends IModelResultItem> getResultItemClass() {
+			return ModelResultItem.class;
+		}
+
+		@Override
+		public void run() {
+			this.result.addPairedBlocks(IContentBlock.of(this.file1.getFile(), 1, 2), IContentBlock.of(this.file2.getFile(), 1, 2), 1);
+		}
 	}
 }

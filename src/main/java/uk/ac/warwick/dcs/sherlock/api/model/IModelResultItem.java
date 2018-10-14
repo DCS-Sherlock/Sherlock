@@ -1,13 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
-
 import java.util.List;
 
 /**
  *
  */
-public interface IModelResult {
+public interface IModelResultItem {
 
 	/**
 	 * Adds a set of matching blocks of code to the results.
@@ -33,15 +31,5 @@ public interface IModelResult {
 	Can then be used to run analysis on the results and rank the plagiarised sections in the base program
 	*/
 	List<IPairedBlocks> getAllPairedBlocks();
-
-	/**
-	 * @return Detector class used to get result set
-	 */
-	Class<? extends IDetector> getDetector();
-
-	/**
-	 * @return the set of files in the result
-	 */
-	List<ISourceFile> getIncludedFiles();
 
 }
