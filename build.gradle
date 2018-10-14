@@ -109,7 +109,7 @@ generateGrammarSource {
 
 /** Token Replacement */
 task generateSources(type: Copy) {
-    delete "$buildDir/tmp/src"
+    delete "$buildDir/tmp/src/main/java"
     from "src/main/java"
     into "$buildDir/tmp/src/main/java"
     filter(ReplaceTokens, tokens: [VERSION: project.version.toString()])
