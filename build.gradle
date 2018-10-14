@@ -45,7 +45,8 @@ dependencies {
     antlr 'org.antlr:antlr4:4.7.1'
 
     compile(
-            'org.antlr:antlr4-runtime:4.7.1'
+            'org.antlr:antlr4-runtime:4.7.1',
+            'com.google.guava:guava:26.0-jre'
     )
 
     testImplementation(
@@ -108,7 +109,7 @@ generateGrammarSource {
 
 /** Token Replacement */
 task generateSources(type: Copy) {
-    delete "$buildDir/src"
+    delete "$buildDir/tmp/src"
     from "src/main/java"
     into "$buildDir/tmp/src/main/java"
     filter(ReplaceTokens, tokens: [VERSION: project.version.toString()])
@@ -124,7 +125,7 @@ jar {
     }
     manifest {
         attributes(
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.deprecated.SherlockApplication',
+                'Main-Class': 'uk.ac.warwick.dcs.sherlock.Sherlock',
                 "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
     }

@@ -1,12 +1,18 @@
 package uk.ac.warwick.dcs.sherlock.model.base.detection;
 
 import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.model.*;
+import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 import uk.ac.warwick.dcs.sherlock.model.base.data.ModelResultItem;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentExtractor;
 
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.List;
 
 public class TestDetector extends AbstractPairwiseDetector {
 
@@ -26,13 +32,13 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public Stream<Class<? extends IPreProcessor>> getPreProcessors() {
-		return Stream.of(CommentExtractor.class);
+	public List<Class<? extends IPreProcessor>> getPreProcessors() {
+		return Collections.singletonList(CommentExtractor.class);
 	}
 
 	@Override
-	public Stream<Language> getSupportedLanguages() {
-		return Stream.of(Language.JAVA);
+	public List<Language> getSupportedLanguages() {
+		return Collections.singletonList(Language.JAVA);
 	}
 
 	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
@@ -44,7 +50,10 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 		@Override
 		public void run() {
-			this.result.addPairedBlocks(IContentBlock.of(this.file1.getFile(), 1, 2), IContentBlock.of(this.file2.getFile(), 1, 2), 1);
+			for (IndexedString checkLine : this.file1.getPreProcessedLines(CommentExtractor.class)) {
+				this.file2.getPreProcessedLines(CommentExtractor.class).stream().filter(x -> x.valueEquals(checkLine)).forEach(x -> this.result
+						.addPairedBlocks(IContentBlock.of(this.file1.getFile(), checkLine.getKey(), checkLine.getKey()), IContentBlock.of(this.file2.getFile(), x.getKey(), x.getKey()), 1));
+			}
 		}
 	}
 }

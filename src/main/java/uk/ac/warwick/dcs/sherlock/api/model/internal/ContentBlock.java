@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model.internal;
 
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.IContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
 
 public class ContentBlock implements IContentBlock {
 
@@ -39,5 +39,10 @@ public class ContentBlock implements IContentBlock {
 	@Override
 	public int getStartLine() {
 		return this.start;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("(%s [%d, %d])", this.file.getFilename(), this.start, this.end);
 	}
 }

@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.model.base.data;
 
-import uk.ac.warwick.dcs.sherlock.api.model.IModelResultItem;
-import uk.ac.warwick.dcs.sherlock.api.model.IPairedBlocks;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IPairedBlocks;
 
 import java.util.LinkedList;
 import java.util.List;

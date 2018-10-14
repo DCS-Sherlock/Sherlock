@@ -5,27 +5,25 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
 
 import java.util.stream.Stream;
 
 public class SourceTokeniser implements IPreProcessor {
 
 	@Override
-	public Class<? extends ILexerSpecification> getLexerSpecification() {
-		return StandardLexerSpecification.class;
+	public ILexerSpecification getLexerSpecification() {
+		return new StandardLexerSpecification();
 	}
 
 	/**
 	 * Tokenises a sourcefile
 	 *
 	 * @param lexer input of lexer instance containing the unprocessed lines
-	 * @param lang  reference of the language of the lexer
 	 *
 	 * @return stream of tokenised source, 1 line per string
 	 */
 	@Override
-	public Stream<String> process(Lexer lexer, Language lang) {
+	public Stream<String> process(Lexer lexer) {
 		Vocabulary vocab = lexer.getVocabulary();
 		Stream.Builder<String> builder = Stream.builder();
 		StringBuilder active = new StringBuilder(); //use string builder for much faster concatenation

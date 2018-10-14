@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.model.internal;
 
 import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
-import uk.ac.warwick.dcs.sherlock.api.model.IContentBlock;
-import uk.ac.warwick.dcs.sherlock.api.model.IPairedBlocks;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IPairedBlocks;
 
 public class PairedBlocks implements IPairedBlocks {
 
@@ -39,5 +39,10 @@ public class PairedBlocks implements IPairedBlocks {
 			this.percentage = 0;
 			Logger.log("Percentage match out of range, must be between 0 and 1");
 		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s <--> %s [%.0f%%]", this.block1.toString(), this.block2.toString(), this.percentage * 100);
 	}
 }

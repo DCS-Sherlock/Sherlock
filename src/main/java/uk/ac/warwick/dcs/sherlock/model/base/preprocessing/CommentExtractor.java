@@ -4,27 +4,25 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
 
 import java.util.stream.Stream;
 
 public class CommentExtractor implements IPreProcessor {
 
 	@Override
-	public Class<? extends ILexerSpecification> getLexerSpecification() {
-		return StandardLexerSpecification.class;
+	public ILexerSpecification getLexerSpecification() {
+		return new StandardLexerSpecification();
 	}
 
 	/**
 	 * Extracts the comments from a sourcefile
 	 *
 	 * @param lexer input of lexer instance containing the unprocessed lines
-	 * @param lang  reference of the language of the lexer
 	 *
 	 * @return stream of comments, 1 per string
 	 */
 	@Override
-	public Stream<String> process(Lexer lexer, Language lang) {
+	public Stream<String> process(Lexer lexer) {
 		Stream.Builder<String> builder = Stream.builder();
 		StringBuilder active = new StringBuilder();
 		int lineCount = 1;

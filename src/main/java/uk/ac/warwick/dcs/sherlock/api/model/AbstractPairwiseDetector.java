@@ -1,5 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

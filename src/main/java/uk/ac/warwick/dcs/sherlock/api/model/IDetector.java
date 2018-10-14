@@ -1,13 +1,17 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import java.util.List;
-import java.util.stream.Stream;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 
-interface IDetector {
+import java.util.List;
+
+public interface IDetector {
 
 	/**
 	 * Builds the set of workers on the passed dataset
+	 *
 	 * @param data
+	 *
 	 * @return
 	 */
 	List<IDetectorWorker> buildWorkers(List<IModelDataItem> data);
@@ -38,25 +42,26 @@ interface IDetector {
 	}
 
 	/**
-	 * Allows implementation to specify preprocessors required. The full file set data processed with each of the returned preprocessors will be made available to the implementation via IModelDataItem
+	 * Allows implementation to specify preprocessors required. The full file set data processed with each of the returned preprocessors will be made available to the implementation via
+	 * IModelDataItem
 	 *
 	 * @return returns a stream of IPreProcessor Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
 	 */
-	Stream<Class<? extends IPreProcessor>> getPreProcessors();
+	List<Class<? extends IPreProcessor>> getPreProcessors();
 
 	/**
 	 * @return Stream of the languages supported by the algorithm
 	 */
-	Stream<Language> getSupportedLanguages();
+	List<Language> getSupportedLanguages();
 
 	/**
 	 *
 	 */
 	interface IDetectorWorker {
 
-		void run();
-
 		IModelResultItem getResult();
+
+		void run();
 
 	}
 
