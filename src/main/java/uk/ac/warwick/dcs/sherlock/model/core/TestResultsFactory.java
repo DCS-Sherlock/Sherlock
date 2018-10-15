@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
-	public static void buildTest(List<ISourceFile> files, Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException, NoSuchMethodException,
-			InvocationTargetException {
+	public static void buildTest(List<ISourceFile> files, Class<? extends IDetector> algorithm)
+			throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {
 
 		IDetector instance = algorithm.newInstance();
 
@@ -28,8 +28,8 @@ public class TestResultsFactory {
 		//AtomicReference<Class<? extends Lexer>> lexerClass = new AtomicReference<>(instance.getLexer(Language.JAVA));
 		//List<IPreProcessingStrategy> preProcessorClasses = Collections.synchronizedList(instance.getPreProcessors());
 
-		String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(null).getChannelNames();
-		if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerChannels))) {
+		String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
+		if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
 			// strategy is not valid
 			return;
 		}

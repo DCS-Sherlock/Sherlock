@@ -3,9 +3,12 @@ package uk.ac.warwick.dcs.sherlock.model.core;
 import com.google.common.collect.Streams;
 import org.antlr.v4.runtime.Lexer;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,7 +68,7 @@ public class ModelUtils {
 	 * @return is the strategy valid
 	 */
 	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer) {
-		return validatePreProcessingStrategy(strategy, lexer.getChannelNames());
+		return validatePreProcessingStrategy(strategy, lexer.getClass().getName(), lexer.getChannelNames());
 	}
 
 	/**
@@ -74,8 +77,31 @@ public class ModelUtils {
 	 * @param lexerChannels array of channels used in {@link Lexer}, to check
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String[] lexerChannels) {
-		return strategy == null;
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels) {
+
+		if (strategy == null) return false;
+
+		List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
+		for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+			try {
+				IPreProcessor processor = processorClass.newInstance();
+				if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
+					Logger.log(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here
+					return false;
+				}
+
+				if (processor.getDependencies() != null && !checkedProcessors.containsAll(processor.getDependencies())) {
+					Logger.log(String.format("%s does not meet the dependencies of %s", strategy.getName(), processorClass.getName())); //throw exception here
+					return false;
+				}
+				checkedProcessors.add(processorClass);
+			}
+			catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return true;
 	}
 
 }
