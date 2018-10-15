@@ -18,6 +18,12 @@ public class ModelDataItem implements IModelDataItem {
 		this.mapping = new HashMap<>();
 	}
 
+	public ModelDataItem(ISourceFile file, Map<String, List<IndexedString>> map) {
+		this.file = file;
+		this.mapping = new HashMap<>(map);
+	}
+
+	@Override
 	public void addPreProcessedLines(String strategyName, List<IndexedString> lines) {
 		this.mapping.put(strategyName, lines);
 	}

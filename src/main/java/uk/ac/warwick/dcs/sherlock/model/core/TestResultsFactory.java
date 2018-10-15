@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
+import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
@@ -13,13 +14,15 @@ import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardTokeniser;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
 	public static void buildTest(List<ISourceFile> files, Class<? extends IDetector> algorithm)
-			throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {
+			throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
 
 		IDetector instance = algorithm.newInstance();
 
@@ -37,34 +40,43 @@ public class TestResultsFactory {
 		List<IModelDataItem> inputData = files.parallelStream().map(file -> {
 			try {
 				Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromFileName(file.getFilename())); // build new lexer for each file
-				ModelDataItem data = new ModelDataItem(file); //data item for the file
+				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
 				// run each of the preprocessors and populate the file data with result
-				for (IPreProcessingStrategy strategy : preProcessingStrategies) {
-					lexer.reset();
-					List<? extends Token> tokens = lexer.getAllTokens();
-
-					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
-						IPreProcessor processor = processorClass.newInstance();
-						tokens = processor.process(tokens, lexer.getVocabulary(), Language.JAVA);
+				//for (IPreProcessingStrategy strategy : preProcessingStrategies) {
+				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel
+					List<? extends Token> tokens;
+					synchronized (lexer) {
+						lexer.reset();
+						tokens = lexer.getAllTokens();
 					}
 
-					ITokenStringifier stringifier = null;
+					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+						try {
+							IPreProcessor processor = processorClass.newInstance();
+							tokens = processor.process(tokens, lexer.getVocabulary(), Language.JAVA);
+						}
+						catch (InstantiationException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
 
+					ITokenStringifier stringifier;
 					if (strategy.getStringifier() != null) {
 						stringifier = strategy.getStringifier();
 					}
-					else if(strategy instanceof IPreProcessingStrategy.GenericPreProcessingStrategy && ((IPreProcessingStrategy.GenericPreProcessingStrategy) strategy).isResultTokenised()) {
+					else if (strategy instanceof IPreProcessingStrategy.GenericPreProcessingStrategy && ((IPreProcessingStrategy.GenericPreProcessingStrategy) strategy).isResultTokenised()) {
 						stringifier = new StandardTokeniser();
 					}
 					else {
 						stringifier = new StandardStringifier();
 					}
 
-					data.addPreProcessedLines(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
-				}
+					final List<IndexedString> indexedStrings = stringifier.processTokens(tokens, lexer.getVocabulary());
+					map.put(strategy.getName(), indexedStrings);
+				});
 
-				return data;
+				return new ModelDataItem(file, map);
 			}
 			catch (InstantiationException | IllegalAccessException | IOException | NoSuchMethodException | InvocationTargetException e) {
 				e.printStackTrace();
