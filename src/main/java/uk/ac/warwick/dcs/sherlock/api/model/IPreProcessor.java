@@ -30,6 +30,6 @@ public interface IPreProcessor {
 	 *
 	 * @return output list of filtered tokens
 	 */
-	List<Token> process(List<Token> tokens, Vocabulary vocab, Language lang);
+	List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang);
 
 }

@@ -3,12 +3,12 @@ package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
-import uk.ac.warwick.dcs.sherlock.api.model.ITokeniser;
+import uk.ac.warwick.dcs.sherlock.api.model.ITokenStringifier;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class StandardTokeniser implements ITokeniser {
+public class StandardTokeniser implements ITokenStringifier {
 
 	/**
 	 *  Tokenises a file in the form of a list of tokens
@@ -18,19 +18,13 @@ public class StandardTokeniser implements ITokeniser {
 	 * @return indexed lines of the file, tokenised
 	 */
 	@Override
-	public List<IndexedString> processTokens(List<Token> tokens, Vocabulary vocab) {
+	public List<IndexedString> processTokens(List<? extends Token> tokens, Vocabulary vocab) {
 		List<IndexedString> output = new LinkedList<>();
 		StringBuilder active = new StringBuilder(); //use string builder for much faster concatenation
 		int lineCount = 1;
 
 		for (Token t : tokens) {
-			if (t.getLine() > lineCount) {
-				if (active.length() > 0) {
-					output.add(IndexedString.of(lineCount, active.toString()));
-				}
-				active.setLength(0);
-				lineCount = t.getLine();
-			}
+			lineCount = StandardStringifier.checkLineFinished(output, active, lineCount, t);
 
 			switch (StandardLexerSpecification.channels.values()[t.getChannel()]) {
 				case DEFAULT:

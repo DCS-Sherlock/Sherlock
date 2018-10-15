@@ -5,31 +5,29 @@ import java.util.List;
 
 public interface IPreProcessingStrategy {
 
-	static IPreProcessingStrategy of(String name, IPreProcessor... preProcessor) {
+	static IPreProcessingStrategy of(String name, Class<? extends IPreProcessor>... preProcessor) {
 		return new GenericPreProcessingStrategy(name, false, Arrays.asList(preProcessor));
 	}
 
-	static IPreProcessingStrategy of(String name, boolean tokenise, IPreProcessor... preProcessor) {
+	static IPreProcessingStrategy of(String name, boolean tokenise, Class<? extends IPreProcessor>... preProcessor) {
 		return new GenericPreProcessingStrategy(name, tokenise, Arrays.asList(preProcessor));
 	}
 
 	String getName();
 
-	List<IPreProcessor> getPreProcessors();
+	List<Class<? extends IPreProcessor>> getPreProcessorClasses();
 
-	default ITokeniser getTokeniser() {
+	default ITokenStringifier getStringifier() {
 		return null;
 	}
-
-	boolean isResultTokenised();
 
 	class GenericPreProcessingStrategy implements IPreProcessingStrategy {
 
 		private String name;
 		private boolean tokenise;
-		private List<IPreProcessor> preProcessors;
+		private List<Class<? extends IPreProcessor>> preProcessors;
 
-		private GenericPreProcessingStrategy(String name, boolean tokenise, List<IPreProcessor> preProcessors) {
+		private GenericPreProcessingStrategy(String name, boolean tokenise, List<Class<? extends IPreProcessor>> preProcessors) {
 			this.name = name;
 			this.tokenise = tokenise;
 			this.preProcessors = preProcessors;
@@ -41,11 +39,10 @@ public interface IPreProcessingStrategy {
 		}
 
 		@Override
-		public List<IPreProcessor> getPreProcessors() {
+		public List<Class<? extends IPreProcessor>> getPreProcessorClasses() {
 			return this.preProcessors;
 		}
 
-		@Override
 		public boolean isResultTokenised() {
 			return this.tokenise;
 		}

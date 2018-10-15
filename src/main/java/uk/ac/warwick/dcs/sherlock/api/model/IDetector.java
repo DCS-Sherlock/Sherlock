@@ -47,7 +47,7 @@ public interface IDetector {
 	 *
 	 * @return a list of the required preprocessing strategies
 	 */
-	List<Class<? extends IPreProcessingStrategy>> getPreProcessors();
+	List<IPreProcessingStrategy> getPreProcessors();
 
 	/**
 	 * @return Stream of the languages supported by the algorithm
