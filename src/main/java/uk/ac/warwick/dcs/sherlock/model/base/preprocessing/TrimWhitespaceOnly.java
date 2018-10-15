@@ -1,11 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.Language;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrimWhitespaceOnly implements IPreProcessor {
 
@@ -17,37 +19,33 @@ public class TrimWhitespaceOnly implements IPreProcessor {
 	/**
 	 * Removes the excess whitespace from a sourcefile
 	 *
-	 * @param lexer input of lexer instance containing the unprocessed lines
+	 * @param tokens List of tokens to process
+	 * @param vocab Lexer vocabulary
+	 * @param lang language of source file being processed
 	 *
-	 * @return stream of processed lines, 1 line per string
+	 * @return stream of tokens containing comments
 	 */
 	@Override
-	public Stream<String> process(Lexer lexer) {
-		Stream.Builder<String> builder = Stream.builder();
-		StringBuilder active = new StringBuilder(); //use string builder for much faster concatenation
-		int lineCount = 1;
+	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang) {
+		List<Token> result =  new ArrayList<>();
 
-		for (Token t : lexer.getAllTokens()) {
-			while (t.getLine() > lineCount) {
-				builder.add(active.toString());
-				active.setLength(0);
-				lineCount++;
-			}
+		for (Token t : tokens) {
 
 			switch (StandardLexerSpecification.channels.values()[t.getChannel()]) {
 				case COMMENT:
-					lineCount = CommentExtractor.preserveCommentLines(builder, active, lineCount, t);
+					result.add(t);
 					break;
 				case DEFAULT:
+					result.add(t);
+					break;
 				case WHITESPACE:
-					active.append(t.getText());
+					result.add(t);
 					break;
 				default:
 					break;
 			}
 		}
-		builder.add(active.toString());
 
-		return builder.build();
+		return result;
 	}
 }

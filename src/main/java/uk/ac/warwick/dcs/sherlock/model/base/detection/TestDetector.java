@@ -8,6 +8,8 @@ import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentExtractor;
+import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentRemover;
+import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.TrimWhitespaceOnly;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +33,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 	@Override
 	public List<IPreProcessingStrategy> getPreProcessors() {
-		return Collections.singletonList(IPreProcessingStrategy.of("comments", CommentExtractor.class));
+		return Collections.singletonList(IPreProcessingStrategy.of("comments", TrimWhitespaceOnly.class));
 	}
 
 	@Override
