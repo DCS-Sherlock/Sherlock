@@ -47,7 +47,7 @@ public interface IDetector {
 	 *
 	 * @return returns a stream of IPreProcessor Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
 	 */
-	List<Class<? extends IPreProcessor>> getPreProcessors();
+	List<Class<? extends IPreProcessingStrategy>> getPreProcessors();
 
 	/**
 	 * @return Stream of the languages supported by the algorithm
