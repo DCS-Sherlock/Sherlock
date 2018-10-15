@@ -5,11 +5,7 @@ import org.antlr.v4.runtime.Vocabulary;
 
 import java.util.List;
 
-/**
- * Generic IPreProcessor interface, do not implement directly, instead use either IPreProcessorFilter or IPreProcessorMapper
- * @param <E> return type of the preprocessor
- */
-public interface IPreProcessorBase<E> {
+public interface IPreProcessor {
 
 	/**
 	 * Specifies which channels must be present in the lexer for the preprocessor to function, this is a minimum specification, other channels may be present.
@@ -19,14 +15,14 @@ public interface IPreProcessorBase<E> {
 	ILexerSpecification getLexerSpecification();
 
 	/**
-	 * Method to perform preprocessing
+	 * Method to perform preprocessing filtering on a source file.
 	 *
 	 * @param tokens List of tokens to process
      * @param vocab Lexer vocabulary
 	 * @param lang language of source file being processed
 	 *
-	 * @return output list of return items
+	 * @return output list of filtered tokens
 	 */
-	List<E> process(List<Token> tokens, Vocabulary vocab, Language lang);
+	List<Token> process(List<Token> tokens, Vocabulary vocab, Language lang);
 
 }

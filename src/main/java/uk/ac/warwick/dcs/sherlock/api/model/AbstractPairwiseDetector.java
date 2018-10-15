@@ -2,7 +2,6 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
-import uk.ac.warwick.dcs.sherlock.api.model.data.internal.ModelResultItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +28,8 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 	}
 
 	@Override
-	public List<IDetectorWorker> buildWorkers(List<IModelDataItem> data) {
-		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1))).collect(Collectors.toList());
+	public List<IDetectorWorker> buildWorkers(List<IModelDataItem> data, Class<? extends IModelResultItem> resultItemClass) {
+		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1), resultItemClass)).collect(Collectors.toList());
 	}
 
 	public abstract AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker();
@@ -46,22 +45,18 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 			return this.result;
 		}
 
-		AbstractPairwiseDetectorWorker putData(IModelDataItem file1Data, IModelDataItem file2Data) {
+		AbstractPairwiseDetectorWorker putData(IModelDataItem file1Data, IModelDataItem file2Data, Class<? extends IModelResultItem> resultItemClass) {
 			this.file1 = file1Data;
 			this.file2 = file2Data;
 
 			try {
-				this.result = getResultItemClass().newInstance();
+				this.result = resultItemClass.newInstance();
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 
 			return this;
-		}
-
-		public Class<? extends IModelResultItem> getResultItemClass() {
-			return ModelResultItem.class;
 		}
 	}
 
