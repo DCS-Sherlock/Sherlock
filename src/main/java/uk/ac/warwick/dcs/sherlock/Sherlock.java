@@ -22,13 +22,18 @@ public class Sherlock {
 
 		/* temporary run in main method */
 
+		long startTime = System.currentTimeMillis();
+
 		try {
-			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("test.java"), new TestResultsFactory.tmpFile("test2.java")));
+			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("test.java"), new TestResultsFactory.tmpFile("test2.java"), new TestResultsFactory.tmpFile("test3.java")));
 			TestResultsFactory.buildTest(fileList, TestDetector.class);
 		}
 		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total Runtime Time = " + (endTime - startTime) + "ms");
 	}
 
 }

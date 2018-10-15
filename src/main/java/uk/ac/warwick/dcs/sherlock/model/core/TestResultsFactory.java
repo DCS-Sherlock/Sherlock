@@ -13,6 +13,7 @@ import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardTokeniser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -28,8 +29,6 @@ public class TestResultsFactory {
 
 		Class<? extends Lexer> lexerClass = instance.getLexer(Language.JAVA);
 		List<IPreProcessingStrategy> preProcessingStrategies = instance.getPreProcessors();
-		//AtomicReference<Class<? extends Lexer>> lexerClass = new AtomicReference<>(instance.getLexer(Language.JAVA));
-		//List<IPreProcessingStrategy> preProcessorClasses = Collections.synchronizedList(instance.getPreProcessors());
 
 		String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 		if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
@@ -40,17 +39,12 @@ public class TestResultsFactory {
 		List<IModelDataItem> inputData = files.parallelStream().map(file -> {
 			try {
 				Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromFileName(file.getFilename())); // build new lexer for each file
+				List<? extends Token> tokensMaster = lexer.getAllTokens();
+
 				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
-				// run each of the preprocessors and populate the file data with result
-				//for (IPreProcessingStrategy strategy : preProcessingStrategies) {
-				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel
-					List<? extends Token> tokens;
-					synchronized (lexer) {
-						lexer.reset();
-						tokens = lexer.getAllTokens();
-					}
-
+				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
+					List<? extends Token> tokens = new LinkedList<>(tokensMaster);
 					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 						try {
 							IPreProcessor processor = processorClass.newInstance();
@@ -72,8 +66,7 @@ public class TestResultsFactory {
 						stringifier = new StandardStringifier();
 					}
 
-					final List<IndexedString> indexedStrings = stringifier.processTokens(tokens, lexer.getVocabulary());
-					map.put(strategy.getName(), indexedStrings);
+					map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
 				});
 
 				return new ModelDataItem(file, map);
