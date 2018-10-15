@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.model.base.detection;
 import org.antlr.v4.runtime.Lexer;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessorBase;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
@@ -30,7 +30,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public List<Class<? extends IPreProcessor>> getPreProcessors() {
+	public List<Class<? extends IPreProcessorBase>> getPreProcessors() {
 		return Collections.singletonList(CommentExtractor.class);
 	}
 

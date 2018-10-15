@@ -3,11 +3,11 @@ package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessorBase;
 
 import java.util.stream.Stream;
 
-public class CommentExtractor implements IPreProcessor {
+public class CommentExtractor implements IPreProcessorBase {
 
 	@Override
 	public ILexerSpecification getLexerSpecification() {

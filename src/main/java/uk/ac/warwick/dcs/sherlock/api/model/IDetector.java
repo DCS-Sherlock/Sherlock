@@ -45,9 +45,9 @@ public interface IDetector {
 	 * Allows implementation to specify preprocessors required. The full file set data processed with each of the returned preprocessors will be made available to the implementation via
 	 * IModelDataItem
 	 *
-	 * @return returns a stream of IPreProcessor Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
+	 * @return returns a stream of IPreProcessorBase Classes. Example: "return Stream.of(preRemoveWhiteSpace.class, preRemoveComments.class)";
 	 */
-	List<Class<? extends IPreProcessor>> getPreProcessors();
+	List<Class<? extends IPreProcessorBase>> getPreProcessors();
 
 	/**
 	 * @return Stream of the languages supported by the algorithm

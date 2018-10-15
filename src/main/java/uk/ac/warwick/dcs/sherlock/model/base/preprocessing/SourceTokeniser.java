@@ -4,11 +4,11 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessorBase;
 
 import java.util.stream.Stream;
 
-public class SourceTokeniser implements IPreProcessor {
+public class SourceTokeniser implements IPreProcessorBase {
 
 	@Override
 	public ILexerSpecification getLexerSpecification() {
