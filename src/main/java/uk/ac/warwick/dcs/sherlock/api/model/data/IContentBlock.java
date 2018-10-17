@@ -14,25 +14,8 @@ public interface IContentBlock {
 	 * @return configured instance of IContentBlock
 	 */
 	static IContentBlock of(ISourceFile file, int startLine, int endLine) {
-		return new GenericContentBlock(file, startLine, endLine, -1, -1);
+		return new GenericContentBlock(file, startLine, endLine);
 	}
-
-	/**
-	 * Constructs a default IContentBlock based on the API internal implementation
-	 *
-	 * @param file              File containing code block
-	 * @param startLine         Line number of start of block
-	 * @param endLine           Line number of end of block
-	 * @param startCharacterPos Position of the first character in the block on the start line
-	 * @param endCharacterPos   Position of the final character in the block on the end line
-	 *
-	 * @return configured instance of IContentBlock
-	 */
-	static IContentBlock of(ISourceFile file, int startLine, int endLine, int startCharacterPos, int endCharacterPos) {
-		return new GenericContentBlock(file, startLine, endLine, startCharacterPos, endCharacterPos);
-	}
-
-	int getEndCharacterPos();
 
 	/**
 	 * @return Line number of end of block
@@ -44,29 +27,23 @@ public interface IContentBlock {
 	 */
 	ISourceFile getFile();
 
-	int getStartCharacterPos();
-
 	/**
 	 * @return Line number of start of block
 	 */
 	int getStartLine();
 
+	/**
+	 * Generic implementation of IContentBlock
+	 */
 	class GenericContentBlock implements IContentBlock {
 
 		private ISourceFile file;
-		private int start, end, startChar, endChar;
+		private int start, end;
 
-		private GenericContentBlock(ISourceFile file, int startLine, int endLine, int startCharacterPos, int endCharacterPos) {
+		private GenericContentBlock(ISourceFile file, int startLine, int endLine) {
 			this.file = file;
 			this.start = startLine;
 			this.end = endLine;
-			this.startChar = startCharacterPos;
-			this.endChar = endCharacterPos;
-		}
-
-		@Override
-		public int getEndCharacterPos() {
-			return this.endChar;
 		}
 
 		@Override
@@ -77,11 +54,6 @@ public interface IContentBlock {
 		@Override
 		public ISourceFile getFile() {
 			return this.file;
-		}
-
-		@Override
-		public int getStartCharacterPos() {
-			return this.startChar;
 		}
 
 		@Override

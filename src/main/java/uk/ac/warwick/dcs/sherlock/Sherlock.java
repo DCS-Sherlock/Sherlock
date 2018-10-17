@@ -25,7 +25,7 @@ public class Sherlock {
 		long startTime = System.currentTimeMillis();
 
 		try {
-			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("test.java"), new TestResultsFactory.tmpFile("test2.java"), new TestResultsFactory.tmpFile("test3.java")));
+			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("test.java"), new TestResultsFactory.tmpFile("test2.java")));
 			TestResultsFactory.buildTest(fileList, TestDetector.class);
 		}
 		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {

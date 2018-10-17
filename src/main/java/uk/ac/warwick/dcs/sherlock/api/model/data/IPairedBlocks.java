@@ -4,12 +4,23 @@ import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
 
 public interface IPairedBlocks {
 
+	/**
+	 * @return value is within the range 0 to 1 inclusive
+	 */
 	static boolean checkPercentageInRange(float value) {
 		return (value >= 0) && (value <= 1);
 	}
 
-	static IPairedBlocks of(IContentBlock block1, IContentBlock block2, float percentageMatch) {
-		return new GenericPairedBlocks(block1, block2, percentageMatch);
+	/**
+	 * Construct a default instance of IPairedBlocks, based on the internal api implementation
+	 * @param block1 IContentBlock 1
+	 * @param block2 IContentBlock 2
+	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
+	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
+	 * @return constructed generic instance
+	 */
+	static IPairedBlocks of(IContentBlock block1, IContentBlock block2, float percentageMatchBlock1, float percentageMatchBlock2) {
+		return new GenericPairedBlocks(block1, block2, percentageMatchBlock1, percentageMatchBlock2);
 	}
 
 	IContentBlock getBlock1();
@@ -17,21 +28,31 @@ public interface IPairedBlocks {
 	IContentBlock getBlock2();
 
 	/**
-	 * @return The percentage the two blocks match, float between 0 and 1
+	 * @return The percentage of block 1 which contains elements from block 2, float between 0 and 1
 	 */
-	float getPercentageMatch();
+	float getPercentageMatchBlock1();
 
-	void setPercentageMatch(float percentage);
+	/**
+	 * @return The percentage of block 2 which contains elements from block 1, float between 0 and 1
+	 */
+	float getPercentageMatchBlock2();
+
+	/**
+	 * Verifies and then sets the percentage match for both directions
+	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
+	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
+	 */
+	void setPercentageMatch(float percentageMatchBlock1, float percentageMatchBlock2);
 
 	class GenericPairedBlocks implements IPairedBlocks {
 
 		private IContentBlock block1, block2;
-		private float percentage;
+		private float percentageB1, percentageB2;
 
-		private GenericPairedBlocks(IContentBlock block1, IContentBlock block2, float percentageMatch) {
+		private GenericPairedBlocks(IContentBlock block1, IContentBlock block2, float percentageMatchBlock1, float percentageMatchBlock2) {
 			this.block1 = block1;
 			this.block2 = block2;
-			this.setPercentageMatch(percentageMatch);
+			this.setPercentageMatch(percentageMatchBlock1, percentageMatchBlock2);
 		}
 
 		@Override
@@ -45,24 +66,37 @@ public interface IPairedBlocks {
 		}
 
 		@Override
-		public float getPercentageMatch() {
-			return this.percentage;
+		public float getPercentageMatchBlock1() {
+			return this.percentageB1;
 		}
 
 		@Override
-		public void setPercentageMatch(float percentage) {
-			if (IPairedBlocks.checkPercentageInRange(percentage)) {
-				this.percentage = percentage;
+		public float getPercentageMatchBlock2() {
+			return this.percentageB2;
+		}
+
+		@Override
+		public void setPercentageMatch(float percentageMatchBlock1, float percentageMatchBlock2) {
+			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock1)) {
+				this.percentageB1 = percentageMatchBlock1;
 			}
 			else {
-				this.percentage = 0;
-				Logger.log("Percentage match out of range, must be between 0 and 1");
+				this.percentageB1 = 0;
+				Logger.log(String.format("percentageMatchBlock1 out of range [%.2f], must be between 0 and 1", percentageMatchBlock1));
+			}
+
+			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock2)) {
+				this.percentageB2 = percentageMatchBlock2;
+			}
+			else {
+				this.percentageB2 = 0;
+				Logger.log(String.format("percentageMatchBlock2 out of range [%.2f], must be between 0 and 1", percentageMatchBlock2));
 			}
 		}
 
 		@Override
 		public String toString() {
-			return String.format("%s <--> %s [%.0f%%]", this.block1.toString(), this.block2.toString(), this.percentage * 100);
+			return String.format("%s <--> %s [%.0f%% <--> %.0f%%]", this.block1.toString(), this.block2.toString(), this.percentageB1 * 100, this.percentageB2 * 100);
 		}
 	}
 }

@@ -12,10 +12,11 @@ public interface IModelResultItem {
 	 *
 	 * @param block1          first matched block
 	 * @param block2          second matched block
-	 * @param percentageMatch the percentage the two block match, float between 0 and 1
+	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
+	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
 	 */
-	default void addPairedBlocks(IContentBlock block1, IContentBlock block2, float percentageMatch) {
-		this.addPairedBlocks(IPairedBlocks.of(block1, block2, percentageMatch));
+	default void addPairedBlocks(IContentBlock block1, IContentBlock block2, float percentageMatchBlock1, float percentageMatchBlock2) {
+		this.addPairedBlocks(IPairedBlocks.of(block1, block2, percentageMatchBlock1, percentageMatchBlock2));
 	}
 
 	/**
