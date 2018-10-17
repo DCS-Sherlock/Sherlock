@@ -79,7 +79,7 @@ public class TestResultsFactory {
 		}).collect(Collectors.toList());
 
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData, ModelResultItem.class);
-		workers.parallelStream().forEach(IDetector.IDetectorWorker::run);
+		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
 		workers.stream().map(IDetector.IDetectorWorker::getResult).forEach(x -> x.getAllPairedBlocks().forEach(System.out::println));
 	}
 
