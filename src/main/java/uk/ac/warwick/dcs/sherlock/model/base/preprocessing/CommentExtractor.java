@@ -18,7 +18,10 @@ public class CommentExtractor implements IPreProcessor {
 	/**
 	 * Extracts the comments from a source file
 	 *
-	 * @param tokens List of tokens to process
+	 * Parallel version:
+	 * return tokens.parallelStream().filter(t -> StandardLexerSpecification.channels.values()[t.getChannel()] == StandardLexerSpecification.channels.COMMENT).collect(Collectors.toList());
+	 *
+	 * @param tokens list of tokens to process
 	 * @param vocab Lexer vocabulary
 	 * @param lang language of source file being processed
 	 *

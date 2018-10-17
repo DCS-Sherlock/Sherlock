@@ -44,7 +44,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
 
 		@Override
-		public void run() {
+		public void execute() {
 			for (IndexedString checkLine : this.file1.getPreProcessedLines("comments")) {
 				this.file2.getPreProcessedLines("comments").stream().filter(x -> x.valueEquals(checkLine)).forEach(x -> this.result
 						.addPairedBlocks(IContentBlock.of(this.file1.getFile(), checkLine.getKey(), checkLine.getKey()), IContentBlock.of(this.file2.getFile(), x.getKey(), x.getKey()), 1));
