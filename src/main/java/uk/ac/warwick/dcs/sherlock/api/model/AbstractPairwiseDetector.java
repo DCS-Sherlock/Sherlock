@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * An abstract IDetector implementation which constructs an individual, parallel worker for each combination
+ * of files in the dataset. 
+ */
 public abstract class AbstractPairwiseDetector implements IDetector {
 
 	private static <E> Stream<List<E>> combinations(List<E> l, int size) {
