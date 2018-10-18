@@ -16,20 +16,14 @@ The gradle project comes with IntelliJ IDEA support. To use:
 ```New project from existing sources -> Import project -> Import project from external model -> gradle -> uncheck "Create seperate module per source set"```
 
 
-## Dependencies
-To download the project dependencies use: `gradlew(.bat) deps`. They can be found in `/build/out/lib/`
-
-
 ## Building
 To build WITH tests use `gradlew(.bat) build`
 
-To build WITHOUT tests use `gradlew(.bat) jar`
+To build WITHOUT tests use `gradlew(.bat) bootJar`
 
-To create a distribution zip including the jar and all dependencies use `gradlew(.bat) distribute`
+The jar will be built into the `/build/out/` directory, contains all the required dependencies and can be run using `java -jar Sherlock-x.x.x.jar`
 
-## Testing
-First ensure the dependencies have been downloaded using the `gradlew(.bat) deps` command
+## Running/Testing
+Sherlock can be run within the gradle environment using the command `gradlew(.bat) bootRun`, this has no prior requirements and can be run directly on a clone of the repo
 
-Then build the jar file using `gradlew(.bat) build` or `gradlew(.bat) jar`
-
-The jar will be built into the `/build/out/` directory, the dependencies are in the correct location to run the jar file in place using `java -jar Sherlock-x.x.x.jar`
+The project can also be tested directly within IntelliJ IDEA using either the automatically configured Spring Boot run configuration named `SherlockApplication`, or the gradle task `bootRun`
