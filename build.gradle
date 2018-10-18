@@ -1,15 +1,16 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 import java.util.regex.Matcher
 
-// https://cloud.google.com/appengine/docs/flexible/java/using-gradle zzz
 buildscript {
+    ext {
+        springBootVersion = '2.0.6.RELEASE'
+    }
     repositories {
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.+'
-        classpath 'org.gretty:gretty:+'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
@@ -27,9 +28,9 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'antlr'
-apply plugin: 'org.gretty'
-apply plugin: 'com.google.cloud.tools.appengine'
 apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 /**
  * Without the next section Gradle will add a 'compile' dependency on Antlr3:
@@ -44,26 +45,25 @@ configurations {
 dependencies {
     antlr 'org.antlr:antlr4:4.7.1'
 
-    compile(
-            'org.antlr:antlr4-runtime:4.7.1',
-            'com.google.guava:guava:26.0-jre'
-    )
+    compile 'org.antlr:antlr4-runtime:4.7.1'
+    compile 'com.google.guava:guava:26.0-jre'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+//    compile 'org.springframework.boot:spring-boot-devtools'
 
-    testImplementation(
-            'org.junit.jupiter:junit-jupiter-api:5.1.0'
-    )
-    testRuntimeOnly(
-            'org.junit.jupiter:junit-jupiter-engine:5.1.0'
-    )
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
 
     compile group: 'com.miglayout', name: 'miglayout-javafx', version: '5.0'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.5'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.12'
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+//    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
+//    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.12'
+//    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
+//    compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'org.graphstream', name: 'gs-core', version: '1.0'
     compile group: 'org.graphstream', name: 'gs-ui', version: '1.1.2'
 }
@@ -117,45 +117,45 @@ task generateSources(type: Copy) {
 sourceSets.main.java.srcDirs = ["$buildDir/tmp/src/main/java", "$buildDir/tmp/src/main/antlr"]
 compileJava.dependsOn generateSources
 
-jar {
-    destinationDir = file("$buildDir/out")
-    delete fileTree("$buildDir/out") {
-        include '*.jar'
-        exclude jar.archivePath.getName()
-    }
-    manifest {
-        attributes(
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.Sherlock',
-                "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
-        )
-    }
-}
+//jar {
+//    destinationDir = file("$buildDir/out")
+//    delete fileTree("$buildDir/out") {
+//        include '*.jar'
+//        exclude jar.archivePath.getName()
+//    }
+//    manifest {
+//        attributes(
+//                'Main-Class': 'uk.ac.warwick.dcs.sherlock.web.SherlockApplication',
+//                "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
+//        )
+//    }
+//}
 
 /** Copy dependencies into output folder */
-task deps(type: Copy) {
-    from configurations.runtime
-    into "$buildDir/out/lib"
-}
+//task deps(type: Copy) {
+//    from configurations.runtime
+//    into "$buildDir/out/lib"
+//}
 
 /** Create dist zip */
-task zip(type: Zip) {
-    delete fileTree("$buildDir/distributions") { include '*.zip' }
-    from("$buildDir/out/") {
-        include "*.jar"
-    }
-    from("$buildDir/out/lib/") {
-        into('lib')
-    }
-    into(project.name + '-' + project.version)
-}
+//task zip(type: Zip) {
+//    delete fileTree("$buildDir/distributions") { include '*.zip' }
+//    from("$buildDir/out/") {
+//        include "*.jar"
+//    }
+//    from("$buildDir/out/lib/") {
+//        into('lib')
+//    }
+//    into(project.name + '-' + project.version)
+//}
 
-task distribute {
-    dependsOn 'deps'
-    dependsOn 'build'
-    dependsOn 'zip'
-    tasks.findByName('build').mustRunAfter 'deps'
-    tasks.findByName('zip').mustRunAfter 'build'
-}
+//task distribute {
+//    dependsOn 'deps'
+//    dependsOn 'build'
+//    dependsOn 'zip'
+//    tasks.findByName('build').mustRunAfter 'deps'
+//    tasks.findByName('zip').mustRunAfter 'build'
+//}
 
 test {
     useJUnitPlatform()
