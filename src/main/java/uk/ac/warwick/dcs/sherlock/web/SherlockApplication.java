@@ -86,7 +86,6 @@ public class SherlockApplication extends JFrame {
 			System.out.println(String.format("Sherlock v%s\n", Reference.version));
 		}
 
-		/* temporary run in main method */
 		String result = "";
 		long startTime = System.currentTimeMillis();
 

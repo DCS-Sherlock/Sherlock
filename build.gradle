@@ -100,7 +100,6 @@ task deps(type: Copy) {
     into "$buildDir/out/lib"
 }
 
-
 jar {
     enabled = false //enable to build a standard jar
     destinationDir = file("$buildDir/out")
@@ -118,7 +117,7 @@ jar {
         )
     }
 }
-jar.dependsOn deps
+if (jar.enabled) jar.dependsOn deps
 
 bootJar {
     enabled = true
