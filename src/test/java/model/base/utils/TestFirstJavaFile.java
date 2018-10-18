@@ -9,7 +9,7 @@ public class TestFirstJavaFile implements TestJavaFile {
     private final String Original = "//comment\npublic" + " " + " " + "class {}";
     private List<TestUtils.TokenUtil> list = new ArrayList<>(
             Arrays.asList(
-                new TestUtils.TokenUtil("//comment",1,1),
+                new TestUtils.TokenUtil("//comment",4,1),
                     new TestUtils.TokenUtil("public",0,2),
                     new TestUtils.TokenUtil("  ",3,2),
                     new TestUtils.TokenUtil("class",0,2),
