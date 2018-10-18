@@ -9,8 +9,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.TrimWhitespaceOnly;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TestDetector extends AbstractPairwiseDetector {
 

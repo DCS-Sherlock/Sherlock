@@ -3,14 +3,15 @@ package uk.ac.warwick.dcs.sherlock.api.model.data;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 
-import java.util.List;
+import java.util.*;
 
 public interface IModelDataItem {
 
 	/**
 	 * Adds a set of preprocessed lines, output from an {@link uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy}, to the dataset
+	 *
 	 * @param strategyName string name of the {@link uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy}
-	 * @param lines the set of indexed preprocessing lines
+	 * @param lines        the set of indexed preprocessing lines
 	 */
 	void addPreProcessedLines(String strategyName, List<IndexedString> lines);
 
@@ -21,7 +22,9 @@ public interface IModelDataItem {
 
 	/**
 	 * Retrieves the set of preprcoessed lines from an {@link uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy}
+	 *
 	 * @param strategyName string name of the {@link uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy}
+	 *
 	 * @return the set of indexed preprocessing lines
 	 */
 	List<IndexedString> getPreProcessedLines(String strategyName);

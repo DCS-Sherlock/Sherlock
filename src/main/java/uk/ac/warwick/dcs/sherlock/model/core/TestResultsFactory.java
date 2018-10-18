@@ -13,16 +13,14 @@ import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardTokeniser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
-	public static void buildTest(List<ISourceFile> files, Class<? extends IDetector> algorithm)
+	public static String buildTestResults(List<ISourceFile> files, Class<? extends IDetector> algorithm)
 			throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
 
 		IDetector instance = algorithm.newInstance();
@@ -33,7 +31,7 @@ public class TestResultsFactory {
 		String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 		if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
 			// strategy is not valid
-			return;
+			return null;
 		}
 
 		List<IModelDataItem> inputData = files.parallelStream().map(file -> {
@@ -80,7 +78,7 @@ public class TestResultsFactory {
 
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData, ModelResultItem.class);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
-		workers.stream().map(IDetector.IDetectorWorker::getResult).forEach(x -> x.getAllPairedBlocks().forEach(System.out::println));
+		return workers.stream().map(IDetector.IDetectorWorker::getResult).flatMap(x -> x.getAllPairedBlocks().parallelStream().map(Object::toString)).collect(Collectors.joining("\n"));
 	}
 
 	public static class tmpFile implements ISourceFile {

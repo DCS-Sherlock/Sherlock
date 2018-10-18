@@ -13,10 +13,12 @@ public interface IPairedBlocks {
 
 	/**
 	 * Construct a default instance of IPairedBlocks, based on the internal api implementation
-	 * @param block1 IContentBlock 1
-	 * @param block2 IContentBlock 2
+	 *
+	 * @param block1                IContentBlock 1
+	 * @param block2                IContentBlock 2
 	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
 	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
+	 *
 	 * @return constructed generic instance
 	 */
 	static IPairedBlocks of(IContentBlock block1, IContentBlock block2, float percentageMatchBlock1, float percentageMatchBlock2) {
@@ -39,6 +41,7 @@ public interface IPairedBlocks {
 
 	/**
 	 * Verifies and then sets the percentage match for both directions
+	 *
 	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
 	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
 	 */
@@ -53,6 +56,25 @@ public interface IPairedBlocks {
 			this.block1 = block1;
 			this.block2 = block2;
 			this.setPercentageMatch(percentageMatchBlock1, percentageMatchBlock2);
+		}
+
+		@Override
+		public void setPercentageMatch(float percentageMatchBlock1, float percentageMatchBlock2) {
+			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock1)) {
+				this.percentageB1 = percentageMatchBlock1;
+			}
+			else {
+				this.percentageB1 = 0;
+				Logger.log(String.format("percentageMatchBlock1 out of range [%.2f], must be between 0 and 1", percentageMatchBlock1));
+			}
+
+			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock2)) {
+				this.percentageB2 = percentageMatchBlock2;
+			}
+			else {
+				this.percentageB2 = 0;
+				Logger.log(String.format("percentageMatchBlock2 out of range [%.2f], must be between 0 and 1", percentageMatchBlock2));
+			}
 		}
 
 		@Override
@@ -73,25 +95,6 @@ public interface IPairedBlocks {
 		@Override
 		public float getPercentageMatchBlock2() {
 			return this.percentageB2;
-		}
-
-		@Override
-		public void setPercentageMatch(float percentageMatchBlock1, float percentageMatchBlock2) {
-			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock1)) {
-				this.percentageB1 = percentageMatchBlock1;
-			}
-			else {
-				this.percentageB1 = 0;
-				Logger.log(String.format("percentageMatchBlock1 out of range [%.2f], must be between 0 and 1", percentageMatchBlock1));
-			}
-
-			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock2)) {
-				this.percentageB2 = percentageMatchBlock2;
-			}
-			else {
-				this.percentageB2 = 0;
-				Logger.log(String.format("percentageMatchBlock2 out of range [%.2f], must be between 0 and 1", percentageMatchBlock2));
-			}
 		}
 
 		@Override
