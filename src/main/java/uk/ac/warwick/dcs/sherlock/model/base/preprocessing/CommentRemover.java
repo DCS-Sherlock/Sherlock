@@ -6,8 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CommentRemover implements IPreProcessor {
 
@@ -20,14 +19,14 @@ public class CommentRemover implements IPreProcessor {
 	 * Preprocessor to remove comments and trim whitespace from source
 	 *
 	 * @param tokens List of tokens to process
-	 * @param vocab Lexer vocabulary
-	 * @param lang language of source file being processed
+	 * @param vocab  Lexer vocabulary
+	 * @param lang   language of source file being processed
 	 *
 	 * @return stream of tokens containing comments
 	 */
 	@Override
 	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang) {
-		List<Token> result =  new ArrayList<>();
+		List<Token> result = new ArrayList<>();
 
 		for (Token t : tokens) {
 

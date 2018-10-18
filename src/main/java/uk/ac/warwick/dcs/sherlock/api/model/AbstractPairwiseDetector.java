@@ -3,24 +3,22 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.*;
 
 /**
- * An abstract IDetector implementation which constructs an individual, parallel worker for each combination of files in the dataset.
- * This can be used as a base for pairwise matching algorithms, more advanced implementations should directly implement the IDetector interface.
+ * An abstract IDetector implementation which constructs an individual, parallel worker for each combination of files in the dataset. This can be used as a base for pairwise matching algorithms, more
+ * advanced implementations should directly implement the IDetector interface.
  */
 public abstract class AbstractPairwiseDetector implements IDetector {
 
 	/**
 	 * Recursively creates a list of all the possible combinations (unordered) of a specific size of an input list
+	 *
 	 * @param list list of items to find combinations of
 	 * @param size size of the combinations, 2 returns pairs etc...
-	 * @param <E> list typing
+	 * @param <E>  list typing
+	 *
 	 * @return list of all possible combinations
 	 */
 	private static <E> Stream<List<E>> combinations(List<E> list, int size) {
@@ -39,9 +37,9 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 	}
 
 	/**
-	 *
-	 * @param data preprocessed dataset
+	 * @param data            preprocessed dataset
 	 * @param resultItemClass class the worker should use to return its results
+	 *
 	 * @return
 	 */
 	@Override
@@ -65,6 +63,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 
 		/**
 		 * Gets the results of the worker execution, only minimal processing should be performed in this method
+		 *
 		 * @return worker results
 		 */
 		@Override
@@ -74,9 +73,11 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 
 		/**
 		 * Loads data into the worker, called by the {@link AbstractPairwiseDetector#buildWorkers(List, Class)} method
-		 * @param file1Data preprocessed data for file 1
-		 * @param file2Data preprocessed data for file 2
+		 *
+		 * @param file1Data       preprocessed data for file 1
+		 * @param file2Data       preprocessed data for file 2
 		 * @param resultItemClass class the worker uses to return its results
+		 *
 		 * @return this (the current worker instance)
 		 */
 		AbstractPairwiseDetectorWorker putData(IModelDataItem file1Data, IModelDataItem file2Data, Class<? extends IModelResultItem> resultItemClass) {

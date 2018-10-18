@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * @author Aliyah
- *	Filters on whether the file is a directory
+ * @author Aliyah Filters on whether the file is a directory
  */
 public class DirectoryFilter implements FileFilter {
 

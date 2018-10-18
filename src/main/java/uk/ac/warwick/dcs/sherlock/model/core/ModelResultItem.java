@@ -3,8 +3,7 @@ package uk.ac.warwick.dcs.sherlock.model.core;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IPairedBlocks;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ModelResultItem implements IModelResultItem {
 

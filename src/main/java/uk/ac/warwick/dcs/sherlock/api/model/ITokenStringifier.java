@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 
-import java.util.List;
+import java.util.*;
 
 public interface ITokenStringifier {
 

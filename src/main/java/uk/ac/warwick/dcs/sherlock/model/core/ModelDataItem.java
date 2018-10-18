@@ -4,9 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModelDataItem implements IModelDataItem {
 

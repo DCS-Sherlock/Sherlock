@@ -5,16 +5,16 @@ import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.ITokenStringifier;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class StandardStringifier implements ITokenStringifier {
 
 	/**
-	 *  Stringifies a file in the form of a list of tokens
+	 * Stringifies a file in the form of a list of tokens
 	 *
 	 * @param tokens the file as a list of tokens
-	 * @param vocab the lexer vocab
+	 * @param vocab  the lexer vocab
+	 *
 	 * @return indexed lines of the file, stringified
 	 */
 	@Override

@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -10,8 +10,8 @@ public interface IModelResultItem {
 	/**
 	 * Adds a set of matching blocks of code to the results.
 	 *
-	 * @param block1          first matched block
-	 * @param block2          second matched block
+	 * @param block1                first matched block
+	 * @param block2                second matched block
 	 * @param percentageMatchBlock1 The percentage of block 1 which contains elements from block 2, float between 0 and 1
 	 * @param percentageMatchBlock2 The percentage of block 2 which contains elements from block 1, float between 0 and 1
 	 */

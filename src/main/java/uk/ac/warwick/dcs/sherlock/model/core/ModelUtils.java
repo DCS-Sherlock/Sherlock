@@ -8,10 +8,8 @@ import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.*;
 
 public class ModelUtils {
 
@@ -63,8 +61,10 @@ public class ModelUtils {
 
 	/**
 	 * Check that an instance of {@link IPreProcessingStrategy} is valid, are all preprocessor dependencies met and do they all support the lexer
+	 *
 	 * @param strategy {@link IPreProcessingStrategy} instance to check
-	 * @param lexer {@link Lexer} instance to check
+	 * @param lexer    {@link Lexer} instance to check
+	 *
 	 * @return is the strategy valid
 	 */
 	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer) {
@@ -73,13 +73,17 @@ public class ModelUtils {
 
 	/**
 	 * Check that an instance of {@link IPreProcessingStrategy} is valid, are all preprocessor dependencies met and do they all support the lexer
-	 * @param strategy {@link IPreProcessingStrategy} instance to check
+	 *
+	 * @param strategy      {@link IPreProcessingStrategy} instance to check
 	 * @param lexerChannels array of channels used in {@link Lexer}, to check
+	 *
 	 * @return is the strategy valid
 	 */
 	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels) {
 
-		if (strategy == null) return false;
+		if (strategy == null) {
+			return false;
+		}
 
 		List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
 		for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
