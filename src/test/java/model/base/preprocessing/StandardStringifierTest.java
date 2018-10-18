@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
 import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.*;
-import uk.ac.warwick.dcs.sherlock.services.preprocessing.JavaLexer;
+import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
 
 import java.io.File;
 import java.util.ArrayList;
