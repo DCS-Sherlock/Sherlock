@@ -104,11 +104,6 @@ jar {
     enabled = false //enable to build a standard jar
     destinationDir = file("$buildDir/out")
     classifier = 'cmd'
-    delete fileTree("$buildDir/out") {
-        include '*-cmd.jar'
-        exclude jar.archiveName
-        exclude jar.archivePath.getName()
-    }
     manifest {
         attributes(
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.Sherlock', //set this to a main method for a cmd version of sherlock
@@ -116,11 +111,15 @@ jar {
                 'Class-Path': 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
     }
+    delete fileTree("$buildDir/out") {
+        include '*-cmd.jar'
+        exclude jar.archiveName
+        exclude jar.archivePath.getName()
+    }
 }
 if (jar.enabled) jar.dependsOn deps
 
 bootJar {
-    enabled = true
     destinationDir = file("$buildDir/out")
     //mainClassName = 'com.example.ExampleApplication' // We may want to configure this if we also provide a cmd jar
     manifest {
