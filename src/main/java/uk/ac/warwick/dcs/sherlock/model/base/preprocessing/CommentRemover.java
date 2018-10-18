@@ -34,7 +34,11 @@ public class CommentRemover implements IPreProcessor {
 			switch (StandardLexerSpecification.channels.values()[t.getChannel()]) {
 				case DEFAULT:
 					result.add(t);
+					break;
 				case WHITESPACE:
+					result.add(t);
+					break;
+				case LONG_WHITESPACE:
 					result.add(t);
 					break;
 				default:

@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 
+import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
@@ -40,6 +41,11 @@ public class TrimWhitespaceOnly implements IPreProcessor {
 					break;
 				case WHITESPACE:
 					result.add(t);
+					break;
+				case LONG_WHITESPACE:
+					CommonToken temp = new CommonToken(t);
+					temp.setText(" ");
+					result.add(temp);
 					break;
 				default:
 					break;

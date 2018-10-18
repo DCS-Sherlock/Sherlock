@@ -7,7 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
  */
 public class StandardLexerSpecification implements ILexerSpecification {
 
-	private static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "HIDDEN", "WHITESPACE", "LONG_WHITESPACE", "COMMENT" };
+	private static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "COMMENT", "WHITESPACE", "LONG_WHITESPACE", "HIDDEN"  };
 
 	@Override
 	public String[] getChannelNames() {
@@ -18,7 +18,7 @@ public class StandardLexerSpecification implements ILexerSpecification {
 	 * reference enum
 	 */
 	public enum channels {
-		DEFAULT, HIDDEN, WHITESPACE, LONG_WHITESPACE, COMMENT
+		DEFAULT, COMMENT, WHITESPACE, LONG_WHITESPACE, HIDDEN
 	}
 
 }

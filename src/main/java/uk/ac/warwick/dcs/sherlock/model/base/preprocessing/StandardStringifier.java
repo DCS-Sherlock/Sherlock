@@ -32,6 +32,7 @@ public class StandardStringifier implements ITokenStringifier {
 					break;
 				case DEFAULT:
 				case WHITESPACE:
+				case LONG_WHITESPACE:
 					active.append(t.getText());
 					break;
 				default:
