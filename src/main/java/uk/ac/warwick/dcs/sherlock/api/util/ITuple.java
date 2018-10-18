@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.core;
+package uk.ac.warwick.dcs.sherlock.api.util;
 
 public interface ITuple<K, V> {
 

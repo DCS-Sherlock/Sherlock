@@ -1,9 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.web;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.core.ModuleLoader;
 import uk.ac.warwick.dcs.sherlock.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.model.core.TestResultsFactory;
@@ -67,12 +66,23 @@ public class SherlockApplication extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(SherlockApplication.class).headless(false).run(args);
+		ModuleLoader modules = new ModuleLoader();
+		for (Class<?> c : modules.getModules()) {
+			System.out.println(c.getName());
+			try {
+				c.newInstance();
+			}
+			catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		/*ConfigurableApplicationContext ctx = new SpringApplicationBuilder(SherlockApplication.class).headless(false).run(args);
 
 		EventQueue.invokeLater(() -> {
 			SherlockApplication ex = ctx.getBean(SherlockApplication.class);
 			ex.setVisible(true);
-		});
+		});*/
 	}
 
 	/**

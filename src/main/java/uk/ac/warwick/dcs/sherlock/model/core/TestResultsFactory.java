@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
-import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;

@@ -24,6 +24,7 @@ dependencies {
     implementation (
         'org.antlr:antlr4-runtime:4.7.1',
         'com.google.guava:guava:26.0-jre',
+        'org.reflections:reflections:0.9.10',
         'org.springframework.boot:spring-boot-starter',
         'org.springframework.boot:spring-boot-starter-web',
         'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -101,9 +102,9 @@ task deps(type: Copy) {
 }
 
 jar {
-    enabled = false //enable to build a standard jar
+    enabled = true//enable to build a standard jar
     destinationDir = file("$buildDir/out")
-    classifier = 'cmd'
+    classifier = 'dev'
     manifest {
         attributes(
                 'Main-Class': 'uk.ac.warwick.dcs.sherlock.Sherlock', //set this to a main method for a cmd version of sherlock
@@ -117,7 +118,6 @@ jar {
         exclude jar.archivePath.getName()
     }
 }
-if (jar.enabled) jar.dependsOn deps
 
 bootJar {
     destinationDir = file("$buildDir/out")

@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.model.base.detection;
 
 import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;

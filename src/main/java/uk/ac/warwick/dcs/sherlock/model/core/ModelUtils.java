@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.model.core;
 
 import com.google.common.collect.Streams;
 import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.core.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
