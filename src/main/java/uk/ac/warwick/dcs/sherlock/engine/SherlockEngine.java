@@ -14,13 +14,11 @@ import static uk.ac.warwick.dcs.sherlock.api.event.EventBus.mapEventBus;
 
 public class SherlockEngine {
 
-	public static SherlockEngine instance = null;
 	public static Reference.Side side = Reference.Side.UNKNOWN;
 
 	static EventBus eventBus = null;
 
 	public SherlockEngine(String[] args, Reference.Side side) {
-		SherlockEngine.instance = this;
 		SherlockEngine.side = side;
 		SherlockEngine.eventBus = new EventBus();
 		mapEventBus(SherlockEngine.eventBus);
