@@ -28,7 +28,6 @@ public class SherlockServer extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		System.out.println("Server configure");
 		return application.sources(SherlockServer.class);
 	}
 }

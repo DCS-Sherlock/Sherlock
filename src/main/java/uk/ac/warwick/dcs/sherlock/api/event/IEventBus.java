@@ -4,6 +4,6 @@ public interface IEventBus {
 
 	void publishEvent(IEvent event);
 
-	void registerSubscriber(Class<?> subscriber);
+	void registerSubscriber(Object subscriber);
 
 }

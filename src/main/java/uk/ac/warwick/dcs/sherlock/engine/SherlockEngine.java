@@ -29,8 +29,8 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation(args));
 		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
 
-		SherlockEngine.eventBus.removeInvokationsOfEvent(EventPreInitialisation.class);
-		SherlockEngine.eventBus.removeInvokationsOfEvent(EventInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 	}
 
 	/**

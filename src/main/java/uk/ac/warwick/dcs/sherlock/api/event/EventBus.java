@@ -12,7 +12,7 @@ public class EventBus {
 		bus.publishEvent(event);
 	}
 
-	public void registerSubscriber(Class<?> subscriber) {
+	public void registerSubscriber(Object subscriber) {
 		bus.registerSubscriber(subscriber);
 	}
 

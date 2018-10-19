@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventSubscriber;
 import uk.ac.warwick.dcs.sherlock.api.event.IEvent;
 import uk.ac.warwick.dcs.sherlock.api.event.IEventBus;
@@ -16,17 +15,17 @@ import java.util.*;
 
 class EventBus implements IEventBus {
 
-	private Map<Class<? extends IEvent>, List<EventInvokation>> eventMap;
+	private Map<Class<? extends IEvent>, List<EventInvocation>> eventMap;
 
 	EventBus() {
 		this.eventMap = new HashMap<>();
 	}
 
-	private void addInvokation(Class<? extends IEvent> event, EventInvokation invokation) {
+	private void addInvocation(Class<? extends IEvent> event, EventInvocation invocation) {
 		if (!this.eventMap.containsKey(event)) {
 			this.eventMap.put(event, new LinkedList<>());
 		}
-		this.eventMap.get(event).add(invokation);
+		this.eventMap.get(event).add(invocation);
 	}
 
 	@Override
@@ -35,9 +34,14 @@ class EventBus implements IEventBus {
 	}
 
 	@Override
-	public void registerSubscriber(Class<?> subscriber) {
-		Arrays.stream(subscriber.getMethods()).filter(x -> x.isAnnotationPresent(EventSubscriber.class)).forEach(x -> {
-			System.out.println(x.getName());
+	public void registerSubscriber(Object subscriber) {
+		Arrays.stream(subscriber.getClass().getMethods()).filter(x -> x.isAnnotationPresent(EventSubscriber.class)).forEach(x -> {
+			if (x.getParameterTypes().length != 1) {
+				System.out.println("Wrong number of params");
+			}
+			else {
+				this.addInvocation(x.getParameterTypes()[0].asSubclass(IEvent.class), EventInvocation.of(x, subscriber));
+			}
 		});
 	}
 
@@ -51,7 +55,7 @@ class EventBus implements IEventBus {
 				}
 				else {
 					if (!((module.equals(SherlockClient.class) && SherlockEngine.side != Reference.Side.CLIENT) || (module.equals(SherlockServer.class) && SherlockEngine.side != Reference.Side.SERVER))) {
-						this.addInvokation(x.getParameterTypes()[0].asSubclass(IEvent.class), EventInvokation.of(x, obj));
+						this.addInvocation(x.getParameterTypes()[0].asSubclass(IEvent.class), EventInvocation.of(x, obj));
 					}
 				}
 
@@ -62,17 +66,17 @@ class EventBus implements IEventBus {
 		}
 	}
 
-	void removeInvokationsOfEvent(Class<? extends IEvent> event) {
+	void removeInvocationsOfEvent(Class<? extends IEvent> event) {
 		this.eventMap.remove(event);
 	}
 
-	static class EventInvokation extends Tuple<Method, Object> {
+	static class EventInvocation extends Tuple<Method, Object> {
 
-		public EventInvokation(Method method, Object obj) {
+		EventInvocation(Method method, Object obj) {
 			super(method, obj);
 		}
 
-		public void invoke(IEvent event) {
+		void invoke(IEvent event) {
 			try {
 				this.getKey().invoke(this.getValue(), event);
 			}
@@ -81,8 +85,8 @@ class EventBus implements IEventBus {
 			}
 		}
 
-		public static EventInvokation of(Method method, Object obj) {
-			return new EventInvokation(method, obj);
+		static EventInvocation of(Method method, Object obj) {
+			return new EventInvocation(method, obj);
 		}
 	}
 
