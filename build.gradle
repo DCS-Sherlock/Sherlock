@@ -1,68 +1,49 @@
-import java.util.regex.Matcher
 import org.apache.tools.ant.filters.ReplaceTokens
+import java.util.regex.Matcher
 
 plugins {
-   id "org.ajoberstar.grgit" version "2.3.0"
+    id "java"
+    id "antlr"
+    id "org.springframework.boot" version "2.0.6.RELEASE"
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "org.ajoberstar.grgit" version "2.3.0"
+    id "idea"
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'antlr'
-apply plugin: 'idea'
-
-project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }
-    .sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
-project.ext.count = grgit.log {range(grgit.tag.list().find{ it.name == project.lastTag.toString()}.collect { it }[0].name, "HEAD")}.size()
-
-group = 'uk.ac.warwick.dcs.sherlock'
-version = "${project.ext.lastTag}.${project.count}"
-
-description = """Sherlock"""
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
+    maven {
+        url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
+    }
+    jcenter()
     mavenCentral()
 }
 
-/**
- * Without the next section Gradle will add a 'compile' dependency on Antlr3:
- * https://github.com/gradle/gradle/issues/820
- */
-configurations {
-    compile {
-        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
-    }
-}
-
-dependencies {  
+dependencies {
     antlr 'org.antlr:antlr4:4.7.1'
 
-    compile(
-            'org.antlr:antlr4-runtime:4.7.1'
+    implementation (
+        'org.antlr:antlr4-runtime:4.7.1',
+        'com.google.guava:guava:26.0-jre',
+        'org.reflections:reflections:0.9.10',
+        'org.springframework.boot:spring-boot-starter',
+        'org.springframework.boot:spring-boot-starter-web',
+        'org.springframework.boot:spring-boot-starter-thymeleaf'
+        //, 'org.springframework.boot:spring-boot-devtools'
     )
 
-    testImplementation(
-            'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testImplementation (
+        'org.springframework.boot:spring-boot-starter-test',
+        'org.junit.jupiter:junit-jupiter-api:5.3.1',
+        'org.junit.jupiter:junit-jupiter-params:5.3.1',
+        'commons-io:commons-io:2.6'
     )
-    testRuntimeOnly(
+
+    testRuntimeOnly (
             'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     )
-
-    compile group: 'com.miglayout', name: 'miglayout-javafx', version:'5.0'
-    compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
-    compile group: 'org.apache.commons', name: 'commons-compress', version:'1.5'
-    compile group: 'commons-io', name: 'commons-io', version:'2.6'
-    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.12'
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.12'
-    compile group: 'log4j', name: 'log4j', version:'1.2.17'
-    compile group: 'org.graphstream', name: 'gs-core', version:'1.0'
-    compile group: 'org.graphstream', name: 'gs-ui', version:'1.1.2'
 }
 
-idea{
+idea {
     module {
         contentRoot = file("$projectDir")
 
@@ -78,66 +59,81 @@ idea{
         generatedSourceDirs += file("${buildDir}/tmp/src/main/antlr")
 
         excludeDirs += file("${buildDir}/tmp/src/main/java")
+        excludeDirs += file("${buildDir}/tmp/src/test/java")
     }
 }
+
+project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
+project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
+
+group = 'uk.ac.warwick.dcs.sherlock'
+version = "${project.ext.lastTag}.${project.count}"
+
+description = """Sherlock"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 task printVersion {
     println project.name + '-' + project.version
 }
 
 generateGrammarSource {
-    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/services/preprocessing")
+    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/module/model/base/lang")
 }
 
-/** Token Replacement */
 task generateSources(type: Copy) {
-    delete "$buildDir/src"
-    from "src/main/java"
+    from("src/main/java")
+    exclude "**/sherlock/deprecated/**"
     into "$buildDir/tmp/src/main/java"
-    filter(ReplaceTokens, tokens: [VERSION:  project.version.toString()])
+    filter(ReplaceTokens, tokens: [VERSION: project.version.toString()])
 }
 sourceSets.main.java.srcDirs = ["$buildDir/tmp/src/main/java", "$buildDir/tmp/src/main/antlr"]
 compileJava.dependsOn generateSources
 
-/** Jar*/
-jar {
-    destinationDir = file("$buildDir/out")
-    delete fileTree("$buildDir/out") {
-        include '*.jar'
-        exclude jar.archivePath.getName()
-    }
-    manifest {
-        attributes (
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.SherlockApplication',
-                "Class-Path": 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
-        )
-    }
+task generateTestSources(type: Copy) {
+    from("src/test/java")
+    exclude "**/sherlock/deprecated/**"
+    into "$buildDir/tmp/src/test/java"
 }
+sourceSets.test.java.srcDirs = ["$buildDir/tmp/src/test/java"]
+compileTestJava.dependsOn generateTestSources
 
-/** Copy dependencies in lib folder */
 task deps(type: Copy) {
     from configurations.runtime
     into "$buildDir/out/lib"
 }
 
-/** Create dist zip */
-task zip(type: Zip) {
-    delete   fileTree("$buildDir/distributions") { include '*.zip' }
-    from ("$buildDir/out/") {
-        include "*.jar"
+jar {
+    enabled = true//enable to build a standard jar
+    destinationDir = file("$buildDir/out")
+    classifier = 'dev'
+    manifest {
+        attributes(
+                'Implementation-Version': version,
+        )
     }
-    from("$buildDir/out/lib/") {
-        into('lib')
+    delete fileTree("$buildDir/out") {
+        include '*-cmd.jar'
+        exclude jar.archiveName
+        exclude jar.archivePath.getName()
     }
-    into(project.name + '-' + project.version)
 }
 
-task distribute {
-    dependsOn 'deps'
-    dependsOn 'build'
-    dependsOn 'zip'
-    tasks.findByName('build').mustRunAfter 'deps'
-    tasks.findByName('zip').mustRunAfter 'build'
+bootJar {
+    destinationDir = file("$buildDir/out")
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
+    manifest {
+        attributes(
+                'Implementation-Version': version
+        )
+    }
+    delete fileTree("$buildDir/out") {
+        include '*.jar'
+        exclude bootJar.archiveName
+        exclude jar.archivePath.getName()
+        exclude '*-cmd.jar'
+    }
 }
 
 test {
@@ -145,32 +141,24 @@ test {
 }
 
 task branchSetup {
-    ant.replaceregexp(match:'# Sherlock(.*)', replace:"# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags:'s', byline:true) {
+    ant.replaceregexp(match: '# Sherlock(.*)', replace: "# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags: 's', byline: true) {
         fileset(dir: project.projectDir, includes: 'README.md')
     }
 }
 
-class TagSupport
-{
-    static int tagOrder(String tagPattern, String tagName)
-    {
+class TagSupport {
+    static int tagOrder(String tagPattern, String tagName) {
         Matcher m = tagName =~ tagPattern
 
-        if (m.find())
-        {
+        if (m.find()) {
             int ngroups = m.groupCount()
 
-            if (ngroups < 1)
-            {
+            if (ngroups < 1) {
                 throw new IllegalArgumentException("Tag pattern is expected to have at least one number grouping instruction: $tagPattern")
-            }
-            else
-            {
+            } else {
                 return m.group(1) as int
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalStateException("Tag $tagName should have matched $tagPattern")
         }
     }

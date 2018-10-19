@@ -1,8 +1,10 @@
 lexer grammar JavaLexer;
 
 @header {
-package uk.ac.warwick.dcs.sherlock.services.preprocessing;
+package uk.ac.warwick.dcs.sherlock.module.model.base.lang;
 }
+
+channels { WHITESPACE, LONG_WHITESPACE, COMMENT  }
 
 /*
  * Keywords
@@ -531,10 +533,10 @@ JavaLetterOrDigit
  *  Whitespace
  *-------------------------*/
 
-WS  :  [ ] -> channel(2)
+WS  :  [ ] -> channel(WHITESPACE)
     ;
 
-MWS : [ ]+ -> channel(3)
+MWS : [ ]+ -> channel(LONG_WHITESPACE)
 	;
 
 TAB : [\t]+ -> skip
@@ -548,11 +550,11 @@ NEWLINE : [ \t]* [\r\n]+ [ \t]* -> skip
  *  Comments
  *-------------------------*/
 BLOCK_COMMENT
-    :   '/*' .*? '*/' [ ]* -> channel(HIDDEN)
+    :   '/*' .*? '*/' [ ]* -> channel(COMMENT)
     ;
 
 LINE_COMMENT
-    :   '//' ~[\r\n]* -> channel(HIDDEN)
+    :   '//' ~[\r\n]* -> channel(COMMENT)
     ;
     
 /*-------------------------
