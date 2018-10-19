@@ -34,7 +34,7 @@ class EventBus implements IEventBus {
 	}
 
 	@Override
-	public void registerSubscriber(Object subscriber) {
+	public void registerEventSubscriber(Object subscriber) {
 		Arrays.stream(subscriber.getClass().getMethods()).filter(x -> x.isAnnotationPresent(EventSubscriber.class)).forEach(x -> {
 			if (x.getParameterTypes().length != 1) {
 				System.out.println("Wrong number of params");

@@ -8,12 +8,12 @@ public class EventBus {
 		EventBus.bus = bus;
 	}
 
-	public void publishEvent(IEvent event) {
+	public static void publishEvent(IEvent event) {
 		bus.publishEvent(event);
 	}
 
-	public void registerSubscriber(Object subscriber) {
-		bus.registerSubscriber(subscriber);
+	public static void registerEventSubscriber(Object subscriber) {
+		bus.registerEventSubscriber(subscriber);
 	}
 
 }
