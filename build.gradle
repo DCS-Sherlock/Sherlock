@@ -110,9 +110,7 @@ jar {
     classifier = 'dev'
     manifest {
         attributes(
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine', //set this to a main method for a cmd version of sherlock
                 'Implementation-Version': version,
-                'Class-Path': 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
     }
     delete fileTree("$buildDir/out") {
