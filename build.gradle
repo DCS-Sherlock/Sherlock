@@ -8,6 +8,7 @@ plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "org.ajoberstar.grgit" version "2.3.0"
     id "idea"
+    id "war"
 }
 
 repositories {
@@ -30,6 +31,8 @@ dependencies {
         'org.springframework.boot:spring-boot-starter-thymeleaf'
         //, 'org.springframework.boot:spring-boot-devtools'
     )
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     testImplementation (
         'org.springframework.boot:spring-boot-starter-test',
@@ -133,6 +136,16 @@ bootJar {
         exclude bootJar.archiveName
         exclude jar.archivePath.getName()
         exclude '*-cmd.jar'
+    }
+}
+
+bootWar {
+    destinationDir = file("$buildDir/out")
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.module.web.SherlockWar'
+    manifest {
+        attributes(
+                'Implementation-Version': version
+        )
     }
 }
 
