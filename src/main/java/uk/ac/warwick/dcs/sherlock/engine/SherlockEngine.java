@@ -1,22 +1,26 @@
 package uk.ac.warwick.dcs.sherlock.engine;
 
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
-import uk.ac.warwick.dcs.sherlock.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
-import uk.ac.warwick.dcs.sherlock.module.web.SherlockJar;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class SherlockEngine {
 
-	public static void main(String[] args) {
-		SherlockEngine.init(args);
-		SherlockJar.create();
+	public static Reference.Side side = Reference.Side.UNKNOWN;
+
+	public SherlockEngine(String[] args, Reference.Side side) {
+		SherlockEngine.side = side;
+
+		//do scanning and registration here
+
+		this.init(args);
 	}
 
-	public static void init(String[] args) {
+	private void init(String[] args) {
 		ModuleLoader modules = new ModuleLoader();
 		/*for (Class<?> c : modules.getModules()) {
 			System.out.println(c.getName());

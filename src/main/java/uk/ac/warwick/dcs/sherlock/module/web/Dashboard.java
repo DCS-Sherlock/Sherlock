@@ -1,10 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,10 +7,9 @@ import java.net.URI;
 
 import static javax.swing.LayoutStyle.ComponentPlacement.*;
 
-@SherlockModule
-public class SherlockJar extends JFrame {
+public class Dashboard extends JFrame {
 
-	public SherlockJar() {
+	public Dashboard() {
 		initUI();
 	}
 
@@ -58,19 +52,5 @@ public class SherlockJar extends JFrame {
 		pack();
 
 		setLocationRelativeTo(null);
-	}
-
-	public static void create() {
-		new SpringApplicationBuilder(SherlockWar.class).headless(false).run();
-
-		EventQueue.invokeLater(() -> {
-			SherlockJar ex = new SherlockJar();
-			ex.setVisible(true);
-		});
-	}
-
-	@EventHandler
-	public void initialisation(EventInitialisation event) {
-		System.out.println(event.tmp);
 	}
 }

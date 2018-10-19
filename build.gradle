@@ -127,7 +127,7 @@ jar {
 
 bootJar {
     destinationDir = file("$buildDir/out")
-    mainClassName = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
     manifest {
         attributes(
                 'Implementation-Version': version
@@ -144,7 +144,7 @@ jar.dependsOn bootJar
 
 bootWar {
     destinationDir = file("$buildDir/out")
-    mainClassName = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockServer'
     manifest {
         attributes(
                 'Implementation-Version': version
@@ -160,7 +160,7 @@ war.dependsOn bootWar
 assemble.dependsOn jar
 
 bootRun {
-    main = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
+    main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
 }
 
 test {
