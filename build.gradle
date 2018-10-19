@@ -33,8 +33,9 @@ dependencies {
 
     testImplementation (
         'org.springframework.boot:spring-boot-starter-test',
-            'org.junit.jupiter:junit-jupiter-api:5.3.1',
-            'org.junit.jupiter:junit-jupiter-params:5.3.1'
+        'org.junit.jupiter:junit-jupiter-api:5.3.1',
+        'org.junit.jupiter:junit-jupiter-params:5.3.1',
+        'commons-io:commons-io:2.6'
     )
 
     testRuntimeOnly (
