@@ -4,11 +4,11 @@ import java.util.regex.Matcher
 plugins {
     id "java"
     id "antlr"
+    id "war"
     id "org.springframework.boot" version "2.0.6.RELEASE"
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "org.ajoberstar.grgit" version "2.3.0"
     id "idea"
-    id "war"
 }
 
 repositories {
@@ -32,7 +32,9 @@ dependencies {
         //, 'org.springframework.boot:spring-boot-devtools'
     )
 
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
+        providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    }
 
     testImplementation (
         'org.springframework.boot:spring-boot-starter-test',
@@ -117,7 +119,7 @@ jar {
         )
     }
     delete fileTree("$buildDir/out") {
-        include '*-cmd.jar'
+        include '*-dev.jar'
         exclude jar.archiveName
         exclude jar.archivePath.getName()
     }
@@ -135,18 +137,30 @@ bootJar {
         include '*.jar'
         exclude bootJar.archiveName
         exclude jar.archivePath.getName()
-        exclude '*-cmd.jar'
+        exclude '*-dev.jar'
     }
 }
+jar.dependsOn bootJar
 
 bootWar {
     destinationDir = file("$buildDir/out")
-    mainClassName = 'uk.ac.warwick.dcs.sherlock.module.web.SherlockWar'
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
     manifest {
         attributes(
                 'Implementation-Version': version
         )
     }
+    delete fileTree("$buildDir/out") {
+        include '*.war'
+        exclude bootJar.archiveName
+        exclude war.archivePath.getName()
+    }
+}
+war.dependsOn bootWar
+assemble.dependsOn jar
+
+bootRun {
+    main = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
 }
 
 test {
