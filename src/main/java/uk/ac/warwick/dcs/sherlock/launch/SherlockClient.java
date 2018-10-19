@@ -1,8 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.SherlockModule.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
@@ -20,8 +21,6 @@ public class SherlockClient {
 
 	@EventHandler
 	public void initialisation(EventInitialisation event) {
-		System.out.println(event.tmp);
-
 		EventQueue.invokeLater(() -> {
 			Dashboard dash = new Dashboard();
 			dash.setVisible(true);
@@ -30,8 +29,6 @@ public class SherlockClient {
 
 	@EventHandler
 	public void preInitialisation(EventPreInitialisation event) {
-		System.out.println(event.tmp);
-
-		new SpringApplicationBuilder(SherlockServer.class).headless(false).run(event.getLaunchArgs());
+		ConfigurableApplicationContext server = new SpringApplicationBuilder(SherlockServer.class).headless(false).run(event.getLaunchArgs());
 	}
 }

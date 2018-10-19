@@ -12,4 +12,8 @@ public @interface SherlockModule {
 	String name() default "";
 
 	String version() default "";
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	@interface EventHandler {}
 }

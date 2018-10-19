@@ -8,7 +8,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventHandler;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -72,17 +71,12 @@ public class ModuleLoader {
 		}
 	}
 
-	public Set<Class<?>> getModules() {
-		this.ref.getTypesAnnotatedWith(SherlockModule.class).stream().forEach(x -> x.getAnnotation(SherlockModule.class));
-		return null;
+	Set<Class<?>> getModules() {
+		return this.ref.getTypesAnnotatedWith(SherlockModule.class);
 	}
 
-	public void registerEventHandlers() {
-		Set<Method> methods = this.ref.getMethodsAnnotatedWith(EventHandler.class);
-
-		for (Method m : methods) {
-			System.out.println(Arrays.toString(m.getParameterTypes()));
-		}
+	void registerModuleEventHandlers() {
+		this.getModules().forEach(SherlockEngine.eventBus::registerModule);
 	}
 
 }

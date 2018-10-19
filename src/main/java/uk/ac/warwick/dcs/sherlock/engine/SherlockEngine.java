@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine;
 
+import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -8,25 +10,29 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static uk.ac.warwick.dcs.sherlock.api.event.EventBus.mapEventBus;
+
 public class SherlockEngine {
 
+	public static SherlockEngine instance = null;
 	public static Reference.Side side = Reference.Side.UNKNOWN;
 
+	static EventBus eventBus = null;
+
 	public SherlockEngine(String[] args, Reference.Side side) {
+		SherlockEngine.instance = this;
 		SherlockEngine.side = side;
+		SherlockEngine.eventBus = new EventBus();
+		mapEventBus(SherlockEngine.eventBus);
 
-		//do scanning and registration here
-
-		this.init(args);
-	}
-
-	private void init(String[] args) {
 		ModuleLoader modules = new ModuleLoader();
-		/*for (Class<?> c : modules.getModules()) {
-			System.out.println(c.getName());
-		}*/
+		modules.registerModuleEventHandlers();
 
-		modules.registerEventHandlers();
+		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation(args));
+		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
+
+		SherlockEngine.eventBus.removeInvokationsOfEvent(EventPreInitialisation.class);
+		SherlockEngine.eventBus.removeInvokationsOfEvent(EventInitialisation.class);
 	}
 
 	/**
