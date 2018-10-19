@@ -1,12 +1,6 @@
-package model.base.preprocessing;
+package uk.ac.warwick.dcs.sherlock.model.base.preprocessing;
 
-import model.base.utils.PreprocessorParamsProvider;
-import model.base.utils.TestJavaFile;
-import model.base.utils.TestUtils;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,8 +8,9 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.model.base.lang.JavaLexer;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.CommentRemover;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardLexerSpecification;
+import uk.ac.warwick.dcs.sherlock.model.base.utils.PreprocessorParamsProvider;
+import uk.ac.warwick.dcs.sherlock.model.base.utils.TestJavaFile;
+import uk.ac.warwick.dcs.sherlock.model.base.utils.TestUtils;
 
 import java.io.File;
 import java.util.*;
