@@ -110,7 +110,7 @@ task deps(type: Copy) {
 }
 
 jar {
-    enabled = true//enable to build a standard jar
+    enabled = true //enable to build a standard jar
     destinationDir = file("$buildDir/out")
     classifier = 'dev'
     manifest {
