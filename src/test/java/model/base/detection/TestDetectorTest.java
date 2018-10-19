@@ -1,0 +1,54 @@
+package model.base.detection;
+
+import org.antlr.v4.runtime.Lexer;
+import org.junit.jupiter.api.Test;
+import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.Language;
+import uk.ac.warwick.dcs.sherlock.model.base.detection.TestDetector;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class TestDetectorTest {
+
+    @Test
+    void getAbstractPairwiseDetectorWorker() {
+        TestDetector t = new TestDetector();
+        assertTrue(t.getAbstractPairwiseDetectorWorker() instanceof AbstractPairwiseDetector.AbstractPairwiseDetectorWorker);
+    }
+
+    @Test
+    void getDisplayName() {
+        TestDetector t = new TestDetector();
+        assertEquals("Test Detector", t.getDisplayName());
+    }
+
+    @Test
+    void getLexer() {
+        TestDetector t = new TestDetector();
+        assertTrue(Lexer.class.isAssignableFrom(t.getLexer(Language.JAVA)));
+    }
+
+    @Test
+    void getPreProcessors() {
+        TestDetector t = new TestDetector();
+        List<IPreProcessingStrategy> listOfPreProcessors = t.getPreProcessors();
+        assertAll(
+                () -> assertEquals(1, listOfPreProcessors.size()),
+                () -> assertEquals( "comments", listOfPreProcessors.get(0).getName() )
+        );
+    }
+
+    @Test
+    void getSupportedLanguages() {
+        TestDetector t = new TestDetector();
+        List<Language> supportedLanguages = t.getSupportedLanguages();
+        assertAll(
+                () -> assertEquals(1, supportedLanguages.size()),
+                () -> assertEquals( Language.JAVA, supportedLanguages.get(0) ),
+                () -> assertNotEquals( Language.HASKELL, supportedLanguages.get(0) )
+        );
+    }
+}

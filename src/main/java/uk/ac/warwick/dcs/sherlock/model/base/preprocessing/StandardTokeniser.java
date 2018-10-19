@@ -30,15 +30,32 @@ public class StandardTokeniser implements ITokenStringifier {
 				case DEFAULT:
 					active.append(vocab.getSymbolicName(t.getType())).append(" ");
 					break;
+				case COMMENT:
+					lineCount = preserveCommentLines(output, active, lineCount, t, vocab);
+					break;
 				default:
 					break;
 			}
 		}
 
 		if (active.length() > 0) {
-			output.add(IndexedString.of(lineCount, active.toString()));
+			output.add(IndexedString.of(lineCount, active.toString().trim()));
 		}
 
 		return output;
+	}
+
+	public static int preserveCommentLines(List<IndexedString> output, StringBuilder active, int lineCount, Token t, Vocabulary vocab) {
+		String[] splitComment = t.getText().split("\\r?\\n|\\r");
+
+		for (int i = 0; i < splitComment.length; i++) {
+			if (i != 0) {
+				output.add(IndexedString.of(lineCount, active.toString()));
+				active.setLength(0);
+				lineCount++;
+			}
+		}
+		active.append(vocab.getSymbolicName(t.getType()));
+		return lineCount;
 	}
 }
