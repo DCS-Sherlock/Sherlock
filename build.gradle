@@ -79,7 +79,7 @@ task printVersion {
 }
 
 generateGrammarSource {
-    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/model/base/lang")
+    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/module/model/base/lang")
 }
 
 task generateSources(type: Copy) {
@@ -110,7 +110,7 @@ jar {
     classifier = 'dev'
     manifest {
         attributes(
-                'Main-Class': 'uk.ac.warwick.dcs.sherlock.Sherlock', //set this to a main method for a cmd version of sherlock
+                'Main-Class': 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine', //set this to a main method for a cmd version of sherlock
                 'Implementation-Version': version,
                 'Class-Path': 'lib/' + configurations.compile.collect { it.getName() }.join(' lib/')
         )
@@ -124,7 +124,7 @@ jar {
 
 bootJar {
     destinationDir = file("$buildDir/out")
-    //mainClassName = 'com.example.ExampleApplication' // We may want to configure this if we also provide a cmd jar
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
     manifest {
         attributes(
                 'Implementation-Version': version

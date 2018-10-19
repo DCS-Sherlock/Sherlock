@@ -1,7 +1,7 @@
 parser grammar JavaParser;
 
 @header {
-package uk.ac.warwick.dcs.sherlock.model.base.lang;
+package uk.ac.warwick.dcs.sherlock.module.model.base.lang;
 }
 
 options {

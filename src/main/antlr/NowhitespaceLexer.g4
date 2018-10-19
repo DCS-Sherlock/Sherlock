@@ -1,7 +1,7 @@
 lexer grammar NowhitespaceLexer;
 
 @header {
-package uk.ac.warwick.dcs.sherlock.model.base.lang;
+package uk.ac.warwick.dcs.sherlock.module.model.base.lang;
 }
 
 /*
