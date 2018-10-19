@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web;
+package uk.ac.warwick.dcs.sherlock.module.web.pages;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

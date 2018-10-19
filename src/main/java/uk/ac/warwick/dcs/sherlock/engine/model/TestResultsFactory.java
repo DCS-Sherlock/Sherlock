@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.model.core;
+package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -8,8 +8,8 @@ import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardStringifier;
-import uk.ac.warwick.dcs.sherlock.model.base.preprocessing.StandardTokeniser;
+import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
+import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.model.core;
+package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;

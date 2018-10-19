@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.model.core;
+package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IPairedBlocks;

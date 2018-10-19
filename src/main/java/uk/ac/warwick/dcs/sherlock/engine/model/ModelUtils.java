@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.model.core;
+package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import com.google.common.collect.Streams;
 import org.antlr.v4.runtime.Lexer;
