@@ -1,12 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,11 +7,9 @@ import java.net.URI;
 
 import static javax.swing.LayoutStyle.ComponentPlacement.*;
 
-@SpringBootApplication
-@SherlockModule
-public class SherlockWeb extends JFrame {
+public class Dashboard extends JFrame {
 
-	public SherlockWeb() {
+	public Dashboard() {
 		initUI();
 	}
 
@@ -61,19 +52,5 @@ public class SherlockWeb extends JFrame {
 		pack();
 
 		setLocationRelativeTo(null);
-	}
-
-	public static void create() {
-		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(SherlockWeb.class).headless(false).run();
-
-		EventQueue.invokeLater(() -> {
-			SherlockWeb ex = ctx.getBean(SherlockWeb.class);
-			ex.setVisible(true);
-		});
-	}
-
-	@EventHandler
-	public void initialisation(EventInitialisation event) {
-		System.out.println(event.tmp);
 	}
 }
