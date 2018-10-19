@@ -24,27 +24,39 @@ public class ModuleLoader {
 	private Reflections ref;
 
 	ModuleLoader() {
-		File modules = new File("module/");
-		if (!modules.exists()) {
-			if (modules.mkdir()) {
-				//get default jar and put in here
+		List<URL> moduleURLS = new LinkedList<>();
+
+		if (/*enable external jar loading*/false) {
+			File modules = new File("module/");
+			if (!modules.exists()) {
+				if (modules.mkdir()) {
+					//get default jar and put in here
+				}
 			}
+
+			moduleURLS.addAll(Arrays.stream(Objects.requireNonNull(modules.listFiles())).map(f -> {
+				try {
+					URL url = f.toURI().toURL();
+					this.addURLToClasspath(url);
+					return url;
+				}
+				catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}).collect(Collectors.toList()));
 		}
 
-		List<URL> moduleURLS = Arrays.stream(Objects.requireNonNull(modules.listFiles())).map(f -> {
-			try {
-				URL url = f.toURI().toURL();
-				this.addURLToClasspath(url);
-				return url;
-			}
-			catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}).collect(Collectors.toList());
-
+		//moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.engine"));
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.module"));
-		this.ref = new Reflections(new ConfigurationBuilder().addClassLoader(this.getClass().getClassLoader()).setUrls(moduleURLS).setScanners(new SubTypesScanner(), new TypeAnnotationsScanner(), new MethodAnnotationsScanner()).filterInputsBy(new FilterBuilder().include(".*class")));
+		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.launch"));
+
+		ConfigurationBuilder config = new ConfigurationBuilder();
+		config.addClassLoader(this.getClass().getClassLoader());
+		config.setUrls(moduleURLS);
+		config.setScanners(new SubTypesScanner(), new TypeAnnotationsScanner(), new MethodAnnotationsScanner());
+		config.filterInputsBy(new FilterBuilder().include(".*class"));
+		this.ref = new Reflections(config);
 	}
 
 	private void addURLToClasspath(URL u) {
@@ -68,8 +80,7 @@ public class ModuleLoader {
 	public void registerEventHandlers() {
 		Set<Method> methods = this.ref.getMethodsAnnotatedWith(EventHandler.class);
 
-		for (Method m : methods)
-		{
+		for (Method m : methods) {
 			System.out.println(Arrays.toString(m.getParameterTypes()));
 		}
 	}
