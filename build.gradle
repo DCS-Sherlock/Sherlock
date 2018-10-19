@@ -32,7 +32,9 @@ dependencies {
         //, 'org.springframework.boot:spring-boot-devtools'
     )
 
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    providedRuntime (
+            'org.springframework.boot:spring-boot-starter-tomcat'
+    )
 
     testImplementation (
         'org.springframework.boot:spring-boot-starter-test',
@@ -108,7 +110,7 @@ task deps(type: Copy) {
 }
 
 jar {
-    enabled = true//enable to build a standard jar
+    enabled = true //enable to build a standard jar
     destinationDir = file("$buildDir/out")
     classifier = 'dev'
     manifest {
@@ -147,6 +149,10 @@ bootWar {
                 'Implementation-Version': version
         )
     }
+}
+
+bootRun {
+    main = 'uk.ac.warwick.dcs.sherlock.engine.SherlockEngine'
 }
 
 test {
