@@ -1,4 +1,4 @@
-# Sherlock  [![Build Status: web](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=web)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=web)
+# Sherlock  [![Build Status: api](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=api)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=api)
 
 <!----- Branch: --->
 
