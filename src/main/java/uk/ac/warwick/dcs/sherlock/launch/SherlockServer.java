@@ -1,10 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.EventListener;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
@@ -18,11 +19,14 @@ import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 @ComponentScan ("uk.ac.warwick.dcs.sherlock.module.web")
 public class SherlockServer extends SpringBootServletInitializer {
 
-	public static SpringApplication server;
+	static SherlockEngine engine;
 
 	public static void main(String[] args) {
-		new SpringApplication(SherlockServer.class).run(args);
-		new SherlockEngine(Side.SERVER);
+	}
+
+	@EventListener (ApplicationReadyEvent.class)
+	public void afterStartup() {
+		engine.initalise();
 	}
 
 	@EventHandler
@@ -39,6 +43,7 @@ public class SherlockServer extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		engine = new SherlockEngine(Side.SERVER);
 		return application.sources(SherlockServer.class);
 	}
 }

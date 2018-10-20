@@ -23,11 +23,13 @@ public class SherlockEngine {
 	static EventBus eventBus = null;
 
 	public SherlockEngine(Side side) {
-		logger.info("Starting SherlockEngine on Side.{}", side.name());
-
 		SherlockEngine.side = side;
 		SherlockEngine.eventBus = new EventBus();
 		mapEventBus(SherlockEngine.eventBus);
+	}
+
+	public void initalise() {
+		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		ModuleLoader modules = new ModuleLoader();
 		modules.registerModuleEventHandlers();
@@ -46,12 +48,12 @@ public class SherlockEngine {
 	/**
 	 * old main method for reference
 	 */
-	private String runSherlockTest() {
+	public static String runSherlockTest() {
 		String result = "";
 		long startTime = System.currentTimeMillis();
 
 		try {
-			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("test.java"), new TestResultsFactory.tmpFile("test2.java")));
+			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test.java"), new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test2.java")));
 			result = TestResultsFactory.buildTestResults(fileList, TestDetector.class);
 		}
 		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {

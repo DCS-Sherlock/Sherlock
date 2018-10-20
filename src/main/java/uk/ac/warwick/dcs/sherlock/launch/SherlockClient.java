@@ -19,8 +19,8 @@ public class SherlockClient {
 	private Dashboard dash;
 
 	public static void main(String[] args) {
+		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 		new SpringApplicationBuilder(SherlockServer.class).headless(false).run(args);
-		new SherlockEngine(Side.CLIENT);
 	}
 
 	@EventHandler
