@@ -1,4 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api;
+package uk.ac.warwick.dcs.sherlock.api.annotations;
+
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +15,9 @@ public @interface SherlockModule {
 
 	String version() default "";
 
-	@Retention(RetentionPolicy.RUNTIME)
+	Side side() default Side.UNKNOWN;
+
+	/*@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
-	@interface EventHandler {}
+	@interface EventHandler {}*/
 }

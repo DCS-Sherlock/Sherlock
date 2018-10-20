@@ -7,7 +7,7 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

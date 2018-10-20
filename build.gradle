@@ -11,6 +11,8 @@ plugins {
     id "idea"
 }
 
+apply plugin: 'project-report'
+
 repositories {
     maven {
         url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
@@ -23,29 +25,39 @@ dependencies {
     antlr 'org.antlr:antlr4:4.7.1'
 
     implementation (
-        'org.antlr:antlr4-runtime:4.7.1',
-        'com.google.guava:guava:26.0-jre',
-        'org.reflections:reflections:0.9.10',
-        'org.springframework.boot:spring-boot-starter',
-        'org.springframework.boot:spring-boot-starter-web',
-        'org.springframework.boot:spring-boot-starter-thymeleaf'
-        //, 'org.springframework.boot:spring-boot-devtools'
+            'org.antlr:antlr4-runtime:4.7.1',
+            'com.google.guava:guava:26.0-jre',
+            'org.reflections:reflections:0.9.10',
+            //'org.slf4j:slf4j-api',
+            'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-thymeleaf'
+            //, 'org.springframework.boot:spring-boot-devtools'
     )
+
+    /*providedRuntime (
+            //'org.slf4j:slf4j-log4j12'
+    )*/
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
         providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     }
 
-    testImplementation (
-        'org.springframework.boot:spring-boot-starter-test',
-        'org.junit.jupiter:junit-jupiter-api:5.3.1',
-        'org.junit.jupiter:junit-jupiter-params:5.3.1',
-        'commons-io:commons-io:2.6'
+    testImplementation(
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.junit.jupiter:junit-jupiter-api:5.3.1',
+            'org.junit.jupiter:junit-jupiter-params:5.3.1',
+            'commons-io:commons-io:2.6'
     )
 
-    testRuntimeOnly (
+    testRuntimeOnly(
             'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     )
+
+}
+
+configurations {
+    //all*.exclude module : 'spring-boot-starter-logging'
 }
 
 idea {

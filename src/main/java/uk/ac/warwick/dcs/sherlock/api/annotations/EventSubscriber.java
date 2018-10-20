@@ -1,4 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api.event;
+package uk.ac.warwick.dcs.sherlock.api.annotations;
+
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,5 +10,7 @@ import java.lang.annotation.Target;
 @Retention (RetentionPolicy.RUNTIME)
 @Target (ElementType.METHOD)
 public @interface EventSubscriber {
+
+	Side side() default Side.UNKNOWN;
 
 }

@@ -26,4 +26,4 @@ The jar will be built into the `/build/out/` directory, contains all the require
 ## Running/Testing
 Sherlock can be run within the gradle environment using the command `gradlew(.bat) bootRun`, this has no prior requirements and can be run directly on a clone of the repo
 
-The project can also be tested directly within IntelliJ IDEA using either the automatically configured Spring Boot run configuration named `SherlockApplication`, or the gradle task `bootRun`
+When developing use `SherlockClient` as the main class and use following VM options to enable more console output `-Dspring.output.ansi.enabled=ALWAYS -Dspring.profiles.active=dev`

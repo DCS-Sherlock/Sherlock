@@ -1,8 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.engine;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
+import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.lib.Reference;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
@@ -14,11 +21,16 @@ import static uk.ac.warwick.dcs.sherlock.api.event.EventBus.mapEventBus;
 
 public class SherlockEngine {
 
-	public static Reference.Side side = Reference.Side.UNKNOWN;
+	public static Side side = Side.UNKNOWN;
 
+	static final Log logger = LogFactory.getLog(SherlockEngine.class);
 	static EventBus eventBus = null;
 
-	public SherlockEngine(String[] args, Reference.Side side) {
+	public SherlockEngine(String[] args, Side side) {
+		/** Disable logging until spring starts */
+		Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		root.setLevel(Level.WARN);
+
 		SherlockEngine.side = side;
 		SherlockEngine.eventBus = new EventBus();
 		mapEventBus(SherlockEngine.eventBus);
@@ -31,6 +43,13 @@ public class SherlockEngine {
 
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
+
+		SherlockEngine.eventBus.registerEventSubscriber(this);
+	}
+
+	@EventHandler
+	public void testSub(EventPreInitialisation event) {
+		System.out.println("this should never print");
 	}
 
 	/**

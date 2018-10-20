@@ -5,19 +5,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.lib.Reference;
 
-@SherlockModule
+@SherlockModule(side = Side.SERVER)
 @SpringBootApplication
 @ComponentScan ("uk.ac.warwick.dcs.sherlock.module.web")
 public class SherlockServer extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
-		new SherlockEngine(args, Reference.Side.SERVER);
+		new SherlockEngine(args, Side.SERVER);
 	}
 
 	@EventHandler
