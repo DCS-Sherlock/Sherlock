@@ -13,11 +13,13 @@ public @interface SherlockModule {
 
 	String name() default "";
 
-	String version() default "";
-
 	Side side() default Side.UNKNOWN;
 
-	/*@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	@interface EventHandler {}*/
+	String version() default "";
+
+	@Retention (RetentionPolicy.RUNTIME)
+	@Target (ElementType.FIELD)
+	@interface Instance {
+
+	}
 }
