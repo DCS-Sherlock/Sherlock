@@ -71,12 +71,12 @@ public class ModuleLoader {
 		}
 	}
 
-	Set<Class<?>> getModules() {
-		return this.ref.getTypesAnnotatedWith(SherlockModule.class);
-	}
-
 	void registerModuleEventHandlers() {
 		this.getModules().forEach(SherlockEngine.eventBus::registerModule);
+	}
+
+	Set<Class<?>> getModules() {
+		return this.ref.getTypesAnnotatedWith(SherlockModule.class);
 	}
 
 }

@@ -30,14 +30,14 @@ dependencies {
             'org.reflections:reflections:0.9.10',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
-            'org.springframework.boot:spring-boot-starter-log4j2',
             'org.springframework.boot:spring-boot-starter-thymeleaf'
             //, 'org.springframework.boot:spring-boot-devtools'
     )
 
-    /*providedRuntime (
-            //'org.slf4j:slf4j-log4j12'
-    )*/
+    //this makes it compatible with Gradle 5, we must specify the annotationProcessor but not in the compile block or it's ignored
+    compile('org.springframework.boot:spring-boot-starter-log4j2'){exclude group: 'org.apache.logging.log4j', module: 'log4j-core'}
+    compileOnly('org.apache.logging.log4j:log4j-core')
+    annotationProcessor ('org.apache.logging.log4j:log4j-core')
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
         providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

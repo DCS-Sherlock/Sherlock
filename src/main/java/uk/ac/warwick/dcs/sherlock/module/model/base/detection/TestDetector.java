@@ -1,11 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
-import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.TrimWhitespaceOnly;
 

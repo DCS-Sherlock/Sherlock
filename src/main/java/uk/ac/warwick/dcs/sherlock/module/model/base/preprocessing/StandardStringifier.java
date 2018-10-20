@@ -1,9 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.Vocabulary;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.ITokenStringifier;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 
 import java.util.*;
 
