@@ -4,11 +4,14 @@ import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
 import uk.ac.warwick.dcs.sherlock.api.request.IRequestReference;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;
 
+/**
+ * The idea is to integrate the request processor stuff into classes which handle data, and create an indirect access of them
+ */
 @RequestProcessor(apiFieldName = "dataRequestProcessor")
 public class DataRequestProcessor {
 
 	@RequestProcessor.Instance
-	public static DataRequestProcessor instance;
+	static DataRequestProcessor instance;
 
 	public DataRequestProcessor() {
 

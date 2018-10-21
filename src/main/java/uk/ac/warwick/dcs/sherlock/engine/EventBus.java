@@ -72,6 +72,7 @@ class EventBus implements IEventBus {
 
 			List<Field> field = Arrays.stream(module.getFields()).filter(x -> x.isAnnotationPresent(SherlockModule.Instance.class)).collect(Collectors.toList());
 			if (field.size() == 1) {
+				field.get(0).setAccessible(true);
 				field.get(0).set(obj, obj);
 			}
 			else if (field.size() > 1) {
