@@ -46,6 +46,26 @@ public class SherlockEngine {
 		}
 	}
 
+	/**
+	 * old main method for reference
+	 */
+	private static String runSherlockTest() {
+		String result = "";
+		long startTime = System.currentTimeMillis();
+
+		try {
+			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test.java"),
+					new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test2.java")));
+			result = TestResultsFactory.buildTestResults(fileList, TestDetector.class);
+		}
+		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		assert result != null;
+		return result.concat("\n\nTotal Runtime Time = " + (System.currentTimeMillis() - startTime) + "ms");
+	}
+
 	public void initalise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
@@ -65,30 +85,11 @@ public class SherlockEngine {
 		//SherlockEngine.eventBus.registerEventSubscriber(this);
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.DataRequestReference.REQ1, this, "from the engine");
+		logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.DataRequestReference.REQ1, "from the engine 22"));
 	}
 
 	@ResponseHandler
 	public void responceHandler(IRequestReference request, Object responce) {
 		logger.info("got responce: " + responce);
-	}
-
-	/**
-	 * old main method for reference
-	 */
-	private static String runSherlockTest() {
-		String result = "";
-		long startTime = System.currentTimeMillis();
-
-		try {
-			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test.java"),
-					new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test2.java")));
-			result = TestResultsFactory.buildTestResults(fileList, TestDetector.class);
-		}
-		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		assert result != null;
-		return result.concat("\n\nTotal Runtime Time = " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 }

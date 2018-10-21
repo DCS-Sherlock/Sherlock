@@ -30,15 +30,15 @@ public class SherlockServer extends SpringBootServletInitializer {
 	}
 
 	@EventHandler
-	public void preInitialisation(EventPreInitialisation event) {
-	}
-
-	@EventHandler
 	public void initialisation(EventInitialisation event) {
 	}
 
 	@EventHandler
 	public void postInitialisation(EventPostInitialisation event) {
+	}
+
+	@EventHandler
+	public void preInitialisation(EventPreInitialisation event) {
 	}
 
 	@Override

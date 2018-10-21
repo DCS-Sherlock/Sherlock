@@ -15,25 +15,22 @@ public class RequestInvocation extends Tuple<Method, Object> {
 		return new RequestInvocation(method, obj);
 	}
 
-	public boolean post(IRequestReference reference, RequestInvocation source, Object payload) {
+	public Object post(IRequestReference reference, Object payload) {
 		try {
-			this.getKey().invoke(this.getValue(), reference, source, payload);
-			return true;
+			return this.getKey().invoke(this.getValue(), reference, payload);
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 
-	public boolean respond(IRequestReference reference, Object responce) {
+	public void respond(IRequestReference reference, Object response) {
 		try {
-			this.getKey().invoke(this.getValue(), reference, responce);
-			return true;
+			this.getKey().invoke(this.getValue(), reference, response);
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		return false;
 	}
 }

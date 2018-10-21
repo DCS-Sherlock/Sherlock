@@ -17,6 +17,11 @@ public class HomeController {
 		EventBus.registerEventSubscriber(this);
 	}
 
+	@EventHandler
+	public void getResults(EventPublishResults event) {
+		this.result = event.getResults();
+	}
+
 	@GetMapping ("/")
 	public String greeting(
 			@RequestParam (name = "name", required = false, defaultValue = "World")
@@ -24,11 +29,6 @@ public class HomeController {
 		model.addAttribute("name", name);
 		model.addAttribute("result", this.result);
 		return "index";
-	}
-
-	@EventHandler
-	public void getResults(EventPublishResults event) {
-		this.result = event.getResults();
 	}
 
 }

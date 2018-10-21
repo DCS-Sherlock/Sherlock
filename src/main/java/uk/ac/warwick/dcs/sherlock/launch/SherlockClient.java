@@ -24,10 +24,6 @@ public class SherlockClient {
 	}
 
 	@EventHandler
-	public void preInitialisation(EventPreInitialisation event) {
-	}
-
-	@EventHandler
 	public void initialisation(EventInitialisation event) {
 		this.dash = new LocalDashboard();
 	}
@@ -35,5 +31,9 @@ public class SherlockClient {
 	@EventHandler
 	public void postInitialisation(EventPostInitialisation event) {
 		this.dash.setVisible(true);
+	}
+
+	@EventHandler
+	public void preInitialisation(EventPreInitialisation event) {
 	}
 }

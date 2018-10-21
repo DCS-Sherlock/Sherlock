@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 public @interface RequestProcessor {
 
 	String apiFieldName() default "";
+
 	Class<?> databaseClass() default RequestDatabase.class;
 
 	@Retention (RetentionPolicy.RUNTIME)

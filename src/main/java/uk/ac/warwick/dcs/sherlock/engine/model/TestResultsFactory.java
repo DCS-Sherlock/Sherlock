@@ -1,9 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;

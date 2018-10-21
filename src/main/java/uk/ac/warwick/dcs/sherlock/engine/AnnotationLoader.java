@@ -81,11 +81,13 @@ public class AnnotationLoader {
 	}
 
 	void registerRequestProcessors() {
-		this.ref.getTypesAnnotatedWith(RequestProcessor.class).stream().peek(x -> logger.info("Registering Sherlock request processor: {}", x.getName())).forEach(SherlockEngine.requestBus::registerProcessor);
+		this.ref.getTypesAnnotatedWith(RequestProcessor.class).stream().peek(x -> logger.info("Registering Sherlock request processor: {}", x.getName()))
+				.forEach(SherlockEngine.requestBus::registerProcessor);
 	}
 
 	void registerResponseHandlers() {
-		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}", x.getName())).forEach(SherlockEngine.requestBus::registerResponseHandler);
+		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}", x.getName()))
+				.forEach(SherlockEngine.requestBus::registerResponseHandler);
 	}
 
 }

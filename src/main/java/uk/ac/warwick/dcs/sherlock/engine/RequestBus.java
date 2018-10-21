@@ -7,7 +7,6 @@ import uk.ac.warwick.dcs.sherlock.api.request.IRequestBus;
 import uk.ac.warwick.dcs.sherlock.api.request.IRequestReference;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;
 
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -19,8 +18,7 @@ class RequestBus implements IRequestBus {
 	final Logger logger = LoggerFactory.getLogger(RequestBus.class);
 	private Map<Class<?>, RequestInvocation> processorMap;
 	private Map<Class<?>, Method> responseMap;
-	private Class<?>[] requestHandlerParamTypes = { IRequestReference.class, RequestInvocation.class, Object.class };
-	private Class<?>[] responceHandlerParamTypes = { IRequestReference.class, Object.class };
+	private Class<?>[] paramTypes = { IRequestReference.class, Object.class };
 
 	RequestBus() {
 		this.processorMap = new ConcurrentHashMap<>();
@@ -28,24 +26,54 @@ class RequestBus implements IRequestBus {
 	}
 
 	@Override
-	public boolean post(@NotNull IRequestReference reference, @NotNull Object source, Object payload) {
-		if (reference == null || source == null) {
-			logger.error("Cannot post request with a null reference or source");
+	public Object post(IRequestReference reference, Object payload) {
+		if (reference == null) {
+			logger.error("Cannot post request with a null reference");
+			return null;
 		}
 
 		if (reference.getHandler() != null) {
 			RequestInvocation invocation = this.processorMap.get(reference.getHandler());
-			RequestInvocation responseInvocation = null;
-
-			if (this.responseMap.containsKey(source.getClass())) {
-				responseInvocation = RequestInvocation.of(this.responseMap.get(source.getClass()), source);
-			}
-			else {
-				logger.info("{} has no valid request response handler", source.getClass());
-			}
 
 			if (invocation != null) {
-				return invocation.post(reference, responseInvocation, payload);
+				return invocation.post(reference, payload);
+			}
+			else {
+				logger.warn("Could not find invocation for {}, is it annotated with @RequestProcessor?", reference.getHandler());
+			}
+		}
+		else {
+			logger.warn("{} handler class is null, likely an earlier registration failure occurred");
+		}
+		return null;
+	}
+
+	@Override
+	public boolean post(IRequestReference reference, Object source, Object payload) {
+		if (reference == null || source == null) {
+			logger.error("Cannot post request with a null reference or source");
+			return false;
+		}
+
+		if (reference.getHandler() != null) {
+			RequestInvocation invocation = this.processorMap.get(reference.getHandler());
+
+			if (invocation != null) {
+				Runnable runnable = () -> {
+					RequestInvocation responseInvocation = null;
+
+					if (this.responseMap.containsKey(source.getClass())) {
+						responseInvocation = RequestInvocation.of(this.responseMap.get(source.getClass()), source);
+					}
+					else {
+						logger.info("{} has no valid request response handler", source.getClass());
+					}
+
+					Object res = invocation.post(reference, payload);
+
+					responseInvocation.respond(reference, res);
+				};
+				runnable.run();
 			}
 			else {
 				logger.warn("Could not find invocation for {}, is it annotated with @RequestProcessor?", reference.getHandler());
@@ -80,11 +108,14 @@ class RequestBus implements IRequestBus {
 
 			List<Method> m = Arrays.stream(processor.getMethods()).filter(x -> x.isAnnotationPresent(RequestProcessor.PostHandler.class)).collect(Collectors.toList());
 			if (m.size() == 1) {
-				if (Arrays.equals(m.get(0).getParameterTypes(), requestHandlerParamTypes)) {
-					this.processorMap.put(processor, RequestInvocation.of(m.get(0), obj));
+				if (!Arrays.equals(m.get(0).getParameterTypes(), paramTypes)) {
+					logger.error("{} @PostHandler method does not have valid parameter types, they should be [IRequestReference, RequestInvocation, Object]", processor.getName());
+				}
+				else if (m.get(0).getReturnType() == null) {
+					logger.error("{} @PostHandler method should return the request result", processor.getName());
 				}
 				else {
-					logger.error("{} @PostHandler method does not have valid parameter types, they should be [IRequestReference, RequestInvocation, Object]", processor.getName());
+					this.processorMap.put(processor, RequestInvocation.of(m.get(0), obj));
 				}
 			}
 			else if (m.size() > 1) {
@@ -100,7 +131,7 @@ class RequestBus implements IRequestBus {
 	}
 
 	void registerResponseHandler(Method method) {
-		if (Arrays.equals(method.getParameterTypes(), responceHandlerParamTypes)) {
+		if (Arrays.equals(method.getParameterTypes(), paramTypes)) {
 			this.responseMap.put(method.getDeclaringClass(), method);
 		}
 		else {
