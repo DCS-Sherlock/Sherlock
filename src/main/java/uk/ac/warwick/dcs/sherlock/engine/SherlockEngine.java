@@ -66,7 +66,7 @@ public class SherlockEngine {
 		return result.concat("\n\nTotal Runtime Time = " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
-	public void initalise() {
+	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		AnnotationLoader modules = new AnnotationLoader();
@@ -89,7 +89,7 @@ public class SherlockEngine {
 	}
 
 	@ResponseHandler
-	public void responceHandler(IRequestReference request, Object responce) {
-		logger.info("got responce: " + responce);
+	public void responseHandler(IRequestReference request, Object response) {
+		logger.info("got responce: " + response);
 	}
 }

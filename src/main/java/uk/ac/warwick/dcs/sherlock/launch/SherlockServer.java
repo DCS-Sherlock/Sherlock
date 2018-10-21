@@ -26,7 +26,7 @@ public class SherlockServer extends SpringBootServletInitializer {
 
 	@EventListener (ApplicationReadyEvent.class)
 	public void afterStartup() {
-		engine.initalise();
+		engine.initialise();
 	}
 
 	@EventHandler
