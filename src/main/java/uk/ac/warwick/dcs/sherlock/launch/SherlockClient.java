@@ -8,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.module.web.Dashboard;
+import uk.ac.warwick.dcs.sherlock.module.web.LocalDashboard;
 
 @SherlockModule (side = Side.CLIENT)
 public class SherlockClient {
@@ -16,7 +16,7 @@ public class SherlockClient {
 	@SherlockModule.Instance
 	public static SherlockClient instance;
 
-	private Dashboard dash;
+	private LocalDashboard dash;
 
 	public static void main(String[] args) {
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
@@ -24,16 +24,16 @@ public class SherlockClient {
 	}
 
 	@EventHandler
+	public void preInitialisation(EventPreInitialisation event) {
+	}
+
+	@EventHandler
 	public void initialisation(EventInitialisation event) {
-		this.dash = new Dashboard();
+		this.dash = new LocalDashboard();
 	}
 
 	@EventHandler
 	public void postInitialisation(EventPostInitialisation event) {
 		this.dash.setVisible(true);
-	}
-
-	@EventHandler
-	public void preInitialisation(EventPreInitialisation event) {
 	}
 }

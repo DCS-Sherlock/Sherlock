@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
-import uk.ac.warwick.dcs.sherlock.api.filesystem.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
 @Controller
 public class HomeController {
@@ -16,8 +15,6 @@ public class HomeController {
 
 	public HomeController() {
 		EventBus.registerEventSubscriber(this);
-
-		EventBus.publishEvent(new EventPublishResults(SherlockEngine.runSherlockTest()));
 	}
 
 	@GetMapping ("/")

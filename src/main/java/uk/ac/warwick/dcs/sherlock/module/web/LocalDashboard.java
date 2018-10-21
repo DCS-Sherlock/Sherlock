@@ -7,9 +7,9 @@ import java.net.URI;
 
 import static javax.swing.LayoutStyle.ComponentPlacement.*;
 
-public class Dashboard extends JFrame {
+public class LocalDashboard extends JFrame {
 
-	public Dashboard() {
+	public LocalDashboard() {
 		initUI();
 	}
 
@@ -25,7 +25,7 @@ public class Dashboard extends JFrame {
 		group.setAutoCreateGaps(true);
 		group.setAutoCreateContainerGaps(true);
 
-		JButton openButton = new JButton("Open Dashboard");
+		JButton openButton = new JButton("Open LocalDashboard");
 		openButton.addActionListener((ActionEvent event) -> {
 			try {
 				if (Desktop.isDesktopSupported()) {

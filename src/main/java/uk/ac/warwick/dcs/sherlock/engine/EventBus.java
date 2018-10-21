@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 
 class EventBus implements IEventBus {
@@ -21,7 +22,7 @@ class EventBus implements IEventBus {
 	private Map<Class<? extends IEvent>, List<EventInvocation>> eventMap;
 
 	EventBus() {
-		this.eventMap = new HashMap<>();
+		this.eventMap = new ConcurrentHashMap<>();
 	}
 
 	@Override

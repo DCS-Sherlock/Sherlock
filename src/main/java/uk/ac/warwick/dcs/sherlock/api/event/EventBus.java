@@ -4,10 +4,6 @@ public class EventBus {
 
 	private static IEventBus bus;
 
-	public static void mapEventBus(IEventBus bus) {
-		EventBus.bus = bus;
-	}
-
 	public static void publishEvent(IEvent event) {
 		bus.publishEvent(event);
 	}

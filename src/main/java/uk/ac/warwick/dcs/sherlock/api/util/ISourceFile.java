@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.filesystem;
+package uk.ac.warwick.dcs.sherlock.api.util;
 
 public interface ISourceFile {
 
