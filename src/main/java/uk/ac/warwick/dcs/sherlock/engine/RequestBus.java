@@ -91,7 +91,12 @@ class RequestBus implements IRequestBus {
 			if (!apiFieldName.equals("")) {
 				Field field = processor.getAnnotation(RequestProcessor.class).databaseClass().getDeclaredField(apiFieldName);
 				field.setAccessible(true);
-				field.set(null, processor);
+				if (field.get(null) == null) {
+					field.set(null, processor);
+				}
+				else {
+					logger.error("Failed to register the {} request processor, field matching '{}' in '{}'  already contains a value", processor.getName(), processor.getAnnotation(RequestProcessor.class).apiFieldName(), processor.getAnnotation(RequestProcessor.class).databaseClass().getName());
+				}
 			}
 
 			Object obj = processor.newInstance();
@@ -126,7 +131,7 @@ class RequestBus implements IRequestBus {
 			e.printStackTrace();
 		}
 		catch (NoSuchFieldException e) {
-			logger.error(String.format("Could not find field matching 'apiFieldName' in the database class for %s", processor.getName()), e);
+			logger.error(String.format("Failed to register the %s request processor, could not find field matching '%s' in '%s'", processor.getName(), processor.getAnnotation(RequestProcessor.class).apiFieldName(), processor.getAnnotation(RequestProcessor.class).databaseClass().getName()), e);
 		}
 	}
 
