@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.request;
+package uk.ac.warwick.dcs.sherlock.api.common;
 
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
@@ -17,6 +17,7 @@ public class RequestInvocation extends Tuple<Method, Object> {
 
 	public Object post(IRequestReference reference, Object payload) {
 		try {
+			this.getKey().setAccessible(true);
 			return this.getKey().invoke(this.getValue(), reference, payload);
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {
@@ -27,6 +28,7 @@ public class RequestInvocation extends Tuple<Method, Object> {
 
 	public void respond(IRequestReference reference, Object response) {
 		try {
+			this.getKey().setAccessible(true);
 			this.getKey().invoke(this.getValue(), reference, response);
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {

@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.request;
+package uk.ac.warwick.dcs.sherlock.api.common;
 
 public class RequestBus {
 
@@ -8,7 +8,7 @@ public class RequestBus {
 	 * Blocking request which returns the result
 	 *
 	 * @param reference request identifier
-	 * @param payload data to accompany the request
+	 * @param payload   data to accompany the request
 	 *
 	 * @return result of the request
 	 */

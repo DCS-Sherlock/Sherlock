@@ -3,11 +3,10 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.request.IRequestReference;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.common.IRequestReference;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventPostInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -26,20 +25,29 @@ public class SherlockEngine {
 	static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	static EventBus eventBus = null;
 	static RequestBus requestBus = null;
+	static Registry registry = null;
 
 	public SherlockEngine(Side side) {
 		SherlockEngine.side = side;
 
 		try {
 			SherlockEngine.eventBus = new EventBus();
-			Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
+			Field field = uk.ac.warwick.dcs.sherlock.api.common.EventBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.eventBus);
 
 			SherlockEngine.requestBus = new RequestBus();
-			field = uk.ac.warwick.dcs.sherlock.api.request.RequestBus.class.getDeclaredField("bus");
+			field = uk.ac.warwick.dcs.sherlock.api.common.RequestBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.requestBus);
+
+			SherlockEngine.registry = new Registry();
+			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockRegistry.class.getDeclaredField("registry");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.registry);
+			field = uk.ac.warwick.dcs.sherlock.engine.Registry.class.getDeclaredField("instance");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.registry);
 		}
 		catch (IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
@@ -84,8 +92,9 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.registerEventSubscriber(this);
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.DataRequestReference.REQ1, this, "from the engine");
-		logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.DataRequestReference.REQ1, "from the engine 22"));
+		//uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, this, "from the engine");
+		//logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, "from the engine 22"));
+		SherlockEngine.registry.registerDetector(TestDetector.class);
 	}
 
 	@ResponseHandler

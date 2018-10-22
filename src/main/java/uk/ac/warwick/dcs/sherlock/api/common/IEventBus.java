@@ -1,4 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api.event;
+package uk.ac.warwick.dcs.sherlock.api.common;
+
+import uk.ac.warwick.dcs.sherlock.api.common.event.IEvent;
 
 public interface IEventBus {
 

@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.annotations;
 
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.common.RequestDatabase;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

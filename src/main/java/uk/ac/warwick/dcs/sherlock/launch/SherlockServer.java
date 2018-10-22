@@ -8,9 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventPostInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.common.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 

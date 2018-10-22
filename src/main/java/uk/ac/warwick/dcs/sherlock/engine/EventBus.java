@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.IEvent;
-import uk.ac.warwick.dcs.sherlock.api.event.IEventBus;
-import uk.ac.warwick.dcs.sherlock.api.event.IEventModule;
+import uk.ac.warwick.dcs.sherlock.api.common.IEventBus;
+import uk.ac.warwick.dcs.sherlock.api.common.event.IEvent;
+import uk.ac.warwick.dcs.sherlock.api.common.event.IEventModule;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 import java.lang.reflect.Field;
@@ -35,7 +35,7 @@ class EventBus implements IEventBus {
 
 	@Override
 	public void registerEventSubscriber(Object subscriber) {
-		Arrays.stream(subscriber.getClass().getMethods()).filter(x -> x.isAnnotationPresent(EventHandler.class)).forEach(x -> {
+		Arrays.stream(subscriber.getClass().getDeclaredMethods()).filter(x -> x.isAnnotationPresent(EventHandler.class)).forEach(x -> {
 			if (x.getParameterTypes().length != 1) {
 				logger.warn("Event Handlers can only have 1 parameter, {}.{} has {}", subscriber.getClass().getName(), x.getName(), x.getParameterTypes().length);
 			}
@@ -70,7 +70,7 @@ class EventBus implements IEventBus {
 		try {
 			Object obj = module.newInstance();
 
-			List<Field> field = Arrays.stream(module.getFields()).filter(x -> x.isAnnotationPresent(SherlockModule.Instance.class)).collect(Collectors.toList());
+			List<Field> field = Arrays.stream(module.getDeclaredFields()).filter(x -> x.isAnnotationPresent(SherlockModule.Instance.class)).collect(Collectors.toList());
 			if (field.size() == 1) {
 				field.get(0).setAccessible(true);
 				field.get(0).set(obj, obj);
@@ -80,7 +80,7 @@ class EventBus implements IEventBus {
 				return;
 			}
 
-			Arrays.stream(module.getMethods()).filter(x -> x.isAnnotationPresent(EventHandler.class)).forEach(x -> {
+			Arrays.stream(module.getDeclaredMethods()).filter(x -> x.isAnnotationPresent(EventHandler.class)).forEach(x -> {
 				if (x.getParameterTypes().length != 1) {
 					logger.warn("Event Handlers can only have 1 parameter, {}.{} has {}", module.getName(), x.getName(), x.getParameterTypes().length);
 				}

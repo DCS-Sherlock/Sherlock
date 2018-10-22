@@ -86,7 +86,7 @@ public class AnnotationLoader {
 	}
 
 	void registerResponseHandlers() {
-		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}", x.getName()))
+		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}.{}", x.getDeclaringClass().getName(), x.getName()))
 				.forEach(SherlockEngine.requestBus::registerResponseHandler);
 	}
 

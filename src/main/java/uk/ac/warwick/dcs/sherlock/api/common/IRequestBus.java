@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.request;
+package uk.ac.warwick.dcs.sherlock.api.common;
 
 public interface IRequestBus {
 
