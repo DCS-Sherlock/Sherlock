@@ -1,11 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.api.request;
 
-public abstract class Request<P, R> {
+public abstract class AbstractRequest<P, R> {
 
 	private P payload;
 	private R responce;
 
-	public Request() {}
+	public AbstractRequest() {}
 
 	public abstract Class<?> getHandler();
 
@@ -13,7 +13,7 @@ public abstract class Request<P, R> {
 		return this.payload;
 	}
 
-	public Request setPayload(P payload) {
+	public AbstractRequest setPayload(P payload) {
 		this.payload = payload;
 		return this;
 	}

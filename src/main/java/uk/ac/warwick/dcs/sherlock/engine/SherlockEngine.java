@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.request.Request;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
@@ -99,7 +99,7 @@ public class SherlockEngine {
 	}
 
 	@ResponseHandler
-	public void responseHandler(Request request) {
+	public void responseHandler(AbstractRequest request) {
 		logger.info("got responce: " + request.getPayload());
 	}
 }

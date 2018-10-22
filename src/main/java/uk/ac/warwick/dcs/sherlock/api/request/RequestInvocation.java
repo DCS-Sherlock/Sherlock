@@ -15,12 +15,12 @@ public class RequestInvocation extends Tuple<Method, Object> {
 		return new RequestInvocation(method, obj);
 	}
 
-	public Request post(Request reference) {
+	public AbstractRequest post(AbstractRequest reference) {
 		try {
 			this.getKey().setAccessible(true);
 			Object responce = this.getKey().invoke(this.getValue(), reference);
-			if (responce instanceof Request) {
-				return (Request) responce;
+			if (responce instanceof AbstractRequest) {
+				return (AbstractRequest) responce;
 			}
 			return null;
 		}
@@ -30,7 +30,7 @@ public class RequestInvocation extends Tuple<Method, Object> {
 		return null;
 	}
 
-	public void respond(Request reference) {
+	public void respond(AbstractRequest reference) {
 		try {
 			this.getKey().setAccessible(true);
 			this.getKey().invoke(this.getValue(), reference);

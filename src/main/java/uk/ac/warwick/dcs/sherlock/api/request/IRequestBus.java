@@ -9,7 +9,7 @@ public interface IRequestBus {
 	 *
 	 * @return request containing result
 	 */
-	Request post(Request reference);
+	AbstractRequest post(AbstractRequest reference);
 
 	/**
 	 * Non-blocking request which returns the result to a @ResponseHandler method in the source if one is present
@@ -19,6 +19,6 @@ public interface IRequestBus {
 	 *
 	 * @return whether the request was successfully published
 	 */
-	boolean post(Request reference, Object source);
+	boolean post(AbstractRequest reference, Object source);
 
 }

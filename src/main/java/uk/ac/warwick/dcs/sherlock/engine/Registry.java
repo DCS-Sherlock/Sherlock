@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
-import uk.ac.warwick.dcs.sherlock.api.request.Request;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
@@ -30,7 +30,7 @@ class Registry implements IRegistry {
 	}
 
 	@RequestProcessor.PostHandler
-	public Request handlePost(Request reference) {
+	public AbstractRequest handlePost(AbstractRequest reference) {
 		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
 			reference.setResponce(new HashMap<>(this.detectorRegistry));
 		}

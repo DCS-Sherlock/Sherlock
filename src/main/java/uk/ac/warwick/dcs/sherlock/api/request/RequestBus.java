@@ -11,7 +11,7 @@ public class RequestBus {
 	 *
 	 * @return result of the request
 	 */
-	public static <R extends Request> R post(R reference) {
+	public static <R extends AbstractRequest> R post(R reference) {
 		return (R) bus.post(reference);
 	}
 
@@ -23,7 +23,7 @@ public class RequestBus {
 	 *
 	 * @return whether the request was successfully published
 	 */
-	public static boolean post(Request reference, Object source) {
+	public static boolean post(AbstractRequest reference, Object source) {
 		return bus.post(reference, source);
 	}
 

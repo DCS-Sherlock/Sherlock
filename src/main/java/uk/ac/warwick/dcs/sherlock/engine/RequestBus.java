@@ -3,8 +3,8 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.IRequestBus;
-import uk.ac.warwick.dcs.sherlock.api.request.Request;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;
 
 import java.lang.reflect.Field;
@@ -18,7 +18,7 @@ class RequestBus implements IRequestBus {
 	final Logger logger = LoggerFactory.getLogger(RequestBus.class);
 	private Map<Class<?>, RequestInvocation> processorMap;
 	private Map<Class<?>, Method> responseMap;
-	private Class<?>[] paramTypes = { Request.class };
+	private Class<?>[] paramTypes = { AbstractRequest.class };
 
 	RequestBus() {
 		this.processorMap = new ConcurrentHashMap<>();
@@ -26,7 +26,7 @@ class RequestBus implements IRequestBus {
 	}
 
 	@Override
-	public Request post(Request reference) {
+	public AbstractRequest post(AbstractRequest reference) {
 		if (reference == null) {
 			logger.error("Cannot post request with a null reference");
 			return null;
@@ -49,7 +49,7 @@ class RequestBus implements IRequestBus {
 	}
 
 	@Override
-	public boolean post(Request reference, Object source) {
+	public boolean post(AbstractRequest reference, Object source) {
 		if (reference == null || source == null) {
 			logger.error("Cannot post request with a null reference or source");
 			return false;
@@ -63,7 +63,7 @@ class RequestBus implements IRequestBus {
 					if (this.responseMap.containsKey(source.getClass())) {
 						RequestInvocation responseInvocation = RequestInvocation.of(this.responseMap.get(source.getClass()), source);
 
-						Request res = invocation.post(reference);
+						AbstractRequest res = invocation.post(reference);
 						responseInvocation.respond(res);
 					}
 					else {
@@ -119,9 +119,9 @@ class RequestBus implements IRequestBus {
 			List<Method> m = Arrays.stream(processor.getDeclaredMethods()).filter(x -> x.isAnnotationPresent(RequestProcessor.PostHandler.class)).collect(Collectors.toList());
 			if (m.size() == 1) {
 				if (!Arrays.equals(m.get(0).getParameterTypes(), paramTypes)) {
-					logger.error("{} @PostHandler method does not have valid parameter types, they should be [Request]", processor.getName());
+					logger.error("{} @PostHandler method does not have valid parameter types, they should be [AbstractRequest]", processor.getName());
 				}
-				else if (m.get(0).getReturnType().getSuperclass().equals(Request.class)) {
+				else if (m.get(0).getReturnType().getSuperclass().equals(AbstractRequest.class)) {
 					logger.error("{} @PostHandler method should return the request result", processor.getName());
 				}
 				else {
@@ -146,7 +146,7 @@ class RequestBus implements IRequestBus {
 			this.responseMap.put(method.getDeclaringClass(), method);
 		}
 		else {
-			logger.error("{} does not have valid parameter types, @ResponceHandler methods should have the params [Request]", method.toString());
+			logger.error("{} does not have valid parameter types, @ResponceHandler methods should have the params [AbstractRequest]", method.toString());
 		}
 	}
 
