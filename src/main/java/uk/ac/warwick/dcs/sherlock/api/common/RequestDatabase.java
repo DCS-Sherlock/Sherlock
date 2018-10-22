@@ -1,29 +1,21 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
+import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
+
 import java.util.*;
 
 public class RequestDatabase {
 
 	private static Class<?> registry = null;
 
-	public enum RegistryRequests implements IRequestReference {
-		GET_DETECTORS(Map.class),
-		GET_DETECTORS_NAMES(LinkedList.class);
+	public abstract static class RegistryRequests<P, R> extends Request<P,R> {
 
-		private final Class<?> returnType;
-
-		RegistryRequests(Class<?> returnType) {
-			this.returnType = returnType;
-		}
+		public static class GetDetectors extends RegistryRequests<Object, Map<String, Class<? extends IDetector>>> {}
+		public static class GetDetectorNames extends RegistryRequests<Object, List<String>> {}
 
 		@Override
 		public Class<?> getHandler() {
 			return registry;
-		}
-
-		@Override
-		public Class<?> getReturnType() {
-			return this.returnType;
 		}
 	}
 

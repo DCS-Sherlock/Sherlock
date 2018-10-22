@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
+import uk.ac.warwick.dcs.sherlock.api.common.Request;
 import uk.ac.warwick.dcs.sherlock.api.common.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
@@ -32,12 +33,11 @@ class Registry implements IRegistry {
 	}
 
 	@RequestProcessor.PostHandler
-	public Object handlePost(RequestDatabase.RegistryRequests reference, Object payload) {
-		switch(reference) {
-			case GET_DETECTORS_NAMES:
-				return new LinkedList<>(this.detectorRegistry.keySet());
+	public Request handlePost(Request reference) {
+		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
+			reference.setResponce(new LinkedList<>(this.detectorRegistry.keySet()));
 		}
-		return null;
+		return reference;
 	}
 
 	@Override

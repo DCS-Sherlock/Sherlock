@@ -8,12 +8,11 @@ public class RequestBus {
 	 * Blocking request which returns the result
 	 *
 	 * @param reference request identifier
-	 * @param payload   data to accompany the request
 	 *
 	 * @return result of the request
 	 */
-	public static Object post(IRequestReference reference, Object payload) {
-		return bus.post(reference, payload);
+	public static <R extends Request> R post(R reference) {
+		return (R) bus.post(reference);
 	}
 
 	/**
@@ -21,12 +20,11 @@ public class RequestBus {
 	 *
 	 * @param reference request identifier
 	 * @param source    object sending the request, to return the result to
-	 * @param payload   data to accompany the request
 	 *
 	 * @return whether the request was successfully published
 	 */
-	public static boolean post(IRequestReference reference, Object source, Object payload) {
-		return bus.post(reference, source, payload);
+	public static boolean post(Request reference, Object source) {
+		return bus.post(reference, source);
 	}
 
 }

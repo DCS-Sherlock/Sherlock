@@ -15,10 +15,14 @@ public class RequestInvocation extends Tuple<Method, Object> {
 		return new RequestInvocation(method, obj);
 	}
 
-	public Object post(IRequestReference reference, Object payload) {
+	public Request post(Request reference) {
 		try {
 			this.getKey().setAccessible(true);
-			return this.getKey().invoke(this.getValue(), reference, payload);
+			Object responce = this.getKey().invoke(this.getValue(), reference);
+			if (responce instanceof Request) {
+				return (Request) responce;
+			}
+			return null;
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
@@ -26,10 +30,10 @@ public class RequestInvocation extends Tuple<Method, Object> {
 		return null;
 	}
 
-	public void respond(IRequestReference reference, Object response) {
+	public void respond(Request reference) {
 		try {
 			this.getKey().setAccessible(true);
-			this.getKey().invoke(this.getValue(), reference, response);
+			this.getKey().invoke(this.getValue(), reference);
 		}
 		catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();

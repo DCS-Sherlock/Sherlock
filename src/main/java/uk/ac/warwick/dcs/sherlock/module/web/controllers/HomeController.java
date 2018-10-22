@@ -31,7 +31,10 @@ public class HomeController {
 			@RequestParam (name = "name", required = false, defaultValue = "World")
 					String name, Model model) {
 		model.addAttribute("name", name);
-		model.addAttribute("detectors", String.join(", ", (List<String>) RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS_NAMES, null)));
+
+		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
+
+		model.addAttribute("detectors", String.join(", ", detectors));
 		model.addAttribute("result", this.result);
 		return "index";
 	}

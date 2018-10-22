@@ -3,7 +3,8 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.common.IRequestReference;
+import uk.ac.warwick.dcs.sherlock.api.common.Request;
+import uk.ac.warwick.dcs.sherlock.api.common.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.common.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.common.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.common.event.EventPreInitialisation;
@@ -92,13 +93,13 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.registerEventSubscriber(this);
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		//uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, this, "from the engine");
+		uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
 		//logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, "from the engine 22"));
 		SherlockEngine.registry.registerDetector(TestDetector.class);
 	}
 
 	@ResponseHandler
-	public void responseHandler(IRequestReference request, Object response) {
-		logger.info("got responce: " + response);
+	public void responseHandler(Request request) {
+		logger.info("got responce: " + request.getPayload());
 	}
 }
