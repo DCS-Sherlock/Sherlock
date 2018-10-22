@@ -3,9 +3,9 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
-import uk.ac.warwick.dcs.sherlock.api.common.IRequestBus;
-import uk.ac.warwick.dcs.sherlock.api.common.Request;
-import uk.ac.warwick.dcs.sherlock.api.common.RequestInvocation;
+import uk.ac.warwick.dcs.sherlock.api.request.IRequestBus;
+import uk.ac.warwick.dcs.sherlock.api.request.Request;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -3,11 +3,11 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.common.Request;
-import uk.ac.warwick.dcs.sherlock.api.common.RequestDatabase;
-import uk.ac.warwick.dcs.sherlock.api.common.event.EventInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.common.event.EventPostInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.common.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.request.Request;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -33,12 +33,12 @@ public class SherlockEngine {
 
 		try {
 			SherlockEngine.eventBus = new EventBus();
-			Field field = uk.ac.warwick.dcs.sherlock.api.common.EventBus.class.getDeclaredField("bus");
+			Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.eventBus);
 
 			SherlockEngine.requestBus = new RequestBus();
-			field = uk.ac.warwick.dcs.sherlock.api.common.RequestBus.class.getDeclaredField("bus");
+			field = uk.ac.warwick.dcs.sherlock.api.request.RequestBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.requestBus);
 
@@ -93,8 +93,8 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.registerEventSubscriber(this);
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
-		//logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.common.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, "from the engine 22"));
+		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
+		//logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, "from the engine 22"));
 		SherlockEngine.registry.registerDetector(TestDetector.class);
 	}
 

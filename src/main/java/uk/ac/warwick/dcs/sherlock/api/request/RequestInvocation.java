@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.common;
+package uk.ac.warwick.dcs.sherlock.api.request;
 
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 

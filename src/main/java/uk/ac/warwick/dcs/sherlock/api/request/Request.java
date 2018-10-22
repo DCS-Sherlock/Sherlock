@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.common;
+package uk.ac.warwick.dcs.sherlock.api.request;
 
 public abstract class Request<P, R> {
 

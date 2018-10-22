@@ -5,10 +5,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.common.EventBus;
-import uk.ac.warwick.dcs.sherlock.api.common.RequestBus;
-import uk.ac.warwick.dcs.sherlock.api.common.RequestDatabase;
-import uk.ac.warwick.dcs.sherlock.api.common.event.EventPublishResults;
+import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestBus;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
 
 import java.util.*;
 
@@ -32,7 +32,7 @@ public class HomeController {
 
 		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
 		model.addAttribute("detectors", String.join(", ", detectors));
-		
+
 		model.addAttribute("result", this.result);
 		return "index";
 	}
