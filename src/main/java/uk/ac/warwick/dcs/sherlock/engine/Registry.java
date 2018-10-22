@@ -16,9 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
-/**
- * The idea is to integrate the request processor stuff into classes which handle data, and create an indirect access of them
- */
 @RequestProcessor (apiFieldName = "registry")
 class Registry implements IRegistry {
 
@@ -34,7 +31,10 @@ class Registry implements IRegistry {
 
 	@RequestProcessor.PostHandler
 	public Request handlePost(Request reference) {
-		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
+		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
+			reference.setResponce(new HashMap<>(this.detectorRegistry));
+		}
+		else if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
 			reference.setResponce(new LinkedList<>(this.detectorRegistry.keySet()));
 		}
 		return reference;

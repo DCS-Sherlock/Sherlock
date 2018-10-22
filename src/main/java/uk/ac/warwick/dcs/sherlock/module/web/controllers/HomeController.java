@@ -27,14 +27,12 @@ public class HomeController {
 	}
 
 	@GetMapping ("/")
-	public String greeting(
-			@RequestParam (name = "name", required = false, defaultValue = "World")
-					String name, Model model) {
+	public String greeting(@RequestParam (name = "name", required = false, defaultValue = "World") String name, Model model) {
 		model.addAttribute("name", name);
 
 		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
-
 		model.addAttribute("detectors", String.join(", ", detectors));
+		
 		model.addAttribute("result", this.result);
 		return "index";
 	}

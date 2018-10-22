@@ -2,7 +2,6 @@ package uk.ac.warwick.dcs.sherlock.api.common;
 
 public abstract class Request<P, R> {
 
-	//private Class<?> handler;
 	private P payload;
 	private R responce;
 
