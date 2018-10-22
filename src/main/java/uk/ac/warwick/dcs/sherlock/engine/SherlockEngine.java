@@ -3,11 +3,11 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -23,10 +23,10 @@ public class SherlockEngine {
 	public static final Boolean enableExternalModules = false;
 	public static Side side = Side.UNKNOWN;
 
-	static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	static EventBus eventBus = null;
 	static RequestBus requestBus = null;
 	static Registry registry = null;
+	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 
 	public SherlockEngine(Side side) {
 		SherlockEngine.side = side;
@@ -91,10 +91,10 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
 
-		//SherlockEngine.eventBus.registerEventSubscriber(this);
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
-		//logger.info("t2" + uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(RequestDatabase.RegistryRequests.GET_DETECTORS, "from the engine 22"));
+
+		//Put this in a @module eventually
 		SherlockEngine.registry.registerDetector(TestDetector.class);
 	}
 
