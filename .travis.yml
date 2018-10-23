@@ -2,6 +2,9 @@ language: java
 install: true
 jdk:
 - oraclejdk8
+- oraclejdk9
+- oraclejdk10
+- oravlejdk11
 script:
 - "./gradlew build -s"
 before_cache:
