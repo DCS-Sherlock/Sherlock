@@ -27,6 +27,11 @@ public class HomeController {
 	}
 
 	@GetMapping ("/")
+	public String index(Model model) {
+		return "index";
+	}
+
+	@GetMapping ("/greeting")
 	public String greeting(@RequestParam (name = "name", required = false, defaultValue = "World") String name, Model model) {
 		model.addAttribute("name", name);
 
@@ -34,7 +39,7 @@ public class HomeController {
 		model.addAttribute("detectors", String.join(", ", detectors));
 
 		model.addAttribute("result", this.result);
-		return "index";
+		return "greeting";
 	}
 
 }

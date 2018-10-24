@@ -1,14 +1,126 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="img/ico" th:href="@{/img/favicon.ico}" href="/img/favicon.ico">
+
+    <title>Dashboard - Sherlock</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{/css/build.css}" href="/css/build.css"  rel="stylesheet" type="text/css"  />
 </head>
+
 <body>
-<p th:text="'Hello, ' + ${name} + '!'" />
-<br/>
-<p th:text="'Registered detectors: ' + ${detectors} + '!'" />
-<br/>
-<p th:text="${result}" />
+
+    <div class="container" id="header">
+        <header class="py-3" >
+            <div class="row">
+                <div class="col-12 logo text-center">
+                    <a class="text-dark" href="/">Sherlock</a>
+                </div>
+            </div>
+        </header>
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="mx-auto order-0">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span class="navbar-toggler-icon"></span> Toggle Menu
+                </button>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Workspaces</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Tasks</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-2 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <main role="main" class="container">
+
+        <div class="row">
+
+        </div>
+
+
+
+        <!--<div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">-->
+            <!--<div class="col-md-6 px-0">-->
+                <!--<h1 class="display-4 font-italic">Title of a longer featured blog post</h1>-->
+                <!--<p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p>-->
+                <!--<p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Continue reading...</a></p>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="row mb-2">-->
+            <!--<div class="col-md-6">-->
+                <!--<div class="card flex-md-row mb-4 shadow-sm h-md-250">-->
+                    <!--<div class="card-body d-flex flex-column align-items-start">-->
+                        <!--<strong class="d-inline-block mb-2 text-primary">World</strong>-->
+                        <!--<h3 class="mb-0">-->
+                            <!--<a class="text-dark" href="#">Featured post</a>-->
+                        <!--</h3>-->
+                        <!--<div class="mb-1 text-muted">Nov 12</div>-->
+                        <!--<p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>-->
+                        <!--<a href="#">Continue reading</a>-->
+                    <!--</div>-->
+                    <!--<img class="card-img-right flex-auto d-none d-lg-block" data-src="holder.js/200x250?theme=thumb" alt="Card image cap">-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-6">-->
+                <!--<div class="card flex-md-row mb-4 shadow-sm h-md-250">-->
+                    <!--<div class="card-body d-flex flex-column align-items-start">-->
+                        <!--<strong class="d-inline-block mb-2 text-success">Design</strong>-->
+                        <!--<h3 class="mb-0">-->
+                            <!--<a class="text-dark" href="#">Post title</a>-->
+                        <!--</h3>-->
+                        <!--<div class="mb-1 text-muted">Nov 11</div>-->
+                        <!--<p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>-->
+                        <!--<a href="#">Continue reading</a>-->
+                    <!--</div>-->
+                    <!--<img class="card-img-right flex-auto d-none d-lg-block" data-src="holder.js/200x250?theme=thumb" alt="Card image cap">-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+    </main>
+
+    <footer class="blog-footer">
+        <p>Sherlock &copy; <a href="https://github.com/DCS-Sherlock/" target="_blank">DCS-Sherlock</a> <span th:text="${#dates.format(#dates.createNow(),'YYYY')}"></span></p>
+        <p>
+            <a href="#header">Back to top</a>
+        </p>
+    </footer>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
 </html>

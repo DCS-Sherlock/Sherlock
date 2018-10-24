@@ -31,8 +31,8 @@ dependencies {
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-log4j2',
-            'org.springframework.boot:spring-boot-starter-thymeleaf'
-            //, 'org.springframework.boot:spring-boot-devtools'
+            'org.springframework.boot:spring-boot-starter-thymeleaf',
+            'org.springframework.boot:spring-boot-devtools'
     )
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
