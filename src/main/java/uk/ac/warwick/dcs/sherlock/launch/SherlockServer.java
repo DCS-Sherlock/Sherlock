@@ -1,33 +1,49 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.SherlockModule.EventHandler;
+import org.springframework.context.event.EventListener;
+import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.lib.Reference;
 
-@SherlockModule
+@SherlockModule (side = Side.SERVER)
 @SpringBootApplication
 @ComponentScan ("uk.ac.warwick.dcs.sherlock.module.web")
 public class SherlockServer extends SpringBootServletInitializer {
 
+	static SherlockEngine engine;
+
 	public static void main(String[] args) {
-		new SherlockEngine(args, Reference.Side.SERVER);
+	}
+
+	@EventListener (ApplicationReadyEvent.class)
+	public void afterStartup() {
+		engine.initialise();
+	}
+
+	@EventHandler
+	public void initialisation(EventInitialisation event) {
+	}
+
+	@EventHandler
+	public void postInitialisation(EventPostInitialisation event) {
 	}
 
 	@EventHandler
 	public void preInitialisation(EventPreInitialisation event) {
-		SpringApplication server = new SpringApplication(SherlockServer.class);
-		server.run(event.getLaunchArgs());
 	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		engine = new SherlockEngine(Side.SERVER);
 		return application.sources(SherlockServer.class);
 	}
 }

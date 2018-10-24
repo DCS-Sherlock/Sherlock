@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;

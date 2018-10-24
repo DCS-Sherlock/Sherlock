@@ -1,12 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import com.google.common.collect.Streams;
-import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
-import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
+import org.antlr.v4.runtime.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 
 import java.util.*;
 import java.util.stream.*;
@@ -90,12 +91,14 @@ public class ModelUtils {
 			try {
 				IPreProcessor processor = processorClass.newInstance();
 				if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
-					Logger.log(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here
+					Logger logger = LoggerFactory.getLogger(ModelUtils.class);
+					logger.error(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here
 					return false;
 				}
 
 				if (processor.getDependencies() != null && !checkedProcessors.containsAll(processor.getDependencies())) {
-					Logger.log(String.format("%s does not meet the dependencies of %s", strategy.getName(), processorClass.getName())); //throw exception here
+					Logger logger = LoggerFactory.getLogger(ModelUtils.class);
+					logger.error(String.format("The preprocessing strategy '%s' does not meet the dependencies of %s", strategy.getName(), processorClass.getName())); //throw exception here
 					return false;
 				}
 				checkedProcessors.add(processorClass);

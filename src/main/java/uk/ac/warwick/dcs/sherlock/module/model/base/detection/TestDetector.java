@@ -1,17 +1,22 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
-import org.antlr.v4.runtime.Lexer;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IContentBlock;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.TrimWhitespaceOnly;
 
 import java.util.*;
 
 public class TestDetector extends AbstractPairwiseDetector {
+
+	private static final Language[] languages = { Language.JAVA };
+
+	@TuneableParameter (defaultValue = 0, minimumBound = 0, maxumumBound = 10)
+	public int testParam;
 
 	@Override
 	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
@@ -34,8 +39,8 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public List<Language> getSupportedLanguages() {
-		return Collections.singletonList(Language.JAVA);
+	public Language[] getSupportedLanguages() {
+		return languages;
 	}
 
 	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {

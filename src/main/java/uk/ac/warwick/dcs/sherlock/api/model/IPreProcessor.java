@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.*;
 
 import java.util.*;
 

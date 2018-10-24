@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
-import uk.ac.warwick.dcs.sherlock.api.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface IPairedBlocks {
 
@@ -65,7 +66,8 @@ public interface IPairedBlocks {
 			}
 			else {
 				this.percentageB1 = 0;
-				Logger.log(String.format("percentageMatchBlock1 out of range [%.2f], must be between 0 and 1", percentageMatchBlock1));
+				Logger logger = LoggerFactory.getLogger(GenericPairedBlocks.class);
+				logger.error(String.format("percentageMatchBlock1 out of range [%.2f], must be between 0 and 1", percentageMatchBlock1));
 			}
 
 			if (IPairedBlocks.checkPercentageInRange(percentageMatchBlock2)) {
@@ -73,7 +75,8 @@ public interface IPairedBlocks {
 			}
 			else {
 				this.percentageB2 = 0;
-				Logger.log(String.format("percentageMatchBlock2 out of range [%.2f], must be between 0 and 1", percentageMatchBlock2));
+				Logger logger = LoggerFactory.getLogger(GenericPairedBlocks.class);
+				logger.error(String.format("percentageMatchBlock2 out of range [%.2f], must be between 0 and 1", percentageMatchBlock2));
 			}
 		}
 
