@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestBus;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
 
 import java.util.*;
 

@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.launch;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule.Instance;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
@@ -13,7 +14,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.LocalDashboard;
 @SherlockModule (side = Side.CLIENT)
 public class SherlockClient {
 
-	@SherlockModule.Instance
+	@Instance
 	public static SherlockClient instance;
 
 	private LocalDashboard dash;

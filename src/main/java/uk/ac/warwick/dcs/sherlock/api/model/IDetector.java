@@ -3,20 +3,16 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 
 /**
  * Interface for implementing a detection algorithm
  */
 public interface IDetector {
-
-	@interface TuneableParameter {
-
-		float defaultValue();
-		float minimumBound();
-		float maxumumBound();
-
-	}
 
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
@@ -80,6 +76,18 @@ public interface IDetector {
 		 * @return worker results
 		 */
 		IModelResultItem getResult();
+
+	}
+
+	@Retention (RetentionPolicy.RUNTIME)
+	@Target (ElementType.FIELD)
+	@interface TuneableParameter {
+
+		float defaultValue();
+
+		float maxumumBound();
+
+		float minimumBound();
 
 	}
 

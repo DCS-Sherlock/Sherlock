@@ -4,12 +4,14 @@ import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
+import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor.Instance;
+import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor.PostHandler;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
-import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +21,7 @@ import java.util.concurrent.*;
 @RequestProcessor (apiFieldName = "registry")
 class Registry implements IRegistry {
 
-	@RequestProcessor.Instance
+	@Instance
 	static Registry instance;
 
 	final Logger logger = LoggerFactory.getLogger(Registry.class);
@@ -29,7 +31,7 @@ class Registry implements IRegistry {
 		this.detectorRegistry = new ConcurrentHashMap<>();
 	}
 
-	@RequestProcessor.PostHandler
+	@PostHandler
 	public AbstractRequest handlePost(AbstractRequest reference) {
 		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
 			reference.setResponce(new HashMap<>(this.detectorRegistry));

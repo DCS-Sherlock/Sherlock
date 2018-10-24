@@ -5,7 +5,8 @@ public abstract class AbstractRequest<P, R> {
 	private P payload;
 	private R responce;
 
-	public AbstractRequest() {}
+	public AbstractRequest() {
+	}
 
 	public abstract Class<?> getHandler();
 
