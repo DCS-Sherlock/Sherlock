@@ -10,6 +10,14 @@ import java.util.*;
  */
 public interface IDetector {
 
+	@interface TuneableParameter {
+
+		float defaultValue();
+		float minimumBound();
+		float maxumumBound();
+
+	}
+
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
 	 *
@@ -52,9 +60,9 @@ public interface IDetector {
 	List<IPreProcessingStrategy> getPreProcessors();
 
 	/**
-	 * @return Stream of the languages supported by the algorithm
+	 * @return Array of languages supported by the algorithm
 	 */
-	List<Language> getSupportedLanguages();
+	Language[] getSupportedLanguages();
 
 	/**
 	 * Top level interface workers are required to implement
