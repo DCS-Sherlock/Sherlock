@@ -15,13 +15,9 @@ public class RequestDatabase {
 			return registry;
 		}
 
-		public static class GetDetectors extends RegistryRequests<Object, Map<String, Class<? extends IDetector>>> {
+		public static class GetDetectors extends RegistryRequests<Object, Map<String, Class<? extends IDetector>>> {}
 
-		}
-
-		public static class GetDetectorNames extends RegistryRequests<Object, List<String>> {
-
-		}
+		public static class GetDetectorNames extends RegistryRequests<Object, List<String>> {}
 	}
 
 }
