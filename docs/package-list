@@ -10,7 +10,6 @@ uk.ac.warwick.dcs.sherlock.engine.model
 uk.ac.warwick.dcs.sherlock.launch
 uk.ac.warwick.dcs.sherlock.module.model.base
 uk.ac.warwick.dcs.sherlock.module.model.base.detection
-uk.ac.warwick.dcs.sherlock.module.model.base.lang
 uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing
 uk.ac.warwick.dcs.sherlock.module.web
 uk.ac.warwick.dcs.sherlock.module.web.configurations
