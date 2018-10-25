@@ -94,6 +94,11 @@ task printVersion {
     println project.name + '-' + project.version
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+    destinationDir = file("/docs")
+}
+
 generateGrammarSource {
     outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/module/model/base/lang")
 }

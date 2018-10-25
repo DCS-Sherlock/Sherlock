@@ -16,8 +16,6 @@ public class CommentExtractor implements IPreProcessor {
 
 	/**
 	 * Extracts the comments from a source file
-	 * <p>
-	 * Parallel version: return tokens.parallelStream().filter(t -> StandardLexerSpecification.channels.values()[t.getChannel()] == StandardLexerSpecification.channels.COMMENT).collect(Collectors.toList());
 	 *
 	 * @param tokens list of tokens to process
 	 * @param vocab  Lexer vocabulary
@@ -27,6 +25,8 @@ public class CommentExtractor implements IPreProcessor {
 	 */
 	@Override
 	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang) {
+		//Parallel version: return tokens.parallelStream().filter(t -> StandardLexerSpecification.channels.values()[t.getChannel()] == StandardLexerSpecification.channels.COMMENT).collect(Collectors.toList());
+
 		List<Token> result = new ArrayList<>();
 
 		for (Token t : tokens) {
