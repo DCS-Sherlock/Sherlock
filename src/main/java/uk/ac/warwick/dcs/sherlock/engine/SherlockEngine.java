@@ -2,12 +2,10 @@ package uk.ac.warwick.dcs.sherlock.engine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
 import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -55,6 +53,27 @@ public class SherlockEngine {
 		}
 	}
 
+	public void initialise() {
+		logger.info("Starting SherlockEngine on Side.{}", side.name());
+
+		AnnotationLoader modules = new AnnotationLoader();
+		modules.registerModules();
+		modules.registerRequestProcessors();
+		modules.registerResponseHandlers();
+
+		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
+		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
+		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
+
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
+
+		SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
+
+		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
+	}
+
 	/**
 	 * old main method for reference
 	 */
@@ -75,31 +94,8 @@ public class SherlockEngine {
 		return result.concat("\n\nTotal Runtime Time = " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
-	public void initialise() {
-		logger.info("Starting SherlockEngine on Side.{}", side.name());
-
-		AnnotationLoader modules = new AnnotationLoader();
-		modules.registerModules();
-		modules.registerRequestProcessors();
-		modules.registerResponseHandlers();
-
-		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
-		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
-		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
-
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
-
-		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
-
-		//Put this in a @module eventually
-		SherlockEngine.registry.registerDetector(TestDetector.class);
-	}
-
-	@ResponseHandler
+	/*@ResponseHandler
 	public void responseHandler(AbstractRequest request) {
 		logger.info("got responce: " + request.getPayload());
-	}
+	}*/
 }

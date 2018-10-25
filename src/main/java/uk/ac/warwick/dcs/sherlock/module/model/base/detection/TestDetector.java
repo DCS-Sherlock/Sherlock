@@ -13,6 +13,11 @@ import java.util.*;
 
 public class TestDetector extends AbstractPairwiseDetector {
 
+	private static final Language[] languages = { Language.JAVA };
+
+	@TuneableParameter (defaultValue = 0, minimumBound = 0, maxumumBound = 10)
+	public int testParam;
+
 	@Override
 	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
 		return new TestDetectorWorker();
@@ -34,8 +39,8 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public List<Language> getSupportedLanguages() {
-		return Collections.singletonList(Language.JAVA);
+	public Language[] getSupportedLanguages() {
+		return languages;
 	}
 
 	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {

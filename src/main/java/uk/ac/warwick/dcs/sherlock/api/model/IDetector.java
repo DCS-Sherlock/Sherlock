@@ -3,6 +3,10 @@ package uk.ac.warwick.dcs.sherlock.api.model;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 
 /**
@@ -52,9 +56,9 @@ public interface IDetector {
 	List<IPreProcessingStrategy> getPreProcessors();
 
 	/**
-	 * @return Stream of the languages supported by the algorithm
+	 * @return Array of languages supported by the algorithm
 	 */
-	List<Language> getSupportedLanguages();
+	Language[] getSupportedLanguages();
 
 	/**
 	 * Top level interface workers are required to implement
@@ -72,6 +76,18 @@ public interface IDetector {
 		 * @return worker results
 		 */
 		IModelResultItem getResult();
+
+	}
+
+	@Retention (RetentionPolicy.RUNTIME)
+	@Target (ElementType.FIELD)
+	@interface TuneableParameter {
+
+		float defaultValue();
+
+		float maxumumBound();
+
+		float minimumBound();
 
 	}
 
