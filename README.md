@@ -29,6 +29,6 @@ Sherlock can be run within the gradle environment using the command `gradlew(.ba
 When developing use `SherlockClient` as the main class and use following VM options to enable more console output `-Dspring.output.ansi.enabled=ALWAYS -Dspring.profiles.active=dev`
 
 ## CSS
-This project uses Sass (https://sass-lang.com/) to compile the CSS files for the web interface, the Sass files are stored in `src/main/scss`. Please do not edit the CSS files in `src/main/resources/static/css`, any changes you make to these files will be overwritten.
+This project uses Sass (https://sass-lang.com/) to compile the CSS files for the web interface, the Sass files are stored in `src/main/sass`. Please do not edit the CSS files in `src/main/resources/static/css`, any changes you make to these files will be overwritten.
 
-At the moment Gradle does not automatically compile the CSS files, so you will need an external program (see https://sass-lang.com/install) to compile any changes you make. Whatever program you use, set the source/input directory to `src/main/scss/build` and the output to `src/main/resources/static/css`. 
+At the moment Gradle does not automatically compile the CSS files, so you will need an external program (see https://sass-lang.com/install) to compile any changes you make. Whatever program you use, set the source/input directory to `src/main/sass/build` and the output to `src/main/resources/static/css`. 
