@@ -1,4 +1,4 @@
-// Sandstone 4.1.3
+// Superhero 4.1.3
 // Bootswatch
 
 //
@@ -6,138 +6,150 @@
 //
 
 $white:    #fff !default;
-$gray-100: #f8f9fa !default;
-$gray-200: #F8F5F0 !default;
-$gray-300: #DFD7CA !default;
+$gray-100: #EBEBEB !default;
+$gray-200: #4E5D6C !default;
+$gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
-$gray-500: #98978B !default;
-$gray-600: #8E8C84 !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
 $gray-700: #495057 !default;
-$gray-800: #3E3F3A !default;
+$gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black:    #000 !default;
 
-$blue:    #325D88 !default;
+$blue:    rgba(255,255,255,.4) !default;  //#DF691A
 $indigo:  #6610f2 !default;
 $purple:  #6f42c1 !default;
 $pink:    #e83e8c !default;
 $red:     #d9534f !default;
-$orange:  #F47C3C !default;
-$yellow:  #ffc107 !default;
-$green:   #93C54B !default;
+$orange:  #f0ad4e !default;
+$yellow:  #f0ad4e !default;
+$green:   #5cb85c !default;
 $teal:    #20c997 !default;
-$cyan:    #29ABE0 !default;
+$cyan:    #5bc0de !default;
 
 $primary:       $blue !default;
-$secondary:     $gray-600 !default;
+$secondary:     $gray-200 !default;
 $success:       $green !default;
 $info:          $cyan !default;
-$warning:       $orange !default;
+$warning:       $yellow !default;
 $danger:        $red !default;
-$light:         $gray-200 !default;
-$dark:          $gray-800 !default;
+$light:         lighten($gray-200, 25%) !default;
+$dark:          $gray-200 !default;
 
-$yiq-contrasted-threshold:  170 !default;
+$yiq-contrasted-threshold:  185 !default;
 
 // Body
 
-$body-color:                $gray-800 !default;
+$body-bg:                   #2B3E50 !default;
+$body-color:                $gray-100 !default;
 
-// Links
+// Components
 
-$link-color:                $success !default;
+$border-radius:               0 !default;
+$border-radius-lg:            0 !default;
+$border-radius-sm:            0 !default;
 
 // Fonts
+//$font-family-sans-serif:      "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$font-family-sans-serif:      "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
 
-$font-family-sans-serif:      "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$text-muted:                  rgba(255,255,255,.4) !default;
 
-$font-size-base:              0.875rem !default;
+// Tables
 
-$headings-font-weight:        400 !default;
+$table-accent-bg:             rgba($white,.05) !default;
+$table-hover-bg:              rgba($white,.075) !default;
+
+$table-border-color:          rgba($black,.15) !default;
+
+$table-head-bg:               $light !default;
+
+$table-dark-bg:               $light !default;
+$table-dark-border-color:     $gray-200 !default;
+$table-dark-color:            $body-bg !default;
+
+// Forms
+
+$input-border-color:                transparent !default;
+
+$input-group-addon-color:           $body-color !default;
+
+$custom-file-button-color:          $white !default;
+$custom-file-border-color:          $gray-200 !default;
 
 // Dropdowns
 
-$dropdown-link-color:               $gray-600 !default;
-$dropdown-link-hover-color:         $dropdown-link-color !default;
-$dropdown-link-hover-bg:            $gray-200 !default;
+$dropdown-bg:                       $gray-200 !default;
+$dropdown-divider-bg:               rgba($black,.15) !default;
 
-$dropdown-link-active-color:        $dropdown-link-color !default;
-$dropdown-link-active-bg:           $dropdown-link-hover-bg !default;
+$dropdown-link-color:               $body-color !default;
+$dropdown-link-hover-color:         $dropdown-link-color !default;
+$dropdown-link-hover-bg:            $table-hover-bg !default;
 
 // Navs
 
-$nav-link-padding-x:                0.9rem !default;
-$nav-link-disabled-color:           $gray-300 !default;
+$nav-link-disabled-color:           rgba(255,255,255,.4) !default;
 
-$nav-tabs-border-color:             $gray-300 !default;
-$nav-tabs-link-hover-border-color:  $gray-300 !default;
-$nav-tabs-link-active-bg:           $white !default;
-
-$nav-pills-link-active-color:       $gray-600 !default;
-$nav-pills-link-active-bg:          $gray-200 !default;
+$nav-tabs-border-color:             $gray-200 !default;
+$nav-tabs-link-active-color:        $body-color !default;
+$nav-tabs-link-active-border-color: $gray-200 !default;
 
 // Navbar
 
-$navbar-dark-hover-color:           $white !default;
+$navbar-padding-y:                  0.25rem !default;
 
-$navbar-light-hover-color:          $black !default;
-$navbar-light-active-color:         $black !default;
+$navbar-dark-color:                 rgba($white,.75) !default;
+$navbar-dark-hover-color:           $white !default;
 
 // Pagination
 
-$pagination-color:                  $gray-600 !default;
+$pagination-color:                  $white !default;
 $pagination-bg:                     $gray-200 !default;
-$pagination-border-color:           $gray-300 !default;
+$pagination-border-color:           transparent !default;
 
-$pagination-hover-color:            $pagination-color !default;
+$pagination-hover-color:            $white !default;
+$pagination-hover-bg:               $nav-link-disabled-color !default;
+$pagination-hover-border-color:     $pagination-border-color !default;
 
-$pagination-active-color:           $pagination-color !default;
-$pagination-active-bg:              $gray-300 !default;
-$pagination-active-border-color:    $gray-300 !default;
-
-$pagination-disabled-color:         $gray-300 !default;
-$pagination-disabled-bg:            $gray-200 !default;
+$pagination-disabled-color:         $nav-link-disabled-color !default;
+$pagination-disabled-bg:            $pagination-bg !default;
 $pagination-disabled-border-color:  $pagination-border-color !default;
-
-// Cards
-
-$card-border-color:                 rgba($gray-300, .75) !default;
-$card-cap-bg:                       rgba($gray-200, .25) !default;
-
-// Popovers
-
-$popover-header-bg:                 $gray-200 !default;
 
 // Modals
 
-$modal-content-border-color:        $gray-300 !default;
+$modal-content-bg:                  $gray-200 !default;
 
-$modal-header-border-color:         $modal-content-border-color !default;
+$modal-header-border-color:         rgba(0,0,0,.2) !default;
 
-// Progress bars
+// Cards
 
-$progress-bg:                       $gray-300 !default;
-$progress-border-radius:            10px !default;
-$progress-bar-color:                $primary !default;
+$card-cap-bg:                       $table-hover-bg !default;
+$card-bg:                           $gray-200 !default;
+
+// Popovers
+
+$popover-bg:                        $gray-200 !default;
+
+$popover-header-bg:                 $table-hover-bg !default;
 
 // List group
 
-$list-group-border-color:           $gray-300 !default;
+$list-group-bg:                     $gray-200 !default;
+$list-group-border-color:           transparent !default;
 
-$list-group-hover-bg:               $gray-200 !default;
-$list-group-active-color:           $body-color !default;
-$list-group-active-bg:              $gray-200 !default;
-$list-group-active-border-color:    $gray-300 !default;
+$list-group-hover-bg:               $nav-link-disabled-color !default;
 
-$list-group-disabled-color:         $gray-500 !default;
-$list-group-disabled-bg:            $white !default;
+$list-group-disabled-color:         $nav-link-disabled-color !default;
 
-$list-group-action-color:           $list-group-active-color !default;
+$list-group-action-color:           $white !default;
+$list-group-action-hover-color:     $white !default;
 
-$list-group-action-active-color:    $list-group-active-color !default;
-$list-group-action-active-bg:       $gray-300 !default;
+// Breadcrumbs
 
-// Close
+$breadcrumb-divider-color:          $body-color !default;
+$breadcrumb-active-color:           $body-color !default;
 
-$close-text-shadow:                 none !default;
+// Code
 
+$pre-color:                         inherit !default;
