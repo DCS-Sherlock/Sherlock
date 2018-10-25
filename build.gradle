@@ -97,6 +97,7 @@ task printVersion {
 javadoc {
     source = ["src/main/java"]
     destinationDir = file("/docs")
+    options.memberLevel = JavadocMemberLevel.PRIVATE
 }
 
 generateGrammarSource {
