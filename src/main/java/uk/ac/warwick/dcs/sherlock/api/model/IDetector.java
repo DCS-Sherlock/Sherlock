@@ -76,15 +76,28 @@ public interface IDetector {
 
 	}
 
+	/**
+	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float, or an int.
+	 * If another type is required please request it on {@link https://github.com/DCS-Sherlock/Sherlock/issues}
+	 */
 	@Documented
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target (ElementType.FIELD)
 	@interface TuneableParameter {
 
+		/**
+		 * The default value to load into the field
+		 */
 		float defaultValue();
 
+		/**
+		 * The maximum bound for the field
+		 */
 		float maxumumBound();
 
+		/**
+		 * Minimum bound for field
+		 */
 		float minimumBound();
 
 	}
