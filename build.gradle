@@ -96,7 +96,7 @@ task printVersion {
 
 javadoc {
     source = ["src/main/java"]
-    destinationDir = file("/docs")
+    destinationDir = file("${projectDir}/docs")
     options.memberLevel = JavadocMemberLevel.PRIVATE
     classpath = configurations.compile
 }

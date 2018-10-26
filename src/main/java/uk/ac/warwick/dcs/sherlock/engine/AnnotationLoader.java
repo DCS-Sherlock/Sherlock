@@ -9,9 +9,9 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
-import uk.ac.warwick.dcs.sherlock.api.annotations.ResponseHandler;
-import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor;
+import uk.ac.warwick.dcs.sherlock.api.annotation.ResponseHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

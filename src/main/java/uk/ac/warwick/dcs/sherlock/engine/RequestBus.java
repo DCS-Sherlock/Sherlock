@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotations.RequestProcessor;
+import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor;
 import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.IRequestBus;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;

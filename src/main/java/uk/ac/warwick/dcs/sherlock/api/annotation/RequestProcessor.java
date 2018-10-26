@@ -1,9 +1,12 @@
-package uk.ac.warwick.dcs.sherlock.api.annotations;
+package uk.ac.warwick.dcs.sherlock.api.annotation;
 
 import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 
 import java.lang.annotation.*;
 
+/**
+ *
+ */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
 @Target (ElementType.TYPE)

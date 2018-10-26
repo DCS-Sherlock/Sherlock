@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.annotations;
+package uk.ac.warwick.dcs.sherlock.api.annotation;
 
 import java.lang.annotation.*;
 
