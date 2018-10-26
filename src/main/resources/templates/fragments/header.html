@@ -15,27 +15,27 @@
         </div>
         <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/dashboard">Home</a>
+                <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/dashboard/index}">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/workspaces">Workspaces</a>
+                <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/dashboard/workspaces}">Workspaces</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tasks">Tasks</a>
+                <li class="nav-item" th:classappend="${page == 'tasks' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/dashboard/tasks}">Tasks</a>
                 </li>
             </ul>
         </div>
         <div class="navbar-collapse collapse w-100 order-2 dual-collapse2">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/help">Help</a>
+                <li class="nav-item" th:classappend="${page == 'help' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/help}">Help</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/settings">Settings</a>
+                <li class="nav-item" th:classappend="${page == 'settings' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/dashboard/settings}">Settings</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/account">Account</a>
+                <li class="nav-item" th:classappend="${page == 'account' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/accounts/manage}">Account</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/register">Register</a>

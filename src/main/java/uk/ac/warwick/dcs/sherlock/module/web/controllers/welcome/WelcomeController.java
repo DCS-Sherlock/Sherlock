@@ -1,15 +1,15 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.home;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.welcome;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 
 @Controller
-public class HomeController {
+public class WelcomeController {
 
 //	private String result = "";
 
-	public HomeController() {
+	public WelcomeController() {
 		EventBus.registerEventSubscriber(this);
 	}
 
@@ -20,22 +20,22 @@ public class HomeController {
 
 	@GetMapping ("/")
 	public String welcome() {
-		return "home/welcome";
+		return "welcome/index";
 	}
 
 	@GetMapping ("/terms")
 	public String terms() {
-		return "home/terms";
+		return "welcome/terms";
 	}
 
 	@GetMapping ("/about")
 	public String about() {
-		return "home/about";
+		return "welcome/about";
 	}
 
 	@GetMapping ("/help")
 	public String help() {
-		return "home/help";
+		return "welcome/help";
 	}
 
 //	@GetMapping ("/greeting")

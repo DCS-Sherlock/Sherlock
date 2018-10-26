@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.workspaces;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +11,9 @@ public class WorkspacesController {
 		EventBus.registerEventSubscriber(this);
 	}
 
-	@GetMapping ("/workspaces")
+	@GetMapping ("/dashboard/workspaces")
 	public String index() {
-		return "workspaces/index";
+		return "dashboard/workspaces";
 	}
 
 }

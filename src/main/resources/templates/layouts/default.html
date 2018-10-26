@@ -15,7 +15,7 @@
 
 <body>
 
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="fragments/header :: header" th:with="page=${page}"></div>
 
 <main layout:fragment="content"></main>
 

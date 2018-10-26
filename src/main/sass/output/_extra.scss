@@ -1,0 +1,43 @@
+/* Header */
+.logo a{
+    font-size: 2.25rem;
+    text-transform: uppercase;
+    color: $white;
+}
+
+.logo a:hover {
+    text-decoration: none;
+}
+
+nav {
+    margin-bottom: 2rem;
+    //border-radius: 2px;
+}
+
+.navbar {
+    padding: 0 0.25rem;
+}
+.nav-item {
+    margin: 0.5rem 0.25rem;
+    text-align: center;
+    min-width: 100px;
+}
+
+.active {
+    //border-radius: 5px;
+    background-color: $body-bg;
+    //border: solid 1px $gray-200;
+}
+
+/* Footer */
+footer {
+    padding: 2.5rem 0;
+    //color: #999;
+    text-align: center;
+    background-color: $gray-200;
+    //border-top: .05rem solid $gray-200;
+    margin-top: 2rem;
+}
+footer p:last-child {
+    margin-bottom: 0;
+}
