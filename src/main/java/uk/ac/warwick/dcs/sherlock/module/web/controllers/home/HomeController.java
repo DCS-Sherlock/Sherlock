@@ -42,7 +42,7 @@ public class HomeController {
 //	public String greeting(@RequestParam (name = "name", required = false, defaultValue = "World") String name, Model model) {
 //		model.addAttribute("name", name);
 //
-//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
+//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponse();
 //		model.addAttribute("detectors", String.join(", ", detectors));
 //
 //		model.addAttribute("result", this.result);

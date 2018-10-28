@@ -18,9 +18,9 @@ public class RequestInvocation extends Tuple<Method, Object> {
 	public AbstractRequest post(AbstractRequest reference) {
 		try {
 			this.getKey().setAccessible(true);
-			Object responce = this.getKey().invoke(this.getValue(), reference);
-			if (responce instanceof AbstractRequest) {
-				return (AbstractRequest) responce;
+			Object response = this.getKey().invoke(this.getValue(), reference);
+			if (response instanceof AbstractRequest) {
+				return (AbstractRequest) response;
 			}
 			return null;
 		}

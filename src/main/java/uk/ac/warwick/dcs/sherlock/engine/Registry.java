@@ -34,10 +34,10 @@ class Registry implements IRegistry {
 	@PostHandler
 	public AbstractRequest handlePost(AbstractRequest reference) {
 		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
-			reference.setResponce(new HashMap<>(this.detectorRegistry));
+			reference.setResponse(new HashMap<>(this.detectorRegistry));
 		}
 		else if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
-			reference.setResponce(new LinkedList<>(this.detectorRegistry.keySet()));
+			reference.setResponse(new LinkedList<>(this.detectorRegistry.keySet()));
 		}
 		return reference;
 	}

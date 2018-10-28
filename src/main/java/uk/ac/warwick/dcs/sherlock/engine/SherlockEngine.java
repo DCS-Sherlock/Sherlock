@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPublishResults;
 import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
@@ -96,6 +95,6 @@ public class SherlockEngine {
 
 	/*@ResponseHandler
 	public void responseHandler(AbstractRequest request) {
-		logger.info("got responce: " + request.getPayload());
+		logger.info("got response: " + request.getPayload());
 	}*/
 }
