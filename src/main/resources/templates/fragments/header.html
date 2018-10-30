@@ -8,7 +8,7 @@
         <header class="py-3" >
             <div class="row">
                 <div class="col-12 logo text-center">
-                    <a class="" href="/">Sherlock</a>
+                    <a class="" th:href="@{/}">Sherlock</a>
                 </div>
             </div>
         </header>
@@ -21,13 +21,16 @@
             </div>
             <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}">
+                    <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}" sec:authorize="isAnonymous()">
+                        <a class="nav-link" th:href="@{/}">Home</a>
+                    </li>
+                    <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/index}">Home</a>
                     </li>
-                    <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}">
+                    <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/workspaces}">Workspaces</a>
                     </li>
-                    <li class="nav-item" th:classappend="${page == 'tasks' ? 'active' : ''}">
+                    <li class="nav-item" th:classappend="${page == 'tasks' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/tasks}">Tasks</a>
                     </li>
                 </ul>
@@ -43,7 +46,7 @@
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link" th:href="@{/login}">Login</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <li class="nav-item" sec:authorize="isAuthenticated() && hasRole('LOCAL_USER')">
                         <a class="nav-link" th:href="@{/dashboard/settings}" th:classappend="${page == 'settings' ? 'active' : ''}">Settings</a>
                     </li>
                     <span sec:authorize="isAuthenticated() && !hasRole('LOCAL_USER')">

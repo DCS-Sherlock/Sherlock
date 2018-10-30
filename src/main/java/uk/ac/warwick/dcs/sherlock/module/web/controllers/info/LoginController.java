@@ -19,10 +19,7 @@ public class LoginController {
 		if (SherlockEngine.side == Side.CLIENT) {
 			try {
 				request.login("user","password");
-
-			} catch(ServletException e) {
-
-			}
+			} catch(ServletException e) { }
 		}
 
 		//Redirect if the user is logged in
@@ -36,6 +33,17 @@ public class LoginController {
 
 	@GetMapping ("/register")
 	public String register() {
+		//If running locally, redirect to login page
+		if (SherlockEngine.side == Side.CLIENT) {
+			return "redirect:login";
+		}
+
+		//Redirect if the user is logged in
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!(auth instanceof AnonymousAuthenticationToken)) {
+			return "redirect:dashboard/index";
+		}
+
 		return "info/register";
 	}
 }

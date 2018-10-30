@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -35,6 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER", "LOCAL_USER");
+        if (SherlockEngine.side == Side.CLIENT) {
+            auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER", "LOCAL_USER");
+        } else {
+            auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER");
+        }
     }
 }

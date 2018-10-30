@@ -29,7 +29,7 @@ public class LocalDashboard extends JFrame {
 		openButton.addActionListener((ActionEvent event) -> {
 			try {
 				if (Desktop.isDesktopSupported()) {
-					Desktop.getDesktop().browse(new URI("http://localhost:8080"));
+					Desktop.getDesktop().browse(new URI("http://localhost:2218"));
 				}
 			}
 			catch (Exception e) {
