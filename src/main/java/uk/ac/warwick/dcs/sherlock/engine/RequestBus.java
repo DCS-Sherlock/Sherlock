@@ -146,7 +146,7 @@ class RequestBus implements IRequestBus {
 			this.responseMap.put(method.getDeclaringClass(), method);
 		}
 		else {
-			logger.error("{} does not have valid parameter types, @ResponceHandler methods should have the params [AbstractRequest]", method.toString());
+			logger.error("{} does not have valid parameter types, @ResponseHandler methods should have the params [AbstractRequest]", method.toString());
 		}
 	}
 

@@ -27,7 +27,7 @@ public interface IDetector {
 	String getDisplayName();
 
 	/**
-	 * Returns the appropriate lexer for this strategy and the language of the source files	 *
+	 * Returns the appropriate lexer for this strategy and the language of the source files
 	 *
 	 * @param lang the language of the source files
 	 *
@@ -45,8 +45,12 @@ public interface IDetector {
 	}
 
 	/**
-	 * Allows implementation to specify the preprocessors required. The string name of each of the strategies returned is used as the key reference in the preprocessed dataset given to the {@link
-	 * IDetector#buildWorkers(List, Class)} method
+	 * Specify the preprocessors required for this detector.
+	 * <p><p>
+	 * The individual strategies in the list can be produced using the generic methods {@link IPreProcessingStrategy#of(String, Class... )} or {@link IPreProcessingStrategy#of(String, boolean, Class...)}
+	 * in the interface, or using a fully custom {@link IPreProcessingStrategy} class.
+	 * <p><p>
+	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List, Class)} method
 	 *
 	 * @return a list of the required preprocessing strategies
 	 */
@@ -76,15 +80,26 @@ public interface IDetector {
 
 	}
 
+	/**
+	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float, or an int. If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
+	 * <p><p>
+	 * Set the parameter declaration to the desired default value
+	 * <p><p>
+	 * The engine will set this parameter to it's adjusted value when creating an instance of an IDetector implementatiomn
+	 */
 	@Documented
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target (ElementType.FIELD)
 	@interface TuneableParameter {
 
-		float defaultValue();
-
+		/**
+		 * The maximum bound for the field
+		 */
 		float maxumumBound();
 
+		/**
+		 * Minimum bound for field
+		 */
 		float minimumBound();
 
 	}
