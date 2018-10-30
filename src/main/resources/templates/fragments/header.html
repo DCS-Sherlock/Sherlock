@@ -1,52 +1,67 @@
-<div th:fragment="header" class="container" id="header">
-    <header class="py-3" >
-        <div class="row">
-            <div class="col-12 logo text-center">
-                <a class="" href="/">Sherlock</a>
-            </div>
-        </div>
-    </header>
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+<head>
+</head>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="mx-auto order-0">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-                <span class="navbar-toggler-icon"></span> Toggle Menu
-            </button>
-        </div>
-        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/dashboard/index}">Home</a>
-                </li>
-                <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/dashboard/workspaces}">Workspaces</a>
-                </li>
-                <li class="nav-item" th:classappend="${page == 'tasks' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/dashboard/tasks}">Tasks</a>
-                </li>
-            </ul>
-        </div>
-        <div class="navbar-collapse collapse w-100 order-2 dual-collapse2">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item" th:classappend="${page == 'help' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/help}">Help</a>
-                </li>
-                <li class="nav-item" th:classappend="${page == 'settings' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/dashboard/settings}">Settings</a>
-                </li>
-                <li class="nav-item" th:classappend="${page == 'account' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/accounts/manage}">Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</div>
+<body>
+    <div th:fragment="header" class="container" id="header">
+        <header class="py-3" >
+            <div class="row">
+                <div class="col-12 logo text-center">
+                    <a class="" href="/">Sherlock</a>
+                </div>
+            </div>
+        </header>
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="mx-auto order-0">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span class="navbar-toggler-icon"></span> Toggle Menu
+                </button>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}">
+                        <a class="nav-link" th:href="@{/dashboard/index}">Home</a>
+                    </li>
+                    <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}">
+                        <a class="nav-link" th:href="@{/dashboard/workspaces}">Workspaces</a>
+                    </li>
+                    <li class="nav-item" th:classappend="${page == 'tasks' ? 'active' : ''}">
+                        <a class="nav-link" th:href="@{/dashboard/tasks}">Tasks</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-2 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item" th:classappend="${page == 'help' ? 'active' : ''}">
+                        <a class="nav-link" th:href="@{/info/help}">Help</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAnonymous()">
+                        <a class="nav-link" th:href="@{/register}">Register</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAnonymous()">
+                        <a class="nav-link" th:href="@{/login}">Login</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/dashboard/settings}" th:classappend="${page == 'settings' ? 'active' : ''}">Sherlock Settings</a>
+                    </li>
+                    <span sec:authorize="isAuthenticated() && !hasRole('LOCAL_USER')">
+                        <li class="nav-item dropdown" th:classappend="${page == 'settings' || page == 'account' ? 'active' : ''}">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Hi, <span sec:authentication="name"></span>!
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" th:href="@{/dashboard/account}" th:classappend="${page == 'account' ? 'active' : ''}">Account Settings</a>
+                                <a class="dropdown-item" th:href="@{/dashboard/settings}" th:classappend="${page == 'settings' ? 'active' : ''}">Sherlock Settings</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                            </div>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</body>
+</html>
