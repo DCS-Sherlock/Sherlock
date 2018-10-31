@@ -28,12 +28,13 @@ class Registry implements IRegistry {
 	static Registry instance;
 
 	final Logger logger = LoggerFactory.getLogger(Registry.class);
+	
 	private Map<String, Class<? extends IDetector>> detectorRegistry;
-	private Map<String, List<TuneableParameter>> tunableParamRegistry;
+	private Map<String, List<TuneableParameter>> tuneableParamRegistry;
 
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
-		this.tunableParamRegistry = new ConcurrentHashMap<>();
+		this.tuneableParamRegistry = new ConcurrentHashMap<>();
 	}
 
 	@PostHandler
@@ -87,7 +88,7 @@ class Registry implements IRegistry {
 					}).filter(Objects::nonNull).map(x -> x.getValue()[0]).collect(Collectors.toList());
 
 			if (tuneables.size() > 0){
-				this.tunableParamRegistry.put(tester.getDisplayName(), tuneables);
+				this.tuneableParamRegistry.put(tester.getDisplayName(), tuneables);
 			}
 		}
 		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
