@@ -81,7 +81,7 @@ public interface IDetector {
 	}
 
 	/**
-	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float, or an int. If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
+	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float. If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
 	 * <p><p>
 	 * Set the parameter declaration to the desired default value
 	 * <p><p>
@@ -93,6 +93,16 @@ public interface IDetector {
 	@interface TuneableParameter {
 
 		/**
+		 * Name for the parameter to be displayed in the UI
+		 */
+		String name();
+
+		/**
+		 * Default value the parameter takes
+		 */
+		float defaultValue();
+
+		/**
 		 * The maximum bound for the field
 		 */
 		float maxumumBound();
@@ -102,6 +112,15 @@ public interface IDetector {
 		 */
 		float minimumBound();
 
+		/**
+		 * The step to increment or decrement the parameter by in the UI
+		 */
+		float step();
+
+		/**
+		 * Optional, detailed description of what the parameter does
+		 */
+		String description() default "";
 	}
 
 }
