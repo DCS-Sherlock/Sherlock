@@ -13,6 +13,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase.RegistryRequests;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -28,7 +29,7 @@ class Registry implements IRegistry {
 	static Registry instance;
 
 	final Logger logger = LoggerFactory.getLogger(Registry.class);
-	
+
 	private Map<String, Class<? extends IDetector>> detectorRegistry;
 	private Map<String, List<TuneableParameter>> tuneableParamRegistry;
 
@@ -44,6 +45,9 @@ class Registry implements IRegistry {
 		}
 		else if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
 			reference.setResponse(new LinkedList<>(this.detectorRegistry.keySet()));
+		}
+		else if (reference instanceof RegistryRequests.GetTuneableParameters) {
+			reference.setResponse(this.getTuneableParameters((String) reference.getPayload()));
 		}
 		return reference;
 	}
@@ -78,8 +82,8 @@ class Registry implements IRegistry {
 			this.detectorRegistry.put(tester.getDisplayName(), detector);
 
 			//Do @TunableParameter stuff - find the annotations for the tuneables in the detector, check them and add to the map
-			List<TuneableParameter> tuneables = Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(TuneableParameter.class)))
-					.filter(x -> x.getValue().length == 1).map(x -> {
+			List<TuneableParameter> tuneables =
+					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(TuneableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
 						if (!x.getKey().getType().equals(float.class)) {
 							logger.warn("Detector {} contains @TunableParameter {} which is not a float type", tester.getDisplayName(), x.getKey().getName());
 							return null;
@@ -87,7 +91,7 @@ class Registry implements IRegistry {
 						return x;
 					}).filter(Objects::nonNull).map(x -> x.getValue()[0]).collect(Collectors.toList());
 
-			if (tuneables.size() > 0){
+			if (tuneables.size() > 0) {
 				this.tuneableParamRegistry.put(tester.getDisplayName(), tuneables);
 			}
 		}
@@ -96,5 +100,20 @@ class Registry implements IRegistry {
 		}
 
 		return true;
+	}
+
+	IDetector getIDetectorInstance(String detectorName) {
+		try {
+			return this.detectorRegistry.get(detectorName).newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException | NullPointerException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	List<TuneableParameter> getTuneableParameters(String detectorName) {
+		return this.tuneableParamRegistry.getOrDefault(detectorName, null);
 	}
 }
