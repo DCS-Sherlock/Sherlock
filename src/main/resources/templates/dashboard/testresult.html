@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/default}" th:with="page='test'">
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Test Result</h5>
+                    <p>Look at the console for a cleaner output.</p>
+                    <p th:text="'filename1: ' + ${form.filename1}" />
+                    <p th:text="'filename2: ' + ${form.filename2}" />
+                    <p th:text="'RESULT: ' + ${result}" />
+                    <a href="/dashboard/test">Submit again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

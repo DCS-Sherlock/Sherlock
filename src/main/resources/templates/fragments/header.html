@@ -27,6 +27,9 @@
                     <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/index}">Home</a>
                     </li>
+                    <li class="nav-item" th:classappend="${page == 'test' ? 'active' : ''}" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/dashboard/test}">Test</a>
+                    </li>
                     <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/workspaces}">Workspaces</a>
                     </li>
