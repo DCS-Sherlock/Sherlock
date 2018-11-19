@@ -25,7 +25,7 @@ public class LocalDashboard extends JFrame {
 		group.setAutoCreateGaps(true);
 		group.setAutoCreateContainerGaps(true);
 
-		JButton openButton = new JButton("Open LocalDashboard");
+		JButton openButton = new JButton("Open Dashboard");
 		openButton.addActionListener((ActionEvent event) -> {
 			try {
 				if (Desktop.isDesktopSupported()) {

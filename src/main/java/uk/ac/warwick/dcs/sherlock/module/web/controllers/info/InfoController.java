@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
@@ -23,7 +24,7 @@ public class InfoController {
 //		this.result = event.getResults();
 //	}
 
-	@GetMapping ("/")
+	@RequestMapping ("/")
 	public String welcome() {
 		//Redirect if the user is logged in
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -34,17 +35,17 @@ public class InfoController {
 		return getReturn("info/index");
 	}
 
-	@GetMapping ("/info/terms")
+	@RequestMapping ("/info/terms")
 	public String terms() {
 		return getReturn("info/terms");
 	}
 
-	@GetMapping ("/info/about")
+	@RequestMapping ("/info/about")
 	public String about() {
 		return getReturn("info/about");
 	}
 
-	@GetMapping ("/info/help")
+	@RequestMapping ("/info/help")
 	public String help() {
 		return getReturn("info/help");
 	}

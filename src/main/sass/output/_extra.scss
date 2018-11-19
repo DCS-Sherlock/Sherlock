@@ -29,6 +29,11 @@ nav {
     //border: solid 1px $gray-200;
 }
 
+/* Tabs */
+.tab-content > .active {
+    background: none;
+}
+
 /* Footer */
 footer {
     padding: 2.5rem 0;
