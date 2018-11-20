@@ -31,9 +31,24 @@ public class RequestDatabase {
 			return taskManager;
 		}
 
+		/**
+		 * Payload is the string name of the detector to use
+		 * <p><p>
+		 * Response is the id of the task for monitoring
+		 */
 		public static class RunTask extends TaskRequests<String, Integer> {
 
 			//set other required params here, list of files?
+			private Map<String, Float> parameters;
+
+			public Map<String, Float> getParameters() {
+				return this.parameters;
+			}
+
+			public RunTask setParameters(Map<String, Float> params) {
+				this.parameters = params;
+				return this;
+			}
 
 		}
 	}

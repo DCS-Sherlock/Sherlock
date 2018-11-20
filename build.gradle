@@ -19,6 +19,9 @@ repositories {
     }
     jcenter()
     mavenCentral()
+    maven {
+        url "http://m2.objectdb.com" //ObjectDB Repository
+    }
 }
 
 dependencies {
@@ -28,6 +31,10 @@ dependencies {
             'org.antlr:antlr4-runtime:4.7.1',
             'com.google.guava:guava:26.0-jre',
             'org.reflections:reflections:0.9.10',
+            'org.apache.commons:commons-lang3:3.8.1',
+            'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.3',
+            'javax.transaction:jta:1.1',
+            'com.objectdb:objectdb:2.7.6',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-log4j2',
