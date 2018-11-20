@@ -12,17 +12,12 @@ import org.yaml.snakeyaml.representer.Representer;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabaseWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.database.IDatabaseWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
-import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 public class SherlockEngine {
 
@@ -139,26 +134,6 @@ public class SherlockEngine {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * old main method for reference
-	 */
-	private static String runSherlockTest() {
-		String result = "";
-		long startTime = System.currentTimeMillis();
-
-		try {
-			List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test.java"),
-					new TestResultsFactory.tmpFile("D:\\Work\\Uni\\GroupProject\\Sherlock\\out\\test2.java")));
-			result = TestResultsFactory.buildTestResults(fileList, TestDetector.class);
-		}
-		catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		assert result != null;
-		return result.concat("\n\nTotal Runtime Time = " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	/*@ResponseHandler
