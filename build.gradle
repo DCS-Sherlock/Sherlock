@@ -81,7 +81,8 @@ idea {
 
         resourceDirs += file("src/main/resources")
 
-        generatedSourceDirs += file("${buildDir}/tmp/src/main/antlr")
+        //generatedSourceDirs - fix for Idea 2018.3
+        sourceDirs += file("${buildDir}/tmp/src/main/antlr")
 
         excludeDirs += file("${buildDir}/tmp/src/main/java")
         excludeDirs += file("${buildDir}/tmp/src/test/java")
