@@ -3,22 +3,28 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jmx.access.InvocationFailureException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import uk.ac.warwick.dcs.sherlock.api.annotation.ResponseHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
+import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
+import uk.ac.warwick.dcs.sherlock.engine.core.Registry;
 import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
 import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabaseWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.database.IDatabaseWrapper;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 public class SherlockEngine {
 
@@ -51,15 +57,17 @@ public class SherlockEngine {
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.requestBus);
 
-			SherlockEngine.registry = new Registry();
+			java.lang.reflect.Constructor construct = Registry.class.getDeclaredConstructor();
+			construct.setAccessible(true);
+			SherlockEngine.registry = (Registry) construct.newInstance();
 			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockRegistry.class.getDeclaredField("registry");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
-			field = uk.ac.warwick.dcs.sherlock.engine.Registry.class.getDeclaredField("instance");
+			field = Registry.class.getDeclaredField("instance");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
 		}
-		catch (IllegalAccessException | NoSuchFieldException e) {
+		catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
@@ -85,7 +93,7 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 
-		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload("Hello"), this);
+		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
 	}
 
 	private void shutdown() {
@@ -139,8 +147,8 @@ public class SherlockEngine {
 		}
 	}
 
-	/*@ResponseHandler
+	@ResponseHandler
 	public void responseHandler(AbstractRequest request) {
-		logger.info("got response: " + request.getPayload());
-	}*/
+		logger.info("got response: " + request.getResponse());
+	}
 }

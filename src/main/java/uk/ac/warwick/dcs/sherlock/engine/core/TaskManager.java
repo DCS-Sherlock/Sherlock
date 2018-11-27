@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.engine;
+package uk.ac.warwick.dcs.sherlock.engine.core;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor;
 import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor.Instance;

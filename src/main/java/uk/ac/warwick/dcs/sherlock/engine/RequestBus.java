@@ -7,7 +7,9 @@ import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
 import uk.ac.warwick.dcs.sherlock.api.request.IRequestBus;
 import uk.ac.warwick.dcs.sherlock.api.request.RequestInvocation;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
@@ -97,7 +99,9 @@ class RequestBus implements IRequestBus {
 				}
 			}
 
-			Object obj = processor.newInstance();
+			Constructor construct = processor.getDeclaredConstructor();
+			construct.setAccessible(true);
+			Object obj = construct.newInstance();
 
 			List<Field> field = Arrays.stream(processor.getDeclaredFields()).filter(x -> x.isAnnotationPresent(RequestProcessor.Instance.class)).collect(Collectors.toList());
 			if (field.size() == 1) {
@@ -138,6 +142,9 @@ class RequestBus implements IRequestBus {
 		catch (NoSuchFieldException e) {
 			logger.error(String.format("Failed to register the %s request processor, could not find field matching '%s' in '%s'", processor.getName(),
 					processor.getAnnotation(RequestProcessor.class).apiFieldName(), processor.getAnnotation(RequestProcessor.class).databaseClass().getName()), e);
+		}
+		catch (NoSuchMethodException | InvocationTargetException e) {
+			logger.error(String.format("Failed to register the %s request processor, could not find valid constructor", processor.getName()), e);
 		}
 	}
 

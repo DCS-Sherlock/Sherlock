@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.engine;
+package uk.ac.warwick.dcs.sherlock.engine.core;
 
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 @RequestProcessor (apiFieldName = "registry")
-class Registry implements IRegistry {
+public class Registry implements IRegistry {
 
 	@Instance
 	static Registry instance;
