@@ -13,6 +13,7 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
+import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
 import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabaseWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.database.IDatabaseWrapper;
 
@@ -95,6 +96,8 @@ public class SherlockEngine {
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
 
+		logger.info(SherlockEngine.configDir.getAbsolutePath());
+
 		if (!SherlockEngine.configDir.exists()) {
 			if (!SherlockEngine.configDir.mkdir()){
 				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
@@ -121,7 +124,7 @@ public class SherlockEngine {
 	}
 
 	private static void writeConfiguration() {
-		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + "\\Sherlock.yaml");
+		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		try {
 			Representer representer = new Representer();
 			representer.addClassTag(SherlockConfiguration.class, new Tag("!Sherlock"));

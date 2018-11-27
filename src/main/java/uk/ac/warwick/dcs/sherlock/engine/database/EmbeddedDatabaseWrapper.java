@@ -18,10 +18,9 @@ public class EmbeddedDatabaseWrapper implements IDatabaseWrapper {
 		properties.put("javax.persistence.jdbc.user", "admin");
 		properties.put("javax.persistence.jdbc.password", "admin");
 
-		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDatabase_path() + File.separator + "Sherlock.odb", properties);
+		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getData_Path() + File.separator + "Sherlock.odb", properties);
 
 		this.trialDBAccess();
-		//this.dbFactory.close();
 	}
 
 	public void trialDBAccess() {
