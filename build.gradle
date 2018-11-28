@@ -32,6 +32,7 @@ dependencies {
             'com.google.guava:guava:26.0-jre',
             'org.reflections:reflections:0.9.10',
             'org.apache.commons:commons-lang3:3.8.1',
+            'commons-codec:commons-codec:1.11',
             'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.3',
             'javax.transaction:jta:1.1',
             'com.objectdb:objectdb:2.7.6',

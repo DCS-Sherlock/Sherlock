@@ -27,7 +27,7 @@ public class EmbeddedDatabase implements IDatabaseWrapper {
 		EntityManager em = this.dbFactory.createEntityManager();
 		try {
 			em.getTransaction().begin();
-			em.persist(new DBFile("txt"));
+			//em.persist(new DBFile("txt"));
 			em.getTransaction().commit();
 		}
 		finally {

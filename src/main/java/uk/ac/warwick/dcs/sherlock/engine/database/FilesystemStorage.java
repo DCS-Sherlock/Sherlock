@@ -1,18 +1,25 @@
 package uk.ac.warwick.dcs.sherlock.engine.database;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FilesystemStorage implements IStorageWrapper {
 
 	@Override
-	public void storeFile(MultipartFile file) {
+	public String storeFile(String filename, InputStream fileContent, String key) {
 		try {
-			file.getInputStream();
+			DigestUtils.sha1(fileContent);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public byte[] loadFile(String filename, String hash, String key) {
+		return new byte[0];
 	}
 }
