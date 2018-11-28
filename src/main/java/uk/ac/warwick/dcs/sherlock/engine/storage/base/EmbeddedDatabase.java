@@ -21,14 +21,29 @@ public class EmbeddedDatabase {
 
 		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
 
-		this.trialDBAccess();
+		//this.trialDBAccess();
+	}
+
+	public void storeFile(DBFile file) {
+		EntityManager em = this.dbFactory.createEntityManager();
+		try {
+			em.getTransaction().begin();
+			em.persist(file);
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+
+			em.close();
+		}
 	}
 
 	public void trialDBAccess() {
 		EntityManager em = this.dbFactory.createEntityManager();
 		try {
 			em.getTransaction().begin();
-			em.persist(new DBFile("test", "txt", new Timestamp(System.currentTimeMillis()), "123"));
+			em.persist(new DBFile("test", "txt", new Timestamp(System.currentTimeMillis())));
 			em.getTransaction().commit();
 		}
 		finally {

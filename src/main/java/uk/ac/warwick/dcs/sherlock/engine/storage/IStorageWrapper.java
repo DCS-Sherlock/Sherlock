@@ -4,4 +4,6 @@ public interface IStorageWrapper {
 
 	void close();
 
+	void storeFile(String filename, byte[] fileContent);
+
 }

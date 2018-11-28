@@ -25,11 +25,11 @@ public class DBFile implements Serializable {
 	public DBFile() {
 	}
 
-	public DBFile(String filename, String extension, Timestamp timestamp, String hash) {
+	public DBFile(String filename, String extension, Timestamp timestamp) {
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
-		this.hash = hash;
+		this.hash = null;
 	}
 
 	public String getExtension() {
@@ -42,6 +42,10 @@ public class DBFile implements Serializable {
 
 	public String getHash() {
 		return hash;
+	}
+
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	public Long getId() {
