@@ -1,15 +1,16 @@
-package uk.ac.warwick.dcs.sherlock.engine.database;
+package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.database.entities.DBFile;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.*;
 
-public class EmbeddedDatabase implements IDatabaseWrapper {
+public class EmbeddedDatabase {
 
 	private EntityManagerFactory dbFactory;
 
@@ -18,7 +19,7 @@ public class EmbeddedDatabase implements IDatabaseWrapper {
 		properties.put("javax.persistence.jdbc.user", "admin");
 		properties.put("javax.persistence.jdbc.password", "admin");
 
-		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getData_Path() + File.separator + "Sherlock.odb", properties);
+		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
 
 		this.trialDBAccess();
 	}
@@ -27,7 +28,7 @@ public class EmbeddedDatabase implements IDatabaseWrapper {
 		EntityManager em = this.dbFactory.createEntityManager();
 		try {
 			em.getTransaction().begin();
-			//em.persist(new DBFile("txt"));
+			em.persist(new DBFile("test", "txt", new Timestamp(System.currentTimeMillis()), "123"));
 			em.getTransaction().commit();
 		}
 		finally {

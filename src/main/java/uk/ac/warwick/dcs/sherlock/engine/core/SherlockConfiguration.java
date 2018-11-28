@@ -6,27 +6,27 @@ import java.io.File;
 
 public class SherlockConfiguration {
 
-	private int randomint;
-	private String data_path;
+	//private int randomint;
+	private String dataPath;
 
 	public SherlockConfiguration() {
-		this.randomint = 5;
-		this.setData_Path(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
+		//this.randomint = 5;
+		this.setDataPath(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
 	}
 
-	public String getData_Path() {
-		return data_path;
+	public String getDataPath() {
+		return dataPath;
 	}
 
-	public void setData_Path(String database_path) {
-		this.data_path = database_path.replace("/", File.separator).replace("\\", File.separator).replaceAll(File.separator + "$", "");
+	public void setDataPath(String data_path) {
+		this.dataPath = data_path.replace("/", File.separator).replace("\\", File.separator).replaceAll(File.separator + "$", "");
 	}
 
-	public int getRandomint() {
+	/*public int getRandomint() {
 		return randomint;
 	}
 
 	public void setRandomint(int randomint) {
 		this.randomint = randomint;
-	}
+	}*/
 }

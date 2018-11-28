@@ -18,8 +18,8 @@ import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.core.Registry;
 import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
-import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabase;
-import uk.ac.warwick.dcs.sherlock.engine.database.IDatabaseWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorage;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -32,7 +32,7 @@ public class SherlockEngine {
 
 	public static Side side = Side.UNKNOWN;
 	public static SherlockConfiguration configuration = null;
-	public static IDatabaseWrapper database = null;
+	public static IStorageWrapper storage = null;
 
 	static EventBus eventBus = null;
 	static RequestBus requestBus = null;
@@ -74,7 +74,7 @@ public class SherlockEngine {
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 		SherlockEngine.loadConfiguration();
-		SherlockEngine.database = new EmbeddedDatabase(); //expand to choose wrappers if we extend this
+		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
 
 		AnnotationLoader modules = new AnnotationLoader();
@@ -97,7 +97,7 @@ public class SherlockEngine {
 
 	private void shutdown() {
 		logger.info("Stopping SherlockEngine");
-		SherlockEngine.database.close();
+		SherlockEngine.storage.close();
 	}
 
 	private static void loadConfiguration() {

@@ -1,8 +1,10 @@
-package uk.ac.warwick.dcs.sherlock.engine.database.entities;
+package uk.ac.warwick.dcs.sherlock.engine.storage.base.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.*;
+import java.sql.Timestamp;
 
 // just a test, reimplement with @Table
 @Entity
@@ -17,14 +19,13 @@ public class DBFile implements Serializable {
 	private String filename;
 	private String extension;
 
-	@Temporal (TemporalType.TIMESTAMP)
-	private java.util.Date timestamp;
+	private Timestamp timestamp;
 	private String hash;
 
 	public DBFile() {
 	}
 
-	public DBFile(String filename, String extension, Date timestamp, String hash) {
+	public DBFile(String filename, String extension, Timestamp timestamp, String hash) {
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
@@ -47,7 +48,7 @@ public class DBFile implements Serializable {
 		return id;
 	}
 
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 }
