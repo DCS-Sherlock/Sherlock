@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jmx.access.InvocationFailureException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -19,7 +18,7 @@ import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.core.Registry;
 import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
-import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabaseWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.database.EmbeddedDatabase;
 import uk.ac.warwick.dcs.sherlock.engine.database.IDatabaseWrapper;
 
 import java.io.*;
@@ -75,7 +74,7 @@ public class SherlockEngine {
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 		SherlockEngine.loadConfiguration();
-		SherlockEngine.database = new EmbeddedDatabaseWrapper(); //expand to choose wrappers if we extend this
+		SherlockEngine.database = new EmbeddedDatabase(); //expand to choose wrappers if we extend this
 
 
 		AnnotationLoader modules = new AnnotationLoader();

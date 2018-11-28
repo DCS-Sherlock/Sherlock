@@ -9,11 +9,11 @@ import javax.persistence.Persistence;
 import java.io.File;
 import java.util.*;
 
-public class EmbeddedDatabaseWrapper implements IDatabaseWrapper {
+public class EmbeddedDatabase implements IDatabaseWrapper {
 
 	private EntityManagerFactory dbFactory;
 
-	public EmbeddedDatabaseWrapper() {
+	public EmbeddedDatabase() {
 		Map<String, String> properties = new HashMap<>();
 		properties.put("javax.persistence.jdbc.user", "admin");
 		properties.put("javax.persistence.jdbc.password", "admin");
