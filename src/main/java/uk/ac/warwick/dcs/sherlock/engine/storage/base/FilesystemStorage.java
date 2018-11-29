@@ -23,6 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
+import java.util.*;
+import java.util.stream.*;
 
 public class FilesystemStorage{
 
@@ -32,7 +34,7 @@ public class FilesystemStorage{
 	 * Stores a file on the filesystem
 	 * @param file
 	 * @param fileContent
-	 * @return hash of the stored file, for verification
+	 * @return successful
 	 */
 	boolean storeFile(DBFile file, byte[] fileContent) {
 		file.setHash(DigestUtils.sha512Hex(fileContent));
@@ -76,25 +78,60 @@ public class FilesystemStorage{
 			return null;
 		}
 
-		InputStream fileContent = null;
 		try {
 			byte[] rawContent = FileUtils.readFileToByteArray(fileToLoad);
 
 			if (file.getSecureParam() != null) {
 				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 				cipher.init(Cipher.DECRYPT_MODE, this.getKey(file), new IvParameterSpec(file.getSecureParam()));
-				//logger.info(new String(cipher.doFinal(rawContent), StandardCharsets.UTF_8));
-				fileContent = new ByteArrayInputStream(cipher.doFinal(rawContent));
+				rawContent = cipher.doFinal(rawContent);
 			}
-			else {
-				fileContent = new ByteArrayInputStream(rawContent);
+
+			if (!file.getHash().equals(DigestUtils.sha512Hex(rawContent))) {
+				logger.error("File loaded does not match stored hash, aborting");
+				return null;
 			}
+
+			return new ByteArrayInputStream(rawContent);
 		}
 		catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
 			logger.error("Error reading file", e);
 		}
 
-		return fileContent;
+		return null;
+	}
+
+	List<DBFile> validateFileStore(List<DBFile> allFiles) {
+		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
+
+		List<String> filesInStore;
+		try {
+			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
+		}
+		catch (Exception e) {
+			return null;
+		}
+
+		List<DBFile> orphanRecords = new LinkedList<>();
+		for (DBFile f : allFiles) {
+			String tmp = this.computeLocator(this.computeFileIdentifier(f));
+			if (filesInStore.contains(tmp)) {
+				filesInStore.remove(tmp);
+			}
+			else {
+				orphanRecords.add(f);
+				logger.warn("File in database but not found in file store");
+			}
+		}
+
+		if (filesInStore.size() > 0) {
+			logger.warn("Files in store which are not found in database, removing...");
+			for (String s : filesInStore) {
+				new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + s).delete();
+			}
+		}
+
+		return orphanRecords;
 	}
 
 	private String computeFileIdentifier(DBFile file) {
@@ -104,8 +141,12 @@ public class FilesystemStorage{
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {
-		String dirPath = SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2,4);
-		return new File(dirPath + File.separator + fileIdentifier);
+		String path = SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + this.computeLocator(fileIdentifier);
+		return new File(path);
+	}
+
+	private String computeLocator(String fileIdentifier) {
+		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2,4) + File.separator + fileIdentifier;
 	}
 
 	private SecretKey getKey(DBFile file) {

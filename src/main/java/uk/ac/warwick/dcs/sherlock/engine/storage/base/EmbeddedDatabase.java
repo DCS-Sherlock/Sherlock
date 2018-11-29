@@ -7,12 +7,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.*;
 
 public class EmbeddedDatabase {
 
 	private EntityManagerFactory dbFactory;
+	private EntityManager em;
 
 	public EmbeddedDatabase() {
 		Map<String, String> properties = new HashMap<>();
@@ -20,12 +20,12 @@ public class EmbeddedDatabase {
 		properties.put("javax.persistence.jdbc.password", "admin");
 
 		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
+		this.em = this.dbFactory.createEntityManager();
 
 		//this.trialDBAccess();
 	}
 
 	public void storeFile(DBFile file) {
-		EntityManager em = this.dbFactory.createEntityManager();
 		try {
 			em.getTransaction().begin();
 			em.persist(file);
@@ -34,27 +34,33 @@ public class EmbeddedDatabase {
 		finally {
 			if (em.getTransaction().isActive())
 				em.getTransaction().rollback();
-
-			em.close();
 		}
 	}
 
-	public void trialDBAccess() {
-		EntityManager em = this.dbFactory.createEntityManager();
+	public List<DBFile> getAllFiles() {
+		List<DBFile> q = null;
+		em.getTransaction().begin();
+		q = em.createQuery("SELECT f FROM DBFile f", DBFile.class).getResultList();
+		em.getTransaction().commit();
+		return q;
+	}
+
+	public void removeFiles(List<DBFile> orphans) {
 		try {
 			em.getTransaction().begin();
-			em.persist(new DBFile("test", "txt", new Timestamp(System.currentTimeMillis())));
+			for (DBFile orphan : orphans) {
+				em.remove(orphan);
+			}
 			em.getTransaction().commit();
 		}
 		finally {
 			if (em.getTransaction().isActive())
 				em.getTransaction().rollback();
-
-			em.close();
 		}
 	}
 
 	public void close() {
+		this.em.close();
 		this.dbFactory.close();
 	}
 

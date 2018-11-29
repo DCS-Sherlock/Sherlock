@@ -3,11 +3,13 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base.entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 // just a test, reimplement with @Table
 @Entity
+@Table(name="files")
 public class DBFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
