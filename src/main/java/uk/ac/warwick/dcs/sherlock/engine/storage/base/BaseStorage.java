@@ -1,8 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 
@@ -29,14 +27,10 @@ public class BaseStorage implements IStorageWrapper {
 	public void storeFile(String filename, byte[] fileContent) {
 		System.out.println(filename);
 		DBFile file = new DBFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()));
-		String hash = this.filesystem.storeFile(this.computeFileIdentifier(file), fileContent, "");
-		file.setHash(hash);
-		this.database.storeFile(file);
-	}
+		if (!this.filesystem.storeFile(file, fileContent)) {
+			return;
+		}
 
-	private String computeFileIdentifier(DBFile file) {
-		String str = file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
-		str = StringUtils.rightPad(str, 30, str);
-		return DigestUtils.sha1Hex(str.substring(0, 30));
+		this.database.storeFile(file);
 	}
 }

@@ -21,6 +21,7 @@ public class DBFile implements Serializable {
 
 	private Timestamp timestamp;
 	private String hash;
+	private byte[] secure;
 
 	public DBFile() {
 	}
@@ -30,6 +31,7 @@ public class DBFile implements Serializable {
 		this.extension = extension;
 		this.timestamp = timestamp;
 		this.hash = null;
+		this.secure = null;
 	}
 
 	public String getExtension() {
@@ -54,5 +56,13 @@ public class DBFile implements Serializable {
 
 	public Timestamp getTimestamp() {
 		return timestamp;
+	}
+
+	public byte[] getSecureParam() {
+		return secure;
+	}
+
+	public void setSecureParam(byte[] secure) {
+		this.secure = secure;
 	}
 }

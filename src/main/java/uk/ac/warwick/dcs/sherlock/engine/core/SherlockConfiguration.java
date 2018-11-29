@@ -6,12 +6,12 @@ import java.io.File;
 
 public class SherlockConfiguration {
 
-	//private int randomint;
 	private String dataPath;
+	private Boolean encryptFiles;
 
 	public SherlockConfiguration() {
-		//this.randomint = 5;
 		this.setDataPath(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
+		this.setEncryptFiles(true);
 	}
 
 	public String getDataPath() {
@@ -22,11 +22,11 @@ public class SherlockConfiguration {
 		this.dataPath = data_path.replace("/", File.separator).replace("\\", File.separator).replaceAll(File.separator + "$", "");
 	}
 
-	/*public int getRandomint() {
-		return randomint;
+	public Boolean getEncryptFiles() {
+		return encryptFiles;
 	}
 
-	public void setRandomint(int randomint) {
-		this.randomint = randomint;
-	}*/
+	public void setEncryptFiles(Boolean encryptFiles) {
+		this.encryptFiles = encryptFiles;
+	}
 }

@@ -76,7 +76,6 @@ public class SherlockEngine {
 		SherlockEngine.loadConfiguration();
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
-
 		AnnotationLoader modules = new AnnotationLoader();
 		modules.registerModules();
 		modules.registerRequestProcessors();
