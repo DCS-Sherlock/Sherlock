@@ -30,7 +30,7 @@ public class BaseStorage implements IStorageWrapper {
 
 	@Override
 	public void storeFile(String filename, byte[] fileContent) {
-		DBFile file = new DBFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()));
+		DBFile file = new DBFile(this.database.temporaryStudent(), FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()));
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}

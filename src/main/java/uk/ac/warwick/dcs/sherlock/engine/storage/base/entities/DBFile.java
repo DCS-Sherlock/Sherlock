@@ -1,22 +1,22 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-// just a test, reimplement with @Table
 @Entity
-@Table(name="files")
 public class DBFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="FILE_ID")
 	private long id;
+
+	@ManyToOne
+	@JoinColumn(name = "STUDENT_ID")
+	private DBStudent student;
 
 	private String filename;
 	private String extension;
@@ -28,7 +28,8 @@ public class DBFile implements Serializable {
 	public DBFile() {
 	}
 
-	public DBFile(String filename, String extension, Timestamp timestamp) {
+	public DBFile(DBStudent student, String filename, String extension, Timestamp timestamp) {
+		this.student = student;
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
@@ -56,15 +57,23 @@ public class DBFile implements Serializable {
 		return id;
 	}
 
-	public Timestamp getTimestamp() {
-		return timestamp;
-	}
-
 	public byte[] getSecureParam() {
 		return secure;
 	}
 
 	public void setSecureParam(byte[] secure) {
 		this.secure = secure;
+	}
+
+	public DBStudent getStudent() {
+		return student;
+	}
+
+	public void setStudent(DBStudent student) {
+		this.student = student;
+	}
+
+	public Timestamp getTimestamp() {
+		return timestamp;
 	}
 }

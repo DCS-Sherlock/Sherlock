@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,20 +22,11 @@ public class EmbeddedDatabase {
 
 		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
 		this.em = this.dbFactory.createEntityManager();
-
-		//this.trialDBAccess();
 	}
 
-	public void storeFile(DBFile file) {
-		try {
-			em.getTransaction().begin();
-			em.persist(file);
-			em.getTransaction().commit();
-		}
-		finally {
-			if (em.getTransaction().isActive())
-				em.getTransaction().rollback();
-		}
+	public void close() {
+		this.em.close();
+		this.dbFactory.close();
 	}
 
 	public List<DBFile> getAllFiles() {
@@ -54,14 +46,43 @@ public class EmbeddedDatabase {
 			em.getTransaction().commit();
 		}
 		finally {
-			if (em.getTransaction().isActive())
+			if (em.getTransaction().isActive()) {
 				em.getTransaction().rollback();
+			}
 		}
 	}
 
-	public void close() {
-		this.em.close();
-		this.dbFactory.close();
+	public void storeFile(DBFile file) {
+		try {
+			em.getTransaction().begin();
+			em.persist(file);
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
+	}
+
+	public DBStudent temporaryStudent() {
+		List<DBStudent> s;
+		try {
+			em.getTransaction().begin();
+			s = em.createQuery("SELECT s FROM DBStudent s", DBStudent.class).getResultList();
+			if (s.size() == 0) {
+				s.add(new DBStudent());
+				em.persist(s.get(0));
+			}
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
+
+		return s.get(0);
 	}
 
 }
