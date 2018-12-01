@@ -17,9 +17,9 @@ public class BaseStorage implements IStorageWrapper {
 		this.filesystem = new FilesystemStorage();
 
 		//Do a scan of all files in database in background, check they are there and not tampered with
-		List<DBFile> orphans = this.filesystem.validateFileStore(this.database.getAllFiles());
-		if (orphans != null) {
-			this.database.removeFiles(orphans);
+		List<DBFile> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from DBFile f", DBFile.class));
+		if (orphans != null && orphans.size() > 0) {
+			this.database.removeObjects(orphans);
 		}
 	}
 
@@ -35,8 +35,8 @@ public class BaseStorage implements IStorageWrapper {
 			return;
 		}
 
-		this.database.storeFile(file);
+		this.database.storeObject(file);
 
-		this.filesystem.loadFile(file);
+		//this.filesystem.loadFile(file);
 	}
 }

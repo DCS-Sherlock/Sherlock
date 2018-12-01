@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
 
 import javax.persistence.EntityManager;
@@ -29,19 +28,31 @@ public class EmbeddedDatabase {
 		this.dbFactory.close();
 	}
 
-	public List<DBFile> getAllFiles() {
-		List<DBFile> q = null;
+	public <X> List<X> runQuery(String query, Class<X> xclass) {
 		em.getTransaction().begin();
-		q = em.createQuery("SELECT f FROM DBFile f", DBFile.class).getResultList();
+		List<X> q = em.createQuery(query, xclass).getResultList();
 		em.getTransaction().commit();
 		return q;
 	}
 
-	public void removeFiles(List<DBFile> orphans) {
+	public void removeObject(Object obj) {
 		try {
 			em.getTransaction().begin();
-			for (DBFile orphan : orphans) {
-				em.remove(orphan);
+			em.remove(obj);
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
+	}
+
+	public void removeObjects(List objects) {
+		try {
+			em.getTransaction().begin();
+			for (Object obj: objects) {
+				em.remove(obj);
 			}
 			em.getTransaction().commit();
 		}
@@ -52,10 +63,25 @@ public class EmbeddedDatabase {
 		}
 	}
 
-	public void storeFile(DBFile file) {
+	public void storeObject(Object obj) {
 		try {
 			em.getTransaction().begin();
-			em.persist(file);
+			em.persist(obj);
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
+	}
+
+	public void storeObjects(List objects) {
+		try {
+			em.getTransaction().begin();
+			for (Object obj : objects) {
+				em.persist(obj);
+			}
 			em.getTransaction().commit();
 		}
 		finally {

@@ -96,7 +96,10 @@ public class SherlockEngine {
 
 	private void shutdown() {
 		logger.info("Stopping SherlockEngine");
-		SherlockEngine.storage.close();
+		try {
+			SherlockEngine.storage.close();
+		}
+		catch (Exception ignored) {}
 	}
 
 	private static void loadConfiguration() {
