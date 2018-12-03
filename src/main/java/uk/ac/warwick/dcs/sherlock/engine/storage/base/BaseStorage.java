@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBWorkspace;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -37,10 +38,14 @@ public class BaseStorage implements IStorageWrapper {
 		}
 
 		DBStudent student = this.database.temporaryStudent();
-		file.setStudent(student);
-		student.addFile(file);
+		DBWorkspace workspace = this.database.temporaryWorkspace();
 
-		this.database.storeObject(file, student);
+		file.setStudent(student);
+		file.setWorkspace(workspace);
+		student.addFile(file);
+		workspace.addFile(file);
+
+		this.database.storeObject(file, student, workspace);
 
 		//this.filesystem.loadFile(file);
 	}

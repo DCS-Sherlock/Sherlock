@@ -32,25 +32,37 @@ public class RequestDatabase {
 		}
 
 		/**
-		 * Payload is the string name of the detector to use
+		 * Payload is the id of the workspace
 		 * <p><p>
 		 * Response is the id of the task for monitoring
 		 */
-		public static class RunTask extends TaskRequests<String, Integer> {
+		public static class RunDetectorTask extends TaskRequests<Long, Integer> {
 
 			//set other required params here, list of files?
+			private String detector;
 			private Map<String, Float> parameters;
+
+			public String getDetector() {
+				return detector;
+			}
+
+			public RunDetectorTask setDetector(String detector) {
+				this.detector = detector;
+				return this;
+			}
 
 			public Map<String, Float> getParameters() {
 				return this.parameters;
 			}
 
-			public RunTask setParameters(Map<String, Float> params) {
+			public RunDetectorTask setParameters(Map<String, Float> params) {
 				this.parameters = params;
 				return this;
 			}
 
 		}
+
+		// TODO: Consider create another RunTask for one-off detectors, allow cross workspaces, or one-off files not assigned to a workspace/student
 	}
 
 }

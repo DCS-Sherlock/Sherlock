@@ -5,22 +5,19 @@ import java.io.Serializable;
 import java.util.*;
 
 @Entity
-public class DBStudent implements Serializable {
+public class DBWorkspace implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private long id;
 
-	private String identifier;
-
-	@OneToMany (mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<DBFile> files = new ArrayList<>();
 
-	public DBStudent() {
+	public DBWorkspace() {
 		super();
-		this.identifier = "temporary";
 	}
 
 	public void addFile(DBFile file) {

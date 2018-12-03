@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBWorkspace;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -101,7 +102,7 @@ public class EmbeddedDatabase {
 		}
 	}
 
-	public DBStudent temporaryStudent() {
+	DBStudent temporaryStudent() {
 		List<DBStudent> s;
 		try {
 			em.getTransaction().begin();
@@ -121,8 +122,24 @@ public class EmbeddedDatabase {
 		return s.get(0);
 	}
 
-	private void doStoreObjects(Object objects) {
+	DBWorkspace temporaryWorkspace() {
+		List<DBWorkspace> w;
+		try {
+			em.getTransaction().begin();
+			w = em.createQuery("SELECT w FROM DBWorkspace w", DBWorkspace.class).getResultList();
+			if (w.size() == 0) {
+				w.add(new DBWorkspace());
+				em.persist(w.get(0));
+			}
+			em.getTransaction().commit();
+		}
+		finally {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
 
+		return w.get(0);
 	}
 
 }

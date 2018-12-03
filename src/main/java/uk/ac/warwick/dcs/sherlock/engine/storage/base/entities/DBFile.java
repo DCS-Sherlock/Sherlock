@@ -10,11 +10,14 @@ public class DBFile implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne (fetch = FetchType.LAZY, optional = false)
 	private DBStudent student;
+
+	@ManyToOne (fetch = FetchType.LAZY, optional = false)
+	private DBWorkspace workspace;
 
 	private String filename;
 	private String extension;
@@ -35,6 +38,7 @@ public class DBFile implements Serializable {
 		this.hash = null;
 		this.secure = null;
 		this.student = null;
+		this.workspace = null;
 	}
 
 	public String getExtension() {
@@ -75,5 +79,13 @@ public class DBFile implements Serializable {
 
 	public Timestamp getTimestamp() {
 		return timestamp;
+	}
+
+	public DBWorkspace getWorkspace() {
+		return workspace;
+	}
+
+	public void setWorkspace(DBWorkspace workspace) {
+		this.workspace = workspace;
 	}
 }
