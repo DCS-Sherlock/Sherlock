@@ -28,30 +28,28 @@ public class EmbeddedDatabase {
 		this.dbFactory.close();
 	}
 
-	public <X> List<X> runQuery(String query, Class<X> xclass) {
-		em.getTransaction().begin();
-		List<X> q = em.createQuery(query, xclass).getResultList();
-		em.getTransaction().commit();
-		return q;
-	}
-
 	public void removeObject(Object obj) {
-		try {
-			em.getTransaction().begin();
-			em.remove(obj);
-			em.getTransaction().commit();
+		if (obj instanceof List) {
+			this.removeObject(((List) obj).toArray());
 		}
-		finally {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
+		else {
+			try {
+				em.getTransaction().begin();
+				em.remove(obj);
+				em.getTransaction().commit();
+			}
+			finally {
+				if (em.getTransaction().isActive()) {
+					em.getTransaction().rollback();
+				}
 			}
 		}
 	}
 
-	public void removeObjects(List objects) {
+	public void removeObject(Object... objects) {
 		try {
 			em.getTransaction().begin();
-			for (Object obj: objects) {
+			for (Object obj : objects) {
 				em.remove(obj);
 			}
 			em.getTransaction().commit();
@@ -63,20 +61,32 @@ public class EmbeddedDatabase {
 		}
 	}
 
+	public <X> List<X> runQuery(String query, Class<X> xclass) {
+		em.getTransaction().begin();
+		List<X> q = em.createQuery(query, xclass).getResultList();
+		em.getTransaction().commit();
+		return q;
+	}
+
 	public void storeObject(Object obj) {
-		try {
-			em.getTransaction().begin();
-			em.persist(obj);
-			em.getTransaction().commit();
+		if (obj instanceof List) {
+			this.storeObject(((List) obj).toArray());
 		}
-		finally {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
+		else {
+			try {
+				em.getTransaction().begin();
+				em.persist(obj);
+				em.getTransaction().commit();
+			}
+			finally {
+				if (em.getTransaction().isActive()) {
+					em.getTransaction().rollback();
+				}
 			}
 		}
 	}
 
-	public void storeObjects(List objects) {
+	public void storeObject(Object... objects) {
 		try {
 			em.getTransaction().begin();
 			for (Object obj : objects) {
@@ -109,6 +119,10 @@ public class EmbeddedDatabase {
 		}
 
 		return s.get(0);
+	}
+
+	private void doStoreObjects(Object objects) {
+
 	}
 
 }

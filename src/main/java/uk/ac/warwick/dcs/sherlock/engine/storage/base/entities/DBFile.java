@@ -11,11 +11,9 @@ public class DBFile implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="FILE_ID")
 	private long id;
 
-	@ManyToOne
-	@JoinColumn(name = "STUDENT_ID")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private DBStudent student;
 
 	private String filename;
@@ -26,15 +24,17 @@ public class DBFile implements Serializable {
 	private byte[] secure;
 
 	public DBFile() {
+		super();
 	}
 
-	public DBFile(DBStudent student, String filename, String extension, Timestamp timestamp) {
-		this.student = student;
+	public DBFile(String filename, String extension, Timestamp timestamp) {
+		super();
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
 		this.hash = null;
 		this.secure = null;
+		this.student = null;
 	}
 
 	public String getExtension() {
