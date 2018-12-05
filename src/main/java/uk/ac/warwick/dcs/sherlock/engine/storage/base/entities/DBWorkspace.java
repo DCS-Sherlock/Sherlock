@@ -4,28 +4,39 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Entity
+@Entity (name = "Workspace")
 public class DBWorkspace implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private String name;
+
+	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<DBFile> files = new ArrayList<>();
 
 	public DBWorkspace() {
 		super();
 	}
 
-	public void addFile(DBFile file) {
-		this.files.add(file);
+	public DBWorkspace(String name) {
+		super();
+		this.name = name;
 	}
 
-	public void removeFile(DBFile file) {
-		this.files.remove(file);
+	public List<DBFile> getFiles() {
+		return this.files;
+	}
+
+	public long getId() {
+		return this.id;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 }

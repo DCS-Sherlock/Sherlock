@@ -106,7 +106,7 @@ public class EmbeddedDatabase {
 		List<DBStudent> s;
 		try {
 			em.getTransaction().begin();
-			s = em.createQuery("SELECT s FROM DBStudent s", DBStudent.class).getResultList();
+			s = em.createQuery("SELECT s FROM Student s", DBStudent.class).getResultList();
 			if (s.size() == 0) {
 				s.add(new DBStudent());
 				em.persist(s.get(0));
@@ -126,7 +126,7 @@ public class EmbeddedDatabase {
 		List<DBWorkspace> w;
 		try {
 			em.getTransaction().begin();
-			w = em.createQuery("SELECT w FROM DBWorkspace w", DBWorkspace.class).getResultList();
+			w = em.createQuery("SELECT w FROM Workspace w", DBWorkspace.class).getResultList();
 			if (w.size() == 0) {
 				w.add(new DBWorkspace());
 				em.persist(w.get(0));

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBArchive;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 
 import javax.crypto.*;
@@ -135,9 +136,13 @@ public class FilesystemStorage{
 	}
 
 	private String computeFileIdentifier(DBFile file) {
-		String str = file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
-		str = StringUtils.rightPad(str, 30, str);
-		return DigestUtils.sha1Hex(str.substring(0, 30));
+		String str = this.getArchiveName(file.getArchive()) + file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
+		str = StringUtils.rightPad(str, 48, str);
+		return DigestUtils.sha1Hex(str.substring(0, 48));
+	}
+
+	private String getArchiveName(DBArchive archive) {
+		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {

@@ -85,6 +85,7 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
 		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
 
+		//Cleanup init events, we don't need them any more
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);

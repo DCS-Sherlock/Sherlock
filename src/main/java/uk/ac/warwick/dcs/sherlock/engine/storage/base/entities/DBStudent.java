@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Entity
+@Entity (name = "Student")
 public class DBStudent implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,15 +20,18 @@ public class DBStudent implements Serializable {
 
 	public DBStudent() {
 		super();
-		this.identifier = "temporary";
 	}
 
-	public void addFile(DBFile file) {
-		this.files.add(file);
+	public DBStudent(String identifier) {
+		super();
+		this.identifier = identifier;
 	}
 
-	public void removeFile(DBFile file) {
-		this.files.remove(file);
+	public List<DBFile> getFiles() {
+		return files;
 	}
 
+	public String getIdentifier() {
+		return this.identifier;
+	}
 }

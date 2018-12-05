@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Entity
+@Entity (name = "File")
 public class DBFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,6 +19,9 @@ public class DBFile implements Serializable {
 	@ManyToOne (fetch = FetchType.LAZY, optional = false)
 	private DBWorkspace workspace;
 
+	@ManyToOne (fetch = FetchType.LAZY)
+	private DBArchive archive;
+
 	private String filename;
 	private String extension;
 
@@ -31,6 +34,10 @@ public class DBFile implements Serializable {
 	}
 
 	public DBFile(String filename, String extension, Timestamp timestamp) {
+		this(filename, extension, timestamp, null);
+	}
+
+	public DBFile(String filename, String extension, Timestamp timestamp, DBArchive archive) {
 		super();
 		this.filename = filename;
 		this.extension = extension;
@@ -39,6 +46,11 @@ public class DBFile implements Serializable {
 		this.secure = null;
 		this.student = null;
 		this.workspace = null;
+		this.archive = archive;
+	}
+
+	public DBArchive getArchive() {
+		return archive;
 	}
 
 	public String getExtension() {
