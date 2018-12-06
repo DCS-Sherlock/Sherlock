@@ -40,7 +40,7 @@ public interface IDetector {
 	 *
 	 * @return the post processor to use, default null
 	 */
-	default Class<? extends IPostProcessor> getPostProcessor() {
+	default Class<? extends AbstractPostProcessor> getPostProcessor() {
 		return null;
 	}
 
@@ -80,8 +80,14 @@ public interface IDetector {
 
 	}
 
+	enum rank {
+		PRIMARY, BACKUP
+	}
+
 	/**
-	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float. If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
+	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float or int.
+	 * <p><p>
+	 * If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
 	 * <p><p>
 	 * Set the parameter declaration to the desired default value
 	 * <p><p>
@@ -90,7 +96,7 @@ public interface IDetector {
 	@Documented
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target (ElementType.FIELD)
-	@interface TuneableParameter {
+	@interface DetectorParameter {
 
 		/**
 		 * Name for the parameter to be displayed in the UI

@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.request;
 
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector.TuneableParameter;
+import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
 
 import java.util.*;
 
@@ -21,7 +21,7 @@ public class RequestDatabase {
 
 		public static class GetDetectorNames extends RegistryRequests<Object, List<String>> {}
 
-		public static class GetTuneableParameters extends RegistryRequests<Class<? extends IDetector>, List<TuneableParameter>> {}
+		public static class GetTuneableParameters extends RegistryRequests<Class<? extends IDetector>, List<DetectorParameter>> {}
 	}
 
 	public abstract static class TaskRequests<P, R> extends AbstractRequest<P, R> {

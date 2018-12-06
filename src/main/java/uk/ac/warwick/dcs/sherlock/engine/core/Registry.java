@@ -8,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor.Instance;
 import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor.PostHandler;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector.TuneableParameter;
+import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
@@ -31,11 +31,11 @@ public class Registry implements IRegistry {
 	final Logger logger = LoggerFactory.getLogger(Registry.class);
 
 	private Map<String, Class<? extends IDetector>> detectorRegistry;
-	private Map<String, List<TuneableParameter>> tuneableParamRegistry;
+	private Map<String, List<DetectorParameter>> detectorParamRegistry;
 
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
-		this.tuneableParamRegistry = new ConcurrentHashMap<>();
+		this.detectorParamRegistry = new ConcurrentHashMap<>();
 	}
 
 	@PostHandler
@@ -67,32 +67,43 @@ public class Registry implements IRegistry {
 				String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 				for (IPreProcessingStrategy strat : preProcessingStrategies) {
 					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels)) {
-						logger.warn("Detector {} not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}'", tester.getDisplayName(),
+						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}'", tester.getDisplayName(),
 								strat.getName(), lang.name(), lexerClass.getName());
 						return false;
 					}
 				}
 
 				if (this.detectorRegistry.containsKey(tester)) {
-					logger.warn("Detector {} not registered, registry already contains detector with same name", tester.getDisplayName());
+					logger.warn("Detector '{}' not registered, registry already contains detector with same name", tester.getDisplayName());
 					return false;
 				}
 			}
 
 			this.detectorRegistry.put(tester.getDisplayName(), detector);
 
-			//Do @TunableParameter stuff - find the annotations for the tuneables in the detector, check them and add to the map
-			List<TuneableParameter> tuneables =
-					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(TuneableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
-						if (!x.getKey().getType().equals(float.class)) {
-							logger.warn("Detector {} contains @TunableParameter {} which is not a float type", tester.getDisplayName(), x.getKey().getName());
+			//Do @DetectorParameter stuff - find the annotations for the params in the detector, check them and add to the map
+			List<DetectorParameter> tuneables =
+					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(DetectorParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
+						if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
+							logger.warn("Detector '{}' contains @DetectorParameter {} which is not an int or float", tester.getDisplayName(), x.getKey().getName());
 							return null;
 						}
+
+						if (x.getKey().getType().equals(int.class)) {
+							float[] vals = {x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step()};
+							for (float f : vals) {
+								if (f % 1 != 0) {
+									logger.warn("Detector '{}' contains @DetectorParameter {} of type int, with a float parameter", tester.getDisplayName(), x.getKey().getName());
+									return null;
+								}
+							}
+						}
+
 						return x;
 					}).filter(Objects::nonNull).map(x -> x.getValue()[0]).collect(Collectors.toList());
 
 			if (tuneables.size() > 0) {
-				this.tuneableParamRegistry.put(tester.getDisplayName(), tuneables);
+				this.detectorParamRegistry.put(tester.getDisplayName(), tuneables);
 			}
 		}
 		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -113,7 +124,7 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
-	List<TuneableParameter> getTuneableParameters(String detectorName) {
-		return this.tuneableParamRegistry.getOrDefault(detectorName, null);
+	List<DetectorParameter> getTuneableParameters(String detectorName) {
+		return this.detectorParamRegistry.getOrDefault(detectorName, null);
 	}
 }
