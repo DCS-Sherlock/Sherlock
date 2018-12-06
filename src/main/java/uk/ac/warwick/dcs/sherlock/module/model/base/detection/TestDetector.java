@@ -15,8 +15,8 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 	private static final Language[] languages = { Language.JAVA };
 
-	@TuneableParameter (defaultValue = 0, minimumBound = 0, maxumumBound = 10)
-	public int testParam;
+	@TuneableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
+	public float testParam;
 
 	@Override
 	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {

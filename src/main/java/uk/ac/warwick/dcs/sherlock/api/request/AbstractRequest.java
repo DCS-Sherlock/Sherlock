@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.api.request;
 public abstract class AbstractRequest<P, R> {
 
 	private P payload;
-	private R responce;
+	private R response;
 
 	public AbstractRequest() {
 	}
@@ -19,12 +19,12 @@ public abstract class AbstractRequest<P, R> {
 		return this;
 	}
 
-	public R getResponce() {
-		return this.responce;
+	public R getResponse() {
+		return this.response;
 	}
 
-	public void setResponce(R res) {
-		this.responce = res;
+	public void setResponse(R res) {
+		this.response = res;
 	}
 
 }

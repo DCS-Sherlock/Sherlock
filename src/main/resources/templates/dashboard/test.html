@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/default}" th:with="page='test'">
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Test Form</h5>
+                    <p class="card-text">JavaScript does not allow you to fetch the full path of a file so you have to manually type the full path to both files for now.</p>
+                   <!-- <form action="#" th:action="@{/dashboard/test}" th:object="${form}" method="post">
+                        <p>Filename1: <input type="text" th:field="*{filename1}" /></p>
+                        <p>Filename2: <input type="text" th:field="*{filename2}" /></p>
+                        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+                    </form>
+                    <br/>-->
+                    <form method="POST" enctype="multipart/form-data" action="#">
+                        <table>
+                            <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
+                            <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -2,8 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
 import uk.ac.warwick.dcs.sherlock.api.event.IEvent;
 import uk.ac.warwick.dcs.sherlock.api.event.IEventBus;
 import uk.ac.warwick.dcs.sherlock.api.event.IEventModule;

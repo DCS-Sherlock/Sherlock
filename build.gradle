@@ -19,6 +19,9 @@ repositories {
     }
     jcenter()
     mavenCentral()
+    maven {
+        url "http://m2.objectdb.com" //ObjectDB Repository
+    }
 }
 
 dependencies {
@@ -28,11 +31,19 @@ dependencies {
             'org.antlr:antlr4-runtime:4.7.1',
             'com.google.guava:guava:26.0-jre',
             'org.reflections:reflections:0.9.10',
+            'commons-io:commons-io:2.6',
+            'org.apache.commons:commons-lang3:3.8.1',
+            'commons-codec:commons-codec:1.11',
+            'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.3',
+            'javax.transaction:jta:1.1',
+            'com.objectdb:objectdb:2.7.6',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-log4j2',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
+            'org.springframework.boot:spring-boot-starter-security',
             'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect',
+            'org.thymeleaf.extras:thymeleaf-extras-springsecurity4',
             'org.springframework.boot:spring-boot-devtools'
     )
 
@@ -72,18 +83,23 @@ idea {
 
         resourceDirs += file("src/main/resources")
 
-        generatedSourceDirs += file("${buildDir}/tmp/src/main/antlr")
+        //generatedSourceDirs - fix for Idea 2018.3
+        sourceDirs += file("${buildDir}/tmp/src/main/antlr")
 
         excludeDirs += file("${buildDir}/tmp/src/main/java")
         excludeDirs += file("${buildDir}/tmp/src/test/java")
     }
 }
 
-project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
-project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
-
 group = 'uk.ac.warwick.dcs.sherlock'
-version = "${project.ext.lastTag}.${project.count}"
+version = "release"
+
+if (grgit != null) {
+    project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
+    project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
+    project.version = "${project.ext.lastTag}.${project.count}"
+}
+
 
 description = """Sherlock"""
 
@@ -96,8 +112,9 @@ task printVersion {
 
 javadoc {
     source = ["src/main/java"]
-    destinationDir = file("/docs")
+    destinationDir = file("${projectDir}/docs")
     options.memberLevel = JavadocMemberLevel.PRIVATE
+    classpath = configurations.compile
 }
 
 generateGrammarSource {
@@ -185,8 +202,10 @@ test {
 }
 
 task branchSetup {
-    ant.replaceregexp(match: '# Sherlock(.*)', replace: "# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags: 's', byline: true) {
-        fileset(dir: project.projectDir, includes: 'README.md')
+    if (grgit != null) {
+        ant.replaceregexp(match: '# Sherlock(.*)', replace: "# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags: 's', byline: true) {
+            fileset(dir: project.projectDir, includes: 'README.md')
+        }
     }
 }
 

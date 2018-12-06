@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/blank}">
+<head>
+    <title>Login</title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <form class="form-login text-center" th:action="@{/login}" method="post">
+        <div class="logo">
+            <a class="" th:href="@{/}">Sherlock</a>
+        </div>
+        <h1 class="h4 mb-4 text-muted">
+            Login
+        </h1>
+
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                Invalid username and password.
+            </div>
+        </div>
+        <div th:if="${param.logout}">
+            <div class="alert alert-info">
+                You have been logged out.
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        </div>
+
+        <div class="mb-2">
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        </div>
+
+        <!--<div class="checkbox mb-4">-->
+            <!--<label>-->
+                <!--<input type="checkbox" value="remember-me"> Remember me-->
+            <!--</label>-->
+        <!--</div>-->
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+</main>
+</body>
+</html>

@@ -15,4 +15,8 @@ public interface ISourceFile {
 	/* TODO: Temporary implementation, requires update */
 	String getFilename();
 
+
+
+	// extend to provide file content
+
 }

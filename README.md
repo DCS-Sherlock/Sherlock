@@ -1,4 +1,4 @@
-# Sherlock  [![Build Status: master](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=master)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=master)
+# Sherlock  [![Build Status: devel](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=devel)](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=devel)
 
 <!----- Branch: --->
 
@@ -31,4 +31,4 @@ When developing use `SherlockClient` as the main class and use following VM opti
 ## CSS
 This project uses Sass (https://sass-lang.com/) to compile the CSS files for the web interface, the Sass files are stored in `src/main/sass`. Please do not edit the CSS files in `src/main/resources/static/css`, any changes you make to these files will be overwritten.
 
-At the moment Gradle does not automatically compile the CSS files, so you will need an external program (see https://sass-lang.com/install) to compile any changes you make. Whatever program you use, set the source/input directory to `src/main/sass/build` and the output to `src/main/resources/static/css`. 
+At the moment Gradle does not automatically compile the CSS files, so you will need an external program (see https://sass-lang.com/install) to compile any changes you make. Whatever program you use, set the source/input directory to `src/main/sass/output` and the output to `src/main/resources/static/css`. 

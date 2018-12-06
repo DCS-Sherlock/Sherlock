@@ -1,9 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import uk.ac.warwick.dcs.sherlock.api.annotations.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.annotations.SherlockModule.Instance;
+import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
+import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
+import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule.Instance;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/blank}">
+<head>
+    <title>Register</title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <form class="form-login text-center">
+        <div class="logo">
+            <a class="" th:href="@{/}">Sherlock</a>
+        </div>
+        <h1 class="h4 mb-4 text-muted">
+            Register
+        </h1>
+
+        <div class="mb-2">
+            <label for="name" class="sr-only">Email address</label>
+            <input type="text" id="name" class="form-control" placeholder="Name" required autofocus>
+        </div>
+
+        <div class="mb-2">
+            <label for="email" class="sr-only">Email address</label>
+            <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
+        </div>
+
+        <div class="mb-2">
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+        </div>
+
+        <div class="mb-2">
+            <label for="confirmPassword" class="sr-only">Password</label>
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" required>
+        </div>
+
+        <div class="checkbox mb-4">
+            <label>
+                <input type="checkbox" value="remember-me"> I agree to the <a href="/terms" target="_blank">terms</a>.
+            </label>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+    </form>
+</main>
+</body>
+</html>
