@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.lang.annotation.*;
 import java.util.*;
@@ -15,16 +14,20 @@ public interface IDetector {
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
 	 *
 	 * @param data            preprocessed dataset
-	 * @param resultItemClass class the worker should use to return its results
 	 *
 	 * @return list of configured workers ready to be executed
 	 */
-	List<IDetectorWorker> buildWorkers(List<IModelDataItem> data, Class<? extends IModelResultItem> resultItemClass);
+	List<IDetectorWorker> buildWorkers(List<ModelDataItem> data);
 
 	/**
 	 * @return display name of the algorithm
 	 */
 	String getDisplayName();
+
+	/**
+	 * @return the rank of the detector, either
+	 */
+	Rank getRank();
 
 	/**
 	 * Returns the appropriate lexer for this strategy and the language of the source files
@@ -36,13 +39,9 @@ public interface IDetector {
 	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(Language lang);
 
 	/**
-	 * Allows implementation to override the default post processor
-	 *
-	 * @return the post processor to use, default null
+	 * @return the post processor to use
 	 */
-	default Class<? extends AbstractPostProcessor> getPostProcessor() {
-		return null;
-	}
+	Class<? extends AbstractPostProcessor> getPostProcessor();
 
 	/**
 	 * Specify the preprocessors required for this detector.
@@ -50,7 +49,7 @@ public interface IDetector {
 	 * The individual strategies in the list can be produced using the generic methods {@link IPreProcessingStrategy#of(String, Class... )} or {@link IPreProcessingStrategy#of(String, boolean, Class...)}
 	 * in the interface, or using a fully custom {@link IPreProcessingStrategy} class.
 	 * <p><p>
-	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List, Class)} method
+	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List)} method
 	 *
 	 * @return a list of the required preprocessing strategies
 	 */
@@ -76,11 +75,11 @@ public interface IDetector {
 		 *
 		 * @return worker results
 		 */
-		IModelResultItem getResult();
+		AbstractPostProcessor getRawResult();
 
 	}
 
-	enum rank {
+	enum Rank {
 		PRIMARY, BACKUP
 	}
 

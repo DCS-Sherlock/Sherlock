@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelResultItem;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.util.*;
 import java.util.stream.*;
@@ -38,8 +37,8 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 	}
 
 	@Override
-	public List<IDetectorWorker> buildWorkers(List<IModelDataItem> data, Class<? extends IModelResultItem> resultItemClass) {
-		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1), resultItemClass)).collect(Collectors.toList());
+	public List<IDetectorWorker> buildWorkers(List<ModelDataItem> data) {
+		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1), this.getPostProcessor())).collect(Collectors.toList());
 	}
 
 	/**
@@ -52,9 +51,9 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 	 */
 	public abstract class AbstractPairwiseDetectorWorker implements IDetectorWorker {
 
-		protected IModelDataItem file1;
-		protected IModelDataItem file2;
-		protected IModelResultItem result;
+		protected ModelDataItem file1;
+		protected ModelDataItem file2;
+		protected AbstractPostProcessor result;
 
 		/**
 		 * Gets the results of the worker execution, only minimal processing should be performed in this method
@@ -62,25 +61,25 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 		 * @return worker results
 		 */
 		@Override
-		public IModelResultItem getResult() {
+		public AbstractPostProcessor getRawResult() {
 			return this.result;
 		}
 
 		/**
-		 * Loads data into the worker, called by the {@link AbstractPairwiseDetector#buildWorkers(List, Class)} method
+		 * Loads data into the worker, called by the {@link AbstractPairwiseDetector#buildWorkers(List)} method
 		 *
 		 * @param file1Data       preprocessed data for file 1
 		 * @param file2Data       preprocessed data for file 2
-		 * @param resultItemClass class the worker uses to return its results
+		 * @param postProcessorClass class the worker uses to return its results
 		 *
 		 * @return this (the current worker instance)
 		 */
-		AbstractPairwiseDetectorWorker putData(IModelDataItem file1Data, IModelDataItem file2Data, Class<? extends IModelResultItem> resultItemClass) {
+		AbstractPairwiseDetectorWorker putData(ModelDataItem file1Data, ModelDataItem file2Data, Class<? extends AbstractPostProcessor> postProcessorClass) {
 			this.file1 = file1Data;
 			this.file2 = file2Data;
 
 			try {
-				this.result = resultItemClass.newInstance();
+				this.result = postProcessorClass.newInstance();
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();

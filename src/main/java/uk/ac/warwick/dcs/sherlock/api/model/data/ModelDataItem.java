@@ -1,12 +1,10 @@
-package uk.ac.warwick.dcs.sherlock.engine.model;
+package uk.ac.warwick.dcs.sherlock.api.model.data;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.util.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 
 import java.util.*;
 
-public class ModelDataItem implements IModelDataItem {
+public class ModelDataItem {
 
 	private ISourceFile file;
 	private Map<String, List<IndexedString>> mapping;
@@ -21,17 +19,14 @@ public class ModelDataItem implements IModelDataItem {
 		this.mapping = new HashMap<>(map);
 	}
 
-	@Override
 	public void addPreProcessedLines(String strategyName, List<IndexedString> lines) {
 		this.mapping.put(strategyName, lines);
 	}
 
-	@Override
 	public ISourceFile getFile() {
 		return this.file;
 	}
 
-	@Override
 	public List<IndexedString> getPreProcessedLines(String strategyName) {
 		return this.mapping.get(strategyName);
 	}
