@@ -51,7 +51,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 	@Override
 	public List<IPreProcessingStrategy> getPreProcessors() {
-		return Collections.singletonList(IPreProcessingStrategy.of("comments", VariableExtractor.class));
+		return Collections.singletonList(IPreProcessingStrategy.of("variables", VariableExtractor.class));
 	}
 
 	@Override
@@ -63,11 +63,17 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 		@Override
 		public void execute() {
-			for (IndexedString checkLine : this.file1.getPreProcessedLines("comments")) {
-				System.out.println(checkLine);
-				//this.file2.getPreProcessedLines("comments").stream().filter(x -> x.valueEquals(checkLine)).forEach(x -> this.result.addPairedBlocks(IContentBlock.of(this.file1.getFile(), checkLine.getKey(), checkLine.getKey()), IContentBlock.of(this.file2.getFile(), x.getKey(), x.getKey()), 1, 1));
+			List<IndexedString> lines = this.file1.getPreProcessedLines("variables");
+			int originalSize = lines.size();
 
+			for (IndexedString checkLine : lines) {
+				this.file2.getPreProcessedLines("variables").stream().filter(x -> !x.valueEquals(checkLine)).forEach(lines::remove);
 			}
+
+			float per = lines.size()/(float) originalSize;
+			System.out.println(per + " - " + lines.toString());
+
+			// Then output to a postProcessor, output the line numbers in EACH FILE
 		}
 	}
 }
