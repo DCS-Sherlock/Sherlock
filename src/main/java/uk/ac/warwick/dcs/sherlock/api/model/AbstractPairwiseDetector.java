@@ -78,12 +78,12 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 			this.file1 = file1Data;
 			this.file2 = file2Data;
 
-			try {
+			/*try {
 				this.result = postProcessorClass.newInstance();
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
-			}
+			}*/
 
 			return this;
 		}

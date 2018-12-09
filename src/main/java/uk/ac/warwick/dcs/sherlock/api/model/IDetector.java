@@ -39,6 +39,15 @@ public interface IDetector {
 	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(Language lang);
 
 	/**
+	 * Returns the appropriate parser for this strategy and the language of the source files
+	 *
+	 * @param lang the language of the source files
+	 *
+	 * @return the parser class to use
+	 */
+	Class<? extends org.antlr.v4.runtime.Parser> getParser(Language lang);
+
+	/**
 	 * @return the post processor to use
 	 */
 	Class<? extends AbstractPostProcessor> getPostProcessor();

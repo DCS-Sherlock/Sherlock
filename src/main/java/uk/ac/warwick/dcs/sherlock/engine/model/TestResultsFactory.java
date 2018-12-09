@@ -2,9 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
@@ -24,15 +24,17 @@ public class TestResultsFactory {
 		IDetector instance = algorithm.newInstance();
 
 		Class<? extends Lexer> lexerClass = instance.getLexer(Language.JAVA);
+		Class<? extends Parser> parserClass = instance.getParser(Language.JAVA);
+
 		List<IPreProcessingStrategy> preProcessingStrategies = instance.getPreProcessors();
 
-		String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
+		/*String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 		if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
 			// strategy is not valid
 			return null;
-		}
+		}*/
 
-		List<IModelDataItem> inputData = files.parallelStream().map(file -> {
+		List<ModelDataItem> inputData = files.parallelStream().map(file -> {
 			try {
 				Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromFileName(file.getFilename())); // build new lexer for each file
 				List<? extends Token> tokensMaster = lexer.getAllTokens();
@@ -40,29 +42,42 @@ public class TestResultsFactory {
 				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
 				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
-					List<? extends Token> tokens = new LinkedList<>(tokensMaster);
-					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
-						try {
-							IPreProcessor processor = processorClass.newInstance();
-							tokens = processor.process(tokens, lexer.getVocabulary(), Language.JAVA);
+					if (strategy.isParserBased()) {
+						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+							try {
+								IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
+								map.put(strategy.getName(), processor.processTokens(lexer, parserClass, Language.JAVA));
+							}
+							catch (InstantiationException | IllegalAccessException e) {
+								e.printStackTrace();
+							}
 						}
-						catch (InstantiationException | IllegalAccessException e) {
-							e.printStackTrace();
-						}
-					}
-
-					ITokenStringifier stringifier;
-					if (strategy.getStringifier() != null) {
-						stringifier = strategy.getStringifier();
-					}
-					else if (strategy instanceof IPreProcessingStrategy.GenericPreProcessingStrategy && ((IPreProcessingStrategy.GenericPreProcessingStrategy) strategy).isResultTokenised()) {
-						stringifier = new StandardTokeniser();
 					}
 					else {
-						stringifier = new StandardStringifier();
-					}
+						List<? extends Token> tokens = new LinkedList<>(tokensMaster);
+						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+							try {
+								ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
+								tokens = processor.process(tokens, lexer.getVocabulary(), Language.JAVA);
+							}
+							catch (InstantiationException | IllegalAccessException e) {
+								e.printStackTrace();
+							}
+						}
 
-					map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
+						ITokenStringifier stringifier;
+						if (strategy.getStringifier() != null) {
+							stringifier = strategy.getStringifier();
+						}
+						else if (strategy instanceof GenericTokenPreProcessingStrategy && ((GenericTokenPreProcessingStrategy) strategy).isResultTokenised()) {
+							stringifier = new StandardTokeniser();
+						}
+						else {
+							stringifier = new StandardStringifier();
+						}
+
+						map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
+					}
 				});
 
 				return new ModelDataItem(file, map);
@@ -74,9 +89,10 @@ public class TestResultsFactory {
 			return null;
 		}).collect(Collectors.toList());
 
-		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData, ModelResultItem.class);
+		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
-		return workers.stream().map(IDetector.IDetectorWorker::getResult).flatMap(x -> x.getAllPairedBlocks().parallelStream().map(Object::toString)).collect(Collectors.joining("\n"));
+		return "";
+		//return workers.stream().map(IDetector.IDetectorWorker::getRawResult).flatMap(x -> x.getAllPairedBlocks().parallelStream().map(Object::toString)).collect(Collectors.joining("\n"));
 	}
 
 	public static class tmpFile implements ISourceFile {

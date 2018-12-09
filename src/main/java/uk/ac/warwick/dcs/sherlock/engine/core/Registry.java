@@ -66,9 +66,9 @@ public class Registry implements IRegistry {
 				// Get the lexer channel list only once and store
 				String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 				for (IPreProcessingStrategy strat : preProcessingStrategies) {
-					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels)) {
-						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}'", tester.getDisplayName(),
-								strat.getName(), lang.name(), lexerClass.getName());
+					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels, tester.getParser(lang), lang)) {
+						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}' and parser '{}'", tester.getDisplayName(),
+								strat.getName(), lang.name(), lexerClass.getName(), tester.getParser(lang).getName());
 						return false;
 					}
 				}
