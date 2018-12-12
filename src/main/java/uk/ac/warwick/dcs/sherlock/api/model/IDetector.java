@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.lang.annotation.*;
@@ -50,7 +51,7 @@ public interface IDetector {
 	/**
 	 * @return the post processor to use
 	 */
-	Class<? extends AbstractPostProcessor> getPostProcessor();
+	//Class<? extends AbstractPostProcessor> getPostProcessor();
 
 	/**
 	 * Specify the preprocessors required for this detector.
@@ -84,7 +85,7 @@ public interface IDetector {
 		 *
 		 * @return worker results
 		 */
-		AbstractPostProcessor getRawResult();
+		IModelRawResult getRawResult();
 
 	}
 

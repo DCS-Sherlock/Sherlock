@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.util.*;
@@ -38,7 +39,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 
 	@Override
 	public List<IDetectorWorker> buildWorkers(List<ModelDataItem> data) {
-		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1), this.getPostProcessor())).collect(Collectors.toList());
+		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1))).collect(Collectors.toList());
 	}
 
 	/**
@@ -53,7 +54,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 
 		protected ModelDataItem file1;
 		protected ModelDataItem file2;
-		protected AbstractPostProcessor result;
+		protected IModelRawResult result;
 
 		/**
 		 * Gets the results of the worker execution, only minimal processing should be performed in this method
@@ -61,7 +62,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 		 * @return worker results
 		 */
 		@Override
-		public AbstractPostProcessor getRawResult() {
+		public IModelRawResult getRawResult() {
 			return this.result;
 		}
 
@@ -70,20 +71,12 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 		 *
 		 * @param file1Data       preprocessed data for file 1
 		 * @param file2Data       preprocessed data for file 2
-		 * @param postProcessorClass class the worker uses to return its results
 		 *
 		 * @return this (the current worker instance)
 		 */
-		AbstractPairwiseDetectorWorker putData(ModelDataItem file1Data, ModelDataItem file2Data, Class<? extends AbstractPostProcessor> postProcessorClass) {
+		AbstractPairwiseDetectorWorker putData(ModelDataItem file1Data, ModelDataItem file2Data) {
 			this.file1 = file1Data;
 			this.file2 = file2Data;
-
-			/*try {
-				this.result = postProcessorClass.newInstance();
-			}
-			catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}*/
 
 			return this;
 		}

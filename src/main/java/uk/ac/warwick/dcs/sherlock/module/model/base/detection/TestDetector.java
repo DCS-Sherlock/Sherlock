@@ -2,7 +2,6 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractPairwiseDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.AbstractPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
@@ -42,11 +41,6 @@ public class TestDetector extends AbstractPairwiseDetector {
 	@Override
 	public Class<? extends Parser> getParser(Language lang) {
 		return JavaParser.class;
-	}
-
-	@Override
-	public Class<? extends AbstractPostProcessor> getPostProcessor() {
-		return null;
 	}
 
 	@Override
