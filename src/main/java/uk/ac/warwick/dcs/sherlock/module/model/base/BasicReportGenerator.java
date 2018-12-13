@@ -5,6 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlockPair;
 import uk.ac.warwick.dcs.sherlock.api.model.DetectionType;
 
+import javax.persistence.Basic;
 import java.util.*;
 
 /**
@@ -23,12 +24,9 @@ import java.util.*;
  */
 public class BasicReportGenerator extends AbstractReportGenerator {
 
-	/**
-	 * The unformatted descriptions are stored in this map of strings
-	 *
-	 * TODO: actually getting those descriptions
-	 */
-	private Map<DetectionType, String> baseDescriptions;
+	BasicReportGenerator(String descriptionFileName) {
+		super(descriptionFileName);
+	}
 
 	@Override
 	public String GenerateReport(List<? extends ICodeBlockPair> codeBlockPairs) {
@@ -45,7 +43,7 @@ public class BasicReportGenerator extends AbstractReportGenerator {
 				lineNumbers.addAll(codeBlock.getLineNumbers());
 			}
 
-			//Kind of gross but not sure if string.format can just take a list 
+			//Kind of gross but not sure if string.format can just take a list
 			String lineNumberDesc = String.format(currentDescription, lineNumbers.get(0), lineNumbers.get(1), lineNumbers.get(2), lineNumbers.get(3));
 
 			//TODO: further formatting with e.g. variable names etc.

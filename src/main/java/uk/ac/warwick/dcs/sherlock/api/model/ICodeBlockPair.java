@@ -21,13 +21,4 @@ public interface ICodeBlockPair {
 	 * @return the the type of plagiarism that was detected for these blocks of code
 	 */
 	DetectionType getDetectionType();
-
-	/**
-	 * TODO To implement this there will need to be some file to store descriptions for each kind of plagiarism,
-	 * TODO and then an implementation of this function will convert those descriptions into something more complete
-	 * TODO using specific parts of the code blocks that are problematic (i.e. filling in the blanks).
-	 *
-	 * @return a string that is a full written description of why these blocks of code are suspected of plagiarism.
-	 */
-	String CreateDescription();
 }

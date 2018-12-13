@@ -1,0 +1,18 @@
+//Lines starting with // are ignored; so are blank lines
+//Lines starting with :: denote a DetectionType enum
+
+//Changing Comments or formatting
+::COMMENT
+Lines %1$d to %2$d in file A contain comments that are identical to lines %3$d to %4$d in file B.
+
+//Changing Identifiers
+::IDENTIFIER
+The code in lines %1$d to %2$d in file A is identical to the code in lines %3$d to %4$d in file B, except that the identifiers have different names.
+
+//Changing the order of operands in expressions
+::OPERAND_ORDER
+The expression at line %1$d to %2$d of file A is equivalent to the expression at line %3$d to %4$d of file B. The order that the operands are written in has been changed, but the result is the same.
+
+//Changing Data Types
+::DATA_TYPE
+Variable X of file A is used in all the same ways as variable P of file B, but it is stored as a slightly different data type. This does not make a significant difference on the result however, and lines %1$d to %2$d of file A and lines %3$d to %4$d of file B are suspiciously similar.
