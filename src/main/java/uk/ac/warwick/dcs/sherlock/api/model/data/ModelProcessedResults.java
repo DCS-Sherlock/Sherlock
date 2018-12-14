@@ -39,19 +39,22 @@ public class ModelProcessedResults {
 	}
 
 	class ResultsInstance {
-
 		private ISourceFile file;
 		private DetectionType type;
 		private float overallScore;
 
-		private List<ResultsBlock> blocks;
+		private List<ResultsBlock> blockMap;
+		private Map<ISourceFile, ResultsFile> fileMap;
+	}
+
+	class ResultsFile {
+		private float fileScore;
+		private List<ResultsBlock> blocksContaingFile;
 	}
 
 	class ResultsBlock {
-		//String details; // Can be added if worthwhile????
-
 		Tuple<Integer, Integer> parentBlock;
-		float score;
+		float blockScore;
 		Map<ISourceFile, Tuple<Integer, Integer>> associatedBlocks;
 	}
 

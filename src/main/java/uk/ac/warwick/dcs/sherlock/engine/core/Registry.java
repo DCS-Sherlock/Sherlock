@@ -3,17 +3,13 @@ package uk.ac.warwick.dcs.sherlock.engine.core;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor;
-import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor.Instance;
-import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor.PostHandler;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
+import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase.RegistryRequests;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -22,13 +18,12 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
-@RequestProcessor (apiFieldName = "registry")
+//@RequestProcessor (apiFieldName = "registry")
 public class Registry implements IRegistry {
 
-	@Instance
-	static Registry instance;
-
-	final Logger logger = LoggerFactory.getLogger(Registry.class);
+	//@Instance
+	private static Registry instance;
+	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
 	private Map<String, Class<? extends IDetector>> detectorRegistry;
 	private Map<String, List<DetectorParameter>> detectorParamRegistry;
@@ -38,7 +33,7 @@ public class Registry implements IRegistry {
 		this.detectorParamRegistry = new ConcurrentHashMap<>();
 	}
 
-	@PostHandler
+	/*@PostHandler
 	public AbstractRequest handlePost(AbstractRequest reference) {
 		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
 			reference.setResponse(new HashMap<>(this.detectorRegistry));
@@ -50,10 +45,10 @@ public class Registry implements IRegistry {
 			reference.setResponse(this.getTuneableParameters((String) reference.getPayload()));
 		}
 		return reference;
-	}
+	}*/
 
 	@Override
-	public Boolean registerDetector(Class<? extends IDetector> detector) {
+	public boolean registerDetector(Class<? extends IDetector> detector) {
 
 		//Do checks on detector, ensure is valid
 		try {
@@ -67,8 +62,8 @@ public class Registry implements IRegistry {
 				String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
 				for (IPreProcessingStrategy strat : preProcessingStrategies) {
 					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels, tester.getParser(lang), lang)) {
-						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}' and parser '{}'", tester.getDisplayName(),
-								strat.getName(), lang.name(), lexerClass.getName(), tester.getParser(lang).getName());
+						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}' and parser '{}'",
+								tester.getDisplayName(), strat.getName(), lang.name(), lexerClass.getName(), tester.getParser(lang).getName());
 						return false;
 					}
 				}
@@ -90,7 +85,7 @@ public class Registry implements IRegistry {
 						}
 
 						if (x.getKey().getType().equals(int.class)) {
-							float[] vals = {x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step()};
+							float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
 							for (float f : vals) {
 								if (f % 1 != 0) {
 									logger.warn("Detector '{}' contains @DetectorParameter {} of type int, with a float parameter", tester.getDisplayName(), x.getKey().getName());
@@ -111,6 +106,13 @@ public class Registry implements IRegistry {
 		}
 
 		return true;
+	}
+	
+	@Override
+	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends IModelRawResult> handledResultTypes) {
+
+		// check the results are serializable
+		return false;
 	}
 
 	IDetector getIDetectorInstance(String detectorName) {

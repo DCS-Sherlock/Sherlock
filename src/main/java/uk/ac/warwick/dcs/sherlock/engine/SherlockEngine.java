@@ -9,12 +9,9 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
-import uk.ac.warwick.dcs.sherlock.api.annotation.ResponseHandler;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.request.AbstractRequest;
-import uk.ac.warwick.dcs.sherlock.api.request.RequestDatabase;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.core.Registry;
 import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
@@ -91,8 +88,7 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-
-		uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
+		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
 	}
 
 	private void shutdown() {
@@ -149,8 +145,8 @@ public class SherlockEngine {
 		}
 	}
 
-	@ResponseHandler
+	/*@ResponseHandler
 	public void responseHandler(AbstractRequest request) {
 		logger.info("got response: " + request.getResponse());
-	}
+	}*/
 }

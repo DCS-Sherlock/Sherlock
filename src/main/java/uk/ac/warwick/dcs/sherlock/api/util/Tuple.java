@@ -1,6 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.util;
 
-public class Tuple<K, V> implements ITuple<K, V> {
+import java.io.Serializable;
+
+public class Tuple<K, V> implements ITuple<K, V>, Serializable {
 
 	private K key;
 	private V value;

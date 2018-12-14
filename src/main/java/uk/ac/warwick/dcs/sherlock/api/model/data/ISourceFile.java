@@ -1,22 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
+import java.io.InputStream;
+
 public interface ISourceFile {
 
-
-	/*try (BufferedReader r = Files.newBufferedReader(path, encoding)) {
-		r.lines().forEach(System.out::println);
-	}*/
-
-
-	/* How do we want to handle file reading, we should really store in mem to prevent constantly having to read files from the disk and perform the preprocessing. Ideally we woudld
-	 * do this only once and cache the files we are working on, however will we have enough memory to do this when we get large projects, how should we handle this???
+	/**
+	 * @return fetches a unique, persistent id for the file. No other file should EVER be able to take this ID, even if this file is deleted.
 	 */
+	long getPersistentId();
 
-	/* TODO: Temporary implementation, requires update */
 	String getFilename();
 
-
-
-	// extend to provide file content
-
+	InputStream getFileContents();
 }
