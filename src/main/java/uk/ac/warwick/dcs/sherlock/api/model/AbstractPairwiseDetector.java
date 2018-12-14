@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.util.*;
@@ -54,7 +54,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 
 		protected ModelDataItem file1;
 		protected ModelDataItem file2;
-		protected IModelRawResult result;
+		protected AbstractModelRawResult result;
 
 		/**
 		 * Gets the results of the worker execution, only minimal processing should be performed in this method
@@ -62,7 +62,7 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 		 * @return worker results
 		 */
 		@Override
-		public IModelRawResult getRawResult() {
+		public AbstractModelRawResult getRawResult() {
 			return this.result;
 		}
 

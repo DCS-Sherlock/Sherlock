@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.IWorkspace;
 
 import java.util.*;
@@ -14,7 +14,7 @@ public class Job {
 	private IDetector.Rank rank;
 
 	//When adding check that all same type
-	private List<IModelRawResult> rawResults;
+	private List<AbstractModelRawResult> rawResults;
 
 	public Job(long taskId, IWorkspace workspace, Class<? extends IDetector> detector, IDetector.Rank rank) {
 		this.taskId = taskId;

@@ -9,7 +9,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
 import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -107,9 +107,9 @@ public class Registry implements IRegistry {
 
 		return true;
 	}
-	
+
 	@Override
-	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends IModelRawResult> handledResultTypes) {
+	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelRawResult> handledResultTypes) {
 
 		// check the results are serializable
 		return false;

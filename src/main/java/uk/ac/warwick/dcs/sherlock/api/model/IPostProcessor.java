@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelProcessedResults;
 
 import java.lang.annotation.*;
@@ -8,7 +8,7 @@ import java.util.*;
 
 public interface IPostProcessor {
 
-	void loadRawResults(List<IModelRawResult> results);
+	void loadRawResults(List<AbstractModelRawResult> results);
 
 	/**
 	 * Run the post processing and return a data item with the final results in the correct format

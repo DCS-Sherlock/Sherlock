@@ -2,7 +2,9 @@ package uk.ac.warwick.dcs.sherlock.api.model.data;
 
 import java.io.Serializable;
 
-public interface IModelRawResult extends Serializable {
+public abstract class AbstractModelRawResult implements Serializable {
+
+	private static final long serialVersionUID = 24L;
 
 	/**
 	 * Check that this object is of the same exact type as the baseline, including check any generic types are equal
@@ -13,6 +15,6 @@ public interface IModelRawResult extends Serializable {
 	 *
 	 * @return is same type?
 	 */
-	boolean testType(IModelRawResult baseline);
+	public abstract boolean testType(AbstractModelRawResult baseline);
 
 }

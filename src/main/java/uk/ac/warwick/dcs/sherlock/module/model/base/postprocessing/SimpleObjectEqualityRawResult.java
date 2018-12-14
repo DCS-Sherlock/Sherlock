@@ -1,13 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.PairedTuple;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class SimpleObjectEqualityRawResult<T extends Serializable> implements IModelRawResult {
+public class SimpleObjectEqualityRawResult<T extends Serializable> extends AbstractModelRawResult {
 
 	long file1id;
 	long file2id;
@@ -49,7 +49,7 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> implements IM
 	}
 
 	@Override
-	public boolean testType(IModelRawResult baseline) {
+	public boolean testType(AbstractModelRawResult baseline) {
 
 		if (baseline instanceof SimpleObjectEqualityRawResult) {
 			SimpleObjectEqualityRawResult bl = (SimpleObjectEqualityRawResult) baseline;
