@@ -13,7 +13,9 @@ public class SherlockRegistry {
 
 	/**
 	 * Registers an {@link IDetector} implementation to Sherlock
+	 *
 	 * @param detector the implementation
+	 *
 	 * @return was successful?
 	 */
 	public static boolean registerDetector(Class<? extends IDetector> detector) {

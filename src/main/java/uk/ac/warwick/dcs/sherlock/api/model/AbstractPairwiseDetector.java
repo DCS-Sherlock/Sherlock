@@ -69,8 +69,8 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 		/**
 		 * Loads data into the worker, called by the {@link AbstractPairwiseDetector#buildWorkers(List)} method
 		 *
-		 * @param file1Data       preprocessed data for file 1
-		 * @param file2Data       preprocessed data for file 2
+		 * @param file1Data preprocessed data for file 1
+		 * @param file2Data preprocessed data for file 2
 		 *
 		 * @return this (the current worker instance)
 		 */

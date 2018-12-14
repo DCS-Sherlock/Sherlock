@@ -39,6 +39,7 @@ public class ModelProcessedResults {
 	}
 
 	class ResultsInstance {
+
 		private ISourceFile file;
 		private DetectionType type;
 		private float overallScore;
@@ -48,11 +49,13 @@ public class ModelProcessedResults {
 	}
 
 	class ResultsFile {
+
 		private float fileScore;
 		private List<ResultsBlock> blocksContaingFile;
 	}
 
 	class ResultsBlock {
+
 		Tuple<Integer, Integer> parentBlock;
 		float blockScore;
 		Map<ISourceFile, Tuple<Integer, Integer>> associatedBlocks;

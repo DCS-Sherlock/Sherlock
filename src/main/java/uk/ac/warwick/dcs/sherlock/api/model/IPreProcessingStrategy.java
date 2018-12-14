@@ -72,6 +72,7 @@ public interface IPreProcessingStrategy {
 
 	/**
 	 * Does the strategy use
+	 *
 	 * @return
 	 */
 	boolean isParserBased();

@@ -4,19 +4,19 @@ import java.util.*;
 
 /**
  * An interface that connects two ICodeBlocks where plagiarism is detected between two files.
- *
- * This and ICodeBlockPair are somewhat redundant with the stuff in ModelProcessedResults but are easier to work with for the
- * ReportGenerator stuff for the time being.
+ * <p>
+ * This and ICodeBlockPair are somewhat redundant with the stuff in ModelProcessedResults but are easier to work with for the ReportGenerator stuff for the time being.
  */
 public interface ICodeBlockPair {
+
 	/**
 	 * @return the two blocks of code that were flagged as similar
 	 */
 	List<? extends ICodeBlock> getCodeBlocks();
 
 	/**
-	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are
-	 * TODO detected. Not sure; also depends on how the DetectionTypes are decided on by the algs in the first place.
+	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by
+	 * the algs in the first place.
 	 *
 	 * @return the the type of plagiarism that was detected for these blocks of code
 	 */

@@ -9,11 +9,24 @@ import java.util.*;
 
 public class SimpleObjectEqualityRawResult<T extends Serializable> implements IModelRawResult {
 
+	long file1id;
+	long file2id;
+
+	int file1NumObjs;
+	int file2NumObjs;
+
 	List<T> objects;
 	List<PairedTuple<Integer, Integer, Integer, Integer>> locations;
+
 	int size;
 
 	public SimpleObjectEqualityRawResult(ISourceFile file1, ISourceFile file2, int numObjectsFile1, int numObjectsFile2) {
+		this.file1id = file1.getPersistentId();
+		this.file2id = file2.getPersistentId();
+
+		this.file1NumObjs = numObjectsFile1;
+		this.file2NumObjs = numObjectsFile2;
+
 		this.objects = new ArrayList<>();
 		this.locations = new ArrayList<>();
 
@@ -26,12 +39,13 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> implements IM
 
 	public void put(T object, int file1BlockStart, int file1BlockEnd, int file2BlockStart, int file2BlockEnd) {
 		if (this.objects.size() != this.size || this.locations.size() != this.size) {
-			//ERROR
+			System.out.println("not sized");
 			return;
 		}
 
 		this.objects.add(object);
 		this.locations.add(new PairedTuple<>(file1BlockStart, file1BlockEnd, file2BlockStart, file2BlockEnd));
+		this.size++;
 	}
 
 	@Override
@@ -40,9 +54,18 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> implements IM
 		if (baseline instanceof SimpleObjectEqualityRawResult) {
 			SimpleObjectEqualityRawResult bl = (SimpleObjectEqualityRawResult) baseline;
 
+			//test the type
 			//bl
 		}
 
 		return false;
+	}
+
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		for (int i = 0; i < this.size; i++) {
+			str.append(this.objects.get(i).toString()).append(" - ").append(this.locations.get(i).toString()).append("\n");
+		}
+		return str.toString();
 	}
 }

@@ -27,49 +27,15 @@ import java.security.spec.KeySpec;
 import java.util.*;
 import java.util.stream.*;
 
-public class FilesystemStorage{
+public class FilesystemStorage {
 
 	private static Logger logger = LoggerFactory.getLogger(FilesystemStorage.class);
 
 	/**
-	 * Stores a file on the filesystem
-	 * @param file
-	 * @param fileContent
-	 * @return successful
-	 */
-	boolean storeFile(DBFile file, byte[] fileContent) {
-		file.setHash(DigestUtils.sha512Hex(fileContent));
-
-		File fileToStore = this.getFileFromIdentifier(this.computeFileIdentifier(file));
-		if (fileToStore.exists()) {
-			logger.error("File storage collision, file not stored");
-			return false;
-		}
-
-		try {
-			if (SherlockEngine.configuration.getEncryptFiles()) {
-				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-				cipher.init(Cipher.ENCRYPT_MODE, this.getKey(file));
-				AlgorithmParameters params = cipher.getParameters();
-
-				file.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
-				FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(fileContent));
-			}
-			else {
-				FileUtils.writeByteArrayToFile(fileToStore,fileContent);
-			}
-		}
-		catch (IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException | BadPaddingException e) {
-			logger.error("Error writing file", e);
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Loads a file from the filesystem
+	 *
 	 * @param file
+	 *
 	 * @return
 	 */
 	InputStream loadFile(DBFile file) {
@@ -100,6 +66,44 @@ public class FilesystemStorage{
 		}
 
 		return null;
+	}
+
+	/**
+	 * Stores a file on the filesystem
+	 *
+	 * @param file
+	 * @param fileContent
+	 *
+	 * @return successful
+	 */
+	boolean storeFile(DBFile file, byte[] fileContent) {
+		file.setHash(DigestUtils.sha512Hex(fileContent));
+
+		File fileToStore = this.getFileFromIdentifier(this.computeFileIdentifier(file));
+		if (fileToStore.exists()) {
+			logger.error("File storage collision, file not stored");
+			return false;
+		}
+
+		try {
+			if (SherlockEngine.configuration.getEncryptFiles()) {
+				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+				cipher.init(Cipher.ENCRYPT_MODE, this.getKey(file));
+				AlgorithmParameters params = cipher.getParameters();
+
+				file.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
+				FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(fileContent));
+			}
+			else {
+				FileUtils.writeByteArrayToFile(fileToStore, fileContent);
+			}
+		}
+		catch (IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException | BadPaddingException e) {
+			logger.error("Error writing file", e);
+			return false;
+		}
+
+		return true;
 	}
 
 	List<DBFile> validateFileStore(List<DBFile> allFiles) {
@@ -141,6 +145,10 @@ public class FilesystemStorage{
 		return DigestUtils.sha1Hex(str.substring(0, 48));
 	}
 
+	private String computeLocator(String fileIdentifier) {
+		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2, 4) + File.separator + fileIdentifier;
+	}
+
 	private String getArchiveName(DBArchive archive) {
 		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
 	}
@@ -148,10 +156,6 @@ public class FilesystemStorage{
 	private File getFileFromIdentifier(String fileIdentifier) {
 		String path = SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + this.computeLocator(fileIdentifier);
 		return new File(path);
-	}
-
-	private String computeLocator(String fileIdentifier) {
-		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2,4) + File.separator + fileIdentifier;
 	}
 
 	private SecretKey getKey(DBFile file) {

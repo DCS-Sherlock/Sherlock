@@ -10,6 +10,7 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardString
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -91,8 +92,7 @@ public class TestResultsFactory {
 
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
-		return "";
-		//return workers.stream().map(IDetector.IDetectorWorker::getRawResult).flatMap(x -> x.getAllPairedBlocks().parallelStream().map(Object::toString)).collect(Collectors.joining("\n"));
+		return workers.stream().map(IDetector.IDetectorWorker::getRawResult).map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 
 	public static class tmpFile implements ISourceFile {
@@ -104,8 +104,18 @@ public class TestResultsFactory {
 		}
 
 		@Override
+		public InputStream getFileContents() {
+			return null;
+		}
+
+		@Override
 		public String getFilename() {
 			return this.filename;
+		}
+
+		@Override
+		public long getPersistentId() {
+			return 0;
 		}
 	}
 

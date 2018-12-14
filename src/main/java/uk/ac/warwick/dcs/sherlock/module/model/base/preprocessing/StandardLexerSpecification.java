@@ -17,8 +17,6 @@ public class StandardLexerSpecification implements ILexerSpecification {
 	/**
 	 * reference enum
 	 */
-	public enum channels {
-		DEFAULT, HIDDEN, WHITESPACE, LONG_WHITESPACE, COMMENT
-	}
+	public enum channels {DEFAULT, HIDDEN, WHITESPACE, LONG_WHITESPACE, COMMENT}
 
 }

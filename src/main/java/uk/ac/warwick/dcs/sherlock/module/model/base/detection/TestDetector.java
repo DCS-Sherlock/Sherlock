@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
+import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor;
 
 import java.util.*;
@@ -29,11 +30,6 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public Rank getRank() {
-		return Rank.PRIMARY;
-	}
-
-	@Override
 	public Class<? extends Lexer> getLexer(Language lang) {
 		return JavaLexer.class;
 	}
@@ -49,6 +45,11 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
+	public Rank getRank() {
+		return Rank.PRIMARY;
+	}
+
+	@Override
 	public Language[] getSupportedLanguages() {
 		return languages;
 	}
@@ -57,17 +58,16 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 		@Override
 		public void execute() {
-			List<IndexedString> lines = this.file1.getPreProcessedLines("variables");
-			int originalSize = lines.size();
+			List<IndexedString> linesF1 = this.file1.getPreProcessedLines("variables");
+			List<IndexedString> linesF2 = this.file2.getPreProcessedLines("variables");
 
-			for (IndexedString checkLine : lines) {
-				this.file2.getPreProcessedLines("variables").stream().filter(x -> !x.valueEquals(checkLine)).forEach(lines::remove);
+			SimpleObjectEqualityRawResult<String> res = new SimpleObjectEqualityRawResult<>(this.file1.getFile(), this.file2.getFile(), linesF1.size(), linesF2.size());
+
+			for (IndexedString checkLine : linesF1) {
+				linesF2.stream().filter(x -> x.valueEquals(checkLine)).peek(x -> res.put(checkLine.getValue(), checkLine.getKey(), x.getKey())).findFirst().ifPresent(linesF2::remove);
 			}
 
-			float per = lines.size()/(float) originalSize;
-			System.out.println(per + " - " + lines.toString());
-
-			// Then output to a postProcessor, output the line numbers in EACH FILE
+			this.result = res;
 		}
 	}
 }

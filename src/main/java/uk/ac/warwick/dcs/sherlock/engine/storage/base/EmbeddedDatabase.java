@@ -88,6 +88,7 @@ public class EmbeddedDatabase {
 	}
 
 	public void storeObject(Object... objects) {
+		List<DBWorkspace> w;
 		try {
 			em.getTransaction().begin();
 			for (Object obj : objects) {

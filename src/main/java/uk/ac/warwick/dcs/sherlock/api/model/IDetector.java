@@ -14,7 +14,7 @@ public interface IDetector {
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
 	 *
-	 * @param data            preprocessed dataset
+	 * @param data preprocessed dataset
 	 *
 	 * @return list of configured workers ready to be executed
 	 */
@@ -24,11 +24,6 @@ public interface IDetector {
 	 * @return display name of the algorithm
 	 */
 	String getDisplayName();
-
-	/**
-	 * @return the rank of the detector, either
-	 */
-	Rank getRank();
 
 	/**
 	 * Returns the appropriate lexer for this strategy and the language of the source files
@@ -49,15 +44,10 @@ public interface IDetector {
 	Class<? extends org.antlr.v4.runtime.Parser> getParser(Language lang);
 
 	/**
-	 * @return the post processor to use
-	 */
-	//Class<? extends AbstractPostProcessor> getPostProcessor();
-
-	/**
 	 * Specify the preprocessors required for this detector.
 	 * <p><p>
-	 * The individual strategies in the list can be produced using the generic methods {@link IPreProcessingStrategy#of(String, Class... )} or {@link IPreProcessingStrategy#of(String, boolean, Class...)}
-	 * in the interface, or using a fully custom {@link IPreProcessingStrategy} class.
+	 * The individual strategies in the list can be produced using the generic methods {@link IPreProcessingStrategy#of(String, Class...)} or {@link IPreProcessingStrategy#of(String, boolean,
+	 * Class...)} in the interface, or using a fully custom {@link IPreProcessingStrategy} class.
 	 * <p><p>
 	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List)} method
 	 *
@@ -66,28 +56,19 @@ public interface IDetector {
 	List<IPreProcessingStrategy> getPreProcessors();
 
 	/**
+	 * @return the post processor to use
+	 */
+	//Class<? extends AbstractPostProcessor> getPostProcessor();
+
+	/**
+	 * @return the rank of the detector, either
+	 */
+	Rank getRank();
+
+	/**
 	 * @return Array of languages supported by the algorithm
 	 */
 	Language[] getSupportedLanguages();
-
-	/**
-	 * Top level interface workers are required to implement
-	 */
-	interface IDetectorWorker {
-
-		/**
-		 * Do work and create the results
-		 */
-		void execute();
-
-		/**
-		 * Gets the results of the worker execution, only minimal processing should be performed in this method
-		 *
-		 * @return worker results
-		 */
-		IModelRawResult getRawResult();
-
-	}
 
 	enum Rank {
 		PRIMARY, BACKUP
@@ -108,14 +89,14 @@ public interface IDetector {
 	@interface DetectorParameter {
 
 		/**
-		 * Name for the parameter to be displayed in the UI
-		 */
-		String name();
-
-		/**
 		 * Default value the parameter takes
 		 */
 		float defaultValue();
+
+		/**
+		 * Optional, detailed description of what the parameter does
+		 */
+		String description() default "";
 
 		/**
 		 * The maximum bound for the field
@@ -128,14 +109,33 @@ public interface IDetector {
 		float minimumBound();
 
 		/**
+		 * Name for the parameter to be displayed in the UI
+		 */
+		String name();
+
+		/**
 		 * The step to increment or decrement the parameter by in the UI
 		 */
 		float step();
+	}
+
+	/**
+	 * Top level interface workers are required to implement
+	 */
+	interface IDetectorWorker {
 
 		/**
-		 * Optional, detailed description of what the parameter does
+		 * Do work and create the results
 		 */
-		String description() default "";
+		void execute();
+
+		/**
+		 * Gets the results of the worker execution, only minimal processing should be performed in this method
+		 *
+		 * @return worker results
+		 */
+		IModelRawResult getRawResult();
+
 	}
 
 }

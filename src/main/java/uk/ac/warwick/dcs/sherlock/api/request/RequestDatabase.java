@@ -26,11 +26,11 @@ public class RequestDatabase {
 			return taskManager;
 		}*/
 
-		/**
-		 * Payload is the id of the workspace
-		 * <p><p>
-		 * Response is the id of the task for monitoring
-		 */
+	/**
+	 * Payload is the id of the workspace
+	 * <p><p>
+	 * Response is the id of the task for monitoring
+	 */
 		/*public static class RunDetectorTask extends TaskRequests<Long, Integer> {
 
 			//set other required params here, list of files?

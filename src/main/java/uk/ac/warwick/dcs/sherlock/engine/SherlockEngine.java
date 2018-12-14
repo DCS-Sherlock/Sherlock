@@ -68,6 +68,15 @@ public class SherlockEngine {
 		}
 	}
 
+	private void shutdown() {
+		logger.info("Stopping SherlockEngine");
+		try {
+			SherlockEngine.storage.close();
+		}
+		catch (Exception ignored) {
+		}
+	}
+
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 		SherlockEngine.loadConfiguration();
@@ -91,21 +100,13 @@ public class SherlockEngine {
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
 	}
 
-	private void shutdown() {
-		logger.info("Stopping SherlockEngine");
-		try {
-			SherlockEngine.storage.close();
-		}
-		catch (Exception ignored) {}
-	}
-
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
 
 		logger.info(SherlockEngine.configDir.getAbsolutePath());
 
 		if (!SherlockEngine.configDir.exists()) {
-			if (!SherlockEngine.configDir.mkdir()){
+			if (!SherlockEngine.configDir.mkdir()) {
 				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
 				return;
 			}

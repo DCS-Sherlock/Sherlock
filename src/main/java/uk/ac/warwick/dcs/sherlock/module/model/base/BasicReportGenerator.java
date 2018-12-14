@@ -3,24 +3,15 @@ package uk.ac.warwick.dcs.sherlock.module.model.base;
 import uk.ac.warwick.dcs.sherlock.api.model.AbstractReportGenerator;
 import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlockPair;
-import uk.ac.warwick.dcs.sherlock.api.model.DetectionType;
 
-import javax.persistence.Basic;
 import java.util.*;
 
 /**
- * A fairly basic first pass to generate the presentable reports shown to the user.
- * This uses ICodeBlockPair but could be adapted to the stuff in ModelProcessedRessults; I thought it would be better
+ * A fairly basic first pass to generate the presentable reports shown to the user. This uses ICodeBlockPair but could be adapted to the stuff in ModelProcessedRessults; I thought it would be better
  * to have the report stuff separate for the time being though.
- *
- * rough plan/overview of the process:
- * - have file with descriptions of problems
- * - take a given file pair
- * - go through each CodeBlock in CodeBlockPair
- * - Generate string by taking problem description according to the DetectionType enum of the block
- * - Replace string generic parts with relevant line numbers etc.
- * - Make larger string joining together all of the reasons along the way
- * - done???
+ * <p>
+ * rough plan/overview of the process: - have file with descriptions of problems - take a given file pair - go through each CodeBlock in CodeBlockPair - Generate string by taking problem description
+ * according to the DetectionType enum of the block - Replace string generic parts with relevant line numbers etc. - Make larger string joining together all of the reasons along the way - done???
  */
 public class BasicReportGenerator extends AbstractReportGenerator {
 
@@ -39,7 +30,7 @@ public class BasicReportGenerator extends AbstractReportGenerator {
 			//Get the line numbers for these code blocks and format the description using them
 			//NB with this basic approach, requires the base descriptions to keep line numbers in consistent order
 			List<Integer> lineNumbers = new ArrayList<Integer>();
-			for(ICodeBlock codeBlock : codeBlockPair.getCodeBlocks()) {
+			for (ICodeBlock codeBlock : codeBlockPair.getCodeBlocks()) {
 				lineNumbers.addAll(codeBlock.getLineNumbers());
 			}
 

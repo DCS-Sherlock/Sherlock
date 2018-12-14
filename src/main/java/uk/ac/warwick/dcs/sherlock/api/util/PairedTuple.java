@@ -19,4 +19,9 @@ public class PairedTuple<W, X, Y, Z> implements Serializable {
 	public Tuple<Y, Z> getPoint2() {
 		return point2;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("[(%s), (%s)]", this.point1.toString(), this.point2.toString());
+	}
 }

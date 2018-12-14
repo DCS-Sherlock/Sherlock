@@ -9,33 +9,34 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 
 @Controller
 public class WorkspacesController {
+
 	public WorkspacesController() {
 		EventBus.registerEventSubscriber(this);
 	}
 
-	@RequestMapping("/dashboard/workspaces")
-	public String indexGet() {
-		return "dashboard/workspaces/index";
-	}
-
-	@GetMapping("/dashboard/workspaces/add")
+	@GetMapping ("/dashboard/workspaces/add")
 	public String addGet(Model model) {
-//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponse();
-//		model.addAttribute("detectors", String.join(", ", detectors));
+		//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponse();
+		//		model.addAttribute("detectors", String.join(", ", detectors));
 		return "dashboard/workspaces/add";
 	}
 
-	@PostMapping("/dashboard/workspaces/add")
+	@PostMapping ("/dashboard/workspaces/add")
 	public String addPost() {
 		return "dashboard/workspaces/add";
 	}
 
-	@GetMapping("/dashboard/workspaces/manage")
+	@RequestMapping ("/dashboard/workspaces")
+	public String indexGet() {
+		return "dashboard/workspaces/index";
+	}
+
+	@GetMapping ("/dashboard/workspaces/manage")
 	public String manageGet() {
 		return "dashboard/workspaces/manage";
 	}
 
-	@PostMapping("/dashboard/workspaces/manage")
+	@PostMapping ("/dashboard/workspaces/manage")
 	public String managePost() {
 		return "dashboard/workspaces/manage";
 	}

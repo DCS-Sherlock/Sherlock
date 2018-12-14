@@ -13,6 +13,11 @@ import java.util.*;
 public class VariableExtractor implements IParserPreProcessor {
 
 	@Override
+	public Class<? extends Parser> getParserUsed(Language lang) {
+		return JavaParser.class;
+	}
+
+	@Override
 	public List<IndexedString> processTokens(Lexer lexer, Class<? extends Parser> parserClass, Language lang) {
 		List<IndexedString> fields = new LinkedList<>();
 
@@ -21,19 +26,21 @@ public class VariableExtractor implements IParserPreProcessor {
 			JavaParser parser = new JavaParser(new CommonTokenStream(lexer));
 
 			ParseTreeWalker.DEFAULT.walk(new JavaParserBaseListener() {
-				@Override
+				//globals
+				/*@Override
 				public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
 					fields.add(new IndexedString(ctx.start.getLine(), ctx.getText()));
+				}*/
+
+				//locals
+				@Override
+				public void enterLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
+					fields.add(new IndexedString(ctx.start.getLine(), ctx.getText().split("=")[0]));
 				}
 			}, parser.compilationUnit());
 
-			System.out.println("field -> " + fields.toString());
+			//System.out.println("field -> " + fields.toString());
 		}
 		return fields;
-	}
-
-	@Override
-	public Class<? extends Parser> getParserUsed(Language lang) {
-		return JavaParser.class;
 	}
 }

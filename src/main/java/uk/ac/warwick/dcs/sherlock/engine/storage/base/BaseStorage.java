@@ -45,21 +45,6 @@ public class BaseStorage implements IStorageWrapper {
 		}
 	}
 
-	private void storeIndividualFile(String filename, byte[] fileContent, DBArchive archive) {
-		DBFile file = new DBFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
-		if (!this.filesystem.storeFile(file, fileContent)) {
-			return;
-		}
-
-		DBStudent student = this.database.temporaryStudent();
-		DBWorkspace workspace = this.database.temporaryWorkspace();
-		file.setStudent(student);
-		file.setWorkspace(workspace);
-
-		this.database.storeObject(file);
-		//this.filesystem.loadFile(file);
-	}
-
 	private void storeArchive(String filename, byte[] fileContent) {
 		try {
 			DBArchive topArchive = new DBArchive(filename);
@@ -94,5 +79,20 @@ public class BaseStorage implements IStorageWrapper {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void storeIndividualFile(String filename, byte[] fileContent, DBArchive archive) {
+		DBFile file = new DBFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
+		if (!this.filesystem.storeFile(file, fileContent)) {
+			return;
+		}
+
+		DBStudent student = this.database.temporaryStudent();
+		DBWorkspace workspace = this.database.temporaryWorkspace();
+		file.setStudent(student);
+		file.setWorkspace(workspace);
+
+		this.database.storeObject(file);
+		//this.filesystem.loadFile(file);
 	}
 }

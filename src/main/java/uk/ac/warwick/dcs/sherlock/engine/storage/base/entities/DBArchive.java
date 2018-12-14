@@ -39,18 +39,6 @@ public class DBArchive implements Serializable {
 		this.children = new LinkedList<>();
 	}
 
-	public long getId() {
-		return this.id;
-	}
-
-	public String getFilename() {
-		return filename;
-	}
-
-	public DBArchive getParent() {
-		return this.parent;
-	}
-
 	public void addChild(DBArchive archive) {
 		this.children.add(archive);
 	}
@@ -59,7 +47,19 @@ public class DBArchive implements Serializable {
 		return this.children;
 	}
 
+	public String getFilename() {
+		return filename;
+	}
+
 	public List<DBFile> getFiles() {
 		return this.files;
+	}
+
+	public long getId() {
+		return this.id;
+	}
+
+	public DBArchive getParent() {
+		return this.parent;
 	}
 }

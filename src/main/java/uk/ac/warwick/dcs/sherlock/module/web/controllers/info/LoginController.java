@@ -13,13 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class LoginController {
+
 	@GetMapping ("/login")
 	public String login(HttpServletRequest request) {
 		//Automatically login if running locally
 		if (SherlockEngine.side == Side.CLIENT) {
 			try {
-				request.login("user","password");
-			} catch(ServletException e) { }
+				request.login("user", "password");
+			}
+			catch (ServletException e) {
+			}
 		}
 
 		//Redirect if the user is logged in
