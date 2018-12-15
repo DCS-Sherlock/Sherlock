@@ -17,4 +17,6 @@ public abstract class AbstractModelRawResult implements Serializable {
 	 */
 	public abstract boolean testType(AbstractModelRawResult baseline);
 
+	public abstract boolean isEmpty();
+
 }

@@ -33,6 +33,14 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		this.size = 0;
 	}
 
+	public List<T> getObjects() {
+		return this.objects;
+	}
+
+	public int getSize() {
+		return this.size;
+	}
+
 	public void put(T object, int file1Loc, int file2Loc) {
 		this.put(object, file1Loc, file1Loc, file2Loc, file2Loc);
 	}
@@ -50,17 +58,22 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 
 	@Override
 	public boolean testType(AbstractModelRawResult baseline) {
-
 		if (baseline instanceof SimpleObjectEqualityRawResult) {
 			SimpleObjectEqualityRawResult bl = (SimpleObjectEqualityRawResult) baseline;
-
-			//test the type
-			//bl
+			return bl.getObjects().get(0).getClass().equals(this.getObjects().get(0).getClass());
 		}
 
 		return false;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return this.size <= 0;
+	}
+
+
+
+	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < this.size; i++) {

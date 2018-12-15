@@ -60,10 +60,12 @@ public class TestController {
 
 		Path path1 = Paths.get(form.getFilename1());
 		Path path2 = Paths.get(form.getFilename2());
+		Path path3 = Paths.get(form.getFilename1());
+		Path path4 = Paths.get(form.getFilename2());
 
 		if (Files.isRegularFile(path1) && Files.isRegularFile(path2)) {
 			try {
-				List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile(form.getFilename1()), new TestResultsFactory.tmpFile(form.getFilename2())));
+				List<ISourceFile> fileList = Collections.synchronizedList(Arrays.asList(new TestResultsFactory.tmpFile(form.getFilename1()), new TestResultsFactory.tmpFile(form.getFilename2()), new TestResultsFactory.tmpFile(form.getFilename1()), new TestResultsFactory.tmpFile(form.getFilename2())));
 				result = TestResultsFactory.buildTestResults(fileList, TestDetector.class);
 			}
 			catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {

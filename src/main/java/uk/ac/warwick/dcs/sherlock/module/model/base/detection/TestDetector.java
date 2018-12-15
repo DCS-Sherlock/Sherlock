@@ -61,10 +61,13 @@ public class TestDetector extends AbstractPairwiseDetector {
 			List<IndexedString> linesF1 = this.file1.getPreProcessedLines("variables");
 			List<IndexedString> linesF2 = this.file2.getPreProcessedLines("variables");
 
+			List<Integer> usedIndexesF2 = new LinkedList<>();
+
 			SimpleObjectEqualityRawResult<String> res = new SimpleObjectEqualityRawResult<>(this.file1.getFile(), this.file2.getFile(), linesF1.size(), linesF2.size());
 
 			for (IndexedString checkLine : linesF1) {
-				linesF2.stream().filter(x -> x.valueEquals(checkLine)).peek(x -> res.put(checkLine.getValue(), checkLine.getKey(), x.getKey())).findFirst().ifPresent(linesF2::remove);
+				linesF2.stream().filter(x -> x.valueEquals(checkLine) && !usedIndexesF2.contains(x.getKey())).peek(x -> res.put(checkLine.getValue(), checkLine.getKey(), x.getKey()))
+						.findFirst().ifPresent(x -> usedIndexesF2.add(x.getKey()));
 			}
 
 			this.result = res;

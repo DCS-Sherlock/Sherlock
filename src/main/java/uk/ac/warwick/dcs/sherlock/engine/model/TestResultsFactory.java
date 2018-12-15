@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine.model;
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.*;
 import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
@@ -92,7 +93,33 @@ public class TestResultsFactory {
 
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
-		return workers.stream().map(IDetector.IDetectorWorker::getRawResult).map(Objects::toString).collect(Collectors.joining("\n----\n"));
+
+		List<AbstractModelRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+		boolean isValid = true;
+		for (int i = 1; i < raw.size(); i++) {
+			if (!raw.get(i).testType(raw.get(0))) {
+				isValid = false;
+			}
+		}
+
+		if (!isValid) {
+			System.out.println("Invalid raw result found");
+			return "invalid";
+		}
+
+		/*for (AbstractModelRawResult r : raw) {
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(r);
+				oos.close();
+				System.out.println(Base64.getEncoder().encodeToString(baos.toByteArray()));
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}*/
+		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 
 	public static class tmpFile implements ISourceFile {
