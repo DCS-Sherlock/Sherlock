@@ -13,6 +13,11 @@ plugins {
 
 apply plugin: 'project-report'
 
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+
 repositories {
     maven {
         url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
@@ -95,7 +100,7 @@ idea {
 group = 'uk.ac.warwick.dcs.sherlock'
 version = "release"
 
-println System.env.SHERLOCK_RELEASE
+//typically don't set this env var, used for travis override since there is a grgit bug and a version number is not requried anyway
 if (grgit != null && System.env.SHERLOCK_RELEASE != "1") {
     project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
     project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
