@@ -1,11 +1,10 @@
 language: java
-install: true
+install: echo "skip 'gradle assemble' step"
 jdk:
 - oraclejdk8
 - oraclejdk9
 - oraclejdk11
-script:
-- "./gradlew build -s"
+script: "./gradlew build --scan -s --continue"
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

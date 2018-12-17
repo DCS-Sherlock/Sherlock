@@ -95,7 +95,7 @@ idea {
 group = 'uk.ac.warwick.dcs.sherlock'
 version = "release"
 
-if (grgit != null) {
+if (grgit != null && System.env.travis != true) {
     project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
     project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
     project.version = "${project.ext.lastTag}.${project.count}"
