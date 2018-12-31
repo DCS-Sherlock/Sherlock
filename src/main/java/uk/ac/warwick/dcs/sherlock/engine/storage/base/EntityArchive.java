@@ -1,49 +1,49 @@
-package uk.ac.warwick.dcs.sherlock.engine.storage.base.entities;
+package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 @Entity (name = "Archive")
-public class DBArchive implements Serializable {
+public class EntityArchive implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue //(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	private String filename;
 
 	@ManyToOne (fetch = FetchType.LAZY)
-	private DBArchive parent;
+	private EntityArchive parent;
 
 	@OneToMany (mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<DBArchive> children;
+	private List<EntityArchive> children;
 
 	@OneToMany (mappedBy = "archive", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<DBFile> files;
+	private List<EntityFile> files;
 
-	public DBArchive() {
+	public EntityArchive() {
 		super();
 	}
 
-	public DBArchive(String filename) {
+	public EntityArchive(String filename) {
 		this(filename, null);
 	}
 
-	public DBArchive(String filename, DBArchive archive) {
+	public EntityArchive(String filename, EntityArchive archive) {
 		super();
 		this.filename = filename;
 		this.parent = archive;
 		this.children = new LinkedList<>();
 	}
 
-	public void addChild(DBArchive archive) {
+	public void addChild(EntityArchive archive) {
 		this.children.add(archive);
 	}
 
-	public List<DBArchive> getChildren() {
+	public List<EntityArchive> getChildren() {
 		return this.children;
 	}
 
@@ -51,7 +51,7 @@ public class DBArchive implements Serializable {
 		return filename;
 	}
 
-	public List<DBFile> getFiles() {
+	public List<EntityFile> getFiles() {
 		return this.files;
 	}
 
@@ -59,7 +59,7 @@ public class DBArchive implements Serializable {
 		return this.id;
 	}
 
-	public DBArchive getParent() {
+	public EntityArchive getParent() {
 		return this.parent;
 	}
 }

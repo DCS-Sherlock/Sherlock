@@ -1,26 +1,23 @@
-package uk.ac.warwick.dcs.sherlock.engine.storage.base.entities;
+package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity (name = "File")
-public class DBFile implements Serializable {
+public class EntityFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue //(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@ManyToOne (fetch = FetchType.LAZY, optional = false)
-	private DBStudent student;
-
-	@ManyToOne (fetch = FetchType.LAZY, optional = false)
-	private DBWorkspace workspace;
+	private EntityWorkspace workspace;
 
 	@ManyToOne (fetch = FetchType.LAZY)
-	private DBArchive archive;
+	private EntityArchive archive;
 
 	private String filename;
 	private String extension;
@@ -29,27 +26,26 @@ public class DBFile implements Serializable {
 	private String hash;
 	private byte[] secure;
 
-	public DBFile() {
+	public EntityFile() {
 		super();
 	}
 
-	public DBFile(String filename, String extension, Timestamp timestamp) {
+	public EntityFile(String filename, String extension, Timestamp timestamp) {
 		this(filename, extension, timestamp, null);
 	}
 
-	public DBFile(String filename, String extension, Timestamp timestamp, DBArchive archive) {
+	public EntityFile(String filename, String extension, Timestamp timestamp, EntityArchive archive) {
 		super();
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
 		this.hash = null;
 		this.secure = null;
-		this.student = null;
 		this.workspace = null;
 		this.archive = archive;
 	}
 
-	public DBArchive getArchive() {
+	public EntityArchive getArchive() {
 		return archive;
 	}
 
@@ -81,23 +77,15 @@ public class DBFile implements Serializable {
 		this.secure = secure;
 	}
 
-	public DBStudent getStudent() {
-		return student;
-	}
-
-	public void setStudent(DBStudent student) {
-		this.student = student;
-	}
-
 	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 
-	public DBWorkspace getWorkspace() {
+	public EntityWorkspace getWorkspace() {
 		return workspace;
 	}
 
-	public void setWorkspace(DBWorkspace workspace) {
+	public void setWorkspace(EntityWorkspace workspace) {
 		this.workspace = workspace;
 	}
 }

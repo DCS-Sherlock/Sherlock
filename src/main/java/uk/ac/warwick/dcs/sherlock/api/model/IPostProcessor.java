@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelProcessedResults;
 
 import java.lang.annotation.*;
 import java.util.*;
@@ -13,7 +13,7 @@ public interface IPostProcessor {
 	/**
 	 * Run the post processing and return a data item with the final results in the correct format
 	 */
-	ModelProcessedResults processResults();
+	AbstractModelProcessedResults processResults();
 
 	/**
 	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float or int.

@@ -2,11 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBArchive;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBWorkspace;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,15 +14,19 @@ import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
 
+	static BaseStorage instance;
+
 	private EmbeddedDatabase database;
-	private FilesystemStorage filesystem;
+	private BaseStorageFilesystem filesystem;
 
 	public BaseStorage() {
+		instance = this;
+
 		this.database = new EmbeddedDatabase();
-		this.filesystem = new FilesystemStorage();
+		this.filesystem = new BaseStorageFilesystem();
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
-		List<DBFile> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", DBFile.class));
+		List<EntityFile> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class));
 		if (orphans != null && orphans.size() > 0) {
 			this.database.removeObject(orphans);
 		}
@@ -45,23 +47,33 @@ public class BaseStorage implements IStorageWrapper {
 		}
 	}
 
+	@Override
+	public IWorkspace createWorkspace() {
+		return null;
+	}
+
+	@Override
+	public Class<? extends AbstractModelProcessedResults> getModelProcessedResultsClass() {
+		return null;
+	}
+
 	private void storeArchive(String filename, byte[] fileContent) {
 		try {
-			DBArchive topArchive = new DBArchive(filename);
+			EntityArchive topArchive = new EntityArchive(filename);
 			this.database.storeObject(topArchive);
 
 			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
 			ZipEntry zipEntry = zis.getNextEntry();
-			DBArchive curArchive = topArchive;
+			EntityArchive curArchive = topArchive;
 
 			while (zipEntry != null) {
 				if (zipEntry.isDirectory()) {
 					String[] dirs = FilenameUtils.separatorsToUnix(zipEntry.getName()).split("/");
 					curArchive = topArchive;
 					for (String dir : dirs) {
-						DBArchive nextArch = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getFilename().equals(dir)).findAny().orElse(null);
+						EntityArchive nextArch = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getFilename().equals(dir)).findAny().orElse(null);
 						if (nextArch == null) {
-							nextArch = new DBArchive(dir, curArchive);
+							nextArch = new EntityArchive(dir, curArchive);
 							curArchive.addChild(nextArch);
 							this.database.storeObject(nextArch);
 						}
@@ -81,15 +93,13 @@ public class BaseStorage implements IStorageWrapper {
 		}
 	}
 
-	private void storeIndividualFile(String filename, byte[] fileContent, DBArchive archive) {
-		DBFile file = new DBFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
+	private void storeIndividualFile(String filename, byte[] fileContent, EntityArchive archive) {
+		EntityFile file = new EntityFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}
 
-		DBStudent student = this.database.temporaryStudent();
-		DBWorkspace workspace = this.database.temporaryWorkspace();
-		file.setStudent(student);
+		EntityWorkspace workspace = this.database.temporaryWorkspace();
 		file.setWorkspace(workspace);
 
 		this.database.storeObject(file);

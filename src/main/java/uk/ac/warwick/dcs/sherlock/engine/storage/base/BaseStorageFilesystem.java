@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBArchive;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBFile;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -27,9 +25,9 @@ import java.security.spec.KeySpec;
 import java.util.*;
 import java.util.stream.*;
 
-public class FilesystemStorage {
+public class BaseStorageFilesystem {
 
-	private static Logger logger = LoggerFactory.getLogger(FilesystemStorage.class);
+	private static Logger logger = LoggerFactory.getLogger(BaseStorageFilesystem.class);
 
 	/**
 	 * Loads a file from the filesystem
@@ -38,7 +36,7 @@ public class FilesystemStorage {
 	 *
 	 * @return
 	 */
-	InputStream loadFile(DBFile file) {
+	InputStream loadFile(EntityFile file) {
 		File fileToLoad = this.getFileFromIdentifier(this.computeFileIdentifier(file));
 		if (!fileToLoad.exists()) {
 			logger.error("File not in storage");
@@ -76,7 +74,7 @@ public class FilesystemStorage {
 	 *
 	 * @return successful
 	 */
-	boolean storeFile(DBFile file, byte[] fileContent) {
+	boolean storeFile(EntityFile file, byte[] fileContent) {
 		file.setHash(DigestUtils.sha512Hex(fileContent));
 
 		File fileToStore = this.getFileFromIdentifier(this.computeFileIdentifier(file));
@@ -106,7 +104,7 @@ public class FilesystemStorage {
 		return true;
 	}
 
-	List<DBFile> validateFileStore(List<DBFile> allFiles) {
+	List<EntityFile> validateFileStore(List<EntityFile> allFiles) {
 		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
 
 		List<String> filesInStore;
@@ -117,8 +115,8 @@ public class FilesystemStorage {
 			return null;
 		}
 
-		List<DBFile> orphanRecords = new LinkedList<>();
-		for (DBFile f : allFiles) {
+		List<EntityFile> orphanRecords = new LinkedList<>();
+		for (EntityFile f : allFiles) {
 			String tmp = this.computeLocator(this.computeFileIdentifier(f));
 			if (filesInStore.contains(tmp)) {
 				filesInStore.remove(tmp);
@@ -139,7 +137,7 @@ public class FilesystemStorage {
 		return orphanRecords;
 	}
 
-	private String computeFileIdentifier(DBFile file) {
+	private String computeFileIdentifier(EntityFile file) {
 		String str = this.getArchiveName(file.getArchive()) + file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
 		str = StringUtils.rightPad(str, 48, str);
 		return DigestUtils.sha1Hex(str.substring(0, 48));
@@ -149,7 +147,7 @@ public class FilesystemStorage {
 		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2, 4) + File.separator + fileIdentifier;
 	}
 
-	private String getArchiveName(DBArchive archive) {
+	private String getArchiveName(EntityArchive archive) {
 		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
 	}
 
@@ -158,7 +156,7 @@ public class FilesystemStorage {
 		return new File(path);
 	}
 
-	private SecretKey getKey(DBFile file) {
+	private SecretKey getKey(EntityFile file) {
 		try {
 			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
 			KeySpec spec = new PBEKeySpec(file.getHash().toCharArray(), String.format("%08d", file.getTimestamp().getTime() % 100000000).getBytes(), 65536, 192);
