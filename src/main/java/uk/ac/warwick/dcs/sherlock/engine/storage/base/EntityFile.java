@@ -65,7 +65,7 @@ public class EntityFile implements Serializable {
 		this.hash = hash;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 

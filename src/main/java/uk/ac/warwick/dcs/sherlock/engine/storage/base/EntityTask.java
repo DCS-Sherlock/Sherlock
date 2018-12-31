@@ -61,6 +61,10 @@ public class EntityTask implements ITask, Serializable {
 		return null;
 	}
 
+	public long getId() {
+		return id;
+	}
+
 	@Override
 	public IJob getJob() {
 		return this.job;
