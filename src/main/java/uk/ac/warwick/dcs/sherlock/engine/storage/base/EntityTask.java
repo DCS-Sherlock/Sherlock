@@ -6,13 +6,15 @@ import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Entity (name = "Task")
-public class EntityTask implements ITask, Serializable {
+public class EntityTask implements ITask, IStorable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = LoggerFactory.getLogger(EntityTask.class);
@@ -27,6 +29,10 @@ public class EntityTask implements ITask, Serializable {
 	private String detector;
 	private int rank;
 
+	private Timestamp timestamp;
+	private String hash;
+	private byte[] secure;
+
 	// When adding check that all same type
 	// Store as a file in case too large for db field, store refs to files in this object
 	private transient List<AbstractModelRawResult> rawResults;
@@ -37,16 +43,19 @@ public class EntityTask implements ITask, Serializable {
 		super();
 	}
 
+	private void deserialize() {
+		BaseStorage.instance.filesystem.loadTaskRawResults(this);
+		this.rawResults.forEach(System.out::println);
+	}
+
 	public EntityTask(EntityJob job, IDetector detector) {
 		super();
 		this.job = job;
 		this.detector = detector.getClass().getName();
 		this.rank = detector.getRank().ordinal();
-		this.rawResults = new LinkedList<>();
-	}
-
-	public void deserialize() {
-
+		this.timestamp = new Timestamp(System.currentTimeMillis());
+		this.hash = null;
+		this.secure = null;
 	}
 
 	@Override
@@ -61,13 +70,24 @@ public class EntityTask implements ITask, Serializable {
 		return null;
 	}
 
-	public long getId() {
-		return id;
+	@Override
+	public String getHash() {
+		return this.hash;
+	}
+
+	@Override
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	@Override
 	public IJob getJob() {
 		return this.job;
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
 	}
 
 	@Override
@@ -77,11 +97,41 @@ public class EntityTask implements ITask, Serializable {
 
 	@Override
 	public List<AbstractModelRawResult> getRawResults() {
+		if (this.rawResults == null && this.hash != null && this.hash.length() > 0) {
+			this.deserialize();
+		}
+
 		return this.rawResults;
 	}
 
-	public void serialize() {
+	@Override
+	public void setRawResults(List<AbstractModelRawResult> rawResults) {
+		this.rawResults = rawResults;
+		this.serialize();
+	}
 
+	private void serialize() {
+		BaseStorage.instance.filesystem.storeTaskRawResults(this);
+		BaseStorage.instance.database.storeObject(this);
+	}
+
+	@Override
+	public byte[] getSecureParam() {
+		return this.secure;
+	}
+
+	@Override
+	public void setSecureParam(byte[] secure) {
+		this.secure = secure;
+	}
+
+	@Override
+	public Timestamp getTimestamp() {
+		return this.timestamp;
+	}
+
+	void setRawResultsNoStore(List<AbstractModelRawResult> rawResults) {
+		this.rawResults = rawResults;
 	}
 
 }

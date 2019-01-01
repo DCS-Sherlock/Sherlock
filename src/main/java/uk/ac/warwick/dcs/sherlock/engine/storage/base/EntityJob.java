@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
+import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
@@ -36,21 +37,26 @@ public class EntityJob implements IJob, Serializable {
 		this.filesPresent = new long[workspace.getFiles().size()];
 
 		for (int i = 0; i < this.filesPresent.length; i++) {
-			this.filesPresent[i] = workspace.getFiles().get(i).getId();
+			this.filesPresent[i] = workspace.getFiles().get(i).getPersistentId();
 		}
 	}
 
 	@Override
-	public ITask createTask() {
-		return null;
+	public ITask createTask(IDetector detector) {
+		EntityTask newTask = new EntityTask(this, detector);
+		this.tasks.add(newTask);
+		BaseStorage.instance.database.storeObject(newTask);
+		return newTask;
 	}
 
-	public long getId() {
+	@Override
+	public long getPersistentId() {
 		return this.id;
 	}
 
 	@Override
 	public List<ITask> getTasks() {
+		BaseStorage.instance.database.refreshObject(this);
 		return new ArrayList<>(this.tasks);
 	}
 

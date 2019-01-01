@@ -11,7 +11,11 @@ public interface ITask {
 
 	IJob getJob();
 
+	long getPersistentId();
+
 	IDetector.Rank getRank();
 
 	List<AbstractModelRawResult> getRawResults();
+
+	void setRawResults(List<AbstractModelRawResult> rawResults);
 }

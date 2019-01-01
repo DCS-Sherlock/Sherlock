@@ -13,10 +13,10 @@ plugins {
 
 apply plugin: 'project-report'
 
-buildScan {
+/*buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
-}
+}*/
 
 repositories {
     maven {

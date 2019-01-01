@@ -7,11 +7,11 @@ import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -20,10 +20,15 @@ import java.util.stream.*;
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
-	public static String buildTestResults(List<ISourceFile> files, Class<? extends IDetector> algorithm)
-			throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-
+	public static String buildTestResults(Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException {
 		IDetector instance = algorithm.newInstance();
+
+		IWorkspace workspace = SherlockEngine.storage.createWorkspace(); //actually gets the temporary workspace for now!!!!!!!!!!
+		IJob job = workspace.createJob();
+		ITask task = job.createTask(instance);
+
+		List<ISourceFile> files = workspace.getFiles();
+		System.out.println(files.size());
 
 		Class<? extends Lexer> lexerClass = instance.getLexer(Language.JAVA);
 		Class<? extends Parser> parserClass = instance.getParser(Language.JAVA);
@@ -38,7 +43,7 @@ public class TestResultsFactory {
 
 		List<ModelDataItem> inputData = files.parallelStream().map(file -> {
 			try {
-				Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromFileName(file.getFilename())); // build new lexer for each file
+				Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents())); // build new lexer for each file
 				List<? extends Token> tokensMaster = lexer.getAllTokens();
 
 				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
@@ -107,43 +112,8 @@ public class TestResultsFactory {
 			return "invalid";
 		}
 
-		/*for (AbstractModelRawResult r : raw) {
-			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(r);
-				oos.close();
-				System.out.println(Base64.getEncoder().encodeToString(baos.toByteArray()));
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}*/
+		task.setRawResults(raw);
 		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
-	}
-
-	public static class tmpFile implements ISourceFile {
-
-		String filename;
-
-		public tmpFile(String filename) {
-			this.filename = filename;
-		}
-
-		@Override
-		public InputStream getFileContents() {
-			return null;
-		}
-
-		@Override
-		public String getFilename() {
-			return this.filename;
-		}
-
-		@Override
-		public long getPersistentId() {
-			return 0;
-		}
 	}
 
 }

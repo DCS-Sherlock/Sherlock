@@ -1,11 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
+import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
+
 import javax.persistence.*;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity (name = "File")
-public class EntityFile implements Serializable {
+public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,36 +57,68 @@ public class EntityFile implements Serializable {
 		return this.extension;
 	}
 
+	@Override
+	public InputStream getFileContents() {
+		return BaseStorage.instance.filesystem.loadFile(this);
+	}
+
+	@Override
+	public String getFileDisplayName() {
+		StringBuilder build = new StringBuilder();
+		if (this.archive != null) {
+			this.getFileDisplayNameRecurse(build, this.archive);
+		}
+		build.append(this.filename).append(".").append(this.extension);
+		return build.toString();
+	}
+
+	private void getFileDisplayNameRecurse (StringBuilder build, EntityArchive archive) {
+		if (archive.getParent() != null) {
+			this.getFileDisplayNameRecurse(build, archive.getParent());
+		}
+		build.append(archive.getFilename()).append("/");
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
+	}
+
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 
+	@Override
 	public String getHash() {
-		return hash;
+		return this.hash;
 	}
 
+	@Override
 	public void setHash(String hash) {
 		this.hash = hash;
 	}
 
 	public long getId() {
-		return id;
+		return this.id;
 	}
 
+	@Override
 	public byte[] getSecureParam() {
-		return secure;
+		return this.secure;
 	}
 
+	@Override
 	public void setSecureParam(byte[] secure) {
 		this.secure = secure;
 	}
 
+	@Override
 	public Timestamp getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 
 	public EntityWorkspace getWorkspace() {
-		return workspace;
+		return this.workspace;
 	}
 
 	public void setWorkspace(EntityWorkspace workspace) {

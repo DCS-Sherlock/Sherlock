@@ -44,6 +44,7 @@ public class EntityArchive implements Serializable {
 	}
 
 	public List<EntityArchive> getChildren() {
+		BaseStorage.instance.database.refreshObject(this);
 		return this.children;
 	}
 
@@ -52,6 +53,7 @@ public class EntityArchive implements Serializable {
 	}
 
 	public List<EntityFile> getFiles() {
+		BaseStorage.instance.database.refreshObject(this);
 		return this.files;
 	}
 

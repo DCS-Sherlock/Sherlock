@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
@@ -10,14 +12,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.*;
 import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
 
 	static BaseStorage instance;
+	private static Logger logger = LoggerFactory.getLogger(BaseStorage.class);
 
-	private EmbeddedDatabase database;
-	private BaseStorageFilesystem filesystem;
+	EmbeddedDatabase database;
+	BaseStorageFilesystem filesystem;
 
 	public BaseStorage() {
 		instance = this;
@@ -26,15 +30,29 @@ public class BaseStorage implements IStorageWrapper {
 		this.filesystem = new BaseStorageFilesystem();
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
-		List<EntityFile> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class));
+		List<Object> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
 		if (orphans != null && orphans.size() > 0) {
 			this.database.removeObject(orphans);
 		}
+		this.database.runQuery("SELECT j from Job j", EntityJob.class).stream().filter(j -> j.getTasks().size() == 0).peek(j -> this.database.removeObject(j)).findAny().ifPresent(x -> logger.warn("removing jobs with no tasks"));
+
+		List<EntityTask> tasks = this.database.runQuery("SELECT t from Task t", EntityTask.class);
+		logger.warn(tasks.get(0).getRawResults().stream().map(Objects::toString).collect(Collectors.joining("\n----\n")));
 	}
 
 	@Override
 	public void close() {
 		this.database.close();
+	}
+
+	@Override
+	public IWorkspace createWorkspace() {
+		return this.database.temporaryWorkspace();
+	}
+
+	@Override
+	public Class<? extends AbstractModelProcessedResults> getModelProcessedResultsClass() {
+		return null;
 	}
 
 	@Override
@@ -45,16 +63,6 @@ public class BaseStorage implements IStorageWrapper {
 		else {
 			this.storeIndividualFile(filename, fileContent, null);
 		}
-	}
-
-	@Override
-	public IWorkspace createWorkspace() {
-		return null;
-	}
-
-	@Override
-	public Class<? extends AbstractModelProcessedResults> getModelProcessedResultsClass() {
-		return null;
 	}
 
 	private void storeArchive(String filename, byte[] fileContent) {
@@ -103,6 +111,5 @@ public class BaseStorage implements IStorageWrapper {
 		file.setWorkspace(workspace);
 
 		this.database.storeObject(file);
-		//this.filesystem.loadFile(file);
 	}
 }

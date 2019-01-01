@@ -1,11 +1,16 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
-		import java.util.*;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
+
+import java.util.*;
 
 public interface IWorkspace {
 
 	IJob createJob();
 
+	List<ISourceFile> getFiles();
+
 	List<IJob> getJobs();
 
+	long getPersistentId();
 }

@@ -20,6 +20,7 @@ public class EmbeddedDatabase {
 
 		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
 		this.em = this.dbFactory.createEntityManager();
+		this.em.flush();
 	}
 
 	public void close() {
@@ -61,10 +62,12 @@ public class EmbeddedDatabase {
 	}
 
 	public <X> List<X> runQuery(String query, Class<X> xclass) {
-		em.getTransaction().begin();
 		List<X> q = em.createQuery(query, xclass).getResultList();
-		em.getTransaction().commit();
 		return q;
+	}
+
+	public void refreshObject(Object obj) {
+		this.em.refresh(obj);
 	}
 
 	public void storeObject(Object obj) {
@@ -107,7 +110,7 @@ public class EmbeddedDatabase {
 			em.getTransaction().begin();
 			w = em.createQuery("SELECT w FROM Workspace w", EntityWorkspace.class).getResultList();
 			if (w.size() == 0) {
-				w.add(new EntityWorkspace());
+				w.add(new EntityWorkspace("Temporary Workspace"));
 				em.persist(w.get(0));
 			}
 			em.getTransaction().commit();
@@ -117,7 +120,6 @@ public class EmbeddedDatabase {
 				em.getTransaction().rollback();
 			}
 		}
-
 		return w.get(0);
 	}
 
