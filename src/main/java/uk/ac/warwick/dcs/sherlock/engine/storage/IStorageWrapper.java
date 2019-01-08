@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResult;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 
 public interface IStorageWrapper {
@@ -11,6 +11,6 @@ public interface IStorageWrapper {
 
 	IWorkspace createWorkspace();
 
-	Class<? extends AbstractModelProcessedResults> getModelProcessedResultsClass();
+	Class<? extends IModelProcessedResult> getModelProcessedResultsClass();
 
 }

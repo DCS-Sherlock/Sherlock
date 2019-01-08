@@ -37,7 +37,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	// Store as a file in case too large for db field, store refs to files in this object
 	private transient List<AbstractModelRawResult> rawResults;
 
-	//private List<ModelProcessedResults> listFinalResults;
+	//private List<ModelProcessedResults> finalResults;
 
 	public EntityTask() {
 		super();

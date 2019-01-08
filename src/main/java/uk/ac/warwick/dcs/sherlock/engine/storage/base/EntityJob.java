@@ -27,6 +27,9 @@ public class EntityJob implements IJob, Serializable {
 	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityTask> tasks = new ArrayList<>();
 
+	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<EntityResult> results = new ArrayList<>();
+
 	public EntityJob() {
 		super();
 	}

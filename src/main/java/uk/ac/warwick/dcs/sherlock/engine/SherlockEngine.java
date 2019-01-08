@@ -82,6 +82,15 @@ public class SherlockEngine {
 		SherlockEngine.loadConfiguration();
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
+		try {
+			Field field = uk.ac.warwick.dcs.sherlock.api.common.SherlockRegistry.class.getDeclaredField("modelProcessedResultsClass");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.storage.getModelProcessedResultsClass());
+		}
+		catch (NoSuchFieldException | IllegalAccessException e) {
+			logger.error("Could not set processed results class", e);
+		}
+
 		AnnotationLoader modules = new AnnotationLoader();
 		modules.registerModules();
 		modules.registerRequestProcessors();
