@@ -2,23 +2,26 @@ package uk.ac.warwick.dcs.sherlock.module.web.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+
+import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private Environment environment;
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		if (SherlockEngine.side == Side.CLIENT) {
-			auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER", "LOCAL_USER");
-		}
-		else {
-			auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER");
-		}
+        if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
+            auth.inMemoryAuthentication().withUser("local_user").password("{noop}local_password").roles("USER", "LOCAL_USER");
+        } else {
+            auth.inMemoryAuthentication().withUser("server_user").password("{noop}server_password").roles("USER");
+        }
 	}
 
 	@Override

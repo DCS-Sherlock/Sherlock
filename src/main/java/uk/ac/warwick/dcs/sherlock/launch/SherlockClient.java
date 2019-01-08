@@ -21,7 +21,14 @@ public class SherlockClient {
 
 	public static void main(String[] args) {
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
-		new SpringApplicationBuilder(SherlockServer.class).headless(false).run(args);
+
+		//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
+		String override = System.getProperty("override");
+		if (override != null && override.equals("True")) {
+			new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("server").run(args);
+		} else {
+			new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("client").run(args);
+		}
 	}
 
 	@EventHandler

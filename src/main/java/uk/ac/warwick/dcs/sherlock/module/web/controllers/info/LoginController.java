@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.info;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,19 +12,22 @@ import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 @Controller
 public class LoginController {
 
+	@Autowired
+	private Environment environment;
+
 	@GetMapping ("/login")
 	public String login(HttpServletRequest request) {
 		//Automatically login if running locally
-		if (SherlockEngine.side == Side.CLIENT) {
+		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
 			try {
-				request.login("user", "password");
+				request.login("local_user", "local_password");
 			}
-			catch (ServletException e) {
-			}
+			catch (ServletException e) { }
 		}
 
 		//Redirect if the user is logged in
@@ -37,7 +42,7 @@ public class LoginController {
 	@GetMapping ("/register")
 	public String register() {
 		//If running locally, redirect to login page
-		if (SherlockEngine.side == Side.CLIENT) {
+		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
 			return "redirect:login";
 		}
 

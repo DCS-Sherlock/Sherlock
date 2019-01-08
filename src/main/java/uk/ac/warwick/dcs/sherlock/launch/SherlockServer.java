@@ -44,6 +44,7 @@ public class SherlockServer extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		engine = new SherlockEngine(Side.SERVER);
+		application.profiles("server");
 		return application.sources(SherlockServer.class);
 	}
 }
