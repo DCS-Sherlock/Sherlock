@@ -36,7 +36,7 @@ public class EntityResult implements Serializable {
 
 
 	@Embeddable
-	public class ResultTask implements Serializable {
+	private class ResultTask implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private EntityTask task;
@@ -44,11 +44,13 @@ public class EntityResult implements Serializable {
 		private float taskScore;
 		private Map<EntityFile, Float> fileScores;
 
-		private List<ResultBlock> blocks;
+		private List<ResultBlockFamily> blocks;
+
+		// Maybe add a mapping for getting the blocks for a specific file, or write a query to the same effect
 	}
 
 	@Embeddable
-	public class ResultBlockFamily implements Serializable {
+	private class ResultBlockFamily implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private ResultBlock parent;
@@ -56,7 +58,7 @@ public class EntityResult implements Serializable {
 	}
 
 	@Embeddable
-	public class ResultBlock implements Serializable {
+	private class ResultBlock implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private EntityFile file;

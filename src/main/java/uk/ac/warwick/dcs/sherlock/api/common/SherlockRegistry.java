@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.api.common;
 import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResult;
 
 /**
  * Static access wrapper for the internal registry, should be used on initialisation to add components into the engine
@@ -11,7 +10,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResult;
 public class SherlockRegistry {
 
 	private static IRegistry registry;
-	private static Class<? extends IModelProcessedResult> modelProcessedResultsClass;
 
 	/**
 	 * Registers an {@link IDetector} implementation to Sherlock
@@ -32,9 +30,5 @@ public class SherlockRegistry {
 			return registry.registerPostProcessor(postProcessor, handledResultTypes);
 		}
 		return false;
-	}
-
-	public IModelProcessedResult getModelProcessedResultInstance() throws IllegalAccessException, InstantiationException {
-		return modelProcessedResultsClass.newInstance();
 	}
 }

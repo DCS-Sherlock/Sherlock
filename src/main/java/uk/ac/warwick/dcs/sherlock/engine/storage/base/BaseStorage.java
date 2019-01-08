@@ -4,7 +4,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -50,7 +51,12 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public Class<? extends IModelProcessedResult> getModelProcessedResultsClass() {
+	public Class<? extends IModelProcessedResults> getModelProcessedResultsClass() {
+		return null;
+	}
+
+	@Override
+	public ISourceFile getSourceFile(long persistentId) {
 		return null;
 	}
 
