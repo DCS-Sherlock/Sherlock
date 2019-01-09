@@ -5,7 +5,7 @@ plugins {
     id "java"
     id "antlr"
     id "war"
-    id "org.springframework.boot" version "2.0.6.RELEASE"
+    id "org.springframework.boot" version "2.1.1.RELEASE"
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "org.ajoberstar.grgit" version "2.3.0"
     id "idea"
@@ -45,12 +45,18 @@ dependencies {
             'org.yaml:snakeyaml:1.23',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-mail',
+            'org.springframework.boot:spring-boot-starter-jdbc',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
             'org.springframework.boot:spring-boot-starter-log4j2',
             'org.springframework.boot:spring-boot-starter-thymeleaf',
             'org.springframework.boot:spring-boot-starter-security',
             'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect',
-            'org.thymeleaf.extras:thymeleaf-extras-springsecurity4',
-            'org.springframework.boot:spring-boot-devtools'
+            'org.thymeleaf.extras:thymeleaf-extras-springsecurity5',
+            'org.springframework.boot:spring-boot-devtools',
+            'javax.xml.bind:jaxb-api:2.3.0',
+            'com.h2database:h2',
+            'mysql:mysql-connector-java'
     )
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
@@ -59,6 +65,7 @@ dependencies {
 
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.security:spring-security-test',
             'org.junit.jupiter:junit-jupiter-api:5.3.1',
             'org.junit.jupiter:junit-jupiter-params:5.3.1',
             'commons-io:commons-io:2.6'

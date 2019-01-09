@@ -15,7 +15,7 @@ public class InfoController {
 	//	private String result = "";
 
 	public InfoController() {
-		EventBus.registerEventSubscriber(this);
+//		EventBus.registerEventSubscriber(this);
 	}
 
 	//	@EventHandler

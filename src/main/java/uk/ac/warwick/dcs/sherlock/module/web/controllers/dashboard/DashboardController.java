@@ -15,5 +15,4 @@ public class DashboardController {
 	public String index() {
 		return "dashboard/index";
 	}
-
 }

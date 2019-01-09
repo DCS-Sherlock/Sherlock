@@ -25,7 +25,7 @@ public class LoginController {
 		//Automatically login if running locally
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
 			try {
-				request.login("local_user", "local_password");
+				request.login("local.sherlock@example.com", "local_password");
 			}
 			catch (ServletException e) { }
 		}
