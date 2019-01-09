@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 
 import java.util.*;
@@ -14,7 +14,7 @@ public class SimpleObjectEquality implements IPostProcessor {
 	}
 
 	@Override
-	public AbstractModelProcessedResults processResults() {
+	public List<IModelProcessedResults> processResults() {
 		return null;
 	}
 }

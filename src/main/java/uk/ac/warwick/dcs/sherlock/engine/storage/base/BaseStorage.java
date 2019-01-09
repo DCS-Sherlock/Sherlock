@@ -4,7 +4,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -12,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.*;
 import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
@@ -36,8 +36,8 @@ public class BaseStorage implements IStorageWrapper {
 		}
 		this.database.runQuery("SELECT j from Job j", EntityJob.class).stream().filter(j -> j.getTasks().size() == 0).peek(j -> this.database.removeObject(j)).findAny().ifPresent(x -> logger.warn("removing jobs with no tasks"));
 
-		List<EntityTask> tasks = this.database.runQuery("SELECT t from Task t", EntityTask.class);
-//		logger.warn(tasks.get(0).getRawResults().stream().map(Objects::toString).collect(Collectors.joining("\n----\n")));
+		//List<EntityTask> tasks = this.database.runQuery("SELECT t from Task t", EntityTask.class);
+		//logger.warn(tasks.get(0).getRawResults().stream().map(Objects::toString).collect(Collectors.joining("\n----\n")));
 	}
 
 	@Override
@@ -51,7 +51,12 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public Class<? extends AbstractModelProcessedResults> getModelProcessedResultsClass() {
+	public Class<? extends IModelProcessedResults> getModelProcessedResultsClass() {
+		return null;
+	}
+
+	@Override
+	public ISourceFile getSourceFile(long persistentId) {
 		return null;
 	}
 

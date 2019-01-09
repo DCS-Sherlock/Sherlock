@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
+import uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.PairedTuple;
@@ -33,12 +34,33 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		this.size = 0;
 	}
 
-	public List<T> getObjects() {
-		return this.objects;
+	public ISourceFile getFile1() {
+		return SherlockHelper.getSourceFile(file1id);
+	}
+
+	public int getFile1NumObjects() {
+		return file1NumObjs;
+	}
+
+	public ISourceFile getFile2() {
+		return SherlockHelper.getSourceFile(file2id);
+	}
+
+	public int getFile2NumObjects() {
+		return file2NumObjs;
+	}
+
+	public List<PairedTuple<Integer, Integer, Integer, Integer>> getLocations() {
+		return this.locations;
 	}
 
 	public int getSize() {
 		return this.size;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.size <= 0;
 	}
 
 	public void put(T object, int file1Loc, int file2Loc) {
@@ -66,12 +88,9 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		return false;
 	}
 
-	@Override
-	public boolean isEmpty() {
-		return this.size <= 0;
+	public List<T> getObjects() {
+		return this.objects;
 	}
-
-
 
 	@Override
 	public String toString() {
