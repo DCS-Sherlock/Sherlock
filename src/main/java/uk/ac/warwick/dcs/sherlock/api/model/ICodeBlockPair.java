@@ -15,10 +15,9 @@ public interface ICodeBlockPair {
 	List<? extends ICodeBlock> getCodeBlocks();
 
 	/**
-	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by
-	 * the algs in the first place.
+	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are detected.
 	 *
-	 * @return the the type of plagiarism that was detected for these blocks of code
+	 * @return the type of plagiarism that was detected for these blocks of code
 	 */
 	DetectionType getDetectionType();
 }

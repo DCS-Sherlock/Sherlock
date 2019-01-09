@@ -12,6 +12,12 @@ public abstract class AbstractReportGenerator {
 	 */
 	protected Map<DetectionType, String> baseDescriptions;
 
+
+	/**
+	 * This constructor populates baseDescriptions with the contents of the provided file.
+	 *
+	 * @param descriptionFileName The name of the file containing the unformatted/non-specific descriptions of different plagiarism types. See the file ReportDescriptions for example.
+	 */
 	public AbstractReportGenerator(String descriptionFileName) {
 		baseDescriptions = new HashMap<DetectionType, String>();
 
@@ -49,5 +55,11 @@ public abstract class AbstractReportGenerator {
 		}
 	}
 
+	/**
+	 * The function that actually generates the report when given the results of the detection algorithm(s).
+	 *
+	 * @param codeBlockPairs A list of all the code blocks between 2 files that the detection algorithms considered similar.
+	 * @return A "finished" report in the form of one long string. There may be additional formatting done outside the ReportGenerator but the text itself should be final.
+	 */
 	public abstract String GenerateReport(List<? extends ICodeBlockPair> codeBlockPairs);
 }
