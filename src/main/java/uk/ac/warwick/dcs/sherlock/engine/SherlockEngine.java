@@ -83,11 +83,7 @@ public class SherlockEngine {
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
 		try {
-			Field field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("modelProcessedResultsClass");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.storage.getModelProcessedResultsClass());
-
-			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("sourceFileHelper");
+			Field field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("sourceFileHelper");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.storage);
 		}

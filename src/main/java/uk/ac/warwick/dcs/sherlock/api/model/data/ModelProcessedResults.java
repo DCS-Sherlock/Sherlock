@@ -1,9 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.api.model.data;
 
+import java.util.*;
+
 // Make interface and make a creator interface in the API
-public interface IModelProcessedResults {
+public class ModelProcessedResults {
 
+	private Map<ISourceFile, ResultFileData> fileMap;
 
+	class ResultFileData {
+
+	}
 
 //THIS WILL CHANGE A LOT AGAIN, DONT USE YET
 //

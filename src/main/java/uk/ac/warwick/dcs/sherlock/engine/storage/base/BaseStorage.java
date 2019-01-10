@@ -4,7 +4,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
@@ -48,11 +47,6 @@ public class BaseStorage implements IStorageWrapper {
 	@Override
 	public IWorkspace createWorkspace() {
 		return this.database.temporaryWorkspace();
-	}
-
-	@Override
-	public Class<? extends IModelProcessedResults> getModelProcessedResultsClass() {
-		return null;
 	}
 
 	@Override
