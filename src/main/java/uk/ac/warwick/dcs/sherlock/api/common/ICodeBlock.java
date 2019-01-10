@@ -13,9 +13,9 @@ public interface ICodeBlock {
 	ISourceFile getFile();
 
 	/**
-	 * @return the percentage score of this block within the group
+	 * @return the score (0 to 1) of this block within the group
 	 *
-	 * Example: 100(%) of this block matches the group
+	 * Example: 1 - all of this block matches the group
 	 */
 	float getBlockScore();
 

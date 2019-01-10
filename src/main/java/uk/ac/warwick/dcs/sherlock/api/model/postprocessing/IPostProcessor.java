@@ -9,6 +9,8 @@ public interface IPostProcessor {
 
 	/**
 	 * Run the post processing and return a data item with the final results in the correct format
+	 *
+	 * TODO: look to make it possible to support multiple scorers in a single PostProcessor depending on the detector used
 	 */
 	ModelTaskProcessedResults processResults();
 

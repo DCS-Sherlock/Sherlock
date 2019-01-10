@@ -14,7 +14,7 @@ public interface ICodeBlockGroup {
 	/**
 	 * Adds a code block to the group
 	 * @param file File containing the block
-	 * @param score percentage score of the block within the group, eg: 100(%) means block exactly matches the other blocks in the group
+	 * @param score score (o to 1) of the block within the group, eg: 1 means block exactly matches the other blocks in the group
 	 * @param startLineNumber first line of the block, [inclusive]
 	 * @param endLineNumber last line of the block, [inclusive]
 	 */
@@ -31,4 +31,9 @@ public interface ICodeBlockGroup {
 	 * @return the the type of plagiarism that was detected for these blocks of code
 	 */
 	DetectionType getDetectionType();
+
+	/**
+	 * @return extra string comment or detail regarding this code block
+	 */
+	String getComment();
 }
