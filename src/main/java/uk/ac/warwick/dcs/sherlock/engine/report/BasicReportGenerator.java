@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.model.AbstractReportGenerator;
-import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlockPair;
+import uk.ac.warwick.dcs.sherlock.api.report.AbstractReportGenerator;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockPair;
 
 import java.util.*;
 

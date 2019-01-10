@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine.core;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
+import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.DetectorParameter;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;

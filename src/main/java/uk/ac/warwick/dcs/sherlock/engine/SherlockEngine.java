@@ -9,6 +9,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
@@ -56,7 +58,7 @@ public class SherlockEngine {
 			java.lang.reflect.Constructor construct = Registry.class.getDeclaredConstructor();
 			construct.setAccessible(true);
 			SherlockEngine.registry = (Registry) construct.newInstance();
-			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockRegistry.class.getDeclaredField("registry");
+			field = SherlockRegistry.class.getDeclaredField("registry");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
 			field = Registry.class.getDeclaredField("instance");
@@ -83,7 +85,7 @@ public class SherlockEngine {
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
 		try {
-			Field field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("sourceFileHelper");
+			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.storage);
 		}

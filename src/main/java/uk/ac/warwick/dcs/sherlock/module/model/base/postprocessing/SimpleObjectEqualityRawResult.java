@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.PairedTuple;
 
 import java.io.Serializable;

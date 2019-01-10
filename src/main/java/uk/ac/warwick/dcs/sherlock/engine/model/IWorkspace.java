@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 
 import java.util.*;
 

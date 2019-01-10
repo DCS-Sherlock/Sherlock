@@ -1,5 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api.model;
+package uk.ac.warwick.dcs.sherlock.api.report;
 
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockPair;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 
 import java.io.BufferedReader;

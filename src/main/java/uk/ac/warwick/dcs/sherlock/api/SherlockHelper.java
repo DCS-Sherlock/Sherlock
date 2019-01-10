@@ -1,7 +1,7 @@
-package uk.ac.warwick.dcs.sherlock.api.common;
+package uk.ac.warwick.dcs.sherlock.api;
 
-import uk.ac.warwick.dcs.sherlock.api.model.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.util.ISourceFileHelper;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 
 public class SherlockHelper {
 

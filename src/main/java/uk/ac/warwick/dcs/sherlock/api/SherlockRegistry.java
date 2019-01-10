@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.common;
+package uk.ac.warwick.dcs.sherlock.api;
 
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;

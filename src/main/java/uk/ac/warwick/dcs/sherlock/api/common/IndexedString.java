@@ -1,4 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api.util;
+package uk.ac.warwick.dcs.sherlock.api.common;
+
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 /**
  * A Tuple of Integer and String, is typically used to associate a string with a file line number within the Sherlock API and Engine

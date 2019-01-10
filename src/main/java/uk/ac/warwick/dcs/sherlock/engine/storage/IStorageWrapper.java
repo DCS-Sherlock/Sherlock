@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage;
 
-import uk.ac.warwick.dcs.sherlock.api.util.ISourceFileHelper;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 
 public interface IStorageWrapper extends ISourceFileHelper {

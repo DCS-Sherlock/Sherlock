@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
