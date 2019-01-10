@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ public interface ITask {
 
 	IDetector.Rank getRank();
 
-	List<AbstractModelRawResult> getRawResults();
+	List<AbstractModelTaskRawResult> getRawResults();
 
-	void setRawResults(List<AbstractModelRawResult> rawResults);
+	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 }

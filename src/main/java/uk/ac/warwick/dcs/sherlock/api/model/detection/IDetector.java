@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
 
 import java.lang.annotation.*;
@@ -134,7 +134,7 @@ public interface IDetector {
 		 *
 		 * @return worker results
 		 */
-		AbstractModelRawResult getRawResult();
+		AbstractModelTaskRawResult getRawResult();
 
 	}
 

@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.model.data;
+package uk.ac.warwick.dcs.sherlock.api.model;
 
 import java.io.InputStream;
 

@@ -1,9 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.ITokenPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ITokenPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 

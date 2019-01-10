@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model;
 
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

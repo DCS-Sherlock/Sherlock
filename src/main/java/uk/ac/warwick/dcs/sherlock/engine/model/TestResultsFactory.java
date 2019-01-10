@@ -1,11 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.model.*;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
@@ -99,7 +100,7 @@ public class TestResultsFactory {
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
 
-		List<AbstractModelRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+		List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 		boolean isValid = true;
 		for (int i = 1; i < raw.size(); i++) {
 			if (!raw.get(i).testType(raw.get(0))) {

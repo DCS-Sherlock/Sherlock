@@ -4,12 +4,12 @@ import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
-import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.DetectorParameter;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -109,7 +109,7 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelRawResult> handledResultTypes) {
+	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes) {
 
 		// check the results are serializable
 		return false;

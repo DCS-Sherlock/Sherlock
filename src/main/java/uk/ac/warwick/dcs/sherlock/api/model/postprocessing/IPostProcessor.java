@@ -1,19 +1,16 @@
-package uk.ac.warwick.dcs.sherlock.api.model;
-
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelProcessedResults;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
 import java.lang.annotation.*;
 import java.util.*;
 
 public interface IPostProcessor {
 
-	void loadRawResults(List<AbstractModelRawResult> results);
+	void loadRawResults(List<AbstractModelTaskRawResult> results);
 
 	/**
 	 * Run the post processing and return a data item with the final results in the correct format
 	 */
-	ModelProcessedResults processResults();
+	ModelTaskProcessedResults processResults();
 
 	/**
 	 * Annotation to define a parameter as adjustable by the UI. Currently must be a float or int.

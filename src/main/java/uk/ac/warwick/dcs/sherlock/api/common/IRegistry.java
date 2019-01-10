@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
 public interface IRegistry {
 
@@ -16,13 +16,13 @@ public interface IRegistry {
 	boolean registerDetector(Class<? extends IDetector> detector);
 
 	/**
-	 * Registers an {@link IPostProcessor} implementation to Sherlock, associates it with the {@link AbstractModelRawResult} types it will process
+	 * Registers an {@link IPostProcessor} implementation to Sherlock, associates it with the {@link AbstractModelTaskRawResult} types it will process
 	 *
 	 * @param postProcessor      the implementation
-	 * @param handledResultTypes handled {@link AbstractModelRawResult} type(s) by the implementation
+	 * @param handledResultTypes handled {@link AbstractModelTaskRawResult} type(s) by the implementation
 	 *
 	 * @return was successful?
 	 */
-	boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelRawResult> handledResultTypes);
+	boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes);
 
 }

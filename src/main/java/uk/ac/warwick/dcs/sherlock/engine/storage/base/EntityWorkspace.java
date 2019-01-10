@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 

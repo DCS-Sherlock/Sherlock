@@ -2,8 +2,8 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import org.antlr.v4.runtime.*;
 import org.junit.jupiter.api.Test;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 

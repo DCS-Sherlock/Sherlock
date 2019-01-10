@@ -5,7 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
 import javax.crypto.*;
@@ -48,7 +48,7 @@ public class BaseStorageFilesystem {
 		try {
 			InputStream in = this.loadStorable(task, this.computeTaskIdentifier(task));
 			ObjectInputStream objectinputstream = new ObjectInputStream(in);
-			List<AbstractModelRawResult> rawResults = (List<AbstractModelRawResult>) objectinputstream.readObject();
+			List<AbstractModelTaskRawResult> rawResults = (List<AbstractModelTaskRawResult>) objectinputstream.readObject();
 			task.setRawResultsNoStore(rawResults);
 		}
 		catch (IOException | ClassNotFoundException e) {
