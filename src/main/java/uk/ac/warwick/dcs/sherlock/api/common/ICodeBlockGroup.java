@@ -12,13 +12,21 @@ import java.util.*;
 public interface ICodeBlockGroup {
 
 	/**
-	 * @return the two blocks of code that were flagged as similar
+	 * Adds a code block to the group
+	 * @param file File containing the block
+	 * @param score percentage score of the block within the group, eg: 100(%) means block exactly matches the other blocks in the group
+	 * @param startLineNumber first line of the block, [inclusive]
+	 * @param endLineNumber last line of the block, [inclusive]
+	 */
+	void addCodeBlock(ISourceFile file, float score, int startLineNumber, int endLineNumber);
+
+	/**
+	 * @return the blocks of code that were flagged as similar
 	 */
 	List<? extends ICodeBlock> getCodeBlocks();
 
 	/**
-	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by
-	 * the algs in the first place.
+	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by the algs in the first place.
 	 *
 	 * @return the the type of plagiarism that was detected for these blocks of code
 	 */

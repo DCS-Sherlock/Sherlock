@@ -7,17 +7,23 @@ import java.util.*;
  */
 public interface ICodeBlock {
 
-	/**
-	 * TODO  Could be substituted for the ID for the file or whatever is most convenient
-	 *
-	 * @return the name of the file this code block was found in
+	/*
+	 * @return the file containing the block
 	 */
-	String getFileName();
+	ISourceFile getFile();
+
+	/**
+	 * @return the percentage score of this block within the group
+	 *
+	 * Example: 100(%) of this block matches the group
+	 */
+	float getBlockScore();
 
 	/**
 	 * TODO This could also be altered to show specific line numbers as e.g. variable renaming might take place over many TODO separate lines.
 	 *
 	 * @return a list of 2 line numbers that define the start and end of the code block (inclusive)
 	 */
+	@Deprecated
 	List<Integer> getLineNumbers();
 }
