@@ -58,6 +58,8 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 		@Override
 		public void execute() {
+			// This detector finds and matches up variables - it only works on declarations of the variable, not every time the variable is called.
+
 			List<IndexedString> linesF1 = this.file1.getPreProcessedLines("variables");
 			List<IndexedString> linesF2 = this.file2.getPreProcessedLines("variables");
 

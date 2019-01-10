@@ -1,6 +1,6 @@
-package uk.ac.warwick.dcs.sherlock.api.report;
+package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockPair;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 
 import java.io.BufferedReader;
@@ -52,5 +52,5 @@ public abstract class AbstractReportGenerator {
 		}
 	}
 
-	public abstract String GenerateReport(List<? extends ICodeBlockPair> codeBlockPairs);
+	public abstract String GenerateReport(List<? extends ICodeBlockGroup> codeBlockPairs);
 }

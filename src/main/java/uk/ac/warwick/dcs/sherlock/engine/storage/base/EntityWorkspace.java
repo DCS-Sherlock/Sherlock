@@ -17,7 +17,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
-	/*private*/ String name;
+	private String name;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityFile> files = new ArrayList<>();

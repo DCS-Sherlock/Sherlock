@@ -88,6 +88,10 @@ public class SherlockEngine {
 			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.storage);
+
+			field = SherlockHelper.class.getDeclaredField("codeBlockGroupClass");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.storage.getCodeBlockGroupClass());
 		}
 		catch (NoSuchFieldException | IllegalAccessException e) {
 			logger.error("Could not set processed results class", e);

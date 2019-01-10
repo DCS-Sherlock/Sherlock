@@ -7,9 +7,9 @@ import java.util.*;
 /**
  * An interface that connects two ICodeBlocks where plagiarism is detected between two files.
  * <p>
- * This and ICodeBlockPair are somewhat redundant with the stuff in ModelTaskProcessedResults but are easier to work with for the ReportGenerator stuff for the time being.
+ * This and ICodeBlockGroup are somewhat redundant with the stuff in ModelTaskProcessedResults but are easier to work with for the ReportGenerator stuff for the time being.
  */
-public interface ICodeBlockPair {
+public interface ICodeBlockGroup {
 
 	/**
 	 * @return the two blocks of code that were flagged as similar
