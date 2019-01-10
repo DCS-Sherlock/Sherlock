@@ -6,6 +6,8 @@ public abstract class AbstractModelTaskRawResult implements Serializable {
 
 	private static final long serialVersionUID = 24L;
 
+	public abstract boolean isEmpty();
+
 	/**
 	 * Check that this object is of the same exact type as the baseline, including check any generic types are equal
 	 * <p>
@@ -16,7 +18,5 @@ public abstract class AbstractModelTaskRawResult implements Serializable {
 	 * @return is same type?
 	 */
 	public abstract boolean testType(AbstractModelTaskRawResult baseline);
-
-	public abstract boolean isEmpty();
 
 }

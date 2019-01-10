@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
@@ -108,12 +109,18 @@ public class TestResultsFactory {
 			}
 		}
 
+		if (raw.size() == 0) {
+			isValid = false;
+		}
+
 		if (!isValid) {
 			System.out.println("Invalid raw result found");
 			return "invalid";
 		}
 
 		task.setRawResults(raw);
+		SherlockRegistry.getPostProcessorInstance(raw.get(0).getClass());
+
 		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 

@@ -31,4 +31,11 @@ public class SherlockRegistry {
 		}
 		return false;
 	}
+
+	public static IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
+		if (registry != null) {
+			return registry.getPostProcessorInstance(rawClass);
+		}
+		return null;
+	}
 }

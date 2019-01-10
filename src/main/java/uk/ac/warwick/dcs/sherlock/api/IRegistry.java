@@ -25,4 +25,11 @@ public interface IRegistry {
 	 */
 	boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes);
 
+	/**
+	 * Get correct instance of IPostProcessor to process an AbstractModelTaskRawResult object
+	 * @param rawClass class
+	 * @return new instance of correct postprocessor
+	 */
+	IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass);
+
 }

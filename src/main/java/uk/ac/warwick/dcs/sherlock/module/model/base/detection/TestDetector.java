@@ -1,10 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import org.antlr.v4.runtime.*;
+import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
@@ -16,7 +17,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 
 	private static final Language[] languages = { Language.JAVA };
 
-	@DetectorParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
+	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
 	public int testParam;
 
 	@Override
