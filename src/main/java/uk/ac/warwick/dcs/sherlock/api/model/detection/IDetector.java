@@ -1,7 +1,8 @@
-package uk.ac.warwick.dcs.sherlock.api.model;
+package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.lang.annotation.*;
 import java.util.*;
