@@ -85,13 +85,19 @@ function form(){
         input.find("button[type=submit]").prop("disabled", true);
         input.find("button[type=submit]").addClass("disabled");
 
+        var data = new FormData(this);
+        data.append("ajax", true);
+
         $.ajax({
             type: "POST",
             accept:"text/html",
             dataType: "html",
             url: link,
             timeout: 30000,
-            data: input.serialize()+"&ajax=true",
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: data,
             success: function(result, status, xhr) {
                 if (xhr.getResponseHeader("sherlock-url") != link || result.includes("</script>")) {
                     window.location = xhr.getResponseHeader("sherlock-url");

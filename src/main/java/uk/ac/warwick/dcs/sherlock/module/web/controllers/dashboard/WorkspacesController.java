@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
+import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceNameForm;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
@@ -117,6 +119,53 @@ public class WorkspacesController {
 
 		model.addAttribute("workspace", workspace);
 		return "dashboard/workspaces/manageName";
+	}
+
+
+	@GetMapping ("/dashboard/workspaces/manage/submissions/{id}")
+	public String manageSubmissionsGet(
+			@PathVariable(value="id") long id,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
+			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
+
+		model.addAttribute("workspace", workspace);
+		model.addAttribute("fileUploadForm", new FileUploadForm());
+		return "dashboard/workspaces/manageSubmissions";
+	}
+
+	@PostMapping ("/dashboard/workspaces/manage/submissions/{id}")
+	public String manageSubmissionsPost(
+			@PathVariable(value="id") long id,
+			@Valid @ModelAttribute FileUploadForm fileUploadForm,
+			BindingResult result,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
+			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
+
+		if (!result.hasErrors()) {
+			for(MultipartFile file : fileUploadForm.getFiles()) {
+				if (file.getSize() > 0) {
+					//upload here
+				}
+			}
+			result.reject("workspaces_message_uploaded_submission");
+		}
+
+		model.addAttribute("workspace", workspace);
+		return "dashboard/workspaces/manageSubmissions";
 	}
 
 	@GetMapping ("/dashboard/workspaces/delete/{id}")
