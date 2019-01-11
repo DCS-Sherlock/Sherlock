@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
-import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
@@ -222,7 +220,7 @@ public class WorkspacesController {
 
 		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 		IJob job = workspaceWrapper.getiWorkspace().createJob();
-		ITask task = job.createTask(new TestDetector());
+		//ITask task = job.createTask(new TestDetector());
 
 		model.addAttribute("workspace", workspace);
 		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));

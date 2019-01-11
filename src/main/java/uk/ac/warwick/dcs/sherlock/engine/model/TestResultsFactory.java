@@ -25,7 +25,7 @@ public class TestResultsFactory {
 		IDetector instance = algorithm.newInstance();
 
 		IJob job = workspace.createJob();
-		ITask task = job.createTask(instance);
+		ITask task = null; //job.createTask(instance);
 
 		List<ISourceFile> files = workspace.getFiles();
 		System.out.println(files.size());

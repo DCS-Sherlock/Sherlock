@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
@@ -44,12 +43,22 @@ public class EntityJob implements IJob, Serializable {
 		}
 	}
 
-	@Override
+	/*@Override
 	public ITask createTask(IDetector detector) {
 		EntityTask newTask = new EntityTask(this, detector);
 		this.tasks.add(newTask);
 		BaseStorage.instance.database.storeObject(newTask);
 		return newTask;
+	}*/
+
+	@Override
+	public boolean prepare() {
+		return false;
+	}
+
+	@Override
+	public boolean isPrepared() {
+		return false;
 	}
 
 	@Override
