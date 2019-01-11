@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
@@ -104,6 +105,18 @@ public class SherlockRegistry {
 			return registry.registerPostProcessor(postProcessor, handledResultTypes);
 		}
 		return false;
+	}
+
+	/**
+	 * @param det detector class
+	 *
+	 * @return the detector rank
+	 */
+	public static Rank getDetectorRank(Class<? extends IDetector> det) {
+		if (registry != null) {
+			return registry.getDetectorRank(det);
+		}
+		return null;
 	}
 
 	/**

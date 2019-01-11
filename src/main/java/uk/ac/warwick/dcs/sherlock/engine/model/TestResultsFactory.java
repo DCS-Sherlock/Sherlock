@@ -21,11 +21,20 @@ import java.util.stream.*;
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
-	public static String buildTestResults(IWorkspace workspace, Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException {
-		IDetector instance = algorithm.newInstance();
+	public static String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
+		if (!job.isPrepared()) {
+			System.out.println("Could not run job, it is not prepared");
+			return "Failed to run job, it is not prepared";
+		}
 
-		IJob job = workspace.createJob();
-		ITask task = null; //job.createTask(instance);
+		if (job.getTasks() == null || job.getTasks().isEmpty()) {
+			System.out.println("Could not run job, has no tasks");
+			return "Failed to run job, has no tasks";
+		}
+
+		IWorkspace workspace = job.getWorkspace();
+		ITask task = job.getTasks().get(0);
+		IDetector instance = task.getDetector().newInstance();
 
 		List<ISourceFile> files = workspace.getFiles();
 		System.out.println(files.size());

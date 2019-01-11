@@ -21,7 +21,7 @@ import java.util.zip.*;
 public class BaseStorage implements IStorageWrapper {
 
 	static BaseStorage instance;
-	private static Logger logger = LoggerFactory.getLogger(BaseStorage.class);
+	static Logger logger = LoggerFactory.getLogger(BaseStorage.class);
 
 	EmbeddedDatabase database;
 	BaseStorageFilesystem filesystem;

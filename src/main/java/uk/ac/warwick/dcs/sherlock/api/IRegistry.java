@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
@@ -11,32 +12,39 @@ import java.util.*;
 public interface IRegistry {
 
 	/**
-	 *
 	 * @param det detector class
+	 *
 	 * @return description of the detector
 	 */
 	String getDetecorDescription(Class<? extends IDetector> det);
 
 	/**
-	 *
 	 * @param det detector class
+	 *
 	 * @return adjustable parameters for the detector class
 	 */
 	List<AdjustableParameterObj> getDetectorAdjustableParameters(Class<? extends IDetector> det);
 
 	/**
-	 *
 	 * @param det detector class
+	 *
 	 * @return languages supported by the detector
 	 */
 	String getDetectorDisplayName(Class<? extends IDetector> det);
 
 	/**
-	 *
 	 * @param det detector class
+	 *
 	 * @return display name of the detector
 	 */
 	Language[] getDetectorLanguages(Class<? extends IDetector> det);
+
+	/**
+	 * @param det detector class
+	 *
+	 * @return the detector rank
+	 */
+	Rank getDetectorRank(Class<? extends IDetector> det);
 
 	/**
 	 * @return a set of all detectors registered

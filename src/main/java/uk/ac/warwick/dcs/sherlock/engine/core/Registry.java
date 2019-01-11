@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
@@ -86,6 +87,15 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
+	public Rank getDetectorRank(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).rank;
+		}
+
+		return null;
+	}
+
+	@Override
 	public Set<Class<? extends IDetector>> getDetectors() {
 		return this.detectorRegistry.keySet();
 	}
@@ -153,6 +163,7 @@ public class Registry implements IRegistry {
 			DetectorData data = new DetectorData();
 			data.name = tester.getDisplayName();
 			data.desc = "NOT YET IMPLEMENTED, SORRY";
+			data.rank = tester.getRank();
 			data.langs = tester.getSupportedLanguages();
 			this.detectorRegistry.put(detector, data);
 
@@ -204,6 +215,7 @@ public class Registry implements IRegistry {
 
 		String name;
 		String desc;
+		Rank rank;
 		Language[] langs;
 		List<AdjustableParameterObj> adjustables;
 

@@ -8,10 +8,12 @@ public class AdjustableParameterObj {
 
 	private AdjustableParameter param;
 	private String reference;
+	private boolean isInt;
 
 	public AdjustableParameterObj(AdjustableParameter param, Field field) {
 		this.param = param;
 		this.reference = SherlockHelper.buildFieldReference(field);
+		this.isInt = field.getType().equals(int.class);
 	}
 
 	/**
@@ -49,6 +51,10 @@ public class AdjustableParameterObj {
 		return this.param.name();
 	}
 
+	public String getReference() {
+		return this.reference;
+	}
+
 	/**
 	 * @return The step to increment or decrement the parameter by in the UI
 	 */
@@ -56,7 +62,10 @@ public class AdjustableParameterObj {
 		return this.param.step();
 	}
 
-	public String getReference() {
-		return this.reference;
+	/**
+	 * @return is the parameter an integer parameter? (if not is a float)
+	 */
+	public boolean isInt() {
+		return isInt;
 	}
 }

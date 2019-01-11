@@ -11,6 +11,8 @@ public interface ITask {
 
 	IJob getJob();
 
+	Map<String, Float> getParameterMapping();
+
 	long getPersistentId();
 
 	IDetector.Rank getRank();

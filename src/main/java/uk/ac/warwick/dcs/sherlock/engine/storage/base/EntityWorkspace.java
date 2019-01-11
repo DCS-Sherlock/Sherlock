@@ -41,10 +41,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	@Override
 	public IJob createJob() {
-		EntityJob newJob = new EntityJob(this);
-		this.jobs.add(newJob);
-		BaseStorage.instance.database.storeObject(newJob);
-		return newJob;
+		return new EntityJob(this);
 	}
 
 	@Override
