@@ -33,8 +33,10 @@
                             </div>
                             <div class="col-md-6">
                                 <h5 th:text="#{workspaces_manage_results}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='results-parent', arealink=@{/dashboard/workspaces/manage/results/{id}(id=${workspace.id})})"></div>
 
                                 <h5 th:text="#{workspaces_manage_analysis}" class="mt-3"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='jobs-parent', arealink=@{/dashboard/workspaces/manage/jobs/{id}(id=${workspace.id})})"></div>
                             </div>
                         </div>
                     </div>

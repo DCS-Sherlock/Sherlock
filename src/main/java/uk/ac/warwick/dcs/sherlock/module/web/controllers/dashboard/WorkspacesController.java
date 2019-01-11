@@ -10,6 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
+import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
@@ -30,8 +33,6 @@ public class WorkspacesController {
 	private AccountRepository accountRepository;
 	@Autowired
 	private WorkspaceRepository workspaceRepository;
-
-	private static Logger logger = LoggerFactory.getLogger(WorkspacesController.class);
 
 	public WorkspacesController() { }
 
@@ -172,7 +173,6 @@ public class WorkspacesController {
 			for(MultipartFile file : fileUploadForm.getFiles()) {
 				if (file.getSize() > 0) {
 					try {
-						logger.error("UPLOADING FILE to " + workspaceWrapper.getiWorkspace().getPersistentId() + " with file name " + file.getOriginalFilename());
 						SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -185,6 +185,69 @@ public class WorkspacesController {
 		model.addAttribute("workspace", workspace);
 		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
 		return "dashboard/workspaces/manageSubmissions";
+	}
+
+	@GetMapping ("/dashboard/workspaces/manage/jobs/{id}")
+	public String manageJobsGet(
+			@PathVariable(value="id") long id,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null) {
+			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
+
+		model.addAttribute("workspace", workspace);
+		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		return "dashboard/workspaces/manageJobs";
+	}
+
+	@PostMapping ("/dashboard/workspaces/manage/jobs/{id}")
+	public String manageJobsPost(
+			@PathVariable(value="id") long id,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null) {
+			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
+
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
+		IJob job = workspaceWrapper.getiWorkspace().createJob();
+		ITask task = job.createTask(new TestDetector());
+
+		model.addAttribute("workspace", workspace);
+		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		return "dashboard/workspaces/manageJobs";
+	}
+
+	@GetMapping ("/dashboard/workspaces/manage/results/{id}")
+	public String manageResultsGet(
+			@PathVariable(value="id") long id,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null) {
+			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
+
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
+		List<IJob> jobs = workspaceWrapper.getiWorkspace().getJobs();
+		model.addAttribute("jobs", jobs);
+//		jobs.get(0).getTasks().get(0).getRawResults().get(0).
+
+		model.addAttribute("workspace", workspace);
+		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		return "dashboard/workspaces/manageResults";
 	}
 
 	@GetMapping ("/dashboard/workspaces/delete/{id}")
