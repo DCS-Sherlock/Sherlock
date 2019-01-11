@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 			//Add the "local user" if not found
 			if (account == null) {
-				account = new Account(email, bCryptPasswordEncoder.encode("local_password"));
+				account = new Account(email, bCryptPasswordEncoder.encode("local_password"), "Local User");
 				Set<Role> roles = new HashSet<Role>();
 				roles.add(new Role("USER", account));
 				roles.add(new Role("LOCAL_USER", account));
@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			Account account = accountRepository.findByEmail(email);
 			//Add the "local user" if not found
 			if (account == null) {
-				account = new Account(email, bCryptPasswordEncoder.encode("server_password"));
+				account = new Account(email, bCryptPasswordEncoder.encode("server_password"), "Admin");
 				Set<Role> roles = new HashSet<Role>();
 				roles.add(new Role("USER", account));
 				roles.add(new Role("ADMIN", account));
@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/css/**", "/js/**", "/image/**", "/", "/info/**", "/login", "/register")
+				.antMatchers("/css/**", "/js/**", "/image/**", "/", "/info/**", "/login", "/register", "/h2-console/**")
 				.permitAll();
 
 		http

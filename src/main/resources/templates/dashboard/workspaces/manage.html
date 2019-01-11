@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
 <head>
-    <title>Manage Workspace</title>
+    <title th:text="#{workspaces_page_manage}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -10,22 +10,34 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h4 class="float-left mt-1">
-                        Manage Workspace
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces}">Return to Workspaces</a>
+                        <span th:text="#{workspaces_page_manage}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces}" th:text="#{workspaces_link_return}"></a>
                     </h4>
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
-                            <div class="btn-group mr-3">
-                                <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/archive}">Archive</a>
-                            </div>
                             <div class="btn-group">
-                                <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/delete}">Delete</a>
+                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/delete/{id}(id=${workspace.id})}" th:text="#{link_delete}"></a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 th:text="#{workspaces_manage_basic}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='name-parent', arealink=@{/dashboard/workspaces/manage/name/{id}(id=${workspace.id})})"></div>
 
+                                <h5 th:text="#{workspaces_manage_submissions}" class="mt-3"></h5>
+
+                            </div>
+                            <div class="col-md-6">
+                                <h5 th:text="#{workspaces_manage_results}"></h5>
+
+                                <h5 th:text="#{workspaces_manage_analysis}" class="mt-3"></h5>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

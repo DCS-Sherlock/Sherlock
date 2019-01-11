@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
@@ -19,6 +20,7 @@ import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 @SherlockModule(side = Side.SERVER)
 @SpringBootApplication
 @ComponentScan("uk.ac.warwick.dcs.sherlock.module.web")
+@ServletComponentScan("uk.ac.warwick.dcs.sherlock.module.web")
 @EnableJpaRepositories("uk.ac.warwick.dcs.sherlock.module.web")
 @EntityScan("uk.ac.warwick.dcs.sherlock.module.web")
 public class SherlockServer extends SpringBootServletInitializer {

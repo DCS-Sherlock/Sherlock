@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
 <head>
     <title>Workspaces</title>
 </head>
@@ -9,87 +9,54 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h4 class="float-left mt-1">Workspaces</h4>
+                    <h4 class="float-left mt-1" th:text="#{workspaces_title}"></h4>
                     <div class="btn-toolbar float-right">
-                        <div class="btn-group mr-3">
-                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/add}">Add New</a>
+                        <div class="btn-group mr-3remove">
+                            <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/add}" th:text="#{link_add}"></a>
                         </div>
-                        <div class="btn-group mr-3">
-                            <button role="button" class="btn btn-primary">All</button>
-                            <button role="button" class="btn btn-primary">Complete</button>
-                            <button role="button" class="btn btn-primary">Pending</button>
-                            <button role="button" class="btn btn-primary">Failed</button>
-                            <button role="button" class="btn btn-primary">Archived</button>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button id="year-dropdown" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Year
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="year-dropdown">
-                                <a class="dropdown-item" href="#">18-19</a>
-                                <a class="dropdown-item" href="#">17-18</a>
-                            </div>
-                        </div>
+                        <!--<div class="btn-group mr-3">-->
+                            <!--<button role="button" class="btn btn-primary">All</button>-->
+                            <!--<button role="button" class="btn btn-primary">Complete</button>-->
+                            <!--<button role="button" class="btn btn-primary">Pending</button>-->
+                            <!--<button role="button" class="btn btn-primary">Failed</button>-->
+                            <!--<button role="button" class="btn btn-primary">Archived</button>-->
+                        <!--</div>-->
+                        <!--<div class="btn-group" role="group">-->
+                            <!--<button id="year-dropdown" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                                <!--Year-->
+                            <!--</button>-->
+                            <!--<div class="dropdown-menu dropdown-menu-right" aria-labelledby="year-dropdown">-->
+                                <!--<a class="dropdown-item" href="#">18-19</a>-->
+                                <!--<a class="dropdown-item" href="#">17-18</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
                 </div>
                 <div class="card-body">
                     <table class="table table-hover table-borderless">
                         <tbody>
-                        <tr>
-                            <th class="align-middle">
-                                <h5 class="mb-0">Coursework 1 <span class="badge badge-danger">Analysis Failed</span></h5>
-                            </th>
-                            <td class="align-middle">
-                                2018-2019
-                            </td>
-                            <td class="align-middle text-right">
-                                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage}">Manage</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                <h5 class="mb-0">Coursework 2 <span class="badge badge-success">Analysis Complete</span></h5>
-                            </th>
-                            <td class="align-middle">
-                                2018-2019
-                            </td>
-                            <td class="align-middle text-right">
-                                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage}">Manage</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                <h5 class="mb-0">Coursework 3 <span class="badge badge-warning">No Analysis Scheduled</span></h5>
-                            </th>
-                            <td class="align-middle">
-                                2018-2019
-                            </td>
-                            <td class="align-middle text-right">
-                                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage}">Manage</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                <h5 class="mb-0">Coursework 4 <span class="badge badge-info">Analysis Pending</span></h5>
-                            </th>
-                            <td class="align-middle">
-                                2018-2019
-                            </td>
-                            <td class="align-middle text-right">
-                                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage}">Manage</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                <h5 class="mb-0">Coursework 5 <span class="badge badge-primary">Archived</span></h5>
-                            </th>
-                            <td class="align-middle">
-                                2018-2019
-                            </td>
-                            <td class="align-middle text-right">
-                                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage}">Manage</a>
-                            </td>
-                        </tr>
+                            <th:block th:each="workspace : ${workspaces}">
+                                <tr>
+                                    <th class="align-middle">
+                                        <h5 class="mb-0">
+                                            <span th:text="${workspace.name}"></span>
+                                        </h5>
+                                    </th>
+                                    <td class="align-middle">
+                                        <!--2018-2019-->
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.id})}" th:text="#{link_manage}"></a>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            <tr th:if="${workspaces.empty}">
+                                <th>
+                                    <h5 class="mb-0">
+                                        <span th:text="#{workspaces_message_empty}"></span>
+                                    </h5>
+                                </th>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
