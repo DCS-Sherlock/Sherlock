@@ -1,7 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -10,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
@@ -24,7 +23,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @SuppressWarnings("Duplicates")
@@ -176,6 +175,9 @@ public class WorkspacesController {
 						SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
 					} catch (IOException e) {
 						e.printStackTrace();
+					}
+					catch (WorkspaceUnsupportedException e) {
+						e.printStackTrace(); // this is a major issue, we should probably quit here
 					}
 				}
 			}

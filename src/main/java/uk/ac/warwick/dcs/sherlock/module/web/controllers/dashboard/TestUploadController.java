@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 
 import java.io.IOException;
 
@@ -33,9 +34,9 @@ public class TestUploadController {
 		// rewrite to get a workspace so we can call storeFile
 		try {
 			logger.info(file.getContentType());
-			SherlockEngine.storage.storeFile(SherlockEngine.storage.getWorkspaces().get(1),file.getOriginalFilename(), file.getBytes());
+			SherlockEngine.storage.storeFile(SherlockEngine.storage.getWorkspaces().get(1), file.getOriginalFilename(), file.getBytes());
 		}
-		catch (IOException e) {
+		catch (IOException | WorkspaceUnsupportedException e) {
 			e.printStackTrace();
 		}
 

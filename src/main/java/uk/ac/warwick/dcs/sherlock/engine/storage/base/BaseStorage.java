@@ -2,12 +2,12 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.TypeMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -77,10 +77,9 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) {
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException {
 		if (!(workspace instanceof EntityWorkspace)) {
-			logger.error("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
-			throw new TypeMismatchException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
 		}
 		EntityWorkspace w = (EntityWorkspace) workspace;
 
