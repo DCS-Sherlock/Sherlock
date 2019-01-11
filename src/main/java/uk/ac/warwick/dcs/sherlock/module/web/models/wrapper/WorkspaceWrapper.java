@@ -1,23 +1,53 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 
+import java.util.List;
+
 public class WorkspaceWrapper {
-    private Workspace local;
+    private Workspace workspace;
+    private IWorkspace iWorkspace;
 
-    public WorkspaceWrapper() {
-
+    public WorkspaceWrapper(Workspace workspace) {
+        this.workspace = workspace;
+        List<Long> id = List.of(this.workspace.getEngineId());
+        List<IWorkspace> iWorkspaces = SherlockEngine.storage.getWorkspaces(id);
+        if (iWorkspaces.size() == 1) {
+            this.iWorkspace = iWorkspaces.get(0);
+        } else {
+            this.createEngineWorkspace();
+        }
     }
 
-    public WorkspaceWrapper(Workspace local) {
-        this.local = local;
+    public WorkspaceWrapper(String name, Account account) {
+        this.workspace = new Workspace(name, account);
+        this.createEngineWorkspace();
     }
 
-    public Workspace getLocal() {
-        return local;
+    private void createEngineWorkspace() {
+        IWorkspace iWorkspace = SherlockEngine.storage.createWorkspace();
+        iWorkspace.setName(this.workspace.getName());
+        iWorkspace.setLanguage(Language.JAVA);
+        this.workspace.setEngineId(iWorkspace.getPersistentId());
     }
 
-    public void setLocal(Workspace local) {
-        this.local = local;
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    public IWorkspace getiWorkspace() {
+        return iWorkspace;
+    }
+
+    public void setiWorkspace(IWorkspace iWorkspace) {
+        this.iWorkspace = iWorkspace;
     }
 }

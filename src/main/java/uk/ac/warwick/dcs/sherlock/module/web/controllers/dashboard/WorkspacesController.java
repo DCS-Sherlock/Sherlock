@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -7,25 +9,29 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceNameForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
 @SuppressWarnings("Duplicates")
 public class WorkspacesController {
-
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
 	private WorkspaceRepository workspaceRepository;
+
+	private static Logger logger = LoggerFactory.getLogger(WorkspacesController.class);
 
 	public WorkspacesController() { }
 
@@ -56,7 +62,9 @@ public class WorkspacesController {
 			return "dashboard/workspaces/add";
 		}
 
-		workspaceRepository.save(new Workspace(workspaceNameForm.getName(), this.getAccount(authentication)));
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceNameForm.getName(), this.getAccount(authentication));
+
+		workspaceRepository.save(workspaceWrapper.getWorkspace());
 
 		return "redirect:/dashboard/workspaces";
 	}
@@ -135,8 +143,11 @@ public class WorkspacesController {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
+
 		model.addAttribute("workspace", workspace);
 		model.addAttribute("fileUploadForm", new FileUploadForm());
+		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
 		return "dashboard/workspaces/manageSubmissions";
 	}
 
@@ -155,16 +166,24 @@ public class WorkspacesController {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
+
 		if (!result.hasErrors()) {
 			for(MultipartFile file : fileUploadForm.getFiles()) {
 				if (file.getSize() > 0) {
-					//upload here
+					try {
+						logger.error("UPLOADING FILE to " + workspaceWrapper.getiWorkspace().getPersistentId() + " with file name " + file.getOriginalFilename());
+						SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			result.reject("workspaces_message_uploaded_submission");
 		}
 
 		model.addAttribute("workspace", workspace);
+		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
 		return "dashboard/workspaces/manageSubmissions";
 	}
 

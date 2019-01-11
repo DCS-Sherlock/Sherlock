@@ -18,6 +18,9 @@ public class Workspace {
     @Column(name="name", nullable = false)
     public String name;
 
+    @Column(name="engine_id")
+    private long engineId;
+
     @ManyToOne
     @JoinColumn(name = "account")
     private Account account;
@@ -27,6 +30,7 @@ public class Workspace {
     public Workspace(String name, Account account) {
         this.name = name;
         this.account = account;
+        this.engineId = 0L;
     }
 
     public String getName() {
@@ -43,5 +47,13 @@ public class Workspace {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getEngineId() {
+        return engineId;
+    }
+
+    public void setEngineId(long sherlock_id) {
+        this.engineId = sherlock_id;
     }
 }
