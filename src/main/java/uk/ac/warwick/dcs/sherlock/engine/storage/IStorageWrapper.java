@@ -32,7 +32,7 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 *
 	 * @return a list of all workspaces matching the passed ids in the database
 	 */
-	List<IWorkspace> getWorkspaces(long... ids);
+	List<IWorkspace> getWorkspaces(List<Long> ids);
 
 	/**
 	 * @return a list of all workspaces in the database

@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.*;
 import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
@@ -58,13 +59,14 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public List<IWorkspace> getWorkspaces(long... ids) {
-		return null;
+	public List<IWorkspace> getWorkspaces(List<Long> ids) {
+		return this.getWorkspaces().stream().filter(x -> ids.contains(x.getPersistentId())).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<IWorkspace> getWorkspaces() {
-		return null;
+		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
+		return new LinkedList<>(l);
 	}
 
 	@Override
