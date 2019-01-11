@@ -3,13 +3,13 @@ package uk.ac.warwick.dcs.sherlock.engine.core;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.common.IRegistry;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector.DetectorParameter;
-import uk.ac.warwick.dcs.sherlock.api.model.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.IRegistry;
+import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -26,11 +26,15 @@ public class Registry implements IRegistry {
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
 	private Map<String, Class<? extends IDetector>> detectorRegistry;
-	private Map<String, List<DetectorParameter>> detectorParamRegistry;
+	private Map<String, List<AdjustableParameter>> detectorParamRegistry;
+
+	private Map<Class<? extends AbstractModelTaskRawResult>, Class<? extends IPostProcessor>> postProcRegistry;
 
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
 		this.detectorParamRegistry = new ConcurrentHashMap<>();
+
+		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
 
 	/*@PostHandler
@@ -77,8 +81,8 @@ public class Registry implements IRegistry {
 			this.detectorRegistry.put(tester.getDisplayName(), detector);
 
 			//Do @DetectorParameter stuff - find the annotations for the params in the detector, check them and add to the map
-			List<DetectorParameter> tuneables =
-					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(DetectorParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
+			List<AdjustableParameter> tuneables =
+					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
 						if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
 							logger.warn("Detector '{}' contains @DetectorParameter {} which is not an int or float", tester.getDisplayName(), x.getKey().getName());
 							return null;
@@ -109,10 +113,15 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelRawResult> handledResultTypes) {
-
-		// check the results are serializable
-		return false;
+	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes) {
+		if (postProcessor != null && handledResultTypes != null) {
+			this.postProcRegistry.put(handledResultTypes, postProcessor);
+			return true;
+		}
+		else {
+			logger.warn("Bad IPostProcessor registration");
+			return false;
+		}
 	}
 
 	IDetector getIDetectorInstance(String detectorName) {
@@ -126,7 +135,25 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
-	List<DetectorParameter> getTuneableParameters(String detectorName) {
+	@Override
+	public IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
+		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass);
+		if (p != null) {
+			try {
+				return p.newInstance();
+			}
+			catch (InstantiationException | IllegalAccessException e) {
+				logger.error("An error occurred create IPostProcessor instance", e);
+				return null;
+			}
+		}
+		else {
+			logger.warn("Could not find IPostProcessor instance to process {} object", rawClass.getName());
+			return null;
+		}
+	}
+
+	List<AdjustableParameter> getTuneableParameters(String detectorName) {
 		return this.detectorParamRegistry.getOrDefault(detectorName, null);
 	}
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<h6 th:text="#{workspaces_submissions_upload}"></h6>
+<form th:action="@{/dashboard/workspaces/manage/submissions/{id}(id=${workspace.id})}" th:object="${fileUploadForm}" enctype="multipart/form-data" data-js='form' data-js-target="#submissions-parent" method="post">
+    <div th:if="${#fields.hasAnyErrors()}">
+        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+
+            <input id="files" type="file" name="files" multiple>
+            <button type="submit" class="btn btn-primary" th:text="#{link_upload}"></button>
+        </div>
+    </div>
+</form>
+
+<h6 th:text="#{workspaces_submissions_existing}"></h6>
+
+<table class="table table-hover table-borderless">
+    <tbody>
+    <th:block th:each="submission : ${submissions}">
+        <tr>
+            <th class="align-middle">
+                <h6 class="mb-0">
+                    <span th:text="${submission.getFileDisplayName()}"></span>
+                </h6>
+            </th>
+        </tr>
+    </th:block>
+    <tr th:if="${submissions.empty}">
+        <th>
+            <h6 class="mb-0">
+                <span th:text="#{workspaces_message_no_submissions}"></span>
+            </h6>
+        </th>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

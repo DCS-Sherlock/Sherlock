@@ -1,12 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.reporting;
 
-import uk.ac.warwick.dcs.sherlock.api.model.AbstractReportGenerator;
-import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.model.ICodeBlockPair;
+import uk.ac.warwick.dcs.sherlock.engine.report.AbstractReportGenerator;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 
 import java.util.*;
 
 /**
+ * TODO: currently still based on old ICodeBlockPair rather than ICodeBlockGroup.
+ * <p>
  * A fairly basic first pass to generate the presentable reports shown to the user. This uses ICodeBlockPair but could be adapted to the stuff in ModelProcessedRessults; I thought it would be better
  * to have the report stuff separate for the time being though.
  * <p>
@@ -20,17 +22,17 @@ public class BasicReportGenerator extends AbstractReportGenerator {
 	}
 
 	@Override
-	public String GenerateReport(List<? extends ICodeBlockPair> codeBlockPairs) {
+	public String GenerateReport(List<? extends ICodeBlockGroup> codeBlockGroups) {
 		StringJoiner stringJoiner = new StringJoiner("\n");
 
-		for (ICodeBlockPair codeBlockPair : codeBlockPairs) {
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 			//Get the base description for this type of plagiarism
-			String currentDescription = baseDescriptions.get(codeBlockPair.getDetectionType());
+			String currentDescription = baseDescriptions.get(codeBlockGroup.getDetectionType());
 
 			//Get the line numbers for these code blocks and format the description using them
 			//NB with this basic approach, requires the base descriptions to keep line numbers in consistent order
 			List<Integer> lineNumbers = new ArrayList<Integer>();
-			for (ICodeBlock codeBlock : codeBlockPair.getCodeBlocks()) {
+			for (ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
 				lineNumbers.addAll(codeBlock.getLineNumbers());
 			}
 

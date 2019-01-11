@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
-import uk.ac.warwick.dcs.sherlock.engine.model.TestResultsFactory;
-import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.TestModel;
 
 @Controller
@@ -46,14 +44,14 @@ public class TestController {
 			result = "Not valid files";
 		}*/
 
-		try {
+		/*try {
 			String result = TestResultsFactory.buildTestResults(TestDetector.class);
 			System.out.println(result);
 			model.addAttribute("result", result);
 		}
 		catch (IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 
 		return "dashboard/testresult";

@@ -6,6 +6,12 @@
 <body>
 <main role="main" class="container" layout:fragment="content">
 
+    <li class="nav-item" th:classappend="${page == 'test' ? 'active' : ''}" sec:authorize="isAuthenticated()">
+        <a class="nav-link" th:href="@{/dashboard/test}">Test</a>
+    </li>
+    <li class="nav-item" th:classappend="${page == 'testUpload' ? 'active' : ''}" sec:authorize="isAuthenticated()">
+        <a class="nav-link" th:href="@{/dashboard/testUpload}">TestUpload</a>
+    </li>
 </main>
 </body>
 </html>

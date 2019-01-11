@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.reporting;
 
 import java.util.*;
-import uk.ac.warwick.dcs.sherlock.api.model.AbstractReportGenerator;
+import uk.ac.warwick.dcs.sherlock.engine.report.AbstractReportGenerator;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).

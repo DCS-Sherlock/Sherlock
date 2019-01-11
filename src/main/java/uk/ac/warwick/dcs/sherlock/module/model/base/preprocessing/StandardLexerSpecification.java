@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
 
 /**
  * Provides a specification for a basic lexer for preprocessing

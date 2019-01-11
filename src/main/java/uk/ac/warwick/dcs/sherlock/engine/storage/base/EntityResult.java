@@ -8,7 +8,6 @@ import java.util.*;
 public class EntityResult implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	//private static Logger logger = LoggerFactory.getLogger(EntityResult.class);
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -33,8 +32,6 @@ public class EntityResult implements Serializable {
 		this.job = job;
 	}
 
-
-
 	@Embeddable
 	private class ResultTask implements Serializable {
 		private static final long serialVersionUID = 1L;
@@ -44,27 +41,6 @@ public class EntityResult implements Serializable {
 		private float taskScore;
 		private Map<EntityFile, Float> fileScores;
 
-		private List<ResultBlockFamily> blocks;
-
-		// Maybe add a mapping for getting the blocks for a specific file, or write a query to the same effect
-	}
-
-	@Embeddable
-	private class ResultBlockFamily implements Serializable {
-		private static final long serialVersionUID = 1L;
-
-		private ResultBlock parent;
-		private List<ResultBlock> children;
-	}
-
-	@Embeddable
-	private class ResultBlock implements Serializable {
-		private static final long serialVersionUID = 1L;
-
-		private EntityFile file;
-
-		private int startLine;
-		private int endLine;
-		private float score;
+		private List<EntityCodeBlockGroup> containingBlocks;
 	}
 }

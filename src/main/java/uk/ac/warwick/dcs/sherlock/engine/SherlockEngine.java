@@ -9,6 +9,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
@@ -56,7 +58,7 @@ public class SherlockEngine {
 			java.lang.reflect.Constructor construct = Registry.class.getDeclaredConstructor();
 			construct.setAccessible(true);
 			SherlockEngine.registry = (Registry) construct.newInstance();
-			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockRegistry.class.getDeclaredField("registry");
+			field = SherlockRegistry.class.getDeclaredField("registry");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
 			field = Registry.class.getDeclaredField("instance");
@@ -66,6 +68,8 @@ public class SherlockEngine {
 		catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
+
+		SherlockEngine.loadConfiguration();
 	}
 
 	private void shutdown() {
@@ -79,17 +83,16 @@ public class SherlockEngine {
 
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
-		SherlockEngine.loadConfiguration();
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
 		try {
-			Field field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("modelProcessedResultsClass");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.storage.getModelProcessedResultsClass());
-
-			field = uk.ac.warwick.dcs.sherlock.api.common.SherlockHelper.class.getDeclaredField("sourceFileHelper");
+			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.storage);
+
+			field = SherlockHelper.class.getDeclaredField("codeBlockGroupClass");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.storage.getCodeBlockGroupClass());
 		}
 		catch (NoSuchFieldException | IllegalAccessException e) {
 			logger.error("Could not set processed results class", e);
@@ -108,6 +111,7 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
+
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);

@@ -1,13 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.model.*;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
@@ -20,18 +21,17 @@ import java.util.stream.*;
 /* TODO: temporary implementation*/
 public class TestResultsFactory {
 
-	public static String buildTestResults(Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException {
+	public static String buildTestResults(IWorkspace workspace, Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException {
 		IDetector instance = algorithm.newInstance();
 
-		IWorkspace workspace = SherlockEngine.storage.createWorkspace(); //actually gets the temporary workspace for now!!!!!!!!!!
 		IJob job = workspace.createJob();
 		ITask task = job.createTask(instance);
 
 		List<ISourceFile> files = workspace.getFiles();
 		System.out.println(files.size());
 
-		Class<? extends Lexer> lexerClass = instance.getLexer(Language.JAVA);
-		Class<? extends Parser> parserClass = instance.getParser(Language.JAVA);
+		Class<? extends Lexer> lexerClass = instance.getLexer(workspace.getLanguage());
+		Class<? extends Parser> parserClass = instance.getParser(workspace.getLanguage());
 
 		List<IPreProcessingStrategy> preProcessingStrategies = instance.getPreProcessors();
 
@@ -53,7 +53,7 @@ public class TestResultsFactory {
 						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 							try {
 								IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
-								map.put(strategy.getName(), processor.processTokens(lexer, parserClass, Language.JAVA));
+								map.put(strategy.getName(), processor.processTokens(lexer, parserClass, workspace.getLanguage()));
 							}
 							catch (InstantiationException | IllegalAccessException e) {
 								e.printStackTrace();
@@ -65,7 +65,7 @@ public class TestResultsFactory {
 						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 							try {
 								ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
-								tokens = processor.process(tokens, lexer.getVocabulary(), Language.JAVA);
+								tokens = processor.process(tokens, lexer.getVocabulary(), workspace.getLanguage());
 							}
 							catch (InstantiationException | IllegalAccessException e) {
 								e.printStackTrace();
@@ -99,12 +99,16 @@ public class TestResultsFactory {
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
 		workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
 
-		List<AbstractModelRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+		List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 		boolean isValid = true;
 		for (int i = 1; i < raw.size(); i++) {
 			if (!raw.get(i).testType(raw.get(0))) {
 				isValid = false;
 			}
+		}
+
+		if (raw.size() == 0) {
+			isValid = false;
 		}
 
 		if (!isValid) {
@@ -113,6 +117,8 @@ public class TestResultsFactory {
 		}
 
 		task.setRawResults(raw);
+		SherlockRegistry.getPostProcessorInstance(raw.get(0).getClass());
+
 		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 
