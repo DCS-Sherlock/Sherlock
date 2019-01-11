@@ -29,8 +29,8 @@ public class WorkspaceWrapper {
     }
 
     private void createEngineWorkspace() {
-        IWorkspace iWorkspace = SherlockEngine.storage.createWorkspace(this.workspace.getName(), Language.JAVA); // change the construction method so we do one db write, not three
-        this.workspace.setEngineId(iWorkspace.getPersistentId());
+        this.iWorkspace = SherlockEngine.storage.createWorkspace(this.workspace.getName(), Language.JAVA); // change the construction method so we do one db write, not three
+        this.workspace.setEngineId(this.iWorkspace.getPersistentId());
     }
 
     public Workspace getWorkspace() {
@@ -42,7 +42,7 @@ public class WorkspaceWrapper {
     }
 
     public IWorkspace getiWorkspace() {
-        return iWorkspace;
+        return this.iWorkspace;
     }
 
     public void setiWorkspace(IWorkspace iWorkspace) {
