@@ -47,7 +47,9 @@ public class BaseStorage implements IStorageWrapper {
 
 	@Override
 	public IWorkspace createWorkspace() {
-		return this.database.temporaryWorkspace();
+		IWorkspace w = new EntityWorkspace();
+		this.database.storeObject(w);
+		return w;
 	}
 
 	@Override
@@ -56,12 +58,22 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public List<IWorkspace> getWorkspaces(long... ids) {
+		return null;
+	}
+
+	@Override
+	public List<IWorkspace> getWorkspaces() {
+		return null;
+	}
+
+	@Override
 	public ISourceFile getSourceFile(long persistentId) {
 		return null;
 	}
 
 	@Override
-	public void storeFile(String filename, byte[] fileContent) {
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) {
 		if (FilenameUtils.getExtension(filename).equals("zip")) {
 			this.storeArchive(filename, fileContent);
 		}

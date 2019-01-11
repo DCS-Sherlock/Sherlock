@@ -30,13 +30,14 @@ public class TestUploadController {
 			logger.info("Blank file uploaded - ignoring");
 			return "redirect:/dashboard/testUpload";
 		}
-		try {
+		// rewrite to get a workspace so we can call storeFile
+		/*try {
 			logger.info(file.getContentType());
 			SherlockEngine.storage.storeFile(file.getOriginalFilename(), file.getBytes());
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + file.getOriginalFilename() + "!");
 

@@ -33,6 +33,8 @@ public class Registry implements IRegistry {
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
 		this.detectorParamRegistry = new ConcurrentHashMap<>();
+
+		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
 
 	/*@PostHandler
