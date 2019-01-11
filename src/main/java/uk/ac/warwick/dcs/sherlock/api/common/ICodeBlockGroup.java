@@ -5,9 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import java.util.*;
 
 /**
- * An interface that connects two ICodeBlocks where plagiarism is detected between two files.
- * <p>
- * This and ICodeBlockGroup are somewhat redundant with the stuff in ModelTaskProcessedResults but are easier to work with for the ReportGenerator stuff for the time being.
+ * An interface that connects multiple ICodeBlocks where plagiarism is detected between those files.
  */
 public interface ICodeBlockGroup {
 
