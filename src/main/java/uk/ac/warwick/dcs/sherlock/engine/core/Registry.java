@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
+import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -25,15 +26,12 @@ public class Registry implements IRegistry {
 	private static Registry instance;
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
-	private Map<String, Class<? extends IDetector>> detectorRegistry;
-	private Map<String, List<AdjustableParameter>> detectorParamRegistry;
+	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
 
 	private Map<Class<? extends AbstractModelTaskRawResult>, Class<? extends IPostProcessor>> postProcRegistry;
 
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
-		this.detectorParamRegistry = new ConcurrentHashMap<>();
-
 		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
 
@@ -50,6 +48,80 @@ public class Registry implements IRegistry {
 		}
 		return reference;
 	}*/
+
+	@Override
+	public String getDetecorDescription(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).desc;
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<AdjustableParameterObj> getDetectorAdjustableParameters(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).adjustables;
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getDetectorDisplayName(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).name;
+		}
+
+		return null;
+	}
+
+	@Override
+	public Language[] getDetectorLanguages(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).langs;
+		}
+
+		return null;
+	}
+
+	@Override
+	public Set<Class<? extends IDetector>> getDetectors() {
+		return this.detectorRegistry.keySet();
+	}
+
+	@Override
+	public Set<Class<? extends IDetector>> getDetectors(Language language) {
+		return this.detectorRegistry.keySet().stream().filter(x -> {
+			Language[] langs = this.detectorRegistry.get(x).langs;
+
+			// can this be done more efficiently??
+			for (Language l : langs) {
+				if (l.equals(language)) {
+					return true;
+				}
+			}
+			return false;
+		}).collect(Collectors.toSet());
+	}
+
+	@Override
+	public IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
+		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass);
+		if (p != null) {
+			try {
+				return p.newInstance();
+			}
+			catch (InstantiationException | IllegalAccessException e) {
+				logger.error("An error occurred create IPostProcessor instance", e);
+				return null;
+			}
+		}
+		else {
+			logger.warn("Could not find IPostProcessor instance to process {} object", rawClass.getName());
+			return null;
+		}
+	}
 
 	@Override
 	public boolean registerDetector(Class<? extends IDetector> detector) {
@@ -78,10 +150,14 @@ public class Registry implements IRegistry {
 				}
 			}
 
-			this.detectorRegistry.put(tester.getDisplayName(), detector);
+			DetectorData data = new DetectorData();
+			data.name = tester.getDisplayName();
+			data.desc = "NOT YET IMPLEMENTED, SORRY";
+			data.langs = tester.getSupportedLanguages();
+			this.detectorRegistry.put(detector, data);
 
 			//Do @DetectorParameter stuff - find the annotations for the params in the detector, check them and add to the map
-			List<AdjustableParameter> tuneables =
+			List<AdjustableParameterObj> tuneables =
 					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
 						if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
 							logger.warn("Detector '{}' contains @DetectorParameter {} which is not an int or float", tester.getDisplayName(), x.getKey().getName());
@@ -99,10 +175,10 @@ public class Registry implements IRegistry {
 						}
 
 						return x;
-					}).filter(Objects::nonNull).map(x -> x.getValue()[0]).collect(Collectors.toList());
+					}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
 
 			if (tuneables.size() > 0) {
-				this.detectorParamRegistry.put(tester.getDisplayName(), tuneables);
+				data.adjustables = tuneables;
 			}
 		}
 		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -124,36 +200,12 @@ public class Registry implements IRegistry {
 		}
 	}
 
-	IDetector getIDetectorInstance(String detectorName) {
-		try {
-			return this.detectorRegistry.get(detectorName).newInstance();
-		}
-		catch (InstantiationException | IllegalAccessException | NullPointerException e) {
-			e.printStackTrace();
-		}
+	private class DetectorData {
 
-		return null;
-	}
+		String name;
+		String desc;
+		Language[] langs;
+		List<AdjustableParameterObj> adjustables;
 
-	@Override
-	public IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
-		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass);
-		if (p != null) {
-			try {
-				return p.newInstance();
-			}
-			catch (InstantiationException | IllegalAccessException e) {
-				logger.error("An error occurred create IPostProcessor instance", e);
-				return null;
-			}
-		}
-		else {
-			logger.warn("Could not find IPostProcessor instance to process {} object", rawClass.getName());
-			return null;
-		}
-	}
-
-	List<AdjustableParameter> getTuneableParameters(String detectorName) {
-		return this.detectorParamRegistry.getOrDefault(detectorName, null);
 	}
 }
