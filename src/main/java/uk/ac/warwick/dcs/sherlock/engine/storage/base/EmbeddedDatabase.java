@@ -89,7 +89,6 @@ public class EmbeddedDatabase {
 	}
 
 	public void storeObject(Object... objects) {
-		List<EntityWorkspace> w;
 		try {
 			em.getTransaction().begin();
 			for (Object obj : objects) {
@@ -103,24 +102,4 @@ public class EmbeddedDatabase {
 			}
 		}
 	}
-
-	EntityWorkspace temporaryWorkspace() {
-		List<EntityWorkspace> w;
-		try {
-			em.getTransaction().begin();
-			w = em.createQuery("SELECT w FROM Workspace w", EntityWorkspace.class).getResultList();
-			if (w.size() == 0) {
-				w.add(new EntityWorkspace("Temporary Workspace"));
-				em.persist(w.get(0));
-			}
-			em.getTransaction().commit();
-		}
-		finally {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
-			}
-		}
-		return w.get(0);
-	}
-
 }

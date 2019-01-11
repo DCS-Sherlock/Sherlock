@@ -68,6 +68,8 @@ public class SherlockEngine {
 		catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
+
+		SherlockEngine.loadConfiguration();
 	}
 
 	private void shutdown() {
@@ -81,7 +83,6 @@ public class SherlockEngine {
 
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
-		SherlockEngine.loadConfiguration();
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
 
 		try {

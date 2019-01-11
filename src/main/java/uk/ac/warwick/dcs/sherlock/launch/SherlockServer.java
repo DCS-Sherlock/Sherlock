@@ -4,9 +4,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
@@ -16,6 +19,8 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+
+import javax.sql.DataSource;
 
 @SherlockModule(side = Side.SERVER)
 @SpringBootApplication
@@ -53,4 +58,17 @@ public class SherlockServer extends SpringBootServletInitializer {
 		application.profiles("server");
 		return application.sources(SherlockServer.class);
 	}
+
+	@Bean
+	@Primary
+	public DataSource dataSource() {
+		return DataSourceBuilder
+				.create()
+				.username("sa")
+				.password("")
+				.url("jdbc:h2:file:" + SherlockEngine.configuration.getDataPath() + "/Sherlock-" + (SherlockEngine.side == Side.CLIENT ? "Client" : "Server"))
+				.driverClassName("org.h2.Driver")
+				.build();
+	}
+
 }

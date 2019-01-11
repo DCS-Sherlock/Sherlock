@@ -6,7 +6,7 @@ import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 
-import java.util.List;
+import java.util.*;
 
 public class WorkspaceWrapper {
     private Workspace workspace;
@@ -14,7 +14,7 @@ public class WorkspaceWrapper {
 
     public WorkspaceWrapper(Workspace workspace) {
         this.workspace = workspace;
-        List<Long> id = List.of(this.workspace.getEngineId());
+        List<Long> id = Collections.singletonList(this.workspace.getEngineId());
         List<IWorkspace> iWorkspaces = SherlockEngine.storage.getWorkspaces(id);
         if (iWorkspaces.size() == 1) {
             this.iWorkspace = iWorkspaces.get(0);
@@ -29,9 +29,7 @@ public class WorkspaceWrapper {
     }
 
     private void createEngineWorkspace() {
-        IWorkspace iWorkspace = SherlockEngine.storage.createWorkspace();
-        iWorkspace.setName(this.workspace.getName());
-        iWorkspace.setLanguage(Language.JAVA);
+        IWorkspace iWorkspace = SherlockEngine.storage.createWorkspace(this.workspace.getName(), Language.JAVA); // change the construction method so we do one db write, not three
         this.workspace.setEngineId(iWorkspace.getPersistentId());
     }
 

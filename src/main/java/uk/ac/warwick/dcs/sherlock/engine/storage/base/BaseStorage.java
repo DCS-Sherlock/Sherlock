@@ -2,10 +2,12 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.TypeMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -47,8 +49,8 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public IWorkspace createWorkspace() {
-		IWorkspace w = new EntityWorkspace();
+	public IWorkspace createWorkspace(String name, Language lang) {
+		IWorkspace w = new EntityWorkspace(name, lang);
 		this.database.storeObject(w);
 		return w;
 	}
@@ -76,15 +78,21 @@ public class BaseStorage implements IStorageWrapper {
 
 	@Override
 	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) {
+		if (!(workspace instanceof EntityWorkspace)) {
+			logger.error("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+			throw new TypeMismatchException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityWorkspace w = (EntityWorkspace) workspace;
+
 		if (FilenameUtils.getExtension(filename).equals("zip")) {
-			this.storeArchive(filename, fileContent);
+			this.storeArchive(w, filename, fileContent);
 		}
 		else {
-			this.storeIndividualFile(filename, fileContent, null);
+			this.storeIndividualFile(w, filename, fileContent, null);
 		}
 	}
 
-	private void storeArchive(String filename, byte[] fileContent) {
+	private void storeArchive(EntityWorkspace workspace, String filename, byte[] fileContent) {
 		try {
 			EntityArchive topArchive = new EntityArchive(filename);
 			this.database.storeObject(topArchive);
@@ -108,7 +116,7 @@ public class BaseStorage implements IStorageWrapper {
 					}
 				}
 				else {
-					this.storeIndividualFile(zipEntry.getName(), IOUtils.toByteArray(zis), curArchive);
+					this.storeIndividualFile(workspace, zipEntry.getName(), IOUtils.toByteArray(zis), curArchive);
 				}
 				zipEntry = zis.getNextEntry();
 			}
@@ -120,15 +128,13 @@ public class BaseStorage implements IStorageWrapper {
 		}
 	}
 
-	private void storeIndividualFile(String filename, byte[] fileContent, EntityArchive archive) {
+	private void storeIndividualFile(EntityWorkspace workspace, String filename, byte[] fileContent, EntityArchive archive) {
 		EntityFile file = new EntityFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}
 
-		EntityWorkspace workspace = this.database.temporaryWorkspace();
 		file.setWorkspace(workspace);
-
 		this.database.storeObject(file);
 	}
 }

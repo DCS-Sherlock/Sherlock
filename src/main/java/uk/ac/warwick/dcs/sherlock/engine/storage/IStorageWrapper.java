@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 *
 	 * @return instance
 	 */
-	IWorkspace createWorkspace();
+	IWorkspace createWorkspace(String name, Language lang);
 
 	/**
 	 * Fetches the class of ICodeBlockGroup used in this IStorageWrapper implementation
