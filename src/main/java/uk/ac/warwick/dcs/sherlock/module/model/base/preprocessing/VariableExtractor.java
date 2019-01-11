@@ -2,9 +2,9 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import uk.ac.warwick.dcs.sherlock.api.model.IParserPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.Language;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IParserPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParserBaseListener;
 

@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.api.model;
+package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
 /**
  * A list of different kinds of plagiarism that may be detected. Currently based on "Identification of Program Similarity in Large populations" by Whale (Aliyah's report).

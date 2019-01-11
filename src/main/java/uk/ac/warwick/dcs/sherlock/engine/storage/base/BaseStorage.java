@@ -4,8 +4,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.data.IModelProcessedResults;
-import uk.ac.warwick.dcs.sherlock.api.model.data.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.*;
 import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
@@ -47,12 +48,25 @@ public class BaseStorage implements IStorageWrapper {
 
 	@Override
 	public IWorkspace createWorkspace() {
-		return this.database.temporaryWorkspace();
+		IWorkspace w = new EntityWorkspace();
+		this.database.storeObject(w);
+		return w;
 	}
 
 	@Override
-	public Class<? extends IModelProcessedResults> getModelProcessedResultsClass() {
-		return null;
+	public Class<? extends ICodeBlockGroup> getCodeBlockGroupClass() {
+		return EntityCodeBlockGroup.class;
+	}
+
+	@Override
+	public List<IWorkspace> getWorkspaces(List<Long> ids) {
+		return this.getWorkspaces().stream().filter(x -> ids.contains(x.getPersistentId())).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<IWorkspace> getWorkspaces() {
+		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
+		return new LinkedList<>(l);
 	}
 
 	@Override
@@ -61,7 +75,7 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public void storeFile(String filename, byte[] fileContent) {
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) {
 		if (FilenameUtils.getExtension(filename).equals("zip")) {
 			this.storeArchive(filename, fileContent);
 		}

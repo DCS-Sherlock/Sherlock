@@ -1,10 +1,12 @@
-package uk.ac.warwick.dcs.sherlock.api.model.data;
+package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
 import java.io.Serializable;
 
-public abstract class AbstractModelRawResult implements Serializable {
+public abstract class AbstractModelTaskRawResult implements Serializable {
 
 	private static final long serialVersionUID = 24L;
+
+	public abstract boolean isEmpty();
 
 	/**
 	 * Check that this object is of the same exact type as the baseline, including check any generic types are equal
@@ -15,8 +17,6 @@ public abstract class AbstractModelRawResult implements Serializable {
 	 *
 	 * @return is same type?
 	 */
-	public abstract boolean testType(AbstractModelRawResult baseline);
-
-	public abstract boolean isEmpty();
+	public abstract boolean testType(AbstractModelTaskRawResult baseline);
 
 }

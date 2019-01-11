@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.module.model.base.utils.PreprocessorParamsProvider;
 import uk.ac.warwick.dcs.sherlock.module.model.base.utils.TestJavaFile;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;

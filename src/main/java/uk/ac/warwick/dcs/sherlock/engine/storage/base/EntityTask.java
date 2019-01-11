@@ -2,8 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.data.AbstractModelRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
@@ -35,9 +35,9 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	// When adding check that all same type
 	// Store as a file in case too large for db field, store refs to files in this object
-	private transient List<AbstractModelRawResult> rawResults;
+	private transient List<AbstractModelTaskRawResult> rawResults;
 
-	//private List<IModelProcessedResults> finalResults;
+	//private List<ModelTaskProcessedResults> finalResults;
 
 	public EntityTask() {
 		super();
@@ -96,7 +96,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
-	public List<AbstractModelRawResult> getRawResults() {
+	public List<AbstractModelTaskRawResult> getRawResults() {
 		if (this.rawResults == null && this.hash != null && this.hash.length() > 0) {
 			this.deserialize();
 		}
@@ -105,7 +105,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
-	public void setRawResults(List<AbstractModelRawResult> rawResults) {
+	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
 		this.serialize();
 	}
@@ -130,7 +130,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.timestamp;
 	}
 
-	void setRawResultsNoStore(List<AbstractModelRawResult> rawResults) {
+	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
 	}
 
