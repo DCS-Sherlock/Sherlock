@@ -128,7 +128,7 @@ javadoc {
     source = ["src/main/java"]
     destinationDir = file("${projectDir}/docs")
     options.memberLevel = JavadocMemberLevel.PRIVATE
-    classpath = configurations.compile
+    classpath += configurations.compile
 }
 
 generateGrammarSource {

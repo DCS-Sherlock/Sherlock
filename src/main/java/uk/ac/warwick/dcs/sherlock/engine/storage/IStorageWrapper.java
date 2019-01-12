@@ -4,7 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import java.util.*;
 

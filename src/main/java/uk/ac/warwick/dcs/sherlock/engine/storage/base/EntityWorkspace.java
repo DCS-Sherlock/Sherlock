@@ -2,8 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,16 +35,13 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	public EntityWorkspace(String name, Language lang) {
 		super();
-		this.name = name;
+		this.storeName(name);
 		this.lang = lang;
 	}
 
 	@Override
 	public IJob createJob() {
-		EntityJob newJob = new EntityJob(this);
-		this.jobs.add(newJob);
-		BaseStorage.instance.database.storeObject(newJob);
-		return newJob;
+		return new EntityJob(this);
 	}
 
 	@Override
@@ -82,8 +79,18 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.storeName(name);
 		BaseStorage.instance.database.storeObject(this);
+	}
+
+	private void storeName(String name) {
+		if (name.length() > 64) {
+			BaseStorage.logger.warn("Workspace name too long [{}]", name);
+			this.name = name.substring(0, 64);
+		}
+		else {
+			this.name = name;
+		}
 	}
 
 }

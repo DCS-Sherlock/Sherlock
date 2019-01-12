@@ -2,10 +2,12 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -27,7 +29,8 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	private EntityJob job;
 
 	private String detector;
-	private int rank;
+	private Map<String, Float> paramMap;
+	private Rank rank;
 
 	private Timestamp timestamp;
 	private String hash;
@@ -48,11 +51,12 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.rawResults.forEach(System.out::println);
 	}
 
-	public EntityTask(EntityJob job, IDetector detector) {
+	public EntityTask(EntityJob job, Class<? extends IDetector> detector, Map<String, Float> mapping) {
 		super();
 		this.job = job;
-		this.detector = detector.getClass().getName();
-		this.rank = detector.getRank().ordinal();
+		this.detector = detector.getName();
+		this.paramMap = mapping;
+		this.rank = SherlockRegistry.getDetectorRank(detector);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;
 		this.secure = null;
@@ -86,13 +90,18 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
+	public Map<String, Float> getParameterMapping() {
+		return this.paramMap;
+	}
+
+	@Override
 	public long getPersistentId() {
 		return this.id;
 	}
 
 	@Override
 	public IDetector.Rank getRank() {
-		return IDetector.Rank.values()[rank];
+		return rank;
 	}
 
 	@Override

@@ -9,6 +9,9 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
@@ -19,13 +22,24 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 /* TODO: temporary implementation*/
+@Deprecated
 public class TestResultsFactory {
 
-	public static String buildTestResults(IWorkspace workspace, Class<? extends IDetector> algorithm) throws IllegalAccessException, InstantiationException {
-		IDetector instance = algorithm.newInstance();
+	@Deprecated
+	public static String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
+		if (!job.isPrepared()) {
+			System.out.println("Could not run job, it is not prepared");
+			return "Failed to run job, it is not prepared";
+		}
 
-		IJob job = workspace.createJob();
-		ITask task = job.createTask(instance);
+		if (job.getTasks() == null || job.getTasks().isEmpty()) {
+			System.out.println("Could not run job, has no tasks");
+			return "Failed to run job, has no tasks";
+		}
+
+		IWorkspace workspace = job.getWorkspace();
+		ITask task = job.getTasks().get(0);
+		IDetector instance = task.getDetector().newInstance();
 
 		List<ISourceFile> files = workspace.getFiles();
 		System.out.println(files.size());

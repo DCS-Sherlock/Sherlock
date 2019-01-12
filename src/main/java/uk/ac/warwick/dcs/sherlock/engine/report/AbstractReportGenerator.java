@@ -16,7 +16,7 @@ public abstract class AbstractReportGenerator {
 	protected Map<DetectionType, String> baseDescriptions;
 
 	public AbstractReportGenerator(String descriptionFileName) {
-		baseDescriptions = new HashMap<DetectionType, String>();
+		baseDescriptions = new HashMap<DetectionType, String>(); //just use the ReportDescriptions.getDescription(DetectionType type);
 
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(descriptionFileName))) {
 			String currentLine = bufferedReader.readLine();

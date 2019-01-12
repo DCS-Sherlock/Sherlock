@@ -4,6 +4,8 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 
+import java.lang.reflect.Field;
+
 public class SherlockHelper {
 
 	private static ISourceFileHelper sourceFileHelper;
@@ -18,4 +20,7 @@ public class SherlockHelper {
 		return codeBlockGroupClass.newInstance();
 	}
 
+	public static String buildFieldReference(Field field) {
+		return field.getDeclaringClass().getName() + ":" + field.getName();
+	}
 }
