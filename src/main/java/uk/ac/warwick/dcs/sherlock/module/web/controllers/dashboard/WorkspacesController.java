@@ -7,9 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
@@ -216,7 +218,11 @@ public class WorkspacesController {
 
 		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 		IJob job = workspaceWrapper.getiWorkspace().createJob();
-		//ITask task = job.createTask(new TestDetector());
+
+		//test new code, remove this
+		job.addDetector(TestDetector.class);
+		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
+		job.prepare();
 
 		model.addAttribute("workspace", workspace);
 		model = this.isAjax(model, request);

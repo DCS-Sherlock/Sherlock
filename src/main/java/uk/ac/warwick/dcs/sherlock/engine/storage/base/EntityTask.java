@@ -56,7 +56,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.job = job;
 		this.detector = detector.getName();
 		this.paramMap = mapping;
-		this.paramMap = new HashMap<>();
 		this.rank = SherlockRegistry.getDetectorRank(detector);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;

@@ -21,6 +21,6 @@ public class SherlockHelper {
 	}
 
 	public static String buildFieldReference(Field field) {
-		return field.getDeclaringClass().getName() + field.getName();
+		return field.getDeclaringClass().getName() + ":" + field.getName();
 	}
 }

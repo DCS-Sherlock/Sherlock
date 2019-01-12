@@ -51,18 +51,23 @@ public class EntityJob implements IJob, Serializable {
 	public EntityJob() {
 		super();
 		this.prepared = true;
+		this.detectors = null;
+		this.paramMap = null;
 	}
 
 	public EntityJob(EntityWorkspace workspace) {
 		super();
 		this.workspace = workspace;
 		this.timestamp = new Timestamp(System.currentTimeMillis());
-		this.prepared = false;
 		this.filesPresent = new long[workspace.getFiles().size()];
 
 		for (int i = 0; i < this.filesPresent.length; i++) {
 			this.filesPresent[i] = workspace.getFiles().get(i).getPersistentId();
 		}
+
+		this.prepared = false;
+		this.detectors = new LinkedList<>();
+		this.paramMap = new HashMap<>();
 	}
 
 	@Override
