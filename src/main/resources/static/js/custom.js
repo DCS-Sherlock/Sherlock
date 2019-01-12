@@ -1,39 +1,20 @@
 //Sherlock JS
-function modal(){
+function modalLinks(){
     $("a[data-js='modal']").unbind();
     $("a[data-js='modal']").click(function () {
         var input = $(this);
-        var link = input.attr("href");
+        var url = input.attr("href");
 
         input.prop("disabled", true);
         input.addClass("disabled");
 
-        $.ajax({
-            type: "GET",
-            accept:"text/html",
-            dataType: "html",
-            url: link,
-            timeout: 30000,
-            data: {
-                "ajax": true
-            },
-            success: function(result, status, xhr) {
-                if (xhr.getResponseHeader("sherlock-url") != link || result.includes("</script>")) {
-                    window.location = xhr.getResponseHeader("sherlock-url");
-                } else {
-                    $("#modal").html(result);
-                    $("#modal").modal('show');
-                    loadPage();
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                //Todo proper error messages
-                console.log("error");
-                console.log(xhr.status);
-                console.log(thrownError);
-                window.location = xhr.getResponseHeader("sherlock-url");
+        getAjax(
+            url,
+            function(result, status, xhr) {
+                $("#modal").html(result);
+                $("#modal").modal('show');
             }
-        });
+        );
 
         input.prop("disabled", false);
         input.removeClass("disabled");
@@ -42,84 +23,47 @@ function modal(){
     });
 }
 
-function area(){
+function loadAreas(){
     $("div[data-js='area']").each(function () {
         var input = $(this);
-        var link = input.attr("data-js-href");
+        var url = input.attr("data-js-href");
 
-        $.ajax({
-            type: "GET",
-            accept:"text/html",
-            dataType: "html",
-            url: link,
-            timeout: 30000,
-            data: {
-                "ajax": true
-            },
-            success: function(result, status, xhr) {
-                if (xhr.getResponseHeader("sherlock-url") != link || result.includes("</script>")) {
-                    window.location = xhr.getResponseHeader("sherlock-url");
-                } else {
-                    input.html(result);
-                    loadPage();
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                //Todo proper error messages
-                console.log("error");
-                console.log(xhr.status);
-                console.log(thrownError);
-                window.location = xhr.getResponseHeader("sherlock-url");
+        getAjax(
+            url,
+            function(result, status, xhr) {
+                input.html(result);
             }
-        });
+        );
     });
 }
 
-function form(){
+function formSubmissions(){
     $("form[data-js='form']").unbind();
     $("form[data-js='form']").submit(function () {
         var input = $(this);
-        var link = input.attr("action");
+        var url = input.attr("action");
         var target = $(input.attr("data-js-target"));
 
         input.find("button[type=submit]").prop("disabled", true);
         input.find("button[type=submit]").addClass("disabled");
 
         var data = new FormData(this);
-        data.append("ajax", true);
+        data.append("ajax", "true");
 
-        $.ajax({
-            type: "POST",
-            accept:"text/html",
-            dataType: "html",
-            url: link,
-            timeout: 30000,
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: data,
-            success: function(result, status, xhr) {
-                if (xhr.getResponseHeader("sherlock-url") != link || result.includes("</script>")) {
-                    window.location = xhr.getResponseHeader("sherlock-url");
-                } else {
-                    target.html(result);
-                }
-                loadPage();
+        submitAjax(
+            url,
+            data,
+            function(result, status, xhr) {
+                target.html(result);
             },
-            error: function (xhr, ajaxOptions, thrownError) {
-                //Todo proper error messages
-                console.log("error");
-                console.log(xhr.status);
-                console.log(thrownError);
-                window.location = xhr.getResponseHeader("sherlock-url");
-            }
-        });
+            "POST"
+        );
 
         return false;
     });
 }
 
-function hideClose() {
+function hideCloseButtons() {
     $( ".js-cancel" ).each(function() {
         if ($(this).closest("#modal-container").length == 1) {
             if ($(this).is("button")) {
@@ -131,21 +75,55 @@ function hideClose() {
     });
 }
 
-function loadPage() {
-    modal();
-    form();
-    hideClose();
+function getAjax(url, success) {
+    var data = {
+        ajax: "true"
+    };
+    submitAjax(url, data, success, "GET");
+}
+
+function submitAjax(url, data, success, type) {
+    var input = {
+        type: type,
+        accept:"text/html",
+        dataType: "html",
+        url: url,
+        timeout: 30000,
+        data: data,
+        success: function (result, status, xhr) {
+            if (xhr.getResponseHeader("sherlock-url") != url || result.includes("</script>")) {
+                window.location = xhr.getResponseHeader("sherlock-url");
+            } else {
+                success(result, status, xhr);
+            }
+            bindPage();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError);
+            $('#javascript-error').removeClass('d-none');
+            $('#javascript-error-message').text(xhr.status);
+            $("#modal").modal('hide');
+        }
+    };
+
+    if (type == "POST") {
+        $.extend(input, {
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    $.ajax(input);
+}
+
+function bindPage() {
+    modalLinks();
+    formSubmissions();
+    hideCloseButtons();
 }
 
 $(function () {
-    area();
-    loadPage();
+    loadAreas();
+    bindPage();
 });
-
-// $(function () {
-//     $("[data-js=tab]").click(function () {
-//         var input = $(this);
-//         $(input.attr("data-js-target")).tab('show')
-//         return false;
-//     });
-// });
