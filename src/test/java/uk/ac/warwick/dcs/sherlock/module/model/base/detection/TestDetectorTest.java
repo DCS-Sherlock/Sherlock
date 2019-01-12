@@ -33,7 +33,7 @@ class TestDetectorTest {
 	void getPreProcessors() {
 		TestDetector t = new TestDetector();
 		List<IPreProcessingStrategy> listOfPreProcessors = t.getPreProcessors();
-		assertAll(() -> assertEquals(1, listOfPreProcessors.size()), () -> assertEquals("comments", listOfPreProcessors.get(0).getName()));
+		assertAll(() -> assertEquals(1, listOfPreProcessors.size()), () -> assertEquals("variables", listOfPreProcessors.get(0).getName()));
 	}
 
 	@Test
