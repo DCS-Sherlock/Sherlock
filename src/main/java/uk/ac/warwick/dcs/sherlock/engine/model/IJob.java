@@ -54,6 +54,8 @@ public interface IJob {
 
 	/**
 	 * Builds the tasks required for the job, it cannot be edited after this method is called
+	 * <p><p>
+	 * This should also save the job to the database
 	 *
 	 * @return successfully prepared?
 	 */
