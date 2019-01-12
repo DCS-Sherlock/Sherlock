@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<form th:action="@{/dashboard/workspaces/manage/jobs/{id}(id=${workspace.id})}" data-js='form' data-js-target="#jobs-parent" method="post">
+    <p>NB: need to refresh page to see results at the moment</p>
+        <button type="submit" class="btn btn-primary" th:text="#{link_run}"></button>
+</form>
+
+</body>
+</html>

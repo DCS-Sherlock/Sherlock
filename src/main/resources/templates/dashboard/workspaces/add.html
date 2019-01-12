@@ -1,128 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
 <head>
-    <title>Add Workspace</title>
+    <title th:text="#{workspaces_page_add}"></title>
 </head>
 <body>
-<main role="main" class="container" layout:fragment="content">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h4 class="float-left mt-1">
-                        Add Workspace
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces}">Cancel</a>
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content" id="tabContent">
-                        <ul class="nav nav-tabs d-none" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="first-tab" data-toggle="tab" href="#first" role="tab"></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="algorithms-tab" data-toggle="tab" href="#algorithms" role="tab" ></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="final-tab" data-toggle="tab" href="#final" role="tab"></a>
-                            </li>
-                        </ul>
-                        <div class="tab-pane fade show active" id="first" role="tabpanel">
-                            <form>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="name">Name</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Name">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="year">Year</label>
-                                        <select id="year" class="form-control">
-                                            <option selected>2018-2019</option>
-                                            <option>2017-2018</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="language">Language</label>
-                                        <select id="language" class="form-control">
-                                            <option selected>Java</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label>Algorithms</label>
-                                        <br />
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Algorithm 1</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox2">Algorithm 2</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox3">Algorithm 3</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox4">Algorithm 4</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label>Skeleton Files</label>
-                                        <p class="mb-0">To-do</p>
-                                    </div>
-                                </div>
 
-                                <a class="btn btn-secondary btn-sm" th:href="@{/dashboard/workspaces}">Cancel</a>
-                                <button class="btn btn-primary" data-js="tab" data-js-target="#algorithms-tab">Continue</button>
-                            </form>
-                        </div>
-                        <div class="tab-pane fade" id="algorithms" role="tabpanel">
-                            <div class="row mb-4">
-                                <div class="col-4">
-                                    <div class="list-group" id="list-tab" role="tablist">
-                                        <a class="list-group-item list-group-item-action active" id="link-algorithm-1" data-toggle="list" href="#tab-algorithm-1" role="tab">Algorithm 1</a>
-                                        <a class="list-group-item list-group-item-action" id="link-algorithm-2" data-toggle="list" href="#tab-algorithm-2" role="tab">Algorithm 2</a>
-                                        <a class="list-group-item list-group-item-action" id="link-algorithm-3" data-toggle="list" href="#tab-algorithm-3" role="tab">Algorithm 3</a>
-                                        <a class="list-group-item list-group-item-action" id="link-algorithm-4" data-toggle="list" href="#tab-algorithm-4" role="tab">Algorithm 4</a>
-                                        <a class="list-group-item list-group-item-action" id="link-algorithm-5" data-toggle="list" href="#tab-algorithm-4" role="tab">Algorithm 5</a>
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <div class="tab-content" id="nav-tabContent">
-                                        <div class="tab-pane fade show active" id="tab-algorithm-1" role="tabpanel" >Algorithm 1 Settings</div>
-                                        <div class="tab-pane fade" id="tab-algorithm-2" role="tabpanel">Algorithm 2 Settings</div>
-                                        <div class="tab-pane fade" id="tab-algorithm-3" role="tabpanel">Algorithm 3 Settings</div>
-                                        <div class="tab-pane fade" id="tab-algorithm-4" role="tabpanel">Algorithm 4 Settings</div>
-                                        <div class="tab-pane fade" id="tab-algorithm-5" role="tabpanel">Algorithm 5 Settings</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn btn-secondary btn-sm" data-js="tab" data-js-target="#first-tab">Back</button>
-                            <button class="btn btn-primary" data-js="tab" data-js-target="#final-tab">Continue</button>
-
-                        </div>
-                        <div class="tab-pane fade" id="final" role="tabpanel">
-                            <form>
-                                <p>
-                                    Uploading entries will be here
-                                </p>
-                            </form>
-                            <button class="btn btn-secondary btn-sm" data-js="tab" data-js-target="#algorithms-tab">Back</button>
-                            <button type="submit" class="btn btn-primary" >Submit</button>
-                        </div>
+<div id="add-parent" class="container" layout:fragment="content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{workspaces_page_add}"></h5>
+            </div>
+            <form th:action="@{/dashboard/workspaces/add}" data-js='form' data-js-target="#add-parent" th:object="${workspaceNameForm}" method="post">
+                <div class="modal-body">
+                    <div th:if="${#fields.hasAnyErrors()}">
+                        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="name" th:text="#{workspaces_variable_name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{workspaces_variable_name}" th:value="*{name}" />
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link_cancel}"></a>
+                    <button type="submit" class="btn btn-primary" th:text="#{link_save}"></button>
+                </div>
+            </form>
         </div>
     </div>
-</main>
+</div>
+
 </body>
 </html>

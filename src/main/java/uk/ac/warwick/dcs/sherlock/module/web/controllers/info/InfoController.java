@@ -4,7 +4,6 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
@@ -13,16 +12,31 @@ import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 @Controller
 public class InfoController {
 
-//	private String result = "";
+	//	private String result = "";
 
 	public InfoController() {
-		EventBus.registerEventSubscriber(this);
+//		EventBus.registerEventSubscriber(this);
 	}
 
-//	@EventHandler
-//	public void getResults(EventPublishResults event) {
-//		this.result = event.getResults();
-//	}
+	//	@EventHandler
+	//	public void getResults(EventPublishResults event) {
+	//		this.result = event.getResults();
+	//	}
+
+	@RequestMapping ("/info/about")
+	public String about() {
+		return getReturn("info/about");
+	}
+
+	@RequestMapping ("/info/help")
+	public String help() {
+		return getReturn("info/help");
+	}
+
+	@RequestMapping ("/info/terms")
+	public String terms() {
+		return getReturn("info/terms");
+	}
 
 	@RequestMapping ("/")
 	public String welcome() {
@@ -35,21 +49,6 @@ public class InfoController {
 		return getReturn("info/index");
 	}
 
-	@RequestMapping ("/info/terms")
-	public String terms() {
-		return getReturn("info/terms");
-	}
-
-	@RequestMapping ("/info/about")
-	public String about() {
-		return getReturn("info/about");
-	}
-
-	@RequestMapping ("/info/help")
-	public String help() {
-		return getReturn("info/help");
-	}
-
 	private String getReturn(String page) {
 		//If running locally and logged out, automatically redirect to the login page
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -60,15 +59,15 @@ public class InfoController {
 		return page;
 	}
 
-//	@GetMapping ("/greeting")
-//	public String greeting(@RequestParam (name = "name", required = false, defaultValue = "World") String name, Model model) {
-//		model.addAttribute("name", name);
-//
-//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
-//		model.addAttribute("detectors", String.join(", ", detectors));
-//
-//		model.addAttribute("result", this.result);
-//		return "greeting";
-//	}
+	//	@GetMapping ("/greeting")
+	//	public String greeting(@RequestParam (name = "name", required = false, defaultValue = "World") String name, Model model) {
+	//		model.addAttribute("name", name);
+	//
+	//		List<String> detectors = RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectorNames()).getResponce();
+	//		model.addAttribute("detectors", String.join(", ", detectors));
+	//
+	//		model.addAttribute("result", this.result);
+	//		return "greeting";
+	//	}
 
 }

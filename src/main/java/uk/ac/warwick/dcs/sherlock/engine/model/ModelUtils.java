@@ -4,10 +4,8 @@ import com.google.common.collect.Streams;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.IPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
+import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 
 import java.util.*;
 import java.util.stream.*;
@@ -68,8 +66,8 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer) {
-		return validatePreProcessingStrategy(strategy, lexer.getClass().getName(), lexer.getChannelNames());
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer, Class<? extends Parser> parser, Language lang) {
+		return validatePreProcessingStrategy(strategy, lexer.getClass().getName(), lexer.getChannelNames(), parser, lang);
 	}
 
 	/**
@@ -80,31 +78,49 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels) {
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels, Class<? extends Parser> parser, Language lang) {
 
 		if (strategy == null) {
 			return false;
 		}
 
-		List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
-		for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
-			try {
-				IPreProcessor processor = processorClass.newInstance();
-				if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
-					Logger logger = LoggerFactory.getLogger(ModelUtils.class);
-					logger.error(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here
-					return false;
-				}
+		if (strategy.isParserBased()) {
+			List<Class<? extends IPreProcessor>> s = strategy.getPreProcessorClasses();
+			if (s.size() != 1) {
+				return false;
+			}
 
-				if (processor.getDependencies() != null && !checkedProcessors.containsAll(processor.getDependencies())) {
-					Logger logger = LoggerFactory.getLogger(ModelUtils.class);
-					logger.error(String.format("The preprocessing strategy '%s' does not meet the dependencies of %s", strategy.getName(), processorClass.getName())); //throw exception here
+			try {
+				IParserPreProcessor processor = (IParserPreProcessor) s.get(0).newInstance();
+				if (!processor.getParserUsed(lang).equals(parser)) {
 					return false;
 				}
-				checkedProcessors.add(processorClass);
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
+			}
+		}
+		else {
+			List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
+			for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+				try {
+					ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
+					if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
+						Logger logger = LoggerFactory.getLogger(ModelUtils.class);
+						logger.error(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here
+						return false;
+					}
+
+					if (processor.getDependencies() != null && !checkedProcessors.containsAll(processor.getDependencies())) {
+						Logger logger = LoggerFactory.getLogger(ModelUtils.class);
+						logger.error(String.format("The preprocessing strategy '%s' does not meet the dependencies of %s", strategy.getName(), processorClass.getName())); //throw exception here
+						return false;
+					}
+					checkedProcessors.add(processorClass);
+				}
+				catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 

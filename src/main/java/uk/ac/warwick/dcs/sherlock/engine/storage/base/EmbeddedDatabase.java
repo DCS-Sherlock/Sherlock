@@ -1,8 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBStudent;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.entities.DBWorkspace;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,6 +20,7 @@ public class EmbeddedDatabase {
 
 		this.dbFactory = Persistence.createEntityManagerFactory("objectdb:" + SherlockEngine.configuration.getDataPath() + File.separator + "Sherlock.odb", properties);
 		this.em = this.dbFactory.createEntityManager();
+		this.em.flush();
 	}
 
 	public void close() {
@@ -63,10 +62,12 @@ public class EmbeddedDatabase {
 	}
 
 	public <X> List<X> runQuery(String query, Class<X> xclass) {
-		em.getTransaction().begin();
 		List<X> q = em.createQuery(query, xclass).getResultList();
-		em.getTransaction().commit();
 		return q;
+	}
+
+	public void refreshObject(Object obj) {
+		this.em.refresh(obj);
 	}
 
 	public void storeObject(Object obj) {
@@ -101,45 +102,4 @@ public class EmbeddedDatabase {
 			}
 		}
 	}
-
-	DBStudent temporaryStudent() {
-		List<DBStudent> s;
-		try {
-			em.getTransaction().begin();
-			s = em.createQuery("SELECT s FROM Student s", DBStudent.class).getResultList();
-			if (s.size() == 0) {
-				s.add(new DBStudent());
-				em.persist(s.get(0));
-			}
-			em.getTransaction().commit();
-		}
-		finally {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
-			}
-		}
-
-		return s.get(0);
-	}
-
-	DBWorkspace temporaryWorkspace() {
-		List<DBWorkspace> w;
-		try {
-			em.getTransaction().begin();
-			w = em.createQuery("SELECT w FROM Workspace w", DBWorkspace.class).getResultList();
-			if (w.size() == 0) {
-				w.add(new DBWorkspace());
-				em.persist(w.get(0));
-			}
-			em.getTransaction().commit();
-		}
-		finally {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
-			}
-		}
-
-		return w.get(0);
-	}
-
 }

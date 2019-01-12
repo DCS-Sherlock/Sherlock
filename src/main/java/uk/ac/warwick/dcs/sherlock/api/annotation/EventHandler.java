@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * Marks a method as an event handler. If the containing class object is registered on the event bus, the method will receive events of the type of its required single parameter.
- *
+ * <p>
  * Set the side parameter to only receive events when sherlock is running as a server or a client
  */
 @Documented
