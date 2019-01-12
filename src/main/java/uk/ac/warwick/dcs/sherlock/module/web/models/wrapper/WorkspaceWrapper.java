@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 

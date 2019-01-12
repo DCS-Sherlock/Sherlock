@@ -9,6 +9,9 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
@@ -19,8 +22,10 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 /* TODO: temporary implementation*/
+@Deprecated
 public class TestResultsFactory {
 
+	@Deprecated
 	public static String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
 		if (!job.isPrepared()) {
 			System.out.println("Could not run job, it is not prepared");

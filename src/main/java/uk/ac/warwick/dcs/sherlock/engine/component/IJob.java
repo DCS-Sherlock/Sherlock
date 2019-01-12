@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.engine.model;
+package uk.ac.warwick.dcs.sherlock.engine.component;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;

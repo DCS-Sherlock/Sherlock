@@ -5,9 +5,9 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
-import uk.ac.warwick.dcs.sherlock.engine.model.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import javax.persistence.*;
 import java.io.Serializable;

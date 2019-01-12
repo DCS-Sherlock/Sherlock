@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;

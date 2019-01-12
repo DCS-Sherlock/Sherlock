@@ -6,8 +6,8 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.engine.model.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.model.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
