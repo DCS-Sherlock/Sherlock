@@ -15,14 +15,11 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.core.Registry;
-import uk.ac.warwick.dcs.sherlock.engine.core.SherlockConfiguration;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorage;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 public class SherlockEngine {
 
@@ -30,7 +27,7 @@ public class SherlockEngine {
 	public static final Boolean enableExternalModules = false;
 
 	public static Side side = Side.UNKNOWN;
-	public static SherlockConfiguration configuration = null;
+	public static Configuration configuration = null;
 	public static IStorageWrapper storage = null;
 
 	static EventBus eventBus = null;
@@ -45,6 +42,8 @@ public class SherlockEngine {
 		SherlockEngine.side = side;
 
 		try {
+
+
 			SherlockEngine.eventBus = new EventBus();
 			Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
@@ -55,9 +54,7 @@ public class SherlockEngine {
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.requestBus);
 
-			java.lang.reflect.Constructor construct = Registry.class.getDeclaredConstructor();
-			construct.setAccessible(true);
-			SherlockEngine.registry = (Registry) construct.newInstance();
+			SherlockEngine.registry = new Registry();
 			field = SherlockRegistry.class.getDeclaredField("registry");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
@@ -65,7 +62,7 @@ public class SherlockEngine {
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
 		}
-		catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+		catch (IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 
@@ -131,15 +128,15 @@ public class SherlockEngine {
 
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		if (!configFile.exists()) {
-			SherlockEngine.configuration = new SherlockConfiguration();
+			SherlockEngine.configuration = new Configuration();
 			SherlockEngine.writeConfiguration();
 		}
 		else {
 			try {
 				Constructor constructor = new Constructor();
-				constructor.addTypeDescription(new TypeDescription(SherlockConfiguration.class, "!Sherlock"));
+				constructor.addTypeDescription(new TypeDescription(Configuration.class, "!Sherlock"));
 				Yaml yaml = new Yaml(constructor);
-				SherlockEngine.configuration = yaml.loadAs(new FileInputStream(configFile), SherlockConfiguration.class);
+				SherlockEngine.configuration = yaml.loadAs(new FileInputStream(configFile), Configuration.class);
 			}
 			catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -151,7 +148,7 @@ public class SherlockEngine {
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		try {
 			Representer representer = new Representer();
-			representer.addClassTag(SherlockConfiguration.class, new Tag("!Sherlock"));
+			representer.addClassTag(Configuration.class, new Tag("!Sherlock"));
 			DumperOptions options = new DumperOptions();
 			options.setPrettyFlow(true);
 			Yaml yaml = new Yaml(representer, options);

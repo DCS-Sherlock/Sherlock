@@ -45,7 +45,7 @@ public interface IJob {
 	/**
 	 * @return get the latest processed results for this job
 	 */
-	void getResults();
+	List<IJobResult> getResults();
 
 	/**
 	 * @return has the prepare() method been called?

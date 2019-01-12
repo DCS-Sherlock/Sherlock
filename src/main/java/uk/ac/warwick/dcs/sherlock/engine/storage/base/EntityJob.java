@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJobResult;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
@@ -191,7 +192,8 @@ public class EntityJob implements IJob, Serializable {
 	}
 
 	@Override
-	public void getResults() {
+	public List<IJobResult> getResults() {
 		//TODO: do results api so we can write the getter
+		return null;
 	}
 }
