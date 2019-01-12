@@ -35,14 +35,19 @@ public class WorkspacesController {
 
 	@RequestMapping ("/dashboard/workspaces")
 	public String indexGet(Model model, Authentication authentication) {
+		return "dashboard/workspaces/index";
+	}
+
+	@RequestMapping ("/dashboard/workspaces/list")
+	public String workspacesGetFragment(Model model, Authentication authentication) {
 		List<Workspace> workspaces = workspaceRepository.findByAccount(this.getAccount(authentication));
 		model.addAttribute("workspaces", workspaces);
-		return "dashboard/workspaces/index";
+		return "dashboard/workspaces/fragments/workspaces";
 	}
 
 	@GetMapping ("/dashboard/workspaces/add")
 	public String addGet(Model model, HttpServletRequest request) {
-		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		model = this.isAjax(model, request);
 		model.addAttribute("workspaceNameForm", new WorkspaceNameForm());
 		return "dashboard/workspaces/add";
 	}
@@ -56,19 +61,73 @@ public class WorkspacesController {
 			Authentication authentication
 	) {
 		if (result.hasErrors()){
-			model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+			model = this.isAjax(model, request);
 			return "dashboard/workspaces/add";
 		}
 
 		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceNameForm.getName(), this.getAccount(authentication));
-
-		workspaceRepository.save(workspaceWrapper.getWorkspace());
-
+		workspaceRepository.save(workspaceWrapper.getWorkspace()); //Todo: move to workspace wrapper
 		return "redirect:/dashboard/workspaces";
 	}
 
 	@GetMapping ("/dashboard/workspaces/manage/{id}")
-	public String manage(
+	public String manageGet(
+			@PathVariable(value="id") long id,
+			Model model,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null)
+			return "redirect:/dashboard/workspaces?msg=notfound";
+
+		model.addAttribute("workspace", workspace);
+		return "dashboard/workspaces/manage";
+	}
+
+	@GetMapping ("/dashboard/workspaces/manage/name/{id}")
+	public String nameGetFragment(
+			@PathVariable(value="id") long id,
+			Model model,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null)
+			return "redirect:/dashboard/workspaces?msg=notfound";
+
+		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspaceNameForm", new WorkspaceNameForm(workspace.getName()));
+		return "dashboard/workspaces/fragments/name";
+	}
+
+	@PostMapping ("/dashboard/workspaces/manage/name/{id}")
+	public String namePostFragment(
+			@PathVariable(value="id") long id,
+			@Valid @ModelAttribute WorkspaceNameForm workspaceNameForm,
+			BindingResult result,
+			Model model,
+			HttpServletRequest request,
+			Authentication authentication
+	) {
+		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+
+		if (workspace == null || !this.isAjax(request))
+			return "redirect:/dashboard/workspaces?msg=notfound";
+
+		if (!result.hasErrors()) {
+			workspace.setName(workspaceNameForm.getName());
+			workspaceRepository.save(workspace); //Todo: move to workspace wrapper
+			result.reject("workspaces_message_updated_name"); //Todo: make message appear using "alert-success" not "alert-warning"
+		}
+
+		model.addAttribute("workspace", workspace);
+		return "dashboard/workspaces/fragments/name";
+	}
+
+
+	@GetMapping ("/dashboard/workspaces/manage/submissions/{id}")
+	public String submissionsGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
 			Authentication authentication
@@ -79,78 +138,16 @@ public class WorkspacesController {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
-		model.addAttribute("workspace", workspace);
-		return "dashboard/workspaces/manage";
-	}
-
-	@GetMapping ("/dashboard/workspaces/manage/name/{id}")
-	public String manageNameGet(
-			@PathVariable(value="id") long id,
-			Model model,
-			HttpServletRequest request,
-			Authentication authentication
-	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
-			return "redirect:/dashboard/workspaces?msg=notfound";
-		}
-
-		WorkspaceNameForm workspaceNameForm = new WorkspaceNameForm(workspace.getName());
-		model.addAttribute("workspace", workspace);
-		model.addAttribute("workspaceNameForm", workspaceNameForm);
-		return "dashboard/workspaces/manageName";
-	}
-
-	@PostMapping ("/dashboard/workspaces/manage/name/{id}")
-	public String manageNamePost(
-			@PathVariable(value="id") long id,
-			@Valid @ModelAttribute WorkspaceNameForm workspaceNameForm,
-			BindingResult result,
-			Model model,
-			HttpServletRequest request,
-			Authentication authentication
-	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
-			return "redirect:/dashboard/workspaces?msg=notfound";
-		}
-
-		if (!result.hasErrors()) {
-			workspace.setName(workspaceNameForm.getName());
-			workspaceRepository.save(workspace);
-			result.reject("workspaces_message_updated_name");
-		}
-
-		model.addAttribute("workspace", workspace);
-		return "dashboard/workspaces/manageName";
-	}
-
-
-	@GetMapping ("/dashboard/workspaces/manage/submissions/{id}")
-	public String manageSubmissionsGet(
-			@PathVariable(value="id") long id,
-			Model model,
-			HttpServletRequest request,
-			Authentication authentication
-	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
-			return "redirect:/dashboard/workspaces?msg=notfound";
-		}
-
 		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper.getWorkspace());
 		model.addAttribute("fileUploadForm", new FileUploadForm());
 		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
-		return "dashboard/workspaces/manageSubmissions";
+		return "dashboard/workspaces/fragments/submissions";
 	}
 
 	@PostMapping ("/dashboard/workspaces/manage/submissions/{id}")
-	public String manageSubmissionsPost(
+	public String submissionsPostFragment(
 			@PathVariable(value="id") long id,
 			@Valid @ModelAttribute FileUploadForm fileUploadForm,
 			BindingResult result,
@@ -160,7 +157,7 @@ public class WorkspacesController {
 	) {
 		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
 
-		if (workspace == null || !request.getParameterMap().containsKey("ajax")) {
+		if (workspace == null || !this.isAjax(request)) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
@@ -173,22 +170,21 @@ public class WorkspacesController {
 						SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
 					} catch (IOException e) {
 						e.printStackTrace();
-					}
-					catch (WorkspaceUnsupportedException e) {
+					} catch (WorkspaceUnsupportedException e) {
 						e.printStackTrace(); // this is a major issue, we should probably quit here
 					}
 				}
 			}
-			result.reject("workspaces_message_uploaded_submission");
+			result.reject("workspaces_message_uploaded_submission"); //Todo: make message appear using "alert-success" not "alert-warning"
 		}
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper.getWorkspace());
 		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
-		return "dashboard/workspaces/manageSubmissions";
+		return "dashboard/workspaces/fragments/submissions";
 	}
 
 	@GetMapping ("/dashboard/workspaces/manage/jobs/{id}")
-	public String manageJobsGet(
+	public String jobsGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
 			HttpServletRequest request,
@@ -201,12 +197,12 @@ public class WorkspacesController {
 		}
 
 		model.addAttribute("workspace", workspace);
-		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
-		return "dashboard/workspaces/manageJobs";
+		model = this.isAjax(model, request);
+		return "dashboard/workspaces/fragments/jobs";
 	}
 
 	@PostMapping ("/dashboard/workspaces/manage/jobs/{id}")
-	public String manageJobsPost(
+	public String jobsPostFragment(
 			@PathVariable(value="id") long id,
 			Model model,
 			HttpServletRequest request,
@@ -223,12 +219,12 @@ public class WorkspacesController {
 		//ITask task = job.createTask(new TestDetector());
 
 		model.addAttribute("workspace", workspace);
-		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
-		return "dashboard/workspaces/manageJobs";
+		model = this.isAjax(model, request);
+		return "dashboard/workspaces/fragments/jobs";
 	}
 
 	@GetMapping ("/dashboard/workspaces/manage/results/{id}")
-	public String manageResultsGet(
+	public String resultsGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
 			HttpServletRequest request,
@@ -246,8 +242,8 @@ public class WorkspacesController {
 //		jobs.get(0).getTasks().get(0).getRawResults().get(0).
 
 		model.addAttribute("workspace", workspace);
-		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
-		return "dashboard/workspaces/manageResults";
+		model = this.isAjax(model, request);
+		return "dashboard/workspaces/fragments/results";
 	}
 
 	@GetMapping ("/dashboard/workspaces/delete/{id}")
@@ -264,7 +260,7 @@ public class WorkspacesController {
 		}
 
 		model.addAttribute("workspace", workspace);
-		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		model = this.isAjax(model, request);
 		return "dashboard/workspaces/delete";
 	}
 
@@ -284,6 +280,14 @@ public class WorkspacesController {
 		return "redirect:/dashboard/workspaces?msg=deleted";
 	}
 
+	//Todo: Move helpers to separate class
+	private boolean isAjax(HttpServletRequest request) {
+		return request.getParameterMap().containsKey("ajax");
+	}
+	private Model isAjax(Model model, HttpServletRequest request) {
+		model.addAttribute("ajax", request.getParameterMap().containsKey("ajax"));
+		return model;
+	}
 	private Account getAccount(Authentication authentication) {
 		return accountRepository.findByEmail(authentication.getName());
 	}
