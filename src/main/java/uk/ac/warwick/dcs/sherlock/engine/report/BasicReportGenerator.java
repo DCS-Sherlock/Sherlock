@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.model.base.reporting;
+package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.engine.report.AbstractReportGenerator;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
