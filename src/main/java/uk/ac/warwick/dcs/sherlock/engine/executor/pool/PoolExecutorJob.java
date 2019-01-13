@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorLogger;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.PriorityWorkPriorities;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkPreProcessFiles;
@@ -27,6 +28,14 @@ public class PoolExecutorJob implements Runnable{
 
 		RecursiveAction preProcess = new WorkPreProcessFiles(new LinkedList<>(this.tasks), this.job.getWorkspace().getFiles());
 		this.scheduler.invokeWork(preProcess, PriorityWorkPriorities.DEFAULT);
-		this.tasks.stream().forEach(x -> System.out.println(x.dataItems.size()));
+
+		// Check that preprocessing went okay
+		this.tasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {
+			synchronized (ExecutorLogger.logger) {
+				ExecutorLogger.logger.error("PreProcessing output for detector {} is empty, this detector will be ignored.", x.getDetector().getName());
+			}
+		}).forEach(this.tasks::remove);
+
+
 	}
 }

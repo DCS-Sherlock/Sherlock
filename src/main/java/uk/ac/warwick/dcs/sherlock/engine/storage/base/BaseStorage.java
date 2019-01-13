@@ -37,7 +37,12 @@ public class BaseStorage implements IStorageWrapper {
 		if (orphans != null && orphans.size() > 0) {
 			this.database.removeObject(orphans);
 		}
-		this.database.runQuery("SELECT j from Job j", EntityJob.class).stream().filter(j -> j.getTasks().size() == 0).peek(j -> this.database.removeObject(j)).findAny().ifPresent(x -> logger.warn("removing jobs with no tasks"));
+
+		orphans = this.database.runQuery("SELECT j from Job j", EntityJob.class).stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
+		if (orphans.size() > 0) {
+			logger.warn("removing jobs with no tasks");
+			this.database.removeObject(orphans);
+		}
 
 		//List<EntityTask> tasks = this.database.runQuery("SELECT t from Task t", EntityTask.class);
 		//logger.warn(tasks.get(0).getRawResults().stream().map(Objects::toString).collect(Collectors.joining("\n----\n")));
