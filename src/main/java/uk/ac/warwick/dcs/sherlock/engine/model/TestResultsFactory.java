@@ -28,6 +28,7 @@ import java.util.stream.*;
 @Deprecated
 public class TestResultsFactory {
 
+	@SuppressWarnings ("Duplicates")
 	@Deprecated
 	public static String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
 		if (!job.isPrepared()) {

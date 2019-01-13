@@ -224,6 +224,8 @@ public class WorkspacesController {
 		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
 		job.prepare();
 
+		SherlockEngine.executor.submitJob(job);
+
 		model.addAttribute("workspace", workspace);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/jobs";

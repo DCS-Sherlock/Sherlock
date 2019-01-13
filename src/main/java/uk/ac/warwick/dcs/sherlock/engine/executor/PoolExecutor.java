@@ -2,15 +2,18 @@ package uk.ac.warwick.dcs.sherlock.engine.executor;
 
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.*;
+import uk.ac.warwick.dcs.sherlock.engine.executor.pool.PoolExecutorJob;
 
 import java.util.*;
 import java.util.concurrent.*;
 
 public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
+	private ExecutorService exec;
 	private PriorityWorkScheduler scheduler;
 
 	public PoolExecutor() {
+		this.exec = Executors.newSingleThreadExecutor();
 		this.scheduler = new PriorityWorkScheduler();
 	}
 
@@ -22,6 +25,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 			this.submitWork(task);
 
 			try {
+				Thread.sleep(5000);
 				task.wait();
 				Thread.sleep(5000);
 			}
@@ -40,6 +44,10 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	@Override
 	public int submitJob(IJob job) {
 		//do checks on the job, check it has tasks etc
+
+		PoolExecutorJob j = new PoolExecutorJob(this, job);
+		this.exec.execute(j);
+
 		return 0;
 	}
 

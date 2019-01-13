@@ -25,7 +25,9 @@ public class PriorityWorkScheduler {
 				try {
 					PriorityWorkTask nextTask = this.priorityQueue.take();
 
+					System.out.println("syncing work");
 					synchronized (nextTask) {
+						System.out.println("entered work");
 						Thread.sleep(3000);
 						System.out.println("starting work");
 
