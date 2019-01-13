@@ -12,7 +12,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
-import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
+import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.TrimWhitespaceOnly;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor;
 
@@ -23,7 +23,7 @@ public class NGramDetector extends AbstractPairwiseDetector {
 	// technically works for all languages the same as it's just running basic natural language checks
 	private static final Language[] languages = { Language.JAVA };
 
-	SimpleObjectEqualityRawResult<NgramMatch> res;
+	NGramRawResult<NgramMatch> res;
 
 	/**
 	 * The character width of each N-Gram used in the detection.
@@ -275,7 +275,8 @@ public class NGramDetector extends AbstractPairwiseDetector {
 		NgramMatch temp = new NgramMatch(reference.get(1).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
 				check.get(1).getLineNumber(), check.get(check.size()-1).getLineNumber(), last_peak);
 		// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
-		res.put(temp, reference.get(1).getLineNumber(), check.get(1).getLineNumber());
+		res.put(temp, reference.get(1).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
+				check.get(1).getLineNumber(), check.get(check.size()-1).getLineNumber());
 
 		reference.clear();
 		check.clear();
@@ -355,7 +356,7 @@ public class NGramDetector extends AbstractPairwiseDetector {
 
 			// make
 			// TODO check this is valid init form (not sure of the ints are needed)
-			 res = new SimpleObjectEqualityRawResult<>(this.file1.getFile(), this.file2.getFile(), 0, 0);
+			 res = new NGramRawResult<>(this.file1.getFile(), this.file2.getFile());
 
 			// generate the N-grams for file 1 and load them into a hash map
 			HashMap<String, Ngram> storage_map = new HashMap<String, Ngram>();
