@@ -19,32 +19,58 @@ import java.util.concurrent.*;
 //TODO: switch to logger
 public class WorkPreProcessFile extends RecursiveAction {
 
-	private IWorkTask task;
+	private List<IWorkTask> tasks;
+	private int begin;
+	private int end;
+
 	private ISourceFile file;
 	private String fileContent;
 
-	WorkPreProcessFile(IWorkTask task, ISourceFile file, String fileContent) {
-		this.task = task;
+	WorkPreProcessFile(List<IWorkTask> tasks, ISourceFile file) {
+		this(tasks, 0, tasks.size(), file, file.getFileContentsAsString());
+	}
+
+	private WorkPreProcessFile(List<IWorkTask> tasks, int begin, int end, ISourceFile file, String fileContent) {
+		this.tasks = tasks;
+		this.begin = begin;
+		this.end = end;
+
 		this.file = file;
 		this.fileContent = fileContent;
 	}
 
-	@SuppressWarnings ("Duplicates")
 	@Override
 	protected void compute() {
+		int size = this.end - this.begin;
+
+		if (size > 1) {
+			int middle = this.begin + (size / 2);
+			WorkPreProcessFile t1 = new WorkPreProcessFile(this.tasks, this.begin, middle, this.file, this.fileContent);
+			t1.fork();
+			WorkPreProcessFile t2 = new WorkPreProcessFile(this.tasks, middle, this.end, this.file, this.fileContent);
+			t2.compute();
+			t1.join();
+		}
+		else {
+			this.process(tasks.get(this.begin));
+		}
+	}
+
+	@SuppressWarnings ("Duplicates")
+	private void process(IWorkTask task) {
 		try {
-			Lexer lexer = this.task.getLexerClass().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString(this.fileContent));
+			Lexer lexer = task.getLexerClass().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString(this.fileContent));
 			List<? extends Token> tokensMaster = lexer.getAllTokens();
 
 			Map<String, List<IndexedString>> map = new HashMap<>();
 
-			this.task.getPreProcessingStrategies().forEach(strategy -> {
+			task.getPreProcessingStrategies().forEach(strategy -> {
 				if (strategy.isParserBased()) {
 					if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
 						Class<? extends IPreProcessor> processorClass = strategy.getPreProcessorClasses().get(0);
 						try {
 							IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
-							map.put(strategy.getName(), processor.processTokens(lexer, this.task.getParserClass(), this.task.getLanguage()));
+							map.put(strategy.getName(), processor.processTokens(lexer, task.getParserClass(), task.getLanguage()));
 						}
 						catch (InstantiationException | IllegalAccessException e) {
 							e.printStackTrace();
@@ -56,7 +82,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 						try {
 							ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
-							tokens = processor.process(tokens, lexer.getVocabulary(), this.task.getLanguage());
+							tokens = processor.process(tokens, lexer.getVocabulary(), task.getLanguage());
 						}
 						catch (InstantiationException | IllegalAccessException e) {
 							e.printStackTrace();
@@ -78,7 +104,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 				}
 			});
 
-			this.task.addModelDataItem(new ModelDataItem(this.file, map));
+			task.addModelDataItem(new ModelDataItem(this.file, map));
 		}
 		catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 			e.printStackTrace();

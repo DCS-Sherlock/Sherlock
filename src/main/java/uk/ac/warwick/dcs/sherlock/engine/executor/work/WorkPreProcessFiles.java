@@ -4,34 +4,42 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.*;
 
 public class WorkPreProcessFiles extends RecursiveAction {
 
 	private List<IWorkTask> tasks;
 
-	private ISourceFile file;
 	private List<ISourceFile> files;
-
-	private WorkPreProcessFiles(List<IWorkTask> tasks, ISourceFile file) {
-		this.tasks = tasks;
-		this.file = file;
-		this.files = null;
-	}
+	private int begin;
+	private int end;
 
 	public WorkPreProcessFiles(List<IWorkTask> tasks, List<ISourceFile> files) {
+		this(tasks,files, 0, files.size());
+	}
+
+	private WorkPreProcessFiles(List<IWorkTask> tasks, List<ISourceFile> files, int begin, int end) {
 		this.tasks = tasks;
-		this.file = null;
+
 		this.files = files;
+		this.begin = begin;
+		this.end = end;
 	}
 
 	@Override
 	protected void compute() {
-		if (this.file != null) {
-			ForkJoinTask.invokeAll(this.tasks.stream().map(x -> new WorkPreProcessFile(x, this.file, this.file.getFileContentsAsString())).collect(Collectors.toList()));
+		int size = this.end - this.begin;
+
+		if (size > 1) {
+			int middle = this.begin + (size / 2);
+			WorkPreProcessFiles t1 = new WorkPreProcessFiles(this.tasks, this.files, this.begin, middle);
+			t1.fork();
+			WorkPreProcessFiles t2 = new WorkPreProcessFiles(this.tasks, this.files, middle, this.end);
+			t2.compute();
+			t1.join();
 		}
 		else {
-			ForkJoinTask.invokeAll(this.files.stream().map(x -> new WorkPreProcessFiles(this.tasks, x)).collect(Collectors.toList()));
+			WorkPreProcessFile f1 = new WorkPreProcessFile(tasks, this.files.get(this.begin));
+			f1.compute();
 		}
 	}
 }
