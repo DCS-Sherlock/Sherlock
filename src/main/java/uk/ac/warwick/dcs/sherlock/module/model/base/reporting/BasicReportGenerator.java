@@ -33,7 +33,7 @@ public class BasicReportGenerator extends AbstractReportGenerator {
 			//NB with this basic approach, requires the base descriptions to keep line numbers in consistent order
 			List<Integer> lineNumbers = new ArrayList<Integer>();
 			for (ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-				lineNumbers.addAll(codeBlock.getLineNumbers());
+				//lineNumbers.addAll(codeBlock.getLineNumbers()); //broken
 			}
 
 			//Kind of gross but not sure if string.format can just take a list
