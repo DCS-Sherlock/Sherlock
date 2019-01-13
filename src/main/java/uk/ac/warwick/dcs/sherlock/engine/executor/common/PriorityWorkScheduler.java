@@ -37,7 +37,6 @@ public class PriorityWorkScheduler {
 
 				}
 				catch (InterruptedException e) {
-					// something bad has happened
 					break;
 				}
 			}
@@ -46,6 +45,11 @@ public class PriorityWorkScheduler {
 
 	public void scheduleJob(PriorityWorkTask work) {
 		priorityQueue.add(work);
+	}
+
+	public void shutdown() {
+		this.priorityWorkForkPool.shutdown();
+		this.priorityWorkScheduler.shutdownNow();
 	}
 
 }

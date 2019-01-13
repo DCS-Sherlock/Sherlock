@@ -13,4 +13,6 @@ public interface IExecutor {
 
 	JobStatus getJobStatus(IJob job);
 
+	void shutdown();
+
 }

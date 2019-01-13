@@ -52,4 +52,9 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	public JobStatus getJobStatus(IJob job) {
 		return null;
 	}
+
+	@Override
+	public void shutdown() {
+		this.scheduler.shutdown();
+	}
 }
