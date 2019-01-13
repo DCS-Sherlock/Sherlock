@@ -64,7 +64,9 @@ public class TestResultsFactory {
 
 				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
 					if (strategy.isParserBased()) {
-						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+
+						if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
+							Class<? extends IPreProcessor> processorClass = strategy.getPreProcessorClasses().get(0);
 							try {
 								IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
 								map.put(strategy.getName(), processor.processTokens(lexer, parserClass, workspace.getLanguage()));

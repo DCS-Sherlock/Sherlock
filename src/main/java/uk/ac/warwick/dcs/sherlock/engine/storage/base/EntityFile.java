@@ -63,6 +63,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
+	public String getFileContentsAsString() {
+		return BaseStorage.instance.filesystem.loadFileAsString(this);
+	}
+
+	@Override
 	public String getFileDisplayName() {
 		StringBuilder build = new StringBuilder();
 		if (this.archive != null) {

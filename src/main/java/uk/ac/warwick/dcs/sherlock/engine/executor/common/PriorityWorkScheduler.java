@@ -1,0 +1,51 @@
+package uk.ac.warwick.dcs.sherlock.engine.executor.common;
+
+import java.util.*;
+import java.util.concurrent.*;
+
+public class PriorityWorkScheduler {
+
+	private ForkJoinPool priorityWorkForkPool;
+	private ExecutorService priorityWorkScheduler;
+
+	private PriorityBlockingQueue<PriorityWorkTask> priorityQueue;
+
+	public PriorityWorkScheduler() {
+		this(10);
+	}
+
+	public PriorityWorkScheduler(Integer queueSize) {
+		this.priorityWorkForkPool = ForkJoinPool.commonPool();
+		this.priorityWorkScheduler = Executors.newSingleThreadExecutor();
+
+		this.priorityQueue = new PriorityBlockingQueue<>(queueSize, Comparator.comparing(PriorityWorkTask::getPriority));
+
+		this.priorityWorkScheduler.execute(() -> {
+			while (true) {
+				try {
+					PriorityWorkTask nextTask = this.priorityQueue.take();
+
+					synchronized (nextTask) {
+						Thread.sleep(3000);
+						System.out.println("starting work");
+
+						this.priorityWorkForkPool.execute(nextTask.getTopAction());
+						nextTask.getTopAction().join();
+
+						nextTask.notifyAll();
+					}
+
+				}
+				catch (InterruptedException e) {
+					// something bad has happened
+					break;
+				}
+			}
+		});
+	}
+
+	public void scheduleJob(PriorityWorkTask work) {
+		priorityQueue.add(work);
+	}
+
+}
