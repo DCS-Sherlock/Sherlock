@@ -13,6 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -31,12 +32,23 @@ public class BaseStorageFilesystem {
 	/**
 	 * Loads a file from the filesystem
 	 *
-	 * @param file
+	 * @param file the file to load
 	 *
-	 * @return
+	 * @return inputstream of the file content
 	 */
 	InputStream loadFile(EntityFile file) {
-		return this.loadStorable(file, this.computeFileIdentifier(file));
+		return this.loadStorableIS(file, this.computeFileIdentifier(file));
+	}
+
+	/**
+	 * Loads a file from the filesystem
+	 *
+	 * @param file the file to load
+	 *
+	 * @return string of the file content
+	 */
+	String loadFileAsString(EntityFile file) {
+		return this.loadStorableStr(file, this.computeFileIdentifier(file));
 	}
 
 	/**
@@ -46,7 +58,7 @@ public class BaseStorageFilesystem {
 	 */
 	void loadTaskRawResults(EntityTask task) {
 		try {
-			InputStream in = this.loadStorable(task, this.computeTaskIdentifier(task));
+			InputStream in = this.loadStorableIS(task, this.computeTaskIdentifier(task));
 			ObjectInputStream objectinputstream = new ObjectInputStream(in);
 			List<AbstractModelTaskRawResult> rawResults = (List<AbstractModelTaskRawResult>) objectinputstream.readObject();
 			task.setRawResultsNoStore(rawResults);
@@ -62,10 +74,26 @@ public class BaseStorageFilesystem {
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
 	}
 
+	private String loadStorableStr(IStorable storable, String identfier) {
+		byte[] b = this.loadStorable(storable, identfier);
+		if (b == null) {
+			return null;
+		}
+		return StringUtils.toEncodedString(b, StandardCharsets.UTF_8);
+	}
+
+	private InputStream loadStorableIS(IStorable storable, String identfier) {
+		byte[] b = this.loadStorable(storable, identfier);
+		if (b == null) {
+			return null;
+		}
+		return new ByteArrayInputStream(b);
+	}
+
 	/**
 	 * Main method to load a file from the filestore
 	 */
-	private InputStream loadStorable(IStorable storable, String identfier) {
+	private byte[] loadStorable(IStorable storable, String identfier) {
 		File fileToLoad = this.getFileFromIdentifier(identfier);
 		if (!fileToLoad.exists()) {
 			logger.error("File not in storage");
@@ -86,7 +114,7 @@ public class BaseStorageFilesystem {
 				return null;
 			}
 
-			return new ByteArrayInputStream(rawContent);
+			return rawContent;
 		}
 		catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
 			logger.error("Error reading file", e);

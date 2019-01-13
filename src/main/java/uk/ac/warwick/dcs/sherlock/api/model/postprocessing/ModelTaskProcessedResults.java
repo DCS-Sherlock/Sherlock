@@ -49,7 +49,7 @@ public class ModelTaskProcessedResults {
 	}
 
 	/**
-	 * @return
+	 * @return the final list of {@link ICodeBlockGroup} produced by the task
 	 */
 	public List<ICodeBlockGroup> getGroups() {
 		return groups;

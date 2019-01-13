@@ -10,6 +10,11 @@ public interface ISourceFile {
 	InputStream getFileContents();
 
 	/**
+	 * @return the content of the file as a string
+	 */
+	String getFileContentsAsString();
+
+	/**
 	 * @return string containing the name of the file to display, this should be a path including any parent archives
 	 */
 	String getFileDisplayName();
