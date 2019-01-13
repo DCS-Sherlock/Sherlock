@@ -22,9 +22,7 @@ public interface ICodeBlock {
 	float getBlockScore();
 
 	/**
-	 * TODO This could also be altered to show specific line numbers as e.g. variable renaming might take place over many TODO separate lines.
-	 *
-	 * @return a list of tuples of line numbers that define the start and end of the code block, (inclusive)
+	 * @return a list of tuples of line numbers that define the start and end of the code block. In most cases the list should be a single item, but if the same block is copied in multiple places in a file, all instances of the block will be output here.
 	 */
 	List<ITuple<Integer, Integer>> getLineNumbers();
 }

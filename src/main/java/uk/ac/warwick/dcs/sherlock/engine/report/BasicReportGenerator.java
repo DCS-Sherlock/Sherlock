@@ -7,7 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import java.util.*;
 
 /**
- * TODO: currently still based on old ICodeBlockPair rather than ICodeBlockGroup.
+ * This is based on the old ICodeBlockPair rather than ICodeBlockGroup, and is generally outdated, but may be useful for reference as a first pass at generating reports.
  * <p>
  * A fairly basic first pass to generate the presentable reports shown to the user. This uses ICodeBlockPair but could be adapted to the stuff in ModelProcessedRessults; I thought it would be better
  * to have the report stuff separate for the time being though.
