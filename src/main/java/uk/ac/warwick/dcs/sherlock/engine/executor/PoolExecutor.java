@@ -43,7 +43,9 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		//do checks on the job, check it has tasks etc
 
 		PoolExecutorJob j = new PoolExecutorJob(this, job);
-		this.exec.execute(j);
+		j.run();
+		//j.exec.execute(j);
+
 
 		return 0;
 	}

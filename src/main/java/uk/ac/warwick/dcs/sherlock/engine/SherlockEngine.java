@@ -15,6 +15,7 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.executor.PoolExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
@@ -84,7 +85,9 @@ public class SherlockEngine {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
+
 		SherlockEngine.executor = new PoolExecutor();
+		//SherlockEngine.executor = new TestResultsFactory();
 
 		try {
 			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
@@ -115,6 +118,16 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
+	}
+
+	public static void submitToExecutor(IJob job) {
+		long startTime = System.nanoTime();
+		SherlockEngine.executor.submitJob(job);
+		long endTime = System.nanoTime();
+
+		double duration = (endTime - startTime) * 1e-6;
+		duration = duration / 1000;
+		logger.warn("Job duration: " + duration + " seconds");
 	}
 
 	private static void loadConfiguration() {

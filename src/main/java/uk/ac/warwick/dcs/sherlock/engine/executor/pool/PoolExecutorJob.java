@@ -43,8 +43,8 @@ public class PoolExecutorJob implements Runnable{
 			e.printStackTrace();
 		}
 
-		synchronized (ExecutorLogger.logger) {
+		/*synchronized (ExecutorLogger.logger) {
 			ExecutorLogger.logger.info("Done!!");
-		}
+		}*/
 	}
 }
