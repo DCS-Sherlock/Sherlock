@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
@@ -132,7 +133,8 @@ public class TestResultsFactory {
 		}
 
 		task.setRawResults(raw);
-		SherlockRegistry.getPostProcessorInstance(raw.get(0).getClass());
+		IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(raw.get(0).getClass());
+		postProcessor.processResults(files, raw);
 
 		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
