@@ -2,12 +2,14 @@ package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
@@ -134,7 +136,20 @@ public class TestResultsFactory {
 
 		task.setRawResults(raw);
 		IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(raw.get(0).getClass());
-		postProcessor.processResults(files, raw);
+		if (postProcessor == null) {
+			System.out.println("Could not find a postprocessor for " + raw.get(0).getClass().getName() + ", check that it is being correctly registered!");
+			return "bad postprocessor";
+		}
+
+		ModelTaskProcessedResults processedResults = postProcessor.processResults(files, raw);
+
+		List<ICodeBlockGroup> gs = processedResults.getGroups();
+		System.out.println("Found " + gs.size() + " groups:\n");
+		for (ICodeBlockGroup g : gs) {
+			g.getCodeBlocks().forEach(x -> System.out.println(x.getFile() + " - " + x.getLineNumbers().toString()));
+			System.out.println();
+		}
+
 
 		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}

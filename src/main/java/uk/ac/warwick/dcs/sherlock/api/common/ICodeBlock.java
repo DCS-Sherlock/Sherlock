@@ -1,7 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
-import java.util.*;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+
+import java.util.*;
 
 /**
  * Interface for storing a single block of code flagged by a detector as suspected plagiarism.
@@ -25,6 +26,5 @@ public interface ICodeBlock {
 	 *
 	 * @return a list of tuples of line numbers that define the start and end of the code block, (inclusive)
 	 */
-	@Deprecated
 	List<ITuple<Integer, Integer>> getLineNumbers();
 }
