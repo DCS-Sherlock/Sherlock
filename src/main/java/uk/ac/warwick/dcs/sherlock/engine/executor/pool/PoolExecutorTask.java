@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
 
@@ -72,12 +73,16 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 		return this.task.getDetector();
 	}
 
-
 	@Override
 	public Void call() throws IllegalAccessException, InstantiationException {
-		//IDetector instance = this.task.getDetector().newInstance();
+		IDetector instance = this.task.getDetector().newInstance();
+		ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
-		//instance
+		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(this.dataItems);
+
+		synchronized (ExecutorUtils.logger) {
+			ExecutorUtils.logger.warn("workers: " + workers.size());
+		}
 
 		return null;
 	}
