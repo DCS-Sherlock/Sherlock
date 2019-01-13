@@ -221,6 +221,7 @@ public class WorkspacesController {
 
 		//test new code, remove this
 		job.addDetector(TestDetector.class);
+		job.addDetector(TestDetector.class);
 		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
 		job.prepare();
 

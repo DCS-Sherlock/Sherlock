@@ -15,6 +15,8 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
@@ -26,11 +28,11 @@ import java.util.stream.*;
 
 /* TODO: temporary implementation*/
 @Deprecated
-public class TestResultsFactory {
+public class TestResultsFactory implements IExecutor {
 
 	@SuppressWarnings ("Duplicates")
 	@Deprecated
-	public static String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
+	private String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
 		if (!job.isPrepared()) {
 			System.out.println("Could not run job, it is not prepared");
 			return "Failed to run job, it is not prepared";
@@ -152,7 +154,33 @@ public class TestResultsFactory {
 		}
 
 
-		return raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
+		return "done"; //raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 
+	@Override
+	public int submitJob(IJob job) {
+		try {
+			this.buildTestResults(job);
+		}
+		catch (IllegalAccessException | InstantiationException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+
+	@Override
+	public List<IJob> getCurrentActiveJobs() {
+		return null;
+	}
+
+	@Override
+	public JobStatus getJobStatus(IJob job) {
+		return null;
+	}
+
+	@Override
+	public void shutdown() {
+
+	}
 }

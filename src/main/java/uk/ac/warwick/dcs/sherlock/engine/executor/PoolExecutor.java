@@ -25,14 +25,11 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 			this.submitWork(task);
 
 			try {
-				Thread.sleep(5000);
 				task.wait();
-				Thread.sleep(5000);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Work done");
 		}
 	}
 

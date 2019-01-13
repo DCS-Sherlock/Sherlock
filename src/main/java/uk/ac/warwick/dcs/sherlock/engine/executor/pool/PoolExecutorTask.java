@@ -6,12 +6,14 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorLogger;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
 
 import java.util.*;
+import java.util.concurrent.*;
 
-public class PoolExecutorTask implements Runnable, IWorkTask {
+public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 
 	private IPriorityWorkSchedulerWrapper scheduler;
 	private ITask task;
@@ -71,9 +73,21 @@ public class PoolExecutorTask implements Runnable, IWorkTask {
 		return this.task.getDetector();
 	}
 
-	@Override
-	public void run() {
 
+	@Override
+	public Void call() {
+		synchronized (ExecutorLogger.logger) {
+			ExecutorLogger.logger.warn("Task: " + this.task.getPersistentId());
+		}
+
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
 
