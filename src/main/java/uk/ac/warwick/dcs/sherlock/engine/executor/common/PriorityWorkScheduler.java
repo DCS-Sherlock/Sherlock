@@ -26,12 +26,8 @@ public class PriorityWorkScheduler {
 					PriorityWorkTask nextTask = this.priorityQueue.take();
 
 					synchronized (nextTask) {
-						Thread.sleep(3000);
-						System.out.println("starting work");
-
 						this.priorityWorkForkPool.execute(nextTask.getTopAction());
 						nextTask.getTopAction().join();
-
 						nextTask.notifyAll();
 					}
 

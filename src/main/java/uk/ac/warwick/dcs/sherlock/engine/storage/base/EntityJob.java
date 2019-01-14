@@ -106,7 +106,7 @@ public class EntityJob implements IJob, Serializable {
 			return false;
 		}
 
-		if (det == null || this.detectors.contains(det)) {
+		if (det == null/* || this.detectors.contains(det)*/) {
 			BaseStorage.logger.warn("Could not add detector for job#{}, is null or already present", this.getPersistentId());
 			return false;
 		}

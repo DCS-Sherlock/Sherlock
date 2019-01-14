@@ -231,6 +231,9 @@ public class WorkspacesController {
 		job.addDetector(TestDetector.class);
 		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
 		job.prepare();
+		
+		//SherlockEngine.executor.submitJob(job);
+		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
 
 		model.addAttribute("workspace", workspaceWrapper);
 		model = this.isAjax(model, request);
