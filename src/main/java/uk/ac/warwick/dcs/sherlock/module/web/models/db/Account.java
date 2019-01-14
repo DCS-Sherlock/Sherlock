@@ -1,7 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.db;
 
-import org.hibernate.jdbc.Work;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,8 +25,11 @@ public class Account {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "account")
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.REMOVE)
     private Set<Workspace> workspaces = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.REMOVE)
+    private Set<Template> templates = new HashSet<>();
 
     public Account() {
 
@@ -86,5 +87,13 @@ public class Account {
 
     public void setWorkspaces(Set<Workspace> workspaces) {
         this.workspaces = workspaces;
+    }
+
+    public Set<Template> getTemplates() {
+        return templates;
+    }
+
+    public void setTemplates(Set<Template> jobsets) {
+        this.templates = jobsets;
     }
 }

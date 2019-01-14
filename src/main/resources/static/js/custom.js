@@ -13,6 +13,8 @@ function modalLinks(){
             function(result, status, xhr) {
                 $("#modal").html(result);
                 $("#modal").modal('show');
+                select();
+                $("select[data-js='select']").trigger('change');
             }
         );
 
@@ -20,6 +22,45 @@ function modalLinks(){
         input.removeClass("disabled");
 
         return false;
+    });
+}
+
+function select(){
+    $("select[data-js='select']").unbind();
+    $("select[data-js='select']").on('change', function () {
+        var input = $(this);
+        var value =  input.val();
+        var target = input.attr("data-js-target");
+        var url = input.attr("data-js-href");
+
+        $(target).html("...");
+
+        getAjax(
+            url + value,
+            function(result, status, xhr) {
+                $(target).html(result);
+            }
+        );
+
+        return false;
+    });
+}
+
+function formSubmitButton() {
+    $("button[data-js='formSubmit']").unbind();
+    $("button[data-js='formSubmit']").each(function() {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        if($(target).length == 0) {
+            $(this).addClass('d-none');
+        } else {
+            $(this).removeClass('d-none');
+        }
+    });
+    $("button[data-js='formSubmit']").click(function() {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        $(target).submit();
     });
 }
 
@@ -118,12 +159,18 @@ function submitAjax(url, data, success, type) {
 }
 
 function bindPage() {
+    select();
     modalLinks();
     formSubmissions();
     hideCloseButtons();
+    formSubmitButton();
+
+    $('[data-toggle="tooltip"]').unbind();
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 $(function () {
     loadAreas();
     bindPage();
+    $("select[data-js='select']").trigger('change');
 });

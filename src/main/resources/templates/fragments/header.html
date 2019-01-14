@@ -30,6 +30,9 @@
                     <li class="nav-item" th:classappend="${page == 'workspaces' ? 'active' : ''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/dashboard/workspaces}" th:text="#{nav_workspaces}"></a>
                     </li>
+                    <li class="nav-item" th:classappend="${page == 'templates' ? 'active' : ''}" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/dashboard/templates}" th:text="#{nav_templates}"></a>
+                    </li>
                 </ul>
             </div>
             <div class="navbar-collapse collapse w-100 order-2 dual-collapse2">

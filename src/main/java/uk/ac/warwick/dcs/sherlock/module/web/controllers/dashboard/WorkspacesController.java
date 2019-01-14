@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
@@ -16,11 +17,14 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
+import uk.ac.warwick.dcs.sherlock.module.web.models.db.TemplateDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceNameForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +39,8 @@ public class WorkspacesController {
 	private AccountRepository accountRepository;
 	@Autowired
 	private WorkspaceRepository workspaceRepository;
+	@Autowired
+	private TemplateRepository templateRepository;
 
 	public WorkspacesController() { }
 
@@ -44,12 +50,12 @@ public class WorkspacesController {
 	}
 
 	@RequestMapping ("/dashboard/workspaces/list")
-	public String workspacesGetFragment(Model model, Authentication authentication) {
+	public String listGetFragment(Model model, Authentication authentication) {
 		model.addAttribute(
 				"workspaces",
 				WorkspaceWrapper.getWorkspacesByAccount(this.getAccount(authentication), workspaceRepository)
 		);
-		return "dashboard/workspaces/fragments/workspaces";
+		return "dashboard/workspaces/fragments/list";
 	}
 
 	@GetMapping ("/dashboard/workspaces/add")
@@ -72,9 +78,9 @@ public class WorkspacesController {
 			return "dashboard/workspaces/add";
 		}
 
-		new WorkspaceWrapper(workspaceNameForm.getName(), Language.JAVA, this.getAccount(authentication), workspaceRepository);
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceNameForm.getName(), Language.JAVA, this.getAccount(authentication), workspaceRepository);
 
-		return "redirect:/dashboard/workspaces";
+		return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId();
 	}
 
 	@GetMapping ("/dashboard/workspaces/manage/{id}")
@@ -207,6 +213,10 @@ public class WorkspacesController {
 		}
 
 		model.addAttribute("workspace", workspaceWrapper);
+		model.addAttribute(
+				"templates",
+				templateRepository.findAccountAndPublic(this.getAccount(authentication))
+		);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/jobs";
 	}
@@ -214,6 +224,7 @@ public class WorkspacesController {
 	@PostMapping ("/dashboard/workspaces/manage/jobs/{id}")
 	public String jobsPostFragment(
 			@PathVariable(value="id") long id,
+			@RequestParam(value="template_id", required=true) long template_id,
 			Model model,
 			HttpServletRequest request,
 			Authentication authentication
@@ -225,19 +236,39 @@ public class WorkspacesController {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
+		Template template = templateRepository.findByIdAndPublic(template_id, this.getAccount(authentication));
+		if (template == null) {
+			return "redirect:/dashboard/workspaces?msg=templatenotfound"; //TODO: make into proper error message
+		}
+		if (template.getDetectors().size() == 0) {
+			return "redirect:/dashboard/workspaces?msg=nodetectors"; //TODO: make into proper error message
+		}
+
 		IJob job = workspaceWrapper.getiWorkspace().createJob();
 
-		//test new code, remove this
-		job.addDetector(TestDetector.class);
-		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
+		for (TemplateDetector td : template.getDetectors()) {
+			try {
+				Class<? extends IDetector> detector = (Class<? extends IDetector>) Class.forName(td.getName());
+				job.addDetector(detector);
+				//TODO: deal with custom parameters
+//				job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(detector).get(0), 7);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace(); //TODO: deal with error
+			}
+		}
+
 		job.prepare();
-		
+
 		//SherlockEngine.executor.submitJob(job);
 		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
 
 		model.addAttribute("workspace", workspaceWrapper);
+		model.addAttribute(
+				"templates",
+				templateRepository.findAccountAndPublic(this.getAccount(authentication))
+		);
 		model = this.isAjax(model, request);
-		return "dashboard/workspaces/fragments/jobs";
+		return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId();
 	}
 
 	@GetMapping ("/dashboard/workspaces/manage/results/{id}")
