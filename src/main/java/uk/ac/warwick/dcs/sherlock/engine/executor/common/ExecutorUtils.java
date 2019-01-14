@@ -17,9 +17,11 @@ public class ExecutorUtils {
 	public static <T> void processAdjustableParameters(T instance, Map<String, Float> params) {
 		Arrays.stream(instance.getClass().getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).forEach(x -> {
 			String ref = SherlockHelper.buildFieldReference(x.getKey());
+			boolean isInt = x.getKey().getType().equals(int.class);
+			float val;
+
 			if (params.containsKey(ref)) {
-				float val = params.get(ref);
-				boolean isInt = x.getKey().getType().equals(int.class);
+				val = params.get(ref);
 
 				if (isInt && val % 1 != 0) {
 					synchronized (logger) {
@@ -34,22 +36,25 @@ public class ExecutorUtils {
 					}
 					return;
 				}
+			}
+			else {
+				val = x.getValue()[0].defaultValue();
+			}
 
-				Field f = x.getKey();
-				f.setAccessible(true);
-				try {
-					if (isInt) {
-						int vali = (int) val;
-						f.set(instance, vali);
-					}
-					else {
-						f.set(instance, val);
-					}
+			Field f = x.getKey();
+			f.setAccessible(true);
+			try {
+				if (isInt) {
+					int vali = (int) val;
+					f.set(instance, vali);
 				}
-				catch (IllegalAccessException | IllegalArgumentException | NullPointerException e) {
-					synchronized (logger) {
-						logger.error("Could not set adjustable parameter", e);
-					}
+				else {
+					f.set(instance, val);
+				}
+			}
+			catch (IllegalAccessException | IllegalArgumentException | NullPointerException e) {
+				synchronized (logger) {
+					logger.error("Could not set adjustable parameter", e);
 				}
 			}
 		});

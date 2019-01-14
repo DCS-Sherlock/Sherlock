@@ -5,7 +5,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.*;
 
 public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> {
 
@@ -14,8 +13,11 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 	private int begin;
 	private int end;
 
+	private List<AbstractModelTaskRawResult> result;
+
 	public WorkDetect(List<IDetectorWorker> workers, int threshold) {
 		this(workers, threshold, 0, workers.size());
+		this.result = Collections.EMPTY_LIST;
 	}
 
 	private WorkDetect(List<IDetectorWorker> workers, int threshold, int begin, int end) {
@@ -23,10 +25,12 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 		this.threshold = threshold;
 		this.begin = begin;
 		this.end = end;
+		this.result = null;
 	}
 
 	@Override
 	protected List<AbstractModelTaskRawResult> compute() {
+		List<AbstractModelTaskRawResult> res;
 		int size = this.end - this.begin;
 
 		if (size > this.threshold) {
@@ -35,14 +39,29 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 			t1.fork();
 			WorkDetect t2 = new WorkDetect(this.workers,this.threshold,  middle, this.end);
 
-			List<AbstractModelTaskRawResult> res = t2.compute();
+			res = t2.compute();
 			res.addAll(t1.join());
-
-			return res;
 		}
 		else {
-			return this.workers.stream().map(WorkDetect::runWorker).collect(Collectors.toList());
+			res = new LinkedList<>();
+
+			for (int i = this.begin; i < this.end; i++) {
+				AbstractModelTaskRawResult raw = runWorker(this.workers.get(i));
+				if (raw != null) {
+					res.add(raw);
+				}
+			}
 		}
+
+		if (this.result != null) {
+			this.result = res;
+		}
+
+		return res;
+	}
+
+	public List<AbstractModelTaskRawResult> getResults() {
+		return this.result;
 	}
 
 	private static AbstractModelTaskRawResult runWorker(IDetectorWorker worker) {

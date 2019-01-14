@@ -78,7 +78,7 @@ public class EntityJob implements IJob, Serializable {
 		this.detectors.forEach(x -> {
 			Map<String, Float> map = new HashMap<>();
 			this.paramMap.forEach((k,v) -> {
-				if (v.getKey().equals(x)) {
+				if (v.getKey().equals(x)) { //if is correct detector
 					map.put(k, v.getValue());
 				}
 			});
@@ -87,9 +87,7 @@ public class EntityJob implements IJob, Serializable {
 			this.tasks.add(newTask);
 			BaseStorage.instance.database.storeObject(newTask);
 		});
-
-
-
+		
 		this.prepared = true;
 		return true;
 	}
@@ -106,8 +104,13 @@ public class EntityJob implements IJob, Serializable {
 			return false;
 		}
 
-		if (det == null/* || this.detectors.contains(det)*/) {
-			BaseStorage.logger.warn("Could not add detector for job#{}, is null or already present", this.getPersistentId());
+		if (det == null) {
+			BaseStorage.logger.warn("Could not add detector for job#{}, is null", this.getPersistentId());
+			return false;
+		}
+
+		if (this.detectors.contains(det)) {
+			BaseStorage.logger.warn("Could not add detector {} for job#{}, is already present", det.getName(), this.getPersistentId());
 			return false;
 		}
 
@@ -153,12 +156,18 @@ public class EntityJob implements IJob, Serializable {
 		}
 
 		if (paramObj == null || !this.paramMap.containsKey(paramObj.getReference())) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is null or is not in the mapping", this.getPersistentId());
+			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is null", this.getPersistentId());
 			return false;
 		}
 
 		if (paramObj.isInt() && value % 1 != 0) {
 			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is not an integer", this.getPersistentId());
+			return false;
+		}
+
+		if (value < paramObj.getMinimumBound() || value > paramObj.getMaxumumBound()) {
+			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, value passed is outside the parameter bounds", this.getPersistentId());
+			return false;
 		}
 
 		this.paramMap.get(paramObj.getReference()).setValue(value);
