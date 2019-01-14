@@ -8,7 +8,9 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.PriorityWorkPriorities;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
+import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkDetect;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -79,10 +81,10 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 		ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
 		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(this.dataItems);
+		int threshold = Math.max(workers.size()/Runtime.getRuntime().availableProcessors(), 4);
 
-		synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.warn("workers: " + workers.size());
-		}
+		RecursiveTask detect = new WorkDetect(workers, threshold);
+		this.scheduler.invokeWork(detect, PriorityWorkPriorities.DEFAULT);
 
 		return null;
 	}

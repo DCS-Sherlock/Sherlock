@@ -4,15 +4,15 @@ import java.util.concurrent.*;
 
 public class PriorityWorkTask {
 
-	private RecursiveAction topAction;
+	private ForkJoinTask topAction;
 	private PriorityWorkPriorities priority;
 
-	public PriorityWorkTask(RecursiveAction topAction, PriorityWorkPriorities priority) {
+	public PriorityWorkTask(ForkJoinTask topAction, PriorityWorkPriorities priority) {
 		this.topAction = topAction;
 		this.priority = priority;
 	}
 
-	RecursiveAction getTopAction() {
+	ForkJoinTask getTopAction() {
 		return topAction;
 	}
 

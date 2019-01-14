@@ -18,7 +18,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	}
 
 	@Override
-	public void invokeWork(RecursiveAction topAction, PriorityWorkPriorities priority) {
+	public void invokeWork(ForkJoinTask topAction, PriorityWorkPriorities priority) {
 		PriorityWorkTask task = new PriorityWorkTask(topAction, priority);
 
 		synchronized (task) {
