@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<th:block th:each="job : ${jobs}">
+<th:block th:each="job : ${workspace.getJobs()}">
     <table class="table table-hover table-borderless">
         <tbody>
             <tr>

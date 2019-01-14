@@ -11,7 +11,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" th:text="#{workspaces_page_delete}"></h5>
             </div>
-            <form th:action="@{/dashboard/workspaces/delete/{id}(id=${workspace.id})}" data-js='form' data-js-target="#add-parent" method="post">
+            <form th:action="@{/dashboard/workspaces/delete/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#add-parent" method="post">
                 <div class="modal-body">
                     <div class="alert alert-danger" role="alert" th:text="#{workspaces_message_delete}"></div>
                 </div>

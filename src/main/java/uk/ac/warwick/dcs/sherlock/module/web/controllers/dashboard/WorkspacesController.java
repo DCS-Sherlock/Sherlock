@@ -8,10 +8,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
@@ -36,14 +39,16 @@ public class WorkspacesController {
 	public WorkspacesController() { }
 
 	@RequestMapping ("/dashboard/workspaces")
-	public String indexGet(Model model, Authentication authentication) {
+	public String indexGet() {
 		return "dashboard/workspaces/index";
 	}
 
 	@RequestMapping ("/dashboard/workspaces/list")
 	public String workspacesGetFragment(Model model, Authentication authentication) {
-		List<Workspace> workspaces = workspaceRepository.findByAccount(this.getAccount(authentication));
-		model.addAttribute("workspaces", workspaces);
+		model.addAttribute(
+				"workspaces",
+				WorkspaceWrapper.getWorkspacesByAccount(this.getAccount(authentication), workspaceRepository)
+		);
 		return "dashboard/workspaces/fragments/workspaces";
 	}
 
@@ -67,8 +72,8 @@ public class WorkspacesController {
 			return "dashboard/workspaces/add";
 		}
 
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceNameForm.getName(), this.getAccount(authentication));
-		workspaceRepository.save(workspaceWrapper.getWorkspace()); //Todo: move to workspace wrapper
+		new WorkspaceWrapper(workspaceNameForm.getName(), Language.JAVA, this.getAccount(authentication), workspaceRepository);
+
 		return "redirect:/dashboard/workspaces";
 	}
 
@@ -78,12 +83,14 @@ public class WorkspacesController {
 			Model model,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null)
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		return "dashboard/workspaces/manage";
 	}
 
@@ -93,13 +100,15 @@ public class WorkspacesController {
 			Model model,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null)
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
 
-		model.addAttribute("workspace", workspace);
-		model.addAttribute("workspaceNameForm", new WorkspaceNameForm(workspace.getName()));
+		model.addAttribute("workspace", workspaceWrapper);
+		model.addAttribute("workspaceNameForm", new WorkspaceNameForm(workspaceWrapper.getName()));
 		return "dashboard/workspaces/fragments/name";
 	}
 
@@ -112,18 +121,22 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces?msg=ajax";
 
-		if (workspace == null || !this.isAjax(request))
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
+		}
 
 		if (!result.hasErrors()) {
-			workspace.setName(workspaceNameForm.getName());
-			workspaceRepository.save(workspace); //Todo: move to workspace wrapper
+			workspaceWrapper.setName(workspaceNameForm.getName());
 			result.reject("workspaces_message_updated_name"); //Todo: make message appear using "alert-success" not "alert-warning"
 		}
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		return "dashboard/workspaces/fragments/name";
 	}
 
@@ -134,17 +147,15 @@ public class WorkspacesController {
 			Model model,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
-
-		model.addAttribute("workspace", workspaceWrapper.getWorkspace());
+		model.addAttribute("workspace", workspaceWrapper);
 		model.addAttribute("fileUploadForm", new FileUploadForm());
-		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
 		return "dashboard/workspaces/fragments/submissions";
 	}
 
@@ -157,22 +168,19 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null || !this.isAjax(request)) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
-
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 
 		if (!result.hasErrors()) {
 			for(MultipartFile file : fileUploadForm.getFiles()) {
 				if (file.getSize() > 0) {
 					try {
 						SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (WorkspaceUnsupportedException e) {
+					} catch (IOException | WorkspaceUnsupportedException e) {
 						e.printStackTrace(); // this is a major issue, we should probably quit here
 					}
 				}
@@ -180,8 +188,7 @@ public class WorkspacesController {
 			result.reject("workspaces_message_uploaded_submission"); //Todo: make message appear using "alert-success" not "alert-warning"
 		}
 
-		model.addAttribute("workspace", workspaceWrapper.getWorkspace());
-		model.addAttribute("submissions", workspaceWrapper.getiWorkspace().getFiles());
+		model.addAttribute("workspace", workspaceWrapper);
 		return "dashboard/workspaces/fragments/submissions";
 	}
 
@@ -192,13 +199,14 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/jobs";
 	}
@@ -210,13 +218,13 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 		IJob job = workspaceWrapper.getiWorkspace().createJob();
 
 		//test new code, remove this
@@ -224,7 +232,7 @@ public class WorkspacesController {
 		job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(TestDetector.class).get(0), 7);
 		job.prepare();
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/jobs";
 	}
@@ -236,18 +244,18 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
 
-		if (workspace == null) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
-
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspace);
 		List<IJob> jobs = workspaceWrapper.getiWorkspace().getJobs();
 		model.addAttribute("jobs", jobs);
 //		jobs.get(0).getTasks().get(0).getRawResults().get(0).
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/results";
 	}
@@ -259,13 +267,14 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null) {
+		WorkspaceWrapper workspaceWrapper;
+		try {
+			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 
-		model.addAttribute("workspace", workspace);
+		model.addAttribute("workspace", workspaceWrapper);
 		model = this.isAjax(model, request);
 		return "dashboard/workspaces/delete";
 	}
@@ -275,9 +284,9 @@ public class WorkspacesController {
 			@PathVariable(value="id") long id,
 			Authentication authentication
 	) {
-		Workspace workspace = workspaceRepository.findByIdAndAccount(id, this.getAccount(authentication));
-
-		if (workspace == null) {
+		try {
+			new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
+		} catch (WorkspaceNotFound | IWorkspaceNotFound ex) {
 			return "redirect:/dashboard/workspaces?msg=notfound";
 		}
 

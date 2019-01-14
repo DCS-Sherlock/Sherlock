@@ -11,14 +11,14 @@
         <tr>
             <th class="align-middle">
                 <h5 class="mb-0">
-                    <span th:text="${workspace.name}"></span>
+                    <span th:text="${workspace.getName()}"></span>
                 </h5>
             </th>
             <td class="align-middle">
                 <!--Year-->
             </td>
             <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.id})}" th:text="#{link_manage}"></a>
+                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link_manage}"></a>
             </td>
         </tr>
     </th:block>
