@@ -40,7 +40,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 	@Override
 	public int submitJob(IJob job) {
-		//do checks on the job, check it has tasks etc
+		//do checks on the job, check it has tasks, files etc
 
 		PoolExecutorJob j = new PoolExecutorJob(this, job);
 		j.run();
