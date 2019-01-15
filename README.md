@@ -4,7 +4,7 @@
 
 <!----- Version: --->
 
-##Documentation
+## Documentation
 The latest built documentation can be found at: https://dcs-sherlock.github.io/Sherlock/
 
 ## Requirements
