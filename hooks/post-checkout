@@ -1,8 +1,0 @@
-#!/bin/sh
-
-./gradlew branchSetup
-git add README.md
-
-if [ -n "$(git diff --name-only --cached --exit-code | grep "README.md")" ]; then
-    git commit -m"setup branch" --no-verify
-fi
