@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<table class="table table-hover table-borderless">
+    <tbody>
+    <th:block th:each="template : ${templates}">
+        <tr>
+            <th class="align-middle">
+                <h5 class="mb-0">
+                    <span th:text="${template.getName()}"></span>
+                </h5>
+            </th>
+            <td class="align-middle text-right">
+                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getId()})}" th:text="#{link_manage}"></a>
+            </td>
+        </tr>
+    </th:block>
+    <tr th:if="${templates.empty}">
+        <th>
+            <h5 class="mb-0">
+                <span th:text="#{templates_message_no_templates}"></span>
+            </h5>
+        </th>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

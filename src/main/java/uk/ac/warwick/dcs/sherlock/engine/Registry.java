@@ -16,6 +16,7 @@ import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
@@ -202,8 +203,29 @@ public class Registry implements IRegistry {
 	@Override
 	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes) {
 		if (postProcessor != null && handledResultTypes != null) {
-			this.postProcRegistry.put(handledResultTypes, postProcessor);
-			return true;
+			//get the type T of the postprocessor
+			try {
+				ParameterizedType type =
+						Arrays.stream(postProcessor.getDeclaredMethods()).filter(x -> x.getName().equals("processResults")).map(x -> (ParameterizedType) x.getGenericParameterTypes()[1]).findAny().orElse(null);
+
+				if (type == null) {
+					logger.error("Could not verify the generic type for the IPostProcessor {} is correct", postProcessor.getName());
+					return false;
+				}
+
+				if (handledResultTypes.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
+					this.postProcRegistry.put(handledResultTypes, postProcessor);
+					return true;
+				}
+				else {
+					logger.error("Generic type of the IPostProcessor {}, does not match the type it has been registered with ({})", postProcessor.getName(), handledResultTypes.getName());
+					return false;
+				}
+			}
+			catch (ClassCastException e) {
+				logger.error("IPostProcessor has no raw result type (its generic parameter), this is not allowed. A generic type must be given");
+				return false;
+			}
 		}
 		else {
 			logger.warn("Bad IPostProcessor registration");

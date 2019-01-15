@@ -1,28 +1,4 @@
 //Sherlock JS
-function modalLinks(){
-    $("a[data-js='modal']").unbind();
-    $("a[data-js='modal']").click(function () {
-        var input = $(this);
-        var url = input.attr("href");
-
-        input.prop("disabled", true);
-        input.addClass("disabled");
-
-        getAjax(
-            url,
-            function(result, status, xhr) {
-                $("#modal").html(result);
-                $("#modal").modal('show');
-            }
-        );
-
-        input.prop("disabled", false);
-        input.removeClass("disabled");
-
-        return false;
-    });
-}
-
 function loadAreas(){
     $("div[data-js='area']").each(function () {
         var input = $(this);
@@ -37,7 +13,72 @@ function loadAreas(){
     });
 }
 
-function formSubmissions(){
+function modalLinks(){
+    $("a[data-js='modal']").unbind();
+    $("a[data-js='modal']").click(function () {
+        var input = $(this);
+        var url = input.attr("href");
+
+        input.prop("disabled", true);
+        input.addClass("disabled");
+
+        getAjax(
+            url,
+            function(result, status, xhr) {
+                $("#modal").html(result);
+                $("#modal").modal('show');
+                selectAreas();
+                $("select[data-js='select']").trigger('change');
+            }
+        );
+
+        input.prop("disabled", false);
+        input.removeClass("disabled");
+
+        return false;
+    });
+}
+
+function selectAreas(){
+    $("select[data-js='select']").unbind();
+    $("select[data-js='select']").on('change', function () {
+        var input = $(this);
+        var value =  input.val();
+        var target = input.attr("data-js-target");
+        var url = input.attr("data-js-href");
+
+        $(target).html("...");
+
+        getAjax(
+            url + value,
+            function(result, status, xhr) {
+                $(target).html(result);
+            }
+        );
+
+        return false;
+    });
+}
+
+function formSubmitButton() {
+    $("button[data-js='formSubmit']").unbind();
+    $("button[data-js='formSubmit']").each(function() {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        if($(target).length == 0) {
+            $(this).addClass('d-none');
+        } else {
+            $(this).removeClass('d-none');
+        }
+    });
+    $("button[data-js='formSubmit']").click(function() {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        $(target).submit();
+    });
+}
+
+function formSubmit(){
     $("form[data-js='form']").unbind();
     $("form[data-js='form']").submit(function () {
         var input = $(this);
@@ -117,13 +158,23 @@ function submitAjax(url, data, success, type) {
     $.ajax(input);
 }
 
+function tooltips() {
+    $('[data-toggle="tooltip"]').unbind();
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
 function bindPage() {
+    tooltips();
+    selectAreas();
     modalLinks();
-    formSubmissions();
+    formSubmit();
     hideCloseButtons();
+    formSubmitButton();
 }
 
 $(function () {
     loadAreas();
     bindPage();
+    $('form[data-js="autoSubmit"]').submit();
+    $("select[data-js='select']").trigger('change');
 });

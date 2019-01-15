@@ -122,7 +122,7 @@ public class SherlockRegistry {
 	/**
 	 * @return a set of all detectors registered
 	 */
-	Set<Class<? extends IDetector>> getDetectors() {
+	public static Set<Class<? extends IDetector>> getDetectors() {
 		if (registry != null) {
 			return registry.getDetectors();
 		}
@@ -136,7 +136,7 @@ public class SherlockRegistry {
 	 *
 	 * @return the set of detectors
 	 */
-	Set<Class<? extends IDetector>> getDetectors(Language language) {
+	public static Set<Class<? extends IDetector>> getDetectors(Language language) {
 		if (registry != null) {
 			return registry.getDetectors(language);
 		}

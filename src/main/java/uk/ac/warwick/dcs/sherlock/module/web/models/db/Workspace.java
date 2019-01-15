@@ -1,8 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.db;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="workspace")
@@ -13,11 +11,6 @@ public class Workspace {
     @Column(name="id")
     private long id;
 
-    @NotNull()
-    @Size(min=1, max=64)
-    @Column(name="name", nullable = false)
-    public String name;
-
     @Column(name="engine_id")
     private long engineId;
 
@@ -27,18 +20,14 @@ public class Workspace {
 
     public Workspace() { }
 
-    public Workspace(String name, Account account) {
-        this.name = name;
+    public Workspace(Account account) {
         this.account = account;
         this.engineId = 0L;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Workspace(Account account, long engineId) {
+        this.account = account;
+        this.engineId = engineId;
     }
 
     public long getId() {

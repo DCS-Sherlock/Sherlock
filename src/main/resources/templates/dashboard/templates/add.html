@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='templates'">
+<head>
+    <title th:text="#{templates_page_add}"></title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{templates_page_add}"></h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="lang" th:text="#{variable_language}"></label>
+                        <select class="form-control" id="lang" data-js="select" data-js-target="#add-parent" th:data-js-href="@{/dashboard/templates/add/}">
+                            <option th:each="state : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
+                                    th:value="${state}"
+                                    th:text="${state}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div id="add-parent">
+                    ...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
+                <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/templates}" th:text="#{link_cancel}"></a>
+                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link_save}"></button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

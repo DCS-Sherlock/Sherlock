@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='help'">
+<head>
+    <title th:text="#{privacy_title}"></title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{privacy_title}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/help}" th:text="#{help_link_return}"></a>
+                    </h4>
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

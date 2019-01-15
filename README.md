@@ -4,6 +4,8 @@
 
 <!----- Version: --->
 
+## Documentation
+The latest built documentation can be found at: https://dcs-sherlock.github.io/Sherlock/
 
 ## Requirements
   - JDK 1.8
