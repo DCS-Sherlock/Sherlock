@@ -25,3 +25,4 @@ deploy:
   local-dir: "docs/"
   on:
     branch: master
+    jdk: oraclejdk8
