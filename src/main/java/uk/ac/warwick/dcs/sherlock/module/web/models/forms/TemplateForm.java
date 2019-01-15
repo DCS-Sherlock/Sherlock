@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
-import org.hibernate.Hibernate;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.TemplateDetector;
@@ -97,7 +96,7 @@ public class TemplateForm {
         List<String> toCheck = new ArrayList<>();
 
         toAdd.addAll(this.detectors);
-        toAdd.removeAll(template.getDetectors());
+        template.getDetectors().forEach(d -> toAdd.remove(d.getName()));
 
         template.getDetectors().forEach(d -> toRemove.add(d.getName()));
         toRemove.removeAll(this.detectors);
@@ -112,7 +111,9 @@ public class TemplateForm {
             );
         }
 
+        toCheck.addAll(toAdd);
         template.getDetectors().forEach(d -> toCheck.add(d.getName()));
+        toCheck.removeAll(toRemove);
 
         for (String check : toCheck) {
             if (!activeDetectors.contains(check)) {

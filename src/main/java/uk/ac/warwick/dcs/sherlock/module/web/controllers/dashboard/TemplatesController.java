@@ -6,16 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.TemplateDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.TemplateForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceNameForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.EngineDetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateDetectorRepository;
@@ -23,9 +17,6 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @SuppressWarnings("Duplicates")
