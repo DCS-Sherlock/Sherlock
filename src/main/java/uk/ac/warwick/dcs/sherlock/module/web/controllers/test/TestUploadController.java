@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class TestUploadController {
 
 	@GetMapping ("/dashboard/testUpload")
 	public String indexForm(Model model) {
-		return "dashboard/testUpload";
+		return "test/testUpload";
 	}
 
 }

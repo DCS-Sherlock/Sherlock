@@ -77,12 +77,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(
 						"/css/**",
 						"/js/**",
-						"/image/**",
-						"/",
-						"/info/**",
-						"/help/**",
-						"/h2-console/**")
+						"/image/**")
 				.permitAll();
+
+		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
+			http
+					.authorizeRequests()
+					.antMatchers(
+							"/",
+							"/terms",
+							"/privacy",
+							"/help/**")
+					.hasAuthority("USER");
+		} else {
+			http
+					.authorizeRequests()
+					.antMatchers(
+							"/",
+							"/terms",
+							"/privacy",
+							"/help/**")
+					.permitAll();
+		}
 
 		http
 				.authorizeRequests()
@@ -110,7 +126,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 
 		//Fixes access to h2 console in dev mode
-		if (Arrays.asList(environment.getActiveProfiles()).contains("dev"))
+		if (Arrays.asList(environment.getActiveProfiles()).contains("dev")){
+			http
+					.authorizeRequests()
+					.antMatchers("/h2-console/**")
+					.permitAll();
+
 			http.headers().frameOptions().disable();
+		}
+
 	}
 }

@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AccountController {
 
-	@GetMapping ("/dashboard/account")
-	public String manage() {
-		return "dashboard/account";
+	@GetMapping ("/account")
+	public String index() {
+		return "settings/account";
 	}
 }

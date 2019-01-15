@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class TestController {
 
 	@GetMapping ("/dashboard/test")
 	public String indexForm(Model model) {
-		return "dashboard/test";
+		return "test/test";
 	}
 
 	@PostMapping ("/dashboard/test")
@@ -54,7 +54,7 @@ public class TestController {
 		}*/
 
 
-		return "dashboard/testresult";
+		return "test/testresult";
 	}
 
 }
