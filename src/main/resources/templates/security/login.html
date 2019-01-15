@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/blank}">
+<head>
+    <title th:text="#{login_title}"></title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <form class="form-login text-center" th:action="@{/login}" method="post">
+        <div class="logo">
+            <a class="" th:href="@{/}" th:text="#{nav_title}"></a>
+        </div>
+        <h1 class="h4 mb-4 text-muted" th:text="#{login_title}"></h1>
+
+        <div th:if="${param.error}">
+            <div class="alert alert-danger"><span th:text="#{error_invalid_login}"></span></div>
+        </div>
+        <div th:if="${param.logout}">
+            <div class="alert alert-info"><span th:text="#{error_logged_out}"></span></div>
+        </div>
+
+        <div class="mb-2">
+            <label for="username" class="sr-only" th:text="#{variable_email}"></label>
+            <input type="text" id="username" name="username" class="form-control" th:placeholder="#{variable_email}" required autofocus>
+        </div>
+
+        <div class="mb-2">
+            <label for="password" class="sr-only" th:text="#{variable_password}"></label>
+            <input type="password" id="password" name="password" class="form-control" th:placeholder="#{variable_password}" required>
+        </div>
+
+        <!--<div class="checkbox mb-4">-->
+            <!--<label>-->
+                <!--<input type="checkbox" value="remember-me"> Remember me-->
+            <!--</label>-->
+        <!--</div>-->
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{link_login}"></button>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,246 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import java.util.regex.Matcher
+
+plugins {
+    id "java"
+    id "antlr"
+    id "war"
+    id "org.springframework.boot" version "2.1.1.RELEASE"
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "org.ajoberstar.grgit" version "2.3.0"
+    id "idea"
+}
+
+apply plugin: 'project-report'
+
+/*buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}*/
+
+repositories {
+    maven {
+        url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
+    }
+    jcenter()
+    mavenCentral()
+    maven {
+        url "http://m2.objectdb.com" //ObjectDB Repository
+    }
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.7.1'
+
+    implementation (
+            'org.antlr:antlr4-runtime:4.7.1',
+            'com.google.guava:guava:26.0-jre',
+            'org.reflections:reflections:0.9.10',
+            'commons-io:commons-io:2.6',
+            'org.apache.commons:commons-lang3:3.8.1',
+            'commons-codec:commons-codec:1.11',
+            'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.3',
+            'javax.transaction:jta:1.1',
+            'com.objectdb:objectdb:2.7.6',
+            'org.yaml:snakeyaml:1.23',
+            'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-mail',
+            'org.springframework.boot:spring-boot-starter-jdbc',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-starter-log4j2',
+            'org.springframework.boot:spring-boot-starter-thymeleaf',
+            'org.springframework.boot:spring-boot-starter-security',
+            'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect',
+            'org.thymeleaf.extras:thymeleaf-extras-springsecurity5',
+            'org.springframework.boot:spring-boot-devtools',
+            'javax.xml.bind:jaxb-api:2.3.0',
+            'com.h2database:h2',
+            'mysql:mysql-connector-java'
+    )
+
+    if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
+        providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    }
+
+    testImplementation(
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.security:spring-security-test',
+            'org.junit.jupiter:junit-jupiter-api:5.3.1',
+            'org.junit.jupiter:junit-jupiter-params:5.3.1',
+            'commons-io:commons-io:2.6'
+    )
+
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    )
+
+}
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+idea {
+    module {
+        contentRoot = file("$projectDir")
+
+        sourceDirs = new LinkedHashSet<File>()
+        sourceDirs += file("src/main/java")
+        sourceDirs += file("src/main/antlr")
+
+        testSourceDirs = new LinkedHashSet<File>()
+        testSourceDirs += file("src/test/java")
+
+        resourceDirs += file("src/main/resources")
+
+        //generatedSourceDirs - fix for Idea 2018.3
+        sourceDirs += file("${buildDir}/tmp/src/main/antlr")
+
+        excludeDirs += file("${buildDir}/tmp/src/main/java")
+        excludeDirs += file("${buildDir}/tmp/src/test/java")
+    }
+}
+
+group = 'uk.ac.warwick.dcs.sherlock'
+version = "release"
+
+if (grgit != null) {
+    project.ext.lastTag = grgit.tag.list().findAll { (it.name ==~ /([0-9]+).([0-9]+)$/).find() }.sort { -it.commit.time }.sort { -TagSupport.tagOrder(/([0-9]+).([0-9]+)$/, it.name) }.collect { it.name }[0]
+    project.ext.count = grgit.log { range(grgit.tag.list().find { it.name == project.lastTag.toString() }.collect { it }[0].name, "HEAD") }.size()
+    project.version = "${project.ext.lastTag}.${project.count}"
+}
+
+if (System.env.TRAVIS == "true") {
+    println "Building on travis"
+    build.dependsOn javadoc
+}
+
+
+description = """Sherlock"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task printVersion {
+    println project.name + '-' + project.version
+}
+
+javadoc {
+    source = ["src/main/java"]
+    destinationDir = file("${projectDir}/docs")
+    options.memberLevel = JavadocMemberLevel.PRIVATE
+    classpath += configurations.compile
+}
+
+generateGrammarSource {
+    outputDirectory = file("${buildDir}/tmp/src/main/antlr/uk/ac/warwick/dcs/sherlock/module/model/base/lang")
+}
+
+task generateSources(type: Copy) {
+    from("src/main/java")
+    exclude "**/sherlock/deprecated/**"
+    into "$buildDir/tmp/src/main/java"
+    filter(ReplaceTokens, tokens: [VERSION: project.version.toString()])
+}
+sourceSets.main.java.srcDirs = ["$buildDir/tmp/src/main/java", "$buildDir/tmp/src/main/antlr"]
+compileJava.dependsOn generateSources
+
+task generateTestSources(type: Copy) {
+    from("src/test/java")
+    exclude "**/sherlock/deprecated/**"
+    into "$buildDir/tmp/src/test/java"
+}
+sourceSets.test.java.srcDirs = ["$buildDir/tmp/src/test/java"]
+compileTestJava.dependsOn generateTestSources
+
+task deps(type: Copy) {
+    from configurations.runtime
+    into "$buildDir/out/lib"
+}
+
+jar {
+    enabled = true //enable to build a standard jar
+    destinationDir = file("$buildDir/out")
+    classifier = 'dev'
+    manifest {
+        attributes(
+                'Implementation-Version': version,
+        )
+    }
+    delete fileTree("$buildDir/out") {
+        include '*-dev.jar'
+        exclude jar.archiveName
+        exclude jar.archivePath.getName()
+    }
+}
+
+bootJar {
+    destinationDir = file("$buildDir/out")
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
+    manifest {
+        attributes(
+                'Implementation-Version': version
+        )
+    }
+    delete fileTree("$buildDir/out") {
+        include '*.jar'
+        exclude bootJar.archiveName
+        exclude jar.archivePath.getName()
+        exclude '*-dev.jar'
+    }
+}
+jar.dependsOn bootJar
+
+bootWar {
+    destinationDir = file("$buildDir/out")
+    mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockServer'
+    manifest {
+        attributes(
+                'Implementation-Version': version
+        )
+    }
+    delete fileTree("$buildDir/out") {
+        include '*.war'
+        exclude bootJar.archiveName
+        exclude war.archivePath.getName()
+    }
+}
+war.dependsOn bootWar
+assemble.dependsOn jar
+
+bootRun {
+    main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task branchSetup {
+    if (grgit != null) {
+        ant.replaceregexp(match: '# Sherlock(.*)', replace: "# Sherlock  [![Build Status: ${grgit.branch.current().name}](https://travis-ci.org/DCS-Sherlock/Sherlock.svg?branch=${grgit.branch.current().name})](https://travis-ci.org/DCS-Sherlock/Sherlock?branch=${grgit.branch.current().name})", flags: 's', byline: true) {
+            fileset(dir: project.projectDir, includes: 'README.md')
+        }
+    }
+}
+
+class TagSupport {
+    static int tagOrder(String tagPattern, String tagName) {
+        Matcher m = tagName =~ tagPattern
+
+        if (m.find()) {
+            int ngroups = m.groupCount()
+
+            if (ngroups < 1) {
+                throw new IllegalArgumentException("Tag pattern is expected to have at least one number grouping instruction: $tagPattern")
+            } else {
+                return m.group(1) as int
+            }
+        } else {
+            throw new IllegalStateException("Tag $tagName should have matched $tagPattern")
+        }
+    }
+}

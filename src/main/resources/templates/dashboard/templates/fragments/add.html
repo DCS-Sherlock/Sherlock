@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<form th:action="@{/dashboard/templates/add}" data-js='form' data-js-target="#add-parent" id="add-form" th:object="${templateForm}" method="post">
+    <div th:if="${#fields.hasAnyErrors()}">
+        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
+    </div>
+
+    <input type="hidden" id="language" name="language" th:value="*{language}" />
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="name" th:text="#{templates_variable_name}"></label>
+            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{templates_variable_name}" th:value="*{name}" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="name" th:text="#{templates_variable_public}"></label>
+            <input type="checkbox" id="isPublic" name="isPublic" th:value="*{isPublic}" />
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <th:block th:each="detector : ${detectorList}">
+                <label class="checkbox-inline" th:for="${detector.getClassName()}">
+                    <input type="checkbox" th:field="*{detectors}" th:value="${detector.getClassName()}" th:id="${detector.getClassName()}">
+                    <span th:text="${detector.getDisplayName()}"></span>
+                    <span
+                            th:if="${detector.getDescription().length() > 0}"
+                            th:text="#{templates_message_description}"
+                            data-toggle="tooltip" data-placement="top"
+                            th:title="${detector.getDescription()}"
+                    ></span>
+                </label>
+            </th:block>
+            <span th:if="${detectorList.empty}" th:text="#{templates_message_no_detectors}"></span>
+        </div>
+    </div>
+</form>
+
+</body>
+</html>

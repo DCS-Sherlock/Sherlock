@@ -1,0 +1,28 @@
+language: java
+install: echo "skip 'gradle assemble' step"
+
+jdk:
+- oraclejdk8
+- oraclejdk9
+- oraclejdk11
+
+script: "./gradlew build -s --continue"
+
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  local-dir: "docs/"
+  on:
+    branch: master
+    jdk: oraclejdk8

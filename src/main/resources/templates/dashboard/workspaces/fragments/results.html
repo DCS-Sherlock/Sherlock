@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<th:block th:each="job : ${workspace.getJobs()}">
+    <table class="table table-hover table-borderless">
+        <tbody>
+            <tr>
+                <th class="align-middle">
+                    <h6 class="mb-0">
+                        JOB ID
+                        <span th:text="${job.getPersistentId()}"></span>
+                    </h6>
+                </th>
+            </tr>
+            <th:block th:each="task : ${job.getTasks()}">
+                <tr>
+                    <th class="align-middle">
+                        <h6 class="mb-0">
+                            TASK ID
+                            <span th:text="${task.getPersistentId()}"></span>
+                        </h6>
+                    </th>
+                </tr>
+                <th:block th:each="result : ${task.getRawResults()}">
+                    <tr>
+                        <th class="align-middle">
+                            <h6 class="mb-0">
+                                <span th:text="${result.toString()}"></span>
+                            </h6>
+                        </th>
+                    </tr>
+                </th:block>
+            </th:block>
+        </tbody>
+    </table>
+</th:block>
+
+<table class="table table-hover table-borderless">
+    <tbody>
+        <tr th:if="${jobs.empty}">
+            <th>
+                <h6 class="mb-0">
+                    <span th:text="#{workspaces_message_no_results}"></span>
+                </h6>
+            </th>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
