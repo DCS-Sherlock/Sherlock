@@ -114,6 +114,11 @@ if (grgit != null && System.env.SHERLOCK_RELEASE != "1") {
     project.version = "${project.ext.lastTag}.${project.count}"
 }
 
+if (System.env.SHERLOCK_RELEASE == "1") {
+    println "Build with javadoc"
+    build.dependsOn javadoc
+}
+
 
 description = """Sherlock"""
 
