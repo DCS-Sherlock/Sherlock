@@ -36,7 +36,10 @@ public class TemplatesController {
 	}
 
 	@RequestMapping ("/dashboard/templates/list")
-	public String listGetFragment(Model model, Authentication authentication) {
+	public String listGetFragment(Model model, HttpServletRequest request, Authentication authentication) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/templates";
+
 		model.addAttribute(
 				"templates",
 				templateRepository.findAccountAndPublic(this.getAccount(authentication))
@@ -53,8 +56,12 @@ public class TemplatesController {
 	@GetMapping ("/dashboard/templates/add/{lang}")
 	public String addGetFragment(
 			Model model,
+			HttpServletRequest request,
 			@PathVariable(value="lang") Language language
 			) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/templates/add";
+
 		model.addAttribute("templateForm", new TemplateForm(language));
 		model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(language));
 		model.addAttribute("language", language);
@@ -66,8 +73,12 @@ public class TemplatesController {
 			@Valid @ModelAttribute TemplateForm templateForm,
 			BindingResult result,
 			Model model,
+			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/templates/add";
+
 		if (result.hasErrors()){
 			model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(templateForm.getLanguage()));
 			return "dashboard/templates/fragments/add";
@@ -100,8 +111,12 @@ public class TemplatesController {
 	public String detailsGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
+			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/templates/manage/" + id;
+
 		Template template = templateRepository.findByIdAndPublic(id, this.getAccount(authentication));
 
 		if (template == null) {
@@ -121,8 +136,12 @@ public class TemplatesController {
 			BindingResult result,
 			@PathVariable(value="id") long id,
 			Model model,
+			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/templates/manage/" + id + "?msg=ajax";
+
 		Template template = templateRepository.findById(id).get();
 
 		if (template == null || !this.isOwner(authentication, template)) {

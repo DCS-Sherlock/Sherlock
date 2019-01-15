@@ -74,7 +74,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/css/**", "/js/**", "/image/**", "/", "/info/**", "/login", "/register", "/h2-console/**")
+				.antMatchers(
+						"/css/**",
+						"/js/**",
+						"/image/**",
+						"/",
+						"/info/**",
+						"/help/**",
+						"/h2-console/**")
 				.permitAll();
 
 		http
@@ -89,24 +96,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http
 				.formLogin()
+                .defaultSuccessUrl("/dashboard/index")
 				.loginPage("/login")
-				.failureUrl("/login?error")
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.permitAll();
 
 		http
 				.logout()
-				.logoutSuccessUrl("/login?logout")
 				.permitAll();
 
-		http
-				.csrf()
-				.disable(); //Todo: Re-enable later
+		//TODO: Re-enable later
+		http.csrf().disable();
 
-		http
-				.headers()
-				.frameOptions()
-				.disable(); //Fixes access to h2 console
+		//Fixes access to h2 console in dev mode
+		if (Arrays.asList(environment.getActiveProfiles()).contains("dev"))
+			http.headers().frameOptions().disable();
 	}
 }
