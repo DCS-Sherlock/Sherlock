@@ -50,7 +50,10 @@ public class WorkspacesController {
 	}
 
 	@RequestMapping ("/dashboard/workspaces/list")
-	public String listGetFragment(Model model, Authentication authentication) {
+	public String listGetFragment(Model model, HttpServletRequest request, Authentication authentication) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces";
+
 		model.addAttribute(
 				"workspaces",
 				WorkspaceWrapper.getWorkspacesByAccount(this.getAccount(authentication), workspaceRepository)
@@ -104,8 +107,12 @@ public class WorkspacesController {
 	public String nameGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
+			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id;
+
 		WorkspaceWrapper workspaceWrapper;
 		try {
 			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
@@ -128,7 +135,7 @@ public class WorkspacesController {
 			Authentication authentication
 	) {
 		if (!this.isAjax(request))
-			return "redirect:/dashboard/workspaces?msg=ajax";
+			return "redirect:/dashboard/workspaces/manage/" + id + "?msg=ajax";
 
 		WorkspaceWrapper workspaceWrapper;
 		try {
@@ -151,8 +158,12 @@ public class WorkspacesController {
 	public String submissionsGetFragment(
 			@PathVariable(value="id") long id,
 			Model model,
+			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id;
+
 		WorkspaceWrapper workspaceWrapper;
 		try {
 			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
@@ -174,6 +185,9 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id + "?msg=ajax";
+
 		WorkspaceWrapper workspaceWrapper;
 		try {
 			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
@@ -205,6 +219,9 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id;
+
 		WorkspaceWrapper workspaceWrapper;
 		try {
 			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
@@ -217,7 +234,6 @@ public class WorkspacesController {
 				"templates",
 				templateRepository.findAccountAndPublic(this.getAccount(authentication))
 		);
-		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/jobs";
 	}
 
@@ -229,6 +245,9 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id + "?msg=ajax";
+
 		WorkspaceWrapper workspaceWrapper;
 		try {
 			workspaceWrapper = new WorkspaceWrapper(id, this.getAccount(authentication), workspaceRepository);
@@ -267,7 +286,6 @@ public class WorkspacesController {
 				"templates",
 				templateRepository.findAccountAndPublic(this.getAccount(authentication))
 		);
-		model = this.isAjax(model, request);
 		return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId();
 	}
 
@@ -278,6 +296,8 @@ public class WorkspacesController {
 			HttpServletRequest request,
 			Authentication authentication
 	) {
+		if (!this.isAjax(request))
+			return "redirect:/dashboard/workspaces/manage/" + id;
 
 		WorkspaceWrapper workspaceWrapper;
 		try {
@@ -290,7 +310,6 @@ public class WorkspacesController {
 //		jobs.get(0).getTasks().get(0).getRawResults().get(0).
 
 		model.addAttribute("workspace", workspaceWrapper);
-		model = this.isAjax(model, request);
 		return "dashboard/workspaces/fragments/results";
 	}
 

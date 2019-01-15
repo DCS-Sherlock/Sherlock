@@ -1,4 +1,18 @@
 //Sherlock JS
+function loadAreas(){
+    $("div[data-js='area']").each(function () {
+        var input = $(this);
+        var url = input.attr("data-js-href");
+
+        getAjax(
+            url,
+            function(result, status, xhr) {
+                input.html(result);
+            }
+        );
+    });
+}
+
 function modalLinks(){
     $("a[data-js='modal']").unbind();
     $("a[data-js='modal']").click(function () {
@@ -13,7 +27,7 @@ function modalLinks(){
             function(result, status, xhr) {
                 $("#modal").html(result);
                 $("#modal").modal('show');
-                select();
+                selectAreas();
                 $("select[data-js='select']").trigger('change');
             }
         );
@@ -25,7 +39,7 @@ function modalLinks(){
     });
 }
 
-function select(){
+function selectAreas(){
     $("select[data-js='select']").unbind();
     $("select[data-js='select']").on('change', function () {
         var input = $(this);
@@ -64,21 +78,7 @@ function formSubmitButton() {
     });
 }
 
-function loadAreas(){
-    $("div[data-js='area']").each(function () {
-        var input = $(this);
-        var url = input.attr("data-js-href");
-
-        getAjax(
-            url,
-            function(result, status, xhr) {
-                input.html(result);
-            }
-        );
-    });
-}
-
-function formSubmissions(){
+function formSubmit(){
     $("form[data-js='form']").unbind();
     $("form[data-js='form']").submit(function () {
         var input = $(this);
@@ -158,19 +158,23 @@ function submitAjax(url, data, success, type) {
     $.ajax(input);
 }
 
-function bindPage() {
-    select();
-    modalLinks();
-    formSubmissions();
-    hideCloseButtons();
-    formSubmitButton();
-
+function tooltips() {
     $('[data-toggle="tooltip"]').unbind();
     $('[data-toggle="tooltip"]').tooltip();
+}
+
+function bindPage() {
+    tooltips();
+    selectAreas();
+    modalLinks();
+    formSubmit();
+    hideCloseButtons();
+    formSubmitButton();
 }
 
 $(function () {
     loadAreas();
     bindPage();
+    $('form[data-js="autoSubmit"]').submit();
     $("select[data-js='select']").trigger('change');
 });
