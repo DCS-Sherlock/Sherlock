@@ -32,7 +32,7 @@ public class Registry implements IRegistry {
 
 	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
 
-	private Map<Class<? extends AbstractModelTaskRawResult>, Class<? extends IPostProcessor>> postProcRegistry;
+	private Map<Class<? extends AbstractModelTaskRawResult>, PostProcessorData> postProcRegistry;
 
 	Registry() {
 		this.detectorRegistry = new ConcurrentHashMap<>();
@@ -120,26 +120,34 @@ public class Registry implements IRegistry {
 
 	@Override
 	public List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor) {
+		PostProcessorData data = this.getPostProcessorData(postProcessor);
+		if (data != null) {
+			return data.adjustables;
+		}
+
 		return null;
+	}
+
+	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor) {
+		return this.getPostProcessorData(postProcessor, false);
+	}
+
+	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor, boolean createNew) {
+		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(createNew ? new PostProcessorData() : null);
 	}
 
 	@Override
 	public List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det) {
-		/*try {
-			IDetector d =  det.newInstance();
-			det.getDeclaredMethod()
-		}
-		catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.postProcRegistry.get(this.detectorRegistry.get(det).resultClass).adjustables;
 		}
 
-		Class<? extends IPostProcessor> post =*/
 		return null;
 	}
 
 	@Override
 	public IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
-		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass);
+		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass).proc;
 		if (p != null) {
 			try {
 				return p.newInstance();
@@ -182,7 +190,8 @@ public class Registry implements IRegistry {
 			resultsClass = (Class<? extends AbstractModelTaskRawResult>) getGenericClass(workerClass.getGenericSuperclass());
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
-			logger.error("IDetector '{}' not registered. AbstractDetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
+			logger.error(
+					"IDetector '{}' not registered. AbstractDetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
 					detector.getName(), workerClass.getName());
 			return false;
 		}
@@ -269,6 +278,8 @@ public class Registry implements IRegistry {
 
 	@Override
 	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes) {
+		PostProcessorData data = this.getPostProcessorData(postProcessor, true);
+
 		if (postProcessor != null && handledResultTypes != null) {
 			//get the type T of the postprocessor
 			try {
@@ -282,8 +293,7 @@ public class Registry implements IRegistry {
 				}
 
 				if (handledResultTypes.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
-					this.postProcRegistry.put(handledResultTypes, postProcessor);
-					return true;
+					data.proc = postProcessor;
 				}
 				else {
 					logger.error("Generic type of the IPostProcessor '{}', does not match the type it has been registered with ('{}')", postProcessor.getName(), handledResultTypes.getName());
@@ -299,6 +309,38 @@ public class Registry implements IRegistry {
 			logger.warn("Bad IPostProcessor registration");
 			return false;
 		}
+
+		//If not done already - do @DetectorParameter stuff - find the annotations for the params in the postprocessor, check them and add to the map
+		if (data.adjustables == null) {
+			List<AdjustableParameterObj> tuneables =
+					Arrays.stream(postProcessor.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1)
+							.map(x -> {
+								if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
+									logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} which is not an int or float", postProcessor.getName(), x.getKey().getName());
+									return null;
+								}
+
+								if (x.getKey().getType().equals(int.class)) {
+									float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
+									for (float f : vals) {
+										if (f % 1 != 0) {
+											logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} of type int, with a float parameter", postProcessor.getName(),
+													x.getKey().getName());
+											return null;
+										}
+									}
+								}
+
+								return x;
+							}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
+
+			if (tuneables.size() > 0) {
+				data.adjustables = tuneables;
+			}
+		}
+
+		this.postProcRegistry.put(handledResultTypes, data);
+		return true;
 	}
 
 	private class DetectorData {
@@ -310,5 +352,11 @@ public class Registry implements IRegistry {
 		List<AdjustableParameterObj> adjustables;
 		Class<? extends AbstractModelTaskRawResult> resultClass;
 
+	}
+
+	private class PostProcessorData {
+
+		Class<? extends IPostProcessor> proc;
+		List<AdjustableParameterObj> adjustables;
 	}
 }
