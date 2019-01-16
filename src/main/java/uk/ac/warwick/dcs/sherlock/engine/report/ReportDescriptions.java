@@ -24,6 +24,9 @@ Variable X of file A is used in all the same ways as variable P of file B, but i
 
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 
+/**
+ * A small class to supply the base descriptions for different kinds of plagiarism to the Report Generator.
+ */
 public class ReportDescriptions {
 
 	public static String getDescription(DetectionType type) {
