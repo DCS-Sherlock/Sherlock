@@ -129,11 +129,7 @@ public class Registry implements IRegistry {
 	}
 
 	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor) {
-		return this.getPostProcessorData(postProcessor, false);
-	}
-
-	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor, boolean createNew) {
-		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(createNew ? new PostProcessorData() : null);
+		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(null);
 	}
 
 	@Override
@@ -277,10 +273,20 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes) {
-		PostProcessorData data = this.getPostProcessorData(postProcessor, true);
+	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultType) {
+		if (this.postProcRegistry.containsKey(handledResultType)) {
+			logger.error("RawResult class '{}' already mapped to a postprocessor", handledResultType.getName());
+			return false;
+		}
 
-		if (postProcessor != null && handledResultTypes != null) {
+		if (this.getPostProcessorData(postProcessor) != null) {
+			logger.error("IPostProcessor '{}' already mapped to a RawResult class", postProcessor.getName());
+			return false;
+		}
+
+		PostProcessorData data = new PostProcessorData();
+
+		if (postProcessor != null && handledResultType != null) {
 			//get the type T of the postprocessor
 			try {
 				ParameterizedType type =
@@ -292,11 +298,11 @@ public class Registry implements IRegistry {
 					return false;
 				}
 
-				if (handledResultTypes.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
+				if (handledResultType.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
 					data.proc = postProcessor;
 				}
 				else {
-					logger.error("Generic type of the IPostProcessor '{}', does not match the type it has been registered with ('{}')", postProcessor.getName(), handledResultTypes.getName());
+					logger.error("Generic type of the IPostProcessor '{}', does not match the type it has been registered with ('{}')", postProcessor.getName(), handledResultType.getName());
 					return false;
 				}
 			}
@@ -310,36 +316,32 @@ public class Registry implements IRegistry {
 			return false;
 		}
 
-		//If not done already - do @DetectorParameter stuff - find the annotations for the params in the postprocessor, check them and add to the map
-		if (data.adjustables == null) {
-			List<AdjustableParameterObj> tuneables =
-					Arrays.stream(postProcessor.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1)
-							.map(x -> {
-								if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
-									logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} which is not an int or float", postProcessor.getName(), x.getKey().getName());
-									return null;
-								}
+		// Do @DetectorParameter stuff - find the annotations for the params in the postprocessor, check them and add to the map
+		List<AdjustableParameterObj> tuneables =
+				Arrays.stream(postProcessor.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
+					if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
+						logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} which is not an int or float", postProcessor.getName(), x.getKey().getName());
+						return null;
+					}
 
-								if (x.getKey().getType().equals(int.class)) {
-									float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
-									for (float f : vals) {
-										if (f % 1 != 0) {
-											logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} of type int, with a float parameter", postProcessor.getName(),
-													x.getKey().getName());
-											return null;
-										}
-									}
-								}
+					if (x.getKey().getType().equals(int.class)) {
+						float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
+						for (float f : vals) {
+							if (f % 1 != 0) {
+								logger.warn("PostProcessor '{}' not registered, contains @DetectorParameter {} of type int, with a float parameter", postProcessor.getName(), x.getKey().getName());
+								return null;
+							}
+						}
+					}
 
-								return x;
-							}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
+					return x;
+				}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
 
-			if (tuneables.size() > 0) {
-				data.adjustables = tuneables;
-			}
+		if (tuneables.size() > 0) {
+			data.adjustables = tuneables;
 		}
 
-		this.postProcRegistry.put(handledResultTypes, data);
+		this.postProcRegistry.put(handledResultType, data);
 		return true;
 	}
 
