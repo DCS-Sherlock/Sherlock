@@ -6,5 +6,5 @@ public enum WorkStatus {
 	ACTIVE,
 	REGEN_RESULTS,
 	COMPLETE,
-	INTERUPTED
+	INTERRUPTED
 }

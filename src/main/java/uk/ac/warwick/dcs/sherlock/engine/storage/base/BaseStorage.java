@@ -44,8 +44,8 @@ public class BaseStorage implements IStorageWrapper {
 		jobs.stream().filter(j -> j.getTasks().size() > 0 && j.getStatus() == WorkStatus.ACTIVE).forEach(j ->
 		{
 			if (j.getTasks().stream().anyMatch(i -> i.getStatus() == WorkStatus.PREPARED)) {
-				j.getTasks().stream().filter(i -> i.getStatus() == WorkStatus.PREPARED).forEach(i -> i.setStatus(WorkStatus.INTERUPTED));
-				j.setStatus(WorkStatus.INTERUPTED);
+				j.getTasks().stream().filter(i -> i.getStatus() == WorkStatus.PREPARED).forEach(i -> i.setStatus(WorkStatus.INTERRUPTED));
+				j.setStatus(WorkStatus.INTERRUPTED);
 			}
 		});
 
