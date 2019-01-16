@@ -26,12 +26,5 @@ public interface ITask {
 	 */
 	WorkStatus getStatus();
 
-	/**
-	 * Sets the status of the task
-	 *
-	 * @param status the new status of the task
-	 */
-	void setStatus(WorkStatus status);
-
 	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 }

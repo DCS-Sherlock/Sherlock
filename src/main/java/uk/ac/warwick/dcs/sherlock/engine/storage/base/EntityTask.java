@@ -141,8 +141,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.status;
 	}
 
-	@Override
-	public void setStatus(WorkStatus status) {
+	void setStatus(WorkStatus status) {
 		this.status = status;
 	}
 

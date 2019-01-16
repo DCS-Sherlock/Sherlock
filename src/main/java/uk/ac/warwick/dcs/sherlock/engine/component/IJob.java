@@ -108,7 +108,7 @@ public interface IJob {
 	boolean resetParameter(AdjustableParameterObj paramObj);
 
 	/**
-	 * Sets the passed detector adjustable parameter to the passed value
+	 * Sets the passed detector adjustable parameter to the passed value TODO: redo the setting and modification interface,
 	 * <p><p>
 	 * Will return false if the AdjustableParameter is invalid
 	 *
