@@ -3,14 +3,13 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NgramMatch;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.module.model.base.scoring.NGramScorer;
 
 import java.util.*;
 
-public class NGramPostProcessor implements IPostProcessor<SimpleObjectEqualityRawResult> {
+public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 
 	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
 	public int testParam;
@@ -38,11 +37,10 @@ public class NGramPostProcessor implements IPostProcessor<SimpleObjectEqualityRa
 
 		ArrayList<ArrayList<NgramMatch>> matches = new ArrayList<>();
 
-		for (NGramRawResult result : rawResults ) {
-			for (NgramMatch match : (NgramMatch) result.objects) {
+		for (NGramRawResult result : rawResults )
+			for (NgramMatch match : (List<NgramMatch>) result.objects) {
 				// if nothing in matches add to match, else check isLinked and if true add to relvent list, if false add to new list
 			}
-		}
 
 
 

@@ -117,5 +117,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	@Override
 	public void shutdown() {
 		this.scheduler.shutdown();
+		this.exec.shutdownNow();
+		this.execScheduler.shutdownNow();
 	}
 }
