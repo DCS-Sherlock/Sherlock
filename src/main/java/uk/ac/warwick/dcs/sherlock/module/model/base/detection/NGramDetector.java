@@ -4,8 +4,10 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector.NGramDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
@@ -16,10 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
-public class NGramDetector extends AbstractPairwiseDetector {
-
-	// technically works for all languages the same as it's just running basic natural language checks
-	private static final Language[] languages = { Language.JAVA };
+public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker> {
 
 	NGramRawResult<NgramMatch> res;
 
@@ -54,7 +53,7 @@ public class NGramDetector extends AbstractPairwiseDetector {
 
 	// presumably for use in threading (check with james)
 	@Override
-	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
+	public NGramDetectorWorker getAbstractPairwiseDetectorWorker() {
 		return new NGramDetectorWorker();
 	}
 
@@ -345,13 +344,13 @@ public class NGramDetector extends AbstractPairwiseDetector {
 	 */
 	@Override
 	public Language[] getSupportedLanguages() {
-		return languages;
+		return Language.values(); //All possible values for the language
 	}
 
 	/**
 	 * The main processing method used in the detector
 	 */
-	public class NGramDetectorWorker extends AbstractPairwiseDetectorWorker {
+	public class NGramDetectorWorker extends AbstractPairwiseDetectorWorker<NGramRawResult> {
 
 		/**
 		 *

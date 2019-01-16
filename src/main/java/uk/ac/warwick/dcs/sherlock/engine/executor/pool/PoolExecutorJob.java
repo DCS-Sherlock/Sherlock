@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
@@ -33,28 +34,34 @@ public class PoolExecutorJob implements Runnable{
 
 	@Override
 	public void run() {
-		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
+		if (job.getStatus() != WorkStatus.COMPLETE || job.getStatus() != WorkStatus.REGEN_RESULTS) {
+			job.setStatus(WorkStatus.ACTIVE);
 
-		RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(tasks), this.job.getWorkspace().getFiles());
-		this.scheduler.invokeWork(preProcess, Priority.DEFAULT);
+			List<PoolExecutorTask> tasks = job.getTasks().stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE)
+					.map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
 
-		// Check that preprocessing went okay
-		tasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("PreProcessing output for detector {} is empty, this detector will be ignored.", x.getDetector().getName());
+			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(tasks), this.job.getWorkspace().getFiles());
+			this.scheduler.invokeWork(preProcess, Priority.DEFAULT);
+
+			// Check that preprocessing went okay
+			tasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {
+				synchronized (ExecutorUtils.logger) {
+					ExecutorUtils.logger.error("PreProcessing output for detector {} is empty, this detector will be ignored.", x.getDetector().getName());
+				}
+			}).forEach(tasks::remove);
+
+			ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
+			try {
+				exServ.invokeAll(new LinkedList<>(tasks));
 			}
-		}).forEach(tasks::remove);
-
-		ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
-		try {
-			exServ.invokeAll(new LinkedList<>(tasks));
-		}
-		catch (InterruptedException e) {
-			e.printStackTrace();
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			job.setStatus(WorkStatus.REGEN_RESULTS);
 		}
 
-		/*synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.info("Done!!");
-		}*/
+		//REGEN THE RESULTS
+
+		job.setStatus(WorkStatus.COMPLETE);
 	}
 }

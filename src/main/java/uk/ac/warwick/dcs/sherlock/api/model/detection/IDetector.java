@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
@@ -11,7 +10,7 @@ import java.util.*;
  *
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
-public interface IDetector {
+public interface IDetector<T extends IDetectorWorker> {
 
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
@@ -20,7 +19,7 @@ public interface IDetector {
 	 *
 	 * @return list of configured workers ready to be executed
 	 */
-	List<IDetectorWorker> buildWorkers(List<ModelDataItem> data);
+	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
 	 * @return display name of the algorithm
@@ -75,24 +74,4 @@ public interface IDetector {
 	enum Rank {
 		PRIMARY, BACKUP
 	}
-
-	/**
-	 * Top level interface workers are required to implement
-	 */
-	interface IDetectorWorker {
-
-		/**
-		 * Do work and create the results
-		 */
-		void execute();
-
-		/**
-		 * Gets the results of the worker execution, only minimal processing should be performed in this method
-		 *
-		 * @return worker results
-		 */
-		AbstractModelTaskRawResult getRawResult();
-
-	}
-
 }

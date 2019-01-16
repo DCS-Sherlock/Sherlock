@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -117,10 +118,10 @@ public class TestResultsFactory implements IExecutor {
 				return null;
 			}).collect(Collectors.toList());
 
-			List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
-			workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
+			List<IDetectorWorker> workers = instance.buildWorkers(inputData);
+			workers.parallelStream().forEach(IDetectorWorker::execute);
 
-			List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+			List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 			boolean isValid = true;
 			for (int i = 1; i < raw.size(); i++) {
 				if (!raw.get(i).testType(raw.get(0))) {

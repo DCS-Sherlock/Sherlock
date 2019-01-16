@@ -4,8 +4,10 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector.TestDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
@@ -13,7 +15,7 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtrac
 
 import java.util.*;
 
-public class TestDetector extends AbstractPairwiseDetector {
+public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 
 	private static final Language[] languages = { Language.JAVA };
 
@@ -21,8 +23,8 @@ public class TestDetector extends AbstractPairwiseDetector {
 	public int testParam;
 
 	@Override
-	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
-		return new TestDetectorWorker();
+	public TestDetectorWorker getAbstractPairwiseDetectorWorker() {
+		return new TestDetector.TestDetectorWorker();
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 		return languages;
 	}
 
-	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
+	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker<SimpleObjectEqualityRawResult<String>> {
 
 		@Override
 		public void execute() {

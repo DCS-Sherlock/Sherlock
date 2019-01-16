@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.IDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
 import java.util.*;

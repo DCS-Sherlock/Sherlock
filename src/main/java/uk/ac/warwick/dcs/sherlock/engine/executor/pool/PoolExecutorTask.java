@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -85,7 +86,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 		IDetector instance = this.task.getDetector().newInstance();
 		ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
-		List<IDetector.IDetectorWorker> workers = instance.buildWorkers(this.dataItems);
+		List<IDetectorWorker> workers = instance.buildWorkers(this.dataItems);
 		int threshold = Math.min(Math.max(workers.size()/Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
 
 		WorkDetect detect = new WorkDetect(workers, threshold);

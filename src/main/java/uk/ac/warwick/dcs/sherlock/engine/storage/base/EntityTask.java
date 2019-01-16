@@ -8,6 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -40,14 +41,10 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	// Store as a file in case too large for db field, store refs to files in this object
 	private transient List<AbstractModelTaskRawResult> rawResults;
 
-	//private List<ModelTaskProcessedResults> finalResults;
+	private WorkStatus status;
 
 	public EntityTask() {
 		super();
-	}
-
-	private void deserialize() {
-		BaseStorage.instance.filesystem.loadTaskRawResults(this);
 	}
 
 	public EntityTask(EntityJob job, Class<? extends IDetector> detector, Map<String, Float> mapping) {
@@ -59,6 +56,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;
 		this.secure = null;
+		this.status = WorkStatus.PREPARED;
 	}
 
 	@Override
@@ -112,9 +110,14 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.rawResults;
 	}
 
+	private void deserialize() {
+		BaseStorage.instance.filesystem.loadTaskRawResults(this);
+	}
+
 	@Override
 	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
+		this.status = WorkStatus.COMPLETE;
 		this.serialize();
 	}
 
@@ -131,6 +134,16 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public void setSecureParam(byte[] secure) {
 		this.secure = secure;
+	}
+
+	@Override
+	public WorkStatus getStatus() {
+		return this.status;
+	}
+
+	@Override
+	public void setStatus(WorkStatus status) {
+		this.status = status;
 	}
 
 	@Override

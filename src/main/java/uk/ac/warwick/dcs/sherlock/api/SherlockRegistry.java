@@ -65,6 +65,42 @@ public class SherlockRegistry {
 	}
 
 	/**
+	 * @param det detector class
+	 *
+	 * @return the detector rank
+	 */
+	public static Rank getDetectorRank(Class<? extends IDetector> det) {
+		if (registry != null) {
+			return registry.getDetectorRank(det);
+		}
+		return null;
+	}
+
+	/**
+	 * @return a set of all detectors registered
+	 */
+	public static Set<Class<? extends IDetector>> getDetectors() {
+		if (registry != null) {
+			return registry.getDetectors();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a set of all detectors registered which support the language specified
+	 *
+	 * @param language the language to search
+	 *
+	 * @return the set of detectors
+	 */
+	public static Set<Class<? extends IDetector>> getDetectors(Language language) {
+		if (registry != null) {
+			return registry.getDetectors(language);
+		}
+		return null;
+	}
+
+	/**
 	 * Fetches the correct {@link IPostProcessor} instance for the raw result type
 	 *
 	 * @param rawClass type to search
@@ -108,37 +144,29 @@ public class SherlockRegistry {
 	}
 
 	/**
+	 * Gets the adjustable parameters for a postprocessor
+	 *
+	 * @param postProcessor postprocessor class
+	 *
+	 * @return the list of adjustable parameters
+	 */
+	public static List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor) {
+		if (registry != null) {
+			return registry.getPostProcessorAdjustableParameters(postProcessor);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the adjustable parameters for the corresponding post processor for a detector
+	 *
 	 * @param det detector class
 	 *
-	 * @return the detector rank
+	 * @return the list of adjustable parameters
 	 */
-	public static Rank getDetectorRank(Class<? extends IDetector> det) {
+	public static List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det){
 		if (registry != null) {
-			return registry.getDetectorRank(det);
-		}
-		return null;
-	}
-
-	/**
-	 * @return a set of all detectors registered
-	 */
-	public static Set<Class<? extends IDetector>> getDetectors() {
-		if (registry != null) {
-			return registry.getDetectors();
-		}
-		return null;
-	}
-
-	/**
-	 * Returns a set of all detectors registered which support the language specified
-	 *
-	 * @param language the language to search
-	 *
-	 * @return the set of detectors
-	 */
-	public static Set<Class<? extends IDetector>> getDetectors(Language language) {
-		if (registry != null) {
-			return registry.getDetectors(language);
+			return registry.getPostProcessorAdjustableParametersFromDetector(det);
 		}
 		return null;
 	}
