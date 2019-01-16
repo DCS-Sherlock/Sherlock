@@ -8,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.scoring.SimpleObjectEquality
 
 import java.util.*;
 
-public class SimpleObjectEquality implements IPostProcessor<SimpleObjectEqualityRawResult> {
+public class SimpleObjectEqualityPostProcessor implements IPostProcessor<SimpleObjectEqualityRawResult> {
 
 	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
 	public int testParam;

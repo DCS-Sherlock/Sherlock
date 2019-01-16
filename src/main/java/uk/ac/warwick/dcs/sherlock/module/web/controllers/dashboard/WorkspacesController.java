@@ -7,19 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.TemplateDetector;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.FileUploadForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceNameForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
@@ -278,8 +275,7 @@ public class WorkspacesController {
 
 		job.prepare();
 
-		//SherlockEngine.executor.submitJob(job);
-		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
+		SherlockEngine.executor.submitJob(job);
 
 		model.addAttribute("workspace", workspaceWrapper);
 		model.addAttribute(

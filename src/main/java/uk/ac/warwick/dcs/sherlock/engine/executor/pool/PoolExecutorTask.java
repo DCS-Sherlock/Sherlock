@@ -13,7 +13,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.PriorityWorkPriorities;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.Priority;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkDetect;
 
@@ -89,7 +89,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 		int threshold = Math.min(Math.max(workers.size()/Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
 
 		WorkDetect detect = new WorkDetect(workers, threshold);
-		this.scheduler.invokeWork(detect, PriorityWorkPriorities.DEFAULT);
+		this.scheduler.invokeWork(detect, Priority.DEFAULT);
 		List<AbstractModelTaskRawResult> rawResults = detect.getResults();
 
 		if (workers.size() != rawResults.size()) {

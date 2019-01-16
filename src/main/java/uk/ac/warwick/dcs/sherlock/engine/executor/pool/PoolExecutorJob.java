@@ -3,7 +3,8 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.PriorityWorkPriorities;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.Priority;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkPreProcessFiles;
 
 import java.util.*;
@@ -13,12 +14,21 @@ import java.util.stream.*;
 public class PoolExecutorJob implements Runnable{
 
 	private IPriorityWorkSchedulerWrapper scheduler;
-
 	private IJob job;
+	private JobStatus status;
 
-	public PoolExecutorJob(IPriorityWorkSchedulerWrapper scheduler, IJob job) {
+	public PoolExecutorJob(IPriorityWorkSchedulerWrapper scheduler, IJob job, JobStatus status) {
 		this.scheduler = scheduler;
 		this.job = job;
+		this.status = status;
+	}
+
+	public JobStatus getStatus() {
+		return status;
+	}
+
+	public Priority getPriority() {
+		return this.status.getPriority();
 	}
 
 	@Override
@@ -26,7 +36,7 @@ public class PoolExecutorJob implements Runnable{
 		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
 
 		RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(tasks), this.job.getWorkspace().getFiles());
-		this.scheduler.invokeWork(preProcess, PriorityWorkPriorities.DEFAULT);
+		this.scheduler.invokeWork(preProcess, Priority.DEFAULT);
 
 		// Check that preprocessing went okay
 		tasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {

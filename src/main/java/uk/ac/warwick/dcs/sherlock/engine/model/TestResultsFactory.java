@@ -158,7 +158,7 @@ public class TestResultsFactory implements IExecutor {
 	}
 
 	@Override
-	public int submitJob(IJob job) {
+	public boolean submitJob(IJob job) {
 		try {
 			this.buildTestResults(job);
 		}
@@ -166,11 +166,11 @@ public class TestResultsFactory implements IExecutor {
 			e.printStackTrace();
 		}
 
-		return 0;
+		return true;
 	}
 
 	@Override
-	public List<IJob> getCurrentActiveJobs() {
+	public List<IJob> getCurrentJobs() {
 		return null;
 	}
 

@@ -48,7 +48,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	private void deserialize() {
 		BaseStorage.instance.filesystem.loadTaskRawResults(this);
-		this.rawResults.forEach(System.out::println);
 	}
 
 	public EntityTask(EntityJob job, Class<? extends IDetector> detector, Map<String, Float> mapping) {

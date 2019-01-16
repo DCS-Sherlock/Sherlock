@@ -7,9 +7,9 @@ import java.util.*;
 
 public interface IExecutor {
 
-	int submitJob(IJob job);
+	boolean submitJob(IJob job);
 
-	List<IJob> getCurrentActiveJobs();
+	List<IJob> getCurrentJobs();
 
 	JobStatus getJobStatus(IJob job);
 

@@ -78,7 +78,11 @@ public class BaseStorage implements IStorageWrapper {
 
 	@Override
 	public ISourceFile getSourceFile(long persistentId) {
-		return null;
+		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
+		if (f.size() != 1) {
+			logger.warn("File of id {} does not exist", persistentId);
+		}
+		return f.get(0);
 	}
 
 	@Override
