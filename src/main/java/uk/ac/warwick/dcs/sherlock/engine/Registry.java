@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
@@ -167,12 +167,12 @@ public class Registry implements IRegistry {
 		}
 
 		// Check generics for detector
-		Class<? extends IDetectorWorker> workerClass;
+		Class<? extends AbstractDetectorWorker> workerClass;
 		try {
-			workerClass = (Class<? extends IDetectorWorker>) getGenericClass(detector.getGenericSuperclass());
+			workerClass = (Class<? extends AbstractDetectorWorker>) getGenericClass(detector.getGenericSuperclass());
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
-			logger.error("IDetector '{}' not registered. It has no IDetectorWorker type (its generic parameter), this is not allowed. A generic type MUST be given", detector.getName());
+			logger.error("IDetector '{}' not registered. It has no AbstractDetectorWorker type (its generic parameter), this is not allowed. A generic type MUST be given", detector.getName());
 			return false;
 		}
 
@@ -182,7 +182,7 @@ public class Registry implements IRegistry {
 			resultsClass = (Class<? extends AbstractModelTaskRawResult>) getGenericClass(workerClass.getGenericSuperclass());
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
-			logger.error("IDetector '{}' not registered. IDetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
+			logger.error("IDetector '{}' not registered. AbstractDetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
 					detector.getName(), workerClass.getName());
 			return false;
 		}

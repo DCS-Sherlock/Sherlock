@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * An extension of the basic worker for standard pairwise matching, implements the basic internal data structures
  */
-public abstract class AbstractPairwiseDetectorWorker<K extends AbstractModelTaskRawResult> extends IDetectorWorker<K> {
+public abstract class AbstractPairwiseDetectorWorker<K extends AbstractModelTaskRawResult> extends AbstractDetectorWorker<K> {
 
 	protected ModelDataItem file1;
 	protected ModelDataItem file2;

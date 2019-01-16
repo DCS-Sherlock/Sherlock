@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
@@ -113,10 +113,10 @@ public class TestResultsFactory implements IExecutor {
 				return null;
 			}).collect(Collectors.toList());
 
-			List<IDetectorWorker> workers = instance.buildWorkers(inputData);
-			workers.parallelStream().forEach(IDetectorWorker::execute);
+			List<AbstractDetectorWorker> workers = instance.buildWorkers(inputData);
+			workers.parallelStream().forEach(AbstractDetectorWorker::execute);
 
-			/*List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+			/*List<AbstractModelTaskRawResult> raw = workers.stream().map(AbstractDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 			boolean isValid = true;
 			for (int i = 1; i < raw.size(); i++) {
 				if (!raw.get(i).testType(raw.get(0))) {

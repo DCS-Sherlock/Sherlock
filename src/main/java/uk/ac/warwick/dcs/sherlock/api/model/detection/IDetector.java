@@ -10,7 +10,7 @@ import java.util.*;
  *
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
-public interface IDetector<T extends IDetectorWorker> {
+public interface IDetector<T extends AbstractDetectorWorker> {
 
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
