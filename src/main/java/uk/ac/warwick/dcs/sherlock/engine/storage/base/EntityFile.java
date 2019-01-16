@@ -129,4 +129,8 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	public void setWorkspace(EntityWorkspace workspace) {
 		this.workspace = workspace;
 	}
+
+	public boolean equals(ISourceFile file) {
+		return file.getPersistentId() == this.getPersistentId();
+	}
 }
