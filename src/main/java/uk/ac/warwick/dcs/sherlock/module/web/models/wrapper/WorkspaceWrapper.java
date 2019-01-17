@@ -139,8 +139,8 @@ public class WorkspaceWrapper {
 
 		job.prepare();
 
-		//SherlockEngine.executor.submitJob(job);
-		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
+		SherlockEngine.executor.submitJob(job);
+//		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
     }
 
     public static List<WorkspaceWrapper> findByAccount(Account account, WorkspaceRepository workspaceRepository) {
