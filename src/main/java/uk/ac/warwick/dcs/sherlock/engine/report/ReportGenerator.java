@@ -4,9 +4,9 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class ReportGenerator extends AbstractReportGenerator {
 
@@ -15,6 +15,8 @@ public class ReportGenerator extends AbstractReportGenerator {
 	@Override
 	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups) {
 		FileReport fileReport = new FileReport(persistentId);
+
+		StringJoiner stringJoiner = new StringJoiner("", "", ".");
 
 		/**
 		 * for each codeBlockGroup:
@@ -25,9 +27,13 @@ public class ReportGenerator extends AbstractReportGenerator {
 		 */
 		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 			//Get the base description for this type of plagiarism
-			String currentDescription = baseDescriptions.get(codeBlockGroup.getDetectionType());
+			List<String> descriptionSegments = new ArrayList<>();
+			descriptionSegments.add(baseDescriptions.get(codeBlockGroup.getDetectionType()));
 
-			List<String> continuedDescription = new ArrayList<>();
+			//If the group has more than 2 blocks, the description must be extended.
+			for(int i = 2; i < codeBlockGroup.getCodeBlocks().size(); i++) {
+				descriptionSegments.add(ReportDescriptions.getContinuedDescription());
+			}
 
 			/*
 			 * Get the line numbers for these code blocks and format the description using them
@@ -39,16 +45,17 @@ public class ReportGenerator extends AbstractReportGenerator {
 				lineNumbers.add(codeBlock.getLineNumbers().get(0));
 			}
 
-			//If the group has more than 2 blocks, the description must be extended.
-			for(int i = 2; i < codeBlockGroup.getCodeBlocks().size(); i++) {
-				continuedDescription.add(ReportDescriptions.getContinuedDescription());
+
+			//Format each segment of the description with the appropriate line numbers and add to the StringJoiner along the way.
+			//TODO: other formatting including file names, variables, etc.
+			for(int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
+				String formattedString = String.format(descriptionSegments.get(i), lineNumbers.get(i).getKey(), lineNumbers.get(i).getValue());
+				stringJoiner.add(formattedString);
 			}
 
-			//Kind of gross but not sure if string.format can just take a list
-			//Note that any files in the CodeBlockGroup beyond the first 2 are ignored
-			String lineNumberDesc = String.format(currentDescription, lineNumbers.get(0), lineNumbers.get(1), lineNumbers.get(2), lineNumbers.get(3));
-
-			fileReport.AddReportString(lineNumberDesc);
+			//Get the joined string and add it to the report.
+			String joinedString = stringJoiner.toString();
+			fileReport.AddReportString(joinedString);
 		}
 
 		return fileReport;
