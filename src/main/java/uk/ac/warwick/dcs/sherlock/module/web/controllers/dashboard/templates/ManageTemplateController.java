@@ -58,7 +58,7 @@ public class ManageTemplateController {
         if (!result.hasErrors()) {
             templateWrapper.update(templateForm, templateRepository, tDetectorRepository);
             //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("templates_message_updated_details");
+            result.reject("templates_basic_updated_msg");
         }
 
         model.addAttribute("templateForm", templateForm);

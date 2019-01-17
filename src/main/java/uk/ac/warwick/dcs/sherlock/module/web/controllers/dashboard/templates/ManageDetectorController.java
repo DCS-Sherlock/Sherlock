@@ -10,15 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.TParameter;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.ParameterForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.DetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TParameterRepository;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ManageDetectorController {
@@ -50,7 +47,7 @@ public class ManageDetectorController {
 
 		if (!result.hasErrors()) {
 			detectorWrapper.updateParameters(parameterForm, tParameterRepository);
-			result.reject("templates_message_updated_parameters");
+			result.reject("templates_parameters_updated_msg");
 		}
 
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());

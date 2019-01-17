@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
 <head>
-    <title th:text="#{workspaces_page_add}"></title>
+    <title th:text="#{workspaces_add_title}"></title>
 </head>
 <body>
 
@@ -9,7 +9,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{workspaces_page_add}"></h5>
+                <h5 class="modal-title" th:text="#{workspaces_add_title}"></h5>
             </div>
             <form th:action="@{/dashboard/workspaces/add}" data-js='form' data-js-target="#add-parent" th:object="${workspaceForm}" method="post">
                 <div class="modal-body">
@@ -19,8 +19,8 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="name" th:text="#{workspaces_variable_name}"></label>
-                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{workspaces_variable_name}" th:value="*{name}" />
+                            <label for="name" th:text="#{variable_name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
                         </div>
                     </div>
 

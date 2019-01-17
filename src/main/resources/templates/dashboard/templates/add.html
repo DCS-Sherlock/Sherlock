@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='templates'">
 <head>
-    <title th:text="#{templates_page_add}"></title>
+    <title th:text="#{templates_add_title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -9,7 +9,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{templates_page_add}"></h5>
+                <h5 class="modal-title" th:text="#{templates_add_title}"></h5>
             </div>
             <div class="modal-body">
                 <div class="form-row">

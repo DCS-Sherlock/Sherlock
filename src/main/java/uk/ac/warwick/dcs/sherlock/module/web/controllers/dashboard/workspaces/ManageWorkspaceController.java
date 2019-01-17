@@ -58,7 +58,7 @@ public class ManageWorkspaceController {
 		if (!result.hasErrors()) {
 		    workspaceWrapper.set(workspaceForm);
             //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("workspaces_message_updated_name");
+            result.reject("workspaces_basic_updated_msg");
 		}
 
         return "dashboard/workspaces/fragments/name";
@@ -90,7 +90,7 @@ public class ManageWorkspaceController {
         if (!result.hasErrors()) {
             workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
             //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("workspaces_message_uploaded_submission");
+            result.reject("workspaces_submissions_uploaded_msg");
         }
 
         return "dashboard/workspaces/fragments/submissions";

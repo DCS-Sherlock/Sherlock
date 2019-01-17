@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
 <head>
-    <title th:text="#{templates_page_delete}"></title>
+    <title th:text="#{templates_delete_title}"></title>
 </head>
 <body>
 
@@ -9,11 +9,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{templates_page_delete}"></h5>
+                <h5 class="modal-title" th:text="#{templates_delete_title}"></h5>
             </div>
             <form th:action="@{/dashboard/templates/delete/{id}(id=${template.getId()})}" data-js='form' data-js-target="#delete-parent" method="post">
                 <div class="modal-body">
-                    <div class="alert alert-danger" role="alert" th:text="#{templates_message_delete}"></div>
+                    <div class="alert alert-danger" role="alert" th:text="#{templates_delete_msg}"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>

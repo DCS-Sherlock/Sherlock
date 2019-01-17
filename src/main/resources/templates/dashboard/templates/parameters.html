@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='templates'">
 <head>
-    <title th:text="#{templates_link_manage_parameters}"></title>
+    <title th:text="#{templates_parameters_title}"></title>
 </head>
 <body>
 
@@ -9,7 +9,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{templates_link_manage_parameters}"></h5>
+                <h5 class="modal-title" th:text="#{templates_parameters_title}"></h5>
             </div>
             <form th:action="@{/dashboard/templates/manage/detectors/parameters/{id}(id=${detector.getId()})}" data-js='form' data-js-target="#parameters-parent" th:object="${parameterForm}" method="post">
                 <div class="modal-body">
@@ -24,7 +24,7 @@
                                     <span th:text="${parametersMap.get(parameter.key).getDisplayName()}"></span>
                                     <span
                                             th:if="${parametersMap.get(parameter.key).getDescription().length() > 0}"
-                                            th:text="#{templates_message_description}"
+                                            th:text="#{message_description}"
                                             data-toggle="tooltip" data-placement="top"
                                             th:title="${parametersMap.get(parameter.key).getDescription()}"
                                     ></span>
@@ -41,7 +41,7 @@
                         </div>
                     </th:block>
                     <tr th:if="${parametersMap.empty}">
-                       <span th:text="#{templates_message_no_parameters}"></span>
+                       <span th:text="#{templates_parameters_none_msg}"></span>
                     </tr>
                 </div>
                 <div class="modal-footer">

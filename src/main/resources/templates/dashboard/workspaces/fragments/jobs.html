@@ -8,8 +8,7 @@
 <form th:action="@{/dashboard/workspaces/manage/jobs/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#jobs-parent" method="post">
     <div th:if="${templates.empty}">
         <h6 class="mb-0">
-            <span th:text="#{templates_message_no_templates}"></span>
-            <span th:text="#{templates_message_add_templates}"></span>
+            <span th:text="#{workspaces_analysis_templates_none_msg}"></span>
         </h6>
     </div>
     <div th:unless="${templates.empty}">

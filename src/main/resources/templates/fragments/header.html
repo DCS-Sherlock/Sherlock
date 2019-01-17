@@ -55,8 +55,8 @@
                               <span th:text="#{nav_hello}"></span>, <span sec:authentication="name"></span>!
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" th:href="@{/account}" th:classappend="${page == 'account' ? 'active' : ''}" th:text="#{nav_acc_settings}"></a>
-                                <a class="dropdown-item" sec:authorize="isAuthenticated() && hasAuthority('ADMIN')" th:href="@{/admin}" th:classappend="${page == 'settings' ? 'active' : ''}" th:text="#{nav_sys_settings}"></a>
+                                <a class="dropdown-item" th:href="@{/account}" th:classappend="${page == 'account' ? 'active' : ''}" th:text="#{nav_account_settings}"></a>
+                                <a class="dropdown-item" sec:authorize="isAuthenticated() && hasAuthority('ADMIN')" th:href="@{/admin}" th:classappend="${page == 'settings' ? 'active' : ''}" th:text="#{nav_system_settings}"></a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" th:href="@{/logout}" th:text="#{nav_logout}"></a>
                             </div>
@@ -69,7 +69,7 @@
         <noscript>
             <div class="row">
                 <div class="col-12">
-                    <div class="alert alert-danger"><span th:text="#{warning_javascript_start}"></span> <a href="https://www.enable-javascript.com/" target="_blank" th:text="#{warning_javascript_link}"></a><span th:text="#{warning_javascript_end}"></span></div>
+                    <div class="alert alert-danger"><span th:text="#{js_header_start}"></span> <a href="https://www.enable-javascript.com/" target="_blank" th:text="#{js_header_link}"></a><span th:text="#{js_header_end}"></span></div>
                 </div>
             </div>
             <p></p>

@@ -14,14 +14,14 @@
 
     <div class="form-row">
         <div class="form-group col-md-12">
-            <label for="name" th:text="#{templates_variable_name}"></label>
-            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{templates_variable_name}" th:value="*{name}" />
+            <label for="name" th:text="#{variable_name}"></label>
+            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-12">
-            <label for="name" th:text="#{templates_variable_public}"></label>
+            <label for="name" th:text="#{variable_public}"></label>
             <input type="checkbox" id="isPublic" name="isPublic" th:value="*{isPublic}" />
         </div>
     </div>
@@ -35,13 +35,13 @@
                     <span th:text="${detector.getDisplayName()}"></span>
                     <span
                             th:if="${detector.getDescription().length() > 0}"
-                            th:text="#{templates_message_description}"
+                            th:text="#{message_description}"
                             data-toggle="tooltip" data-placement="top"
                             th:title="${detector.getDescription()}"
                     ></span>
                 </label>
             </th:block>
-            <span th:if="${detectorList.empty}" th:text="#{templates_message_no_detectors}"></span>
+            <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
         </div>
     </div>
 </form>
