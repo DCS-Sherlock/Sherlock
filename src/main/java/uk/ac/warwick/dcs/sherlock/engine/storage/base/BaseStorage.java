@@ -34,7 +34,7 @@ public class BaseStorage implements IStorageWrapper {
 		this.filesystem = new BaseStorageFilesystem();
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
-		List orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class));
+		List orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
 		if (orphans != null && orphans.size() > 0) {
 			this.database.removeObject(orphans);
 		}
@@ -51,7 +51,7 @@ public class BaseStorage implements IStorageWrapper {
 
 		jobs = jobs.stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
 		if (jobs.size() > 0) {
-			logger.info("Removing jobs with no tasks...");
+			logger.warn("Removing jobs with no tasks...");
 			this.database.removeObject(jobs);
 		}
 	}

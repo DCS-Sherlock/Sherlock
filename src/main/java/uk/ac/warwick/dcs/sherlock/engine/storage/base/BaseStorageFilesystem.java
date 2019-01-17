@@ -213,7 +213,7 @@ public class BaseStorageFilesystem {
 		return true;
 	}
 
-	List<Object> validateFileStore(List<EntityFile> allFiles) {
+	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
 		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
 
 		List<String> filesInStore;
@@ -236,16 +236,12 @@ public class BaseStorageFilesystem {
 		}
 
 		// Task check, disabled
-		/*for (EntityTask t : allTasks) {
+		for (EntityTask t : allTasks) {
 			String tmp = this.computeLocator(this.computeTaskIdentifier(t));
 			if (filesInStore.contains(tmp)) {
 				filesInStore.remove(tmp);
 			}
-			else {
-				orphanRecords.add(t);
-				logger.warn("Task in database has no results stored");
-			}
-		}*/
+		}
 
 		if (orphanRecords.size() > 0) {
 			logger.warn("File in database but not found in file store, removing...");
