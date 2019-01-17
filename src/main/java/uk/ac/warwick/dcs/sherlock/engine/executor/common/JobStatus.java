@@ -1,10 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 import java.time.Duration;
+import java.time.Instant;
 
 public class JobStatus {
 
-	private long startTime;
+	private Instant startTime;
 	private Duration duration;
 
 	private Priority priority;
@@ -13,7 +16,7 @@ public class JobStatus {
 	private String message;
 
 	public JobStatus(Priority priority) {
-		this.startTime = 0;
+		this.startTime = null;
 		this.duration = null;
 
 		this.priority = priority;
@@ -23,12 +26,19 @@ public class JobStatus {
 	}
 
 	public void finishJob() {
-		this.duration = Duration.ofNanos(Math.round(System.nanoTime() - this.startTime));
-		this.message = "Finished";
+		if (this.startTime != null) {
+			this.duration = Duration.between(this.startTime, Instant.now());
+			this.message = "Finished";
+			this.startTime = null;
+		}
 	}
 
 	public Duration getDuration() {
 		return this.duration;
+	}
+
+	public String formatDuration() {
+		return DurationFormatUtils.formatDuration(this.duration.toMillis(), "H:mm:ss.SSSS", true);
 	}
 
 	public Priority getPriority() {
@@ -40,7 +50,7 @@ public class JobStatus {
 	}
 
 	public void startJob() {
-		this.startTime = System.nanoTime();
+		this.startTime = Instant.now();
 		this.message = "Starting";
 	}
 

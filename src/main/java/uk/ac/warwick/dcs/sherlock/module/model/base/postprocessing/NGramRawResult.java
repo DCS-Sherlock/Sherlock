@@ -66,9 +66,9 @@ public class NGramRawResult<T extends Serializable> extends AbstractModelTaskRaw
 
 	@Override
 	public boolean testType(AbstractModelTaskRawResult baseline) {
-		if (baseline instanceof SimpleObjectEqualityRawResult) {
-			SimpleObjectEqualityRawResult bl = (SimpleObjectEqualityRawResult) baseline;
-			return bl.getObjects().get(0).getClass().equals(this.getObjects().get(0).getClass());
+		if (baseline instanceof NGramRawResult) {
+			NGramRawResult bl = (NGramRawResult) baseline;
+			return bl.getObjects().get(0).getClass().equals(this.getObjects().get(0).getClass()); // Check generic type is the same
 		}
 
 		return false;

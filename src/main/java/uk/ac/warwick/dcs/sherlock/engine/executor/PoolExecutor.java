@@ -38,7 +38,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 					job.getStatus().finishJob();
 
 					synchronized (ExecutorUtils.logger) {
-						ExecutorUtils.logger.warn("Job duration: {} seconds", job.getStatus().getDuration().toMillis()/(double)1000);
+						ExecutorUtils.logger.warn("Job {} took: {}", job.getId(), job.getStatus().formatDuration());
 					}
 				}
 				catch (InterruptedException | ExecutionException e) {

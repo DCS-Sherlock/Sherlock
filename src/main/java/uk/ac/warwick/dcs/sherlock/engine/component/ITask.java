@@ -26,5 +26,10 @@ public interface ITask {
 	 */
 	WorkStatus getStatus();
 
+	/**
+	 * Used to set task complete if no results are found
+	 */
+	void setComplete();
+
 	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 }

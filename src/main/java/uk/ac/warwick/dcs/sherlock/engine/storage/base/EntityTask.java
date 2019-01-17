@@ -117,13 +117,18 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
-		this.status = WorkStatus.COMPLETE;
+		this.setComplete();
 		this.serialize();
 	}
 
 	private void serialize() {
 		BaseStorage.instance.filesystem.storeTaskRawResults(this);
 		BaseStorage.instance.database.storeObject(this);
+	}
+
+	@Override
+	public void setComplete() {
+		this.status = WorkStatus.COMPLETE;
 	}
 
 	@Override

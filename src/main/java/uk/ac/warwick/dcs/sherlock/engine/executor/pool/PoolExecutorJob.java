@@ -32,6 +32,10 @@ public class PoolExecutorJob implements Runnable{
 		return this.status.getPriority();
 	}
 
+	public long getId() {
+		return this.job.getPersistentId();
+	}
+
 	@Override
 	public void run() {
 		if (job.getStatus() != WorkStatus.COMPLETE || job.getStatus() != WorkStatus.REGEN_RESULTS) {
@@ -61,6 +65,24 @@ public class PoolExecutorJob implements Runnable{
 		}
 
 		//REGEN THE RESULTS
+		/*IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(rawResults.get(0).getClass());
+		if (postProcessor == null) {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.error("Could not find a postprocessor for '{}', check that it is being correctly registered", rawResults.get(0).getClass().getName());
+				return null;
+			}
+		}
+		ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
+
+		//TEMP CODE FROM HERE
+		List<ICodeBlockGroup> gs = processedResults.getGroups();
+		synchronized (ExecutorUtils.logger) {
+			ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
+			for (ICodeBlockGroup g : gs) {
+				g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {}", x.getFile(), x.getLineNumbers().toString()));
+				System.out.println();
+			}
+		}*/
 
 		job.setStatus(WorkStatus.COMPLETE);
 	}

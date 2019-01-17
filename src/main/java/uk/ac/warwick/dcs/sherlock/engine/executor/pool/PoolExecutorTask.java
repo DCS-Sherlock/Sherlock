@@ -1,14 +1,10 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
@@ -20,6 +16,7 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkDetect;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 
 public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 
@@ -100,34 +97,23 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 			}
 		}
 
-		// validate the raw result types, are they all the same?
-		if (!rawResults.stream().allMatch(x -> x.testType(rawResults.get(0)))) {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Work result types are not consistent, this is not allowed. A detector must return a single result type");
-				return null;
+		rawResults = rawResults.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		if (rawResults.size() > 0) {
+			AbstractModelTaskRawResult base = rawResults.get(0);
+
+			// validate the raw result types, are they all the same?
+			if (!rawResults.stream().allMatch(x -> x.testType(base))) {
+				synchronized (ExecutorUtils.logger) {
+					ExecutorUtils.logger.error("Work result types are not consistent, this is not allowed. A detector must return a single result type");
+					return null;
+				}
 			}
+
+			//Save the raw results
+			this.task.setRawResults(rawResults);
 		}
-
-		//Save the raw results
-		this.task.setRawResults(rawResults);
-
-		IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(rawResults.get(0).getClass());
-		if (postProcessor == null) {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Could not find a postprocessor for '{}', check that it is being correctly registered", rawResults.get(0).getClass().getName());
-				return null;
-			}
-		}
-		ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
-
-		//TEMP CODE FROM HERE
-		List<ICodeBlockGroup> gs = processedResults.getGroups();
-		synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
-			for (ICodeBlockGroup g : gs) {
-				g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {}", x.getFile(), x.getLineNumbers().toString()));
-				System.out.println();
-			}
+		else {
+			this.task.setComplete();
 		}
 
 		return null;
