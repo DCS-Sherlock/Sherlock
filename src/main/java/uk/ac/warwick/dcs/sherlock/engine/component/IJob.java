@@ -18,11 +18,25 @@ public interface IJob {
 	boolean addDetector(Class<? extends IDetector> det);
 
 	/**
+	 * Return a new JobResult instance
+	 *
+	 * @return newly created instance
+	 */
+	IResultJob createNewResult();
+
+	/**
 	 * The ids of the files used for this job
 	 *
 	 * @return ids of files used
 	 */
 	long[] getFiles();
+
+	/**
+	 * get the latest processed results for this job
+	 *
+	 * @return latest processed results
+	 */
+	IResultJob getLatestResult();
 
 	/**
 	 * The unique id for the job
@@ -32,11 +46,11 @@ public interface IJob {
 	long getPersistentId();
 
 	/**
-	 * get the latest processed results for this job
+	 * get the list of processed results for this job
 	 *
-	 * @return latest processed results
+	 * @return all processed results
 	 */
-	List<IJobResult> getResults();
+	List<IResultJob> getResults();
 
 	/**
 	 * Returns the status of the job

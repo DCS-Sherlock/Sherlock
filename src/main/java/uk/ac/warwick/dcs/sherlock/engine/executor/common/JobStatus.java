@@ -33,12 +33,12 @@ public class JobStatus {
 		}
 	}
 
-	public Duration getDuration() {
-		return this.duration;
-	}
-
 	public String formatDuration() {
 		return DurationFormatUtils.formatDuration(this.duration.toMillis(), "H:mm:ss.SSSS", true);
+	}
+
+	public Duration getDuration() {
+		return this.duration;
 	}
 
 	public Priority getPriority() {

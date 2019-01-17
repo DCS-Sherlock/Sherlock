@@ -12,15 +12,15 @@ public class SherlockHelper {
 
 	private static Class<? extends ICodeBlockGroup> codeBlockGroupClass;
 
-	public static ISourceFile getSourceFile(long persistentId) {
-		return sourceFileHelper.getSourceFile(persistentId);
+	public static String buildFieldReference(Field field) {
+		return field.getDeclaringClass().getName() + ":" + field.getName();
 	}
 
 	public static ICodeBlockGroup getInstanceOfCodeBlockGroup() throws IllegalAccessException, InstantiationException {
 		return codeBlockGroupClass.newInstance();
 	}
 
-	public static String buildFieldReference(Field field) {
-		return field.getDeclaringClass().getName() + ":" + field.getName();
+	public static ISourceFile getSourceFile(long persistentId) {
+		return sourceFileHelper.getSourceFile(persistentId);
 	}
 }

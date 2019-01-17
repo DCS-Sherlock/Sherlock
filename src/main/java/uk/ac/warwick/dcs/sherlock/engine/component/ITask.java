@@ -19,6 +19,8 @@ public interface ITask {
 
 	List<AbstractModelTaskRawResult> getRawResults();
 
+	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
+
 	/**
 	 * Returns the status of the task
 	 *
@@ -30,6 +32,4 @@ public interface ITask {
 	 * Used to set task complete if no results are found
 	 */
 	void setComplete();
-
-	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 }

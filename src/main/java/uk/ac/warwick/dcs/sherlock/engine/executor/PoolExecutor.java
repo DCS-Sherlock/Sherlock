@@ -9,12 +9,11 @@ import java.util.concurrent.*;
 
 public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
-	private PriorityWorkScheduler scheduler;
-
-	private ExecutorService exec;
-	private ExecutorService execScheduler;
 	private final PriorityBlockingQueue<PoolExecutorJob> queue;
 	private final Map<IJob, JobStatus> jobMap;
+	private PriorityWorkScheduler scheduler;
+	private ExecutorService exec;
+	private ExecutorService execScheduler;
 
 	public PoolExecutor() {
 		this.scheduler = new PriorityWorkScheduler();
@@ -49,6 +48,16 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	}
 
 	@Override
+	public List<IJob> getCurrentJobs() {
+		return null;
+	}
+
+	@Override
+	public JobStatus getJobStatus(IJob job) {
+		return null;
+	}
+
+	@Override
 	public void invokeWork(ForkJoinTask topAction, Priority priority) {
 		PriorityWorkTask task = new PriorityWorkTask(topAction, priority);
 
@@ -67,6 +76,13 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	@Override
 	public void submitWork(PriorityWorkTask work) {
 		this.scheduler.scheduleJob(work);
+	}
+
+	@Override
+	public void shutdown() {
+		this.scheduler.shutdown();
+		this.exec.shutdownNow();
+		this.execScheduler.shutdownNow();
 	}
 
 	@Override
@@ -92,6 +108,11 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 			}
 		}
 
+		/*List<ISourceFile> f = job.getWorkspace().getFiles();
+		IResultJob res = job.createNewResult();
+		res.addFile(f.get(0));
+		res.addFile(f.get(1));*/
+
 		JobStatus s = new JobStatus(Priority.DEFAULT);
 
 		synchronized (this.jobMap) {
@@ -102,22 +123,5 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		this.queue.add(j);
 
 		return true;
-	}
-
-	@Override
-	public List<IJob> getCurrentJobs() {
-		return null;
-	}
-
-	@Override
-	public JobStatus getJobStatus(IJob job) {
-		return null;
-	}
-
-	@Override
-	public void shutdown() {
-		this.scheduler.shutdown();
-		this.exec.shutdownNow();
-		this.execScheduler.shutdownNow();
 	}
 }

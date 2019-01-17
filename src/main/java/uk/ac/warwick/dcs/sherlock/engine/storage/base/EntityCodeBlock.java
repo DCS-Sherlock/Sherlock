@@ -12,13 +12,13 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public ISourceFile getFile() {
-		return null;
+	public float getBlockScore() {
+		return 0;
 	}
 
 	@Override
-	public float getBlockScore() {
-		return 0;
+	public ISourceFile getFile() {
+		return null;
 	}
 
 	@Override

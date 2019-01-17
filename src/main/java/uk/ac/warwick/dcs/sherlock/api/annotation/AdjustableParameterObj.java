@@ -33,6 +33,13 @@ public class AdjustableParameterObj {
 	}
 
 	/**
+	 * @return Display Name for the parameter to be displayed in the UI
+	 */
+	public String getDisplayName() {
+		return this.param.name();
+	}
+
+	/**
 	 * @return The maximum bound for the field
 	 */
 	public float getMaximumBound() {
@@ -51,13 +58,6 @@ public class AdjustableParameterObj {
 	 */
 	public String getName() {
 		return this.name;
-	}
-
-	/**
-	 * @return Display Name for the parameter to be displayed in the UI
-	 */
-	public String getDisplayName() {
-		return this.param.name();
 	}
 
 	public String getReference() {

@@ -80,6 +80,62 @@ public class SherlockEngine {
 		}
 	}
 
+	private static void loadConfiguration() {
+		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
+
+		logger.info(SherlockEngine.configDir.getAbsolutePath());
+
+		if (!SherlockEngine.configDir.exists()) {
+			if (!SherlockEngine.configDir.mkdir()) {
+				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
+				return;
+			}
+		}
+
+		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
+		if (!configFile.exists()) {
+			SherlockEngine.configuration = new Configuration();
+			SherlockEngine.writeConfiguration();
+		}
+		else {
+			try {
+				Constructor constructor = new Constructor();
+				constructor.addTypeDescription(new TypeDescription(Configuration.class, "!Sherlock"));
+				Yaml yaml = new Yaml(constructor);
+				SherlockEngine.configuration = yaml.loadAs(new FileInputStream(configFile), Configuration.class);
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/*public static void submitToExecutor(IJob job) {
+		long startTime = System.nanoTime();
+		SherlockEngine.executor.submitJob(job);
+		long endTime = System.nanoTime();
+
+		double duration = (endTime - startTime) * 1e-6;
+		duration = duration / 1000;
+		logger.warn("Job duration: " + duration + " seconds");
+	}*/
+
+	private static void writeConfiguration() {
+		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
+		try {
+			Representer representer = new Representer();
+			representer.addClassTag(Configuration.class, new Tag("!Sherlock"));
+			DumperOptions options = new DumperOptions();
+			options.setPrettyFlow(true);
+			Yaml yaml = new Yaml(representer, options);
+			FileWriter writer = new FileWriter(configFile);
+			yaml.dump(SherlockEngine.configuration, writer);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void initialise() {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
@@ -117,62 +173,6 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
-	}
-
-	/*public static void submitToExecutor(IJob job) {
-		long startTime = System.nanoTime();
-		SherlockEngine.executor.submitJob(job);
-		long endTime = System.nanoTime();
-
-		double duration = (endTime - startTime) * 1e-6;
-		duration = duration / 1000;
-		logger.warn("Job duration: " + duration + " seconds");
-	}*/
-
-	private static void loadConfiguration() {
-		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
-
-		logger.info(SherlockEngine.configDir.getAbsolutePath());
-
-		if (!SherlockEngine.configDir.exists()) {
-			if (!SherlockEngine.configDir.mkdir()) {
-				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
-				return;
-			}
-		}
-
-		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
-		if (!configFile.exists()) {
-			SherlockEngine.configuration = new Configuration();
-			SherlockEngine.writeConfiguration();
-		}
-		else {
-			try {
-				Constructor constructor = new Constructor();
-				constructor.addTypeDescription(new TypeDescription(Configuration.class, "!Sherlock"));
-				Yaml yaml = new Yaml(constructor);
-				SherlockEngine.configuration = yaml.loadAs(new FileInputStream(configFile), Configuration.class);
-			}
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void writeConfiguration() {
-		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
-		try {
-			Representer representer = new Representer();
-			representer.addClassTag(Configuration.class, new Tag("!Sherlock"));
-			DumperOptions options = new DumperOptions();
-			options.setPrettyFlow(true);
-			Yaml yaml = new Yaml(representer, options);
-			FileWriter writer = new FileWriter(configFile);
-			yaml.dump(SherlockEngine.configuration, writer);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/*@ResponseHandler

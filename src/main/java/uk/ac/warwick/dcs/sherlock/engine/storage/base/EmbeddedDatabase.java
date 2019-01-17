@@ -28,6 +28,10 @@ public class EmbeddedDatabase {
 		this.dbFactory.close();
 	}
 
+	public void refreshObject(Object obj) {
+		this.em.refresh(obj);
+	}
+
 	public void removeObject(Object obj) {
 		if (obj instanceof List) {
 			this.removeObject(((List) obj).toArray());
@@ -64,10 +68,6 @@ public class EmbeddedDatabase {
 	public <X> List<X> runQuery(String query, Class<X> xclass) {
 		List<X> q = em.createQuery(query, xclass).getResultList();
 		return q;
-	}
-
-	public void refreshObject(Object obj) {
-		this.em.refresh(obj);
 	}
 
 	public void storeObject(Object obj) {

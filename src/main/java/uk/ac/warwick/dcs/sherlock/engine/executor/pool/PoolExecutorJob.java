@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
-public class PoolExecutorJob implements Runnable{
+public class PoolExecutorJob implements Runnable {
 
 	private IPriorityWorkSchedulerWrapper scheduler;
 	private IJob job;
@@ -24,16 +24,16 @@ public class PoolExecutorJob implements Runnable{
 		this.status = status;
 	}
 
-	public JobStatus getStatus() {
-		return status;
+	public long getId() {
+		return this.job.getPersistentId();
 	}
 
 	public Priority getPriority() {
 		return this.status.getPriority();
 	}
 
-	public long getId() {
-		return this.job.getPersistentId();
+	public JobStatus getStatus() {
+		return status;
 	}
 
 	@Override
@@ -41,8 +41,8 @@ public class PoolExecutorJob implements Runnable{
 		if (job.getStatus() != WorkStatus.COMPLETE || job.getStatus() != WorkStatus.REGEN_RESULTS) {
 			job.setStatus(WorkStatus.ACTIVE);
 
-			List<PoolExecutorTask> tasks = job.getTasks().stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE)
-					.map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
+			List<PoolExecutorTask> tasks = job.getTasks().stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage()))
+					.collect(Collectors.toList());
 
 			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(tasks), this.job.getWorkspace().getFiles());
 			this.scheduler.invokeWork(preProcess, Priority.DEFAULT);

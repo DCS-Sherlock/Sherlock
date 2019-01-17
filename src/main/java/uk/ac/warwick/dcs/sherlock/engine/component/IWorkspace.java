@@ -9,6 +9,7 @@ public interface IWorkspace {
 
 	/**
 	 * Creates a new job instance
+	 *
 	 * @return the new job
 	 */
 	IJob createJob();

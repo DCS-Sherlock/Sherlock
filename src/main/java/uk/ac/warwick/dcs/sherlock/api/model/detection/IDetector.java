@@ -7,7 +7,7 @@ import java.util.*;
 
 /**
  * Interface for implementing a detection algorithm
- *
+ * <p>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
 public interface IDetector<T extends AbstractDetectorWorker> {

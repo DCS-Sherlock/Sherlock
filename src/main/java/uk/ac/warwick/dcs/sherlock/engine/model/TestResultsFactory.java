@@ -3,8 +3,8 @@ package uk.ac.warwick.dcs.sherlock.engine.model;
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
@@ -26,6 +26,33 @@ import java.util.stream.*;
 @Deprecated
 public class TestResultsFactory implements IExecutor {
 
+	@Override
+	public List<IJob> getCurrentJobs() {
+		return null;
+	}
+
+	@Override
+	public JobStatus getJobStatus(IJob job) {
+		return null;
+	}
+
+	@Override
+	public void shutdown() {
+
+	}
+
+	@Override
+	public boolean submitJob(IJob job) {
+		try {
+			this.buildTestResults(job);
+		}
+		catch (IllegalAccessException | InstantiationException e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+
 	@SuppressWarnings ("Duplicates")
 	@Deprecated
 	private String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
@@ -42,7 +69,7 @@ public class TestResultsFactory implements IExecutor {
 		IWorkspace workspace = job.getWorkspace();
 
 		//ITask task = job.getTasks().get(0);
-		for(ITask task : job.getTasks()) {
+		for (ITask task : job.getTasks()) {
 			IDetector instance = task.getDetector().newInstance();
 
 			List<ISourceFile> files = workspace.getFiles();
@@ -151,32 +178,5 @@ public class TestResultsFactory implements IExecutor {
 		}
 
 		return "done"; //raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
-	}
-
-	@Override
-	public boolean submitJob(IJob job) {
-		try {
-			this.buildTestResults(job);
-		}
-		catch (IllegalAccessException | InstantiationException e) {
-			e.printStackTrace();
-		}
-
-		return true;
-	}
-
-	@Override
-	public List<IJob> getCurrentJobs() {
-		return null;
-	}
-
-	@Override
-	public JobStatus getJobStatus(IJob job) {
-		return null;
-	}
-
-	@Override
-	public void shutdown() {
-
 	}
 }

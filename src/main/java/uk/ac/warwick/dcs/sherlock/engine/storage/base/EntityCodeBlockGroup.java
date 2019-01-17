@@ -13,6 +13,15 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private DetectionType type;
+	private String comment;
+
+	EntityCodeBlockGroup() {
+		super();
+		this.type = null;
+		this.comment = null;
+	}
+
 	@Override
 	public void addCodeBlock(ISourceFile file, float score, ITuple<Integer, Integer> line) {
 
@@ -29,12 +38,22 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	@Override
-	public DetectionType getDetectionType() {
-		return null;
+	public String getComment() {
+		return this.comment;
 	}
 
 	@Override
-	public String getComment() {
-		return null;
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	@Override
+	public DetectionType getDetectionType() {
+		return this.type;
+	}
+
+	@Override
+	public void setDetectionType(DetectionType type) {
+		this.type = type;
 	}
 }

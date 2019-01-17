@@ -12,11 +12,11 @@ public class PriorityWorkTask {
 		this.priority = priority;
 	}
 
-	ForkJoinTask getTopAction() {
-		return topAction;
-	}
-
 	Priority getPriority() {
 		return priority;
+	}
+
+	ForkJoinTask getTopAction() {
+		return topAction;
 	}
 }
