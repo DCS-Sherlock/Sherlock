@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor;
 
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.*;
 import uk.ac.warwick.dcs.sherlock.engine.executor.pool.PoolExecutorJob;
 
@@ -87,25 +88,32 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 	@Override
 	public boolean submitJob(IJob job) {
-		if (!job.isPrepared()) {
+		if (job == null) {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Job has not been prepared");
-				return false;
+				ExecutorUtils.logger.error("Job is null");
 			}
+			return false;
+		}
+
+		if (!job.isPrepared() || job.getStatus() == WorkStatus.NOT_PREPARED) {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.error("Job {} has not been prepared", job.getPersistentId());
+			}
+			return false;
 		}
 
 		if (job.getTasks().isEmpty()) {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Job does not have any tasks");
-				return false;
+				ExecutorUtils.logger.error("Job {} does not have any tasks", job.getPersistentId());
 			}
+			return false;
 		}
 
 		if (job.getFiles() == null || job.getFiles().length == 0) {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Job workspace has no files");
-				return false;
+				ExecutorUtils.logger.error("Job {} workspace has no files", job.getPersistentId());
 			}
+			return false;
 		}
 
 		/*List<ISourceFile> f = job.getWorkspace().getFiles();

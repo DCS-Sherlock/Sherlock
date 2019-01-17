@@ -34,6 +34,13 @@ public interface ICodeBlockGroup {
 	List<? extends ICodeBlock> getCodeBlocks();
 
 	/**
+	 * return the block of code for a specific file
+	 * @param file file to search
+	 * @return the files blocks
+	 */
+	ICodeBlock getCodeBlock(ISourceFile file);
+
+	/**
 	 * @return extra string comment or detail regarding this code block
 	 */
 	String getComment();

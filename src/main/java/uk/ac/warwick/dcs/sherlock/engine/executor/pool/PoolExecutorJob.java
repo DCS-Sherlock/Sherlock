@@ -38,7 +38,7 @@ public class PoolExecutorJob implements Runnable {
 
 	@Override
 	public void run() {
-		if (job.getStatus() != WorkStatus.COMPLETE || job.getStatus() != WorkStatus.REGEN_RESULTS) {
+		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS)) {
 			job.setStatus(WorkStatus.ACTIVE);
 
 			List<PoolExecutorTask> tasks = job.getTasks().stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage()))

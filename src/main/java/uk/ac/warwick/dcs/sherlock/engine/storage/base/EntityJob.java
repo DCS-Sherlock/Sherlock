@@ -153,7 +153,7 @@ public class EntityJob implements IJob, Serializable {
 			BaseStorage.instance.database.storeObject(newTask);
 		});
 
-		this.status = WorkStatus.PREPARED;
+		this.setStatus(WorkStatus.PREPARED);
 		this.prepared = true;
 		return true;
 	}

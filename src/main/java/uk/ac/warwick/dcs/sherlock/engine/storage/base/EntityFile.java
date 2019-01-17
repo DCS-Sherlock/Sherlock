@@ -133,4 +133,9 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		}
 		build.append(archive.getFilename()).append("/");
 	}
+
+	@Override
+	public String toString() {
+		return this.getFileDisplayName();
+	}
 }
