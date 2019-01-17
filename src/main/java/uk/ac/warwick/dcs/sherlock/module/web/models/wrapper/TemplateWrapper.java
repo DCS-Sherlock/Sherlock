@@ -24,9 +24,8 @@ public class TemplateWrapper {
     ) throws NotTemplateOwner {
         this.template = new Template();
         this.template.setAccount(account);
-        this.update(templateForm, templateRepository, tDetectorRepository);
-
         this.isOwner = true;
+        this.update(templateForm, templateRepository, tDetectorRepository);
     }
 
     public TemplateWrapper(
