@@ -29,6 +29,7 @@ public class TemplateForm {
     @NotNull(message = "{error_language_empty}")
     public Language language;
 
+    @NotNull(message = "{error_public_empty}")
     public boolean isPublic;
 
     public List<String> detectors = new ArrayList<>();
@@ -76,5 +77,11 @@ public class TemplateForm {
 
     public void setDetectors(List<String> detectors) {
         this.detectors = detectors;
+    }
+
+    //Required for form binding
+    public boolean getIsPublic() {return isPublic; }
+    public void setIsPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

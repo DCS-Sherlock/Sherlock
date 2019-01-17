@@ -51,14 +51,14 @@ public class ManageWorkspaceController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
 			@Valid @ModelAttribute WorkspaceForm workspaceForm,
-			BindingResult result
+			BindingResult result,
+            Model model
     ) throws NotAjaxRequest {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
 		if (!result.hasErrors()) {
 		    workspaceWrapper.set(workspaceForm);
-            //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("workspaces_basic_updated_msg");
+            model.addAttribute("success", true);
 		}
 
         return "dashboard/workspaces/fragments/name";
@@ -83,14 +83,14 @@ public class ManageWorkspaceController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
             @Valid @ModelAttribute SubmissionsForm submissionsForm,
-            BindingResult result
+            BindingResult result,
+            Model model
     ) throws NotAjaxRequest {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
         if (!result.hasErrors()) {
             workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
-            //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("workspaces_submissions_uploaded_msg");
+            model.addAttribute("success", true);
         }
 
         return "dashboard/workspaces/fragments/submissions";
@@ -99,13 +99,14 @@ public class ManageWorkspaceController {
     @GetMapping("/dashboard/workspaces/manage/jobs/{pathid}")
     public String jobsGetFragment(
             @PathVariable("pathid") long pathid,
+            @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("account") Account account,
             @ModelAttribute("isAjax") boolean isAjax,
             Model model
     ) throws NotAjaxRequest {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
-        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account, templateRepository));
+        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublicAndLanguage(account, templateRepository, workspaceWrapper.getLanguage()));
         return "dashboard/workspaces/fragments/jobs";
     }
 
@@ -124,6 +125,7 @@ public class ManageWorkspaceController {
 
         try {
             workspaceWrapper.runTemplate(templateWrapper);
+            model.addAttribute("success", true);
         } catch (TemplateContainsNoDetectors e) {
             //TODO: add error message
             e.printStackTrace();

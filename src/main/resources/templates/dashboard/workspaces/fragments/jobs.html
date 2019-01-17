@@ -11,6 +11,12 @@
             <span th:text="#{workspaces_analysis_templates_none_msg}"></span>
         </h6>
     </div>
+
+    <div th:if="${success}">
+        <div class="alert alert-info"><span th:text="#{workspaces_analysis_started}"></span></div>
+        <div data-js="triggerArea" data-js-target="#results-parent"></div>
+    </div>
+
     <div th:unless="${templates.empty}">
         <div class="form-row">
             <div class="form-group col-md-12">

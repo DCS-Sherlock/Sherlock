@@ -48,39 +48,39 @@ public class TemplatesController {
 	}
 
 	@GetMapping ("/dashboard/templates/add")
-	public String addGet() {
+	public String addGet(Model model) {
+		Language language = Language.JAVA;
+		model.addAttribute("templateForm", new TemplateForm(language));
+		model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(language));
 		return "dashboard/templates/add";
 	}
 
-	@GetMapping ("/dashboard/templates/add/{language}")
-	public String addGetFragment(
-			Model model,
-			@ModelAttribute("isAjax") boolean isAjax,
-			@PathVariable("language") Language language
-	) throws NotAjaxRequest {
-		if (!isAjax) throw new NotAjaxRequest("/dashboard/templates/add");
-
-		model.addAttribute("templateForm", new TemplateForm(language));
-		model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(language));
-		return "dashboard/templates/fragments/add";
-	}
-
 	@PostMapping("/dashboard/templates/add")
-	public String addPostFragment(
+	public String addPost(
 			@Valid @ModelAttribute TemplateForm templateForm,
 			BindingResult result,
 			@ModelAttribute("account") Account account,
 			@ModelAttribute("isAjax") boolean isAjax,
 			Model model
-	) throws NotAjaxRequest, NotTemplateOwner {
-		if (!isAjax) throw new NotAjaxRequest("/dashboard/templates/add");
-
+	) throws NotTemplateOwner {
 		if (result.hasErrors()) {
 			model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(templateForm.getLanguage()));
-			return "dashboard/templates/fragments/add";
+			return "dashboard/templates/add";
 		}
 
 		TemplateWrapper templateWrapper = new TemplateWrapper(templateForm, account, templateRepository, tDetectorRepository);
 		return "redirect:/dashboard/templates/manage/" + templateWrapper.getTemplate().getId();
+	}
+
+	@GetMapping ("/dashboard/templates/detectors/{language}")
+	public String addGetFragment(
+			Model model,
+			@ModelAttribute("isAjax") boolean isAjax,
+			@PathVariable("language") Language language
+	) throws NotAjaxRequest {
+		if (!isAjax) throw new NotAjaxRequest("/dashboard/templates");
+
+		model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(language));
+		return "dashboard/templates/fragments/details_detectors";
 	}
 }
