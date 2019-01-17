@@ -16,9 +16,9 @@
                     <div class="form-group col-md-12">
                         <label for="lang" th:text="#{variable_language}"></label>
                         <select class="form-control" id="lang" data-js="select" data-js-target="#add-parent" th:data-js-href="@{/dashboard/templates/add/}">
-                            <option th:each="state : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
-                                    th:value="${state}"
-                                    th:text="${state}">
+                            <option th:each="language : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
+                                    th:value="${language}"
+                                    th:text="${language}">
                             </option>
                         </select>
                     </div>

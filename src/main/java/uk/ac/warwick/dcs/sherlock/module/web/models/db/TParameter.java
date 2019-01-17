@@ -3,8 +3,8 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.db;
 import javax.persistence.*;
 
 @Entity
-@Table(name="template_parameter")
-public class TemplateParameter {
+@Table(name="parameter")
+public class TParameter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,11 +18,15 @@ public class TemplateParameter {
     private float value;
 
     @ManyToOne
-    @JoinColumn(name = "detector")
-    private TemplateDetector detector;
+    @JoinColumn(name = "tDetector")
+    private TDetector tDetector;
 
-    public TemplateParameter() {
+    public TParameter() { }
 
+    public TParameter(String name, float value, TDetector templateDetector) {
+        this.name = name;
+        this.value = value;
+        this.tDetector = templateDetector;
     }
 
     public long getId() {
@@ -47,5 +51,13 @@ public class TemplateParameter {
 
     public void setValue(float value) {
         this.value = value;
+    }
+
+    public TDetector getDetector() {
+        return tDetector;
+    }
+
+    public void setDetector(TDetector detector) {
+        this.tDetector = detector;
     }
 }

@@ -29,14 +29,10 @@ public class Template {
     private Account account;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "template", cascade = CascadeType.REMOVE)
-    private Set<TemplateDetector> detectors = new HashSet<>();
+    private Set<TDetector> tDetectors = new HashSet<>();
 
     public Template() {
 
-    }
-
-    public Template(Account account) {
-        this.account = account;
     }
 
     public long getId() {
@@ -71,12 +67,12 @@ public class Template {
         isPublic = aPublic;
     }
 
-    public Set<TemplateDetector> getDetectors() {
-        return detectors;
+    public Set<TDetector> getDetectors() {
+        return tDetectors;
     }
 
-    public void setDetectors(Set<TemplateDetector> detectors) {
-        this.detectors = detectors;
+    public void setDetectors(Set<TDetector> detectors) {
+        this.tDetectors = detectors;
     }
 
     public Language getLanguage() {

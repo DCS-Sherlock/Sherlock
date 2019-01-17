@@ -16,7 +16,7 @@
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
                             <div class="btn-group">
-                                <a class="btn btn-primary" th:if="${owner}" data-js='modal' th:href="@{/dashboard/templates/delete/{id}(id=${template.getId()})}" th:text="#{link_delete}"></a>
+                                <a class="btn btn-primary" th:if="${owner}" data-js='modal' th:href="@{/dashboard/templates/delete/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_delete}"></a>
                             </div>
                         </div>
                     </div>
@@ -26,9 +26,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h5 th:text="#{templates_manage_basic}"></h5>
-                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/dashboard/templates/manage/details/{id}(id=${template.getId()})})"></div>
+                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/dashboard/templates/manage/details/{id}(id=${template.getTemplate().getId()})})"></div>
                             </div>
                             <div class="col-md-6">
+                                <h5 th:text="#{templates_manage_detectors}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='detectors-parent', arealink=@{/dashboard/templates/manage/detectors/{id}(id=${template.getTemplate().getId()})})"></div>
                             </div>
                         </div>
                     </div>

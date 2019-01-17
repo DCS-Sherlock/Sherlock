@@ -4,14 +4,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 
-public class FileUploadForm {
+public class SubmissionsForm {
 
     @NotEmpty(message = "{error_file_empty}")
     public MultipartFile[] files;
 
-    public FileUploadForm() { }
+    public SubmissionsForm() { }
 
-    public FileUploadForm(MultipartFile[] files) {
+    public SubmissionsForm(MultipartFile[] files) {
         this.files = files;
     }
 

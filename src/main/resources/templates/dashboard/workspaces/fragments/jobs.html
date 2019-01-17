@@ -18,8 +18,8 @@
                 <label for="template_id" th:text="#{variable_template}"></label>
                 <select class="form-control" id="template_id" name="template_id">
                     <option th:each="template : ${templates}"
-                            th:value="${template.getId()}"
-                            th:text="${template.getName()}">
+                            th:value="${template.getTemplate().getId()}"
+                            th:text="${template.getTemplate().getName()}">
                     </option>
                 </select>
             </div>

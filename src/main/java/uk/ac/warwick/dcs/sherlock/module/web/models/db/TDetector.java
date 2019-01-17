@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="template_detector")
-public class TemplateDetector {
+@Table(name="detector")
+public class TDetector {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,12 +20,12 @@ public class TemplateDetector {
     @JoinColumn(name = "template")
     private Template template;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "detector", cascade = CascadeType.REMOVE)
-    private Set<TemplateParameter> parameters = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "tDetector", cascade = CascadeType.REMOVE)
+    private Set<TParameter> tParameters = new HashSet<>();
 
-    public TemplateDetector() { }
+    public TDetector() { }
 
-    public TemplateDetector(String name, Template template) {
+    public TDetector(String name, Template template) {
         this.name = name;
         this.template = template;
     }
@@ -54,11 +54,11 @@ public class TemplateDetector {
         this.template = template;
     }
 
-    public Set<TemplateParameter> getParameters() {
-        return parameters;
+    public Set<TParameter> getParameters() {
+        return tParameters;
     }
 
-    public void setParameters(Set<TemplateParameter> parameters) {
-        this.parameters = parameters;
+    public void setParameters(Set<TParameter> parameters) {
+        this.tParameters = parameters;
     }
 }

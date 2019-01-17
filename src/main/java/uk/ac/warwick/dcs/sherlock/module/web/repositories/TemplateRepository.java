@@ -13,5 +13,5 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
     Template findByIdAndPublic(@Param("id")long id, @Param("account")Account account);
 
     @Query("SELECT t FROM Template t WHERE t.account = :account OR t.isPublic = true")
-    List<Template> findAccountAndPublic(@Param("account") Account account);
+    List<Template> findByAccountAndPublic(@Param("account") Account account);
 }

@@ -2,9 +2,10 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.TemplateDetector;
+import uk.ac.warwick.dcs.sherlock.module.web.models.db.TDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.EngineDetectorWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateDetectorRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 
 import javax.validation.constraints.NotNull;
@@ -34,19 +35,15 @@ public class TemplateForm {
 
     public TemplateForm() { }
 
-    public TemplateForm(Template template) {
-        this.name = template.getName();
-        this.language = template.getLanguage();
-        this.isPublic = template.isPublic();
-        template.getDetectors().forEach(d -> this.detectors.add(d.getName()));
-    }
-
     public TemplateForm(Language language) {
         this.language = language;
     }
 
-    public TemplateForm(String name) {
-        this.name = name;
+    public TemplateForm(TemplateWrapper templateWrapper) {
+        this.name = templateWrapper.getTemplate().getName();
+        this.language = templateWrapper.getTemplate().getLanguage();
+        this.isPublic = templateWrapper.getTemplate().isPublic();
+        templateWrapper.getTemplate().getDetectors().forEach(d -> this.detectors.add(d.getName()));
     }
 
     public String getName() {
@@ -79,49 +76,5 @@ public class TemplateForm {
 
     public void setDetectors(List<String> detectors) {
         this.detectors = detectors;
-    }
-
-    public void updateTemplate(Template template,
-                               TemplateRepository templateRepository,
-                               TemplateDetectorRepository templateDetectorRepository) {
-        template.setName(this.name);
-        template.setLanguage(this.language);
-        template.setPublic(this.isPublic);
-        templateRepository.save(template);
-
-        List<String> activeDetectors = EngineDetectorWrapper.getDetectorNames(this.language);
-
-        List<String> toAdd = new ArrayList<>();
-        List<String> toRemove = new ArrayList<>();
-        List<String> toCheck = new ArrayList<>();
-
-        toAdd.addAll(this.detectors);
-        template.getDetectors().forEach(d -> toAdd.remove(d.getName()));
-
-        template.getDetectors().forEach(d -> toRemove.add(d.getName()));
-        toRemove.removeAll(this.detectors);
-
-        for (String add : toAdd) {
-            templateDetectorRepository.save(new TemplateDetector(add, template));
-        }
-
-        for (String remove : toRemove) {
-            templateDetectorRepository.delete(
-                    templateDetectorRepository.findByNameAndTemplate(remove, template)
-            );
-        }
-
-        toCheck.addAll(toAdd);
-        template.getDetectors().forEach(d -> toCheck.add(d.getName()));
-        toCheck.removeAll(toRemove);
-
-        for (String check : toCheck) {
-            if (!activeDetectors.contains(check)) {
-                templateDetectorRepository.delete(
-                        templateDetectorRepository.findByNameAndTemplate(check, template)
-                );
-                //TODO: detector no longer exists or not supported by the language, should return an error
-            }
-        }
     }
 }
