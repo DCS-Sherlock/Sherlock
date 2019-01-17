@@ -29,7 +29,6 @@ public class ManageTemplateController {
 		return "dashboard/templates/manage";
 	}
 
-	//TODO: Update the list of detectors based on the language input
     @GetMapping("/dashboard/templates/manage/details/{pathid}")
     public String detailsGetFragment(
             @PathVariable("pathid") long pathid,
@@ -45,7 +44,7 @@ public class ManageTemplateController {
     }
 
     @PostMapping("/dashboard/templates/manage/details/{pathid}")
-    public String namePostFragment(
+    public String detailsPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("template") TemplateWrapper templateWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
@@ -57,8 +56,7 @@ public class ManageTemplateController {
 
         if (!result.hasErrors()) {
             templateWrapper.update(templateForm, templateRepository, tDetectorRepository);
-            //Todo: make message appear using "alert-success" not "alert-warning"
-            result.reject("templates_basic_updated_msg");
+            model.addAttribute("success", true);
         }
 
         model.addAttribute("templateForm", templateForm);

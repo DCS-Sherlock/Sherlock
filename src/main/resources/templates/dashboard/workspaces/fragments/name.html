@@ -10,6 +10,11 @@
         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
     </div>
 
+    <div th:if="${success}">
+        <div class="alert alert-info"><span th:text="#{workspaces_basic_updated_msg}"></span></div>
+        <div data-js="triggerArea" data-js-target="#jobs-parent"></div>
+    </div>
+
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="name" th:text="#{variable_name}"></label>

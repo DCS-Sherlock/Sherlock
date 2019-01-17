@@ -16,7 +16,7 @@
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
                             <div class="btn-group">
-                                <a class="btn btn-primary" th:if="${owner}" data-js='modal' th:href="@{/dashboard/templates/delete/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_delete}"></a>
+                                <a class="btn btn-primary" th:if="${template.isOwner()}" data-js='modal' th:href="@{/dashboard/templates/delete/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_delete}"></a>
                             </div>
                         </div>
                     </div>

@@ -11,7 +11,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" th:text="#{templates_delete_title}"></h5>
             </div>
-            <form th:action="@{/dashboard/templates/delete/{id}(id=${template.getId()})}" data-js='form' data-js-target="#delete-parent" method="post">
+            <form th:action="@{/dashboard/templates/delete/{id}(id=${template.getTemplate().getId()})}" data-js='form' data-js-target="#delete-parent" method="post">
                 <div class="modal-body">
                     <div class="alert alert-danger" role="alert" th:text="#{templates_delete_msg}"></div>
                 </div>

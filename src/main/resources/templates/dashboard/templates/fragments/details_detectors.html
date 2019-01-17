@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<div class="#detector-list">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <th:block th:each="detector : ${detectorList}">
+                <label class="checkbox-inline" th:for="${detector.getClassName()}">
+                    <input type="checkbox" name="detectors" th:value="${detector.getClassName()}" th:id="${detector.getClassName()}">
+                    <span th:text="${detector.getDisplayName()}"></span>
+                    <span
+                            th:if="${detector.getDescription().length() > 0}"
+                            th:text="#{message_description}"
+                            data-toggle="tooltip" data-placement="top"
+                            th:title="${detector.getDescription()}"
+                    ></span>
+                </label> <br />
+            </th:block>
+            <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

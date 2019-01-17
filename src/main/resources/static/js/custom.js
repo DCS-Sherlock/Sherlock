@@ -2,15 +2,28 @@
 function loadAreas(){
     $("div[data-js='area']").each(function () {
         var input = $(this);
-        var url = input.attr("data-js-href");
-
-        getAjax(
-            url,
-            function(result, status, xhr) {
-                input.html(result);
-            }
-        );
+        loadAreaFn(input);
     });
+}
+function triggerAreas(){
+    $("div[data-js='triggerArea']").each(function () {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        input.remove();
+        $(target).html("...");
+        loadAreaFn($(target), true);
+    });
+}
+
+function loadAreaFn(input){
+    var url = input.attr("data-js-href");
+
+    getAjax(
+        url,
+        function(result, status, xhr) {
+            input.html(result);
+        }
+    );
 }
 
 function modalLinks(){
@@ -28,7 +41,7 @@ function modalLinks(){
                 $("#modal").html(result);
                 $("#modal").modal('show');
                 selectAreas();
-                $("select[data-js='select']").trigger('change');
+                // $("select[data-js='select']").trigger('change');
             }
         );
 
@@ -170,11 +183,12 @@ function bindPage() {
     formSubmit();
     hideCloseButtons();
     formSubmitButton();
+    triggerAreas();
 }
 
 $(function () {
     loadAreas();
     bindPage();
     $('form[data-js="autoSubmit"]').submit();
-    $("select[data-js='select']").trigger('change');
+    // $("select[data-js='select']").trigger('change');
 });

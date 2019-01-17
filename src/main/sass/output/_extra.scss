@@ -34,6 +34,11 @@ nav {
     background: none;
 }
 
+/* Forms */
+.form-control:disabled, .form-control[readonly] {
+    background-color: #abb6c2;
+}
+
 /* Footer */
 footer {
     padding: 2.5rem 0;

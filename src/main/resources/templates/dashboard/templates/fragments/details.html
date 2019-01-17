@@ -5,57 +5,80 @@
 </head>
 <body>
 
-<form th:action="@{/dashboard/templates/manage/details/{id}(id=${template.getTemplate().getId()})}" data-js='form' data-js-target="#details-parent" id="add-form" th:object="${templateForm}" method="post">
-    <div th:if="${#fields.hasAnyErrors()}">
-        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <label for="name" th:text="#{variable_name}"></label>
-            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+<div th:fragment="form-fragment">
+    <form th:action="@{/dashboard/templates/manage/details/{id}(id=${template.getTemplate().getId()})}" data-js='form' data-js-target="#details-parent" id="add-form" th:object="${templateForm}" method="post">
+        <div th:if="${#fields.hasAnyErrors()}">
+            <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
         </div>
-    </div>
 
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <label for="name" th:text="#{variable_public}"></label>
-            <input type="checkbox" id="isPublic" name="isPublic" th:value="*{isPublic}" />
+        <div th:if="${success}">
+            <div class="alert alert-info"><span th:text="#{templates_basic_updated_msg}"></span></div>
+            <div data-js="triggerArea" data-js-target="#detectors-parent"></div>
         </div>
-    </div>
 
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <label  th:for="*{language}" th:text="#{variable_language}"></label>
-            <select class="form-control" th:field="*{language}">
-                <option th:each="language : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
-                        th:value="${language}"
-                        th:text="${language}">
-                </option>
-            </select>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="name" th:text="#{variable_name}"></label>
+                <input type="text" class="form-control" th:disabled="${!template.isOwner() ? true : false}" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+            </div>
         </div>
-    </div>
 
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <th:block th:each="detector : ${detectorList}">
-                <label class="checkbox-inline" th:for="${detector.getClassName()}">
-                    <input type="checkbox" th:field="*{detectors}" th:value="${detector.getClassName()}" th:id="${detector.getClassName()}">
-                    <span th:text="${detector.getDisplayName()}"></span>
-                    <span
-                            th:if="${detector.getDescription().length() > 0}"
-                            th:text="#{message_description}"
-                            data-toggle="tooltip" data-placement="top"
-                            th:title="${detector.getDescription()}"
-                    ></span>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label  th:for="*{language}" th:text="#{variable_language}"></label>
+                <select class="form-control" th:disabled="${!template.isOwner() ? true : false}" th:field="*{language}" data-js="select" data-js-target="#detector-list" th:data-js-href="@{/dashboard/templates/detectors/}">
+                    <option th:each="language : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
+                            th:value="${language}"
+                            th:text="${language}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <label th:text="#{variable_detectors}"></label>
+            </div>
+        </div>
+
+        <div id="detector-list">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <th:block th:each="detector : ${detectorList}">
+                        <label class="checkbox-inline" th:for="${detector.getClassName()}">
+                            <input type="checkbox"  th:disabled="${!template.isOwner() ? true : false}" th:field="*{detectors}" th:value="${detector.getClassName()}" th:id="${detector.getClassName()}">
+                            <span th:text="${detector.getDisplayName()}"></span>
+                            <span
+                                    th:if="${detector.getDescription().length() > 0}"
+                                    th:text="#{message_description}"
+                                    data-toggle="tooltip" data-placement="top"
+                                    th:title="${detector.getDescription()}"
+                            ></span>
+                        </label> <br />
+                    </th:block>
+                    <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <label th:text="#{variable_public}"></label>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="isPublic">
+                    <input type="checkbox" th:disabled="${!template.isOwner() ? true : false}" name="isPublic" id="isPublic" th:value="*{isPublic}" />
+                    <span th:text="#{variable_public_msg}"></span>
                 </label>
-            </th:block>
-            <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
+            </div>
         </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary" th:text="#{link_update}"></button>
-</form>
+        <button th:if="${template.isOwner()}" type="submit" class="btn btn-primary" th:text="#{link_update}"></button>
+    </form>
+</div>
 
 </body>
 </html>
