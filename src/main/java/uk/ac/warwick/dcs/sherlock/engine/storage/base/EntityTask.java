@@ -59,6 +59,17 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.status = WorkStatus.PREPARED;
 
 		List<AdjustableParameterObj> params = SherlockRegistry.getDetectorAdjustableParameters(detector);
+
+		if (params != null) {
+			List<AdjustableParameterObj> params2 = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector);
+			if (params2 != null) {
+				params.addAll(params2);
+			}
+		}
+		else {
+			params = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector);
+		}
+		
 		if (params != null && params.isEmpty()) {
 			this.paramMap = new HashMap<>();
 			params.forEach(x -> {
