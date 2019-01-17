@@ -9,6 +9,10 @@
     text-decoration: none;
 }
 
+.logo img {
+    height: 75px;
+}
+
 nav {
     margin-bottom: 2rem;
     //border-radius: 2px;
@@ -28,7 +32,15 @@ nav {
     background-color: $body-bg;
     //border: solid 1px $gray-200;
 }
+.navbar-dark .navbar-nav .active > .nav-link {
+    color: #f47b2a;
+    font-weight: bold;
+}
 
+/* Links */
+a:hover {
+    color: #f47b2a;
+}
 /* Tabs */
 .tab-content > .active {
     background: none;
