@@ -46,9 +46,11 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 	}
 
 	private void addLineToList(ITuple<Integer, Integer> line) {
-		this.lines.add(line.getKey());
-		this.lines.add(line.getValue());
-		this.size++;
+		if (this.getLineNumbers().stream().noneMatch(line::equals)) {
+			this.lines.add(line.getKey());
+			this.lines.add(line.getValue());
+			this.size++;
+		}
 	}
 
 	private ITuple<Integer, Integer> getLineFromList(int index) {
