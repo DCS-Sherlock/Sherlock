@@ -38,12 +38,6 @@ public class SimpleObjectEqualityPostProcessor implements IPostProcessor<SimpleO
 			}
 		}
 
-		// do stuff in here
-
-		// see docs, use:
-		// x = results.addGroup();
-		// x.addCodeBlock(..........); cont..
-
 		return results;
 	}
 }
