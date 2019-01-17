@@ -7,11 +7,13 @@ import java.lang.reflect.Field;
 public class AdjustableParameterObj {
 
 	private AdjustableParameter param;
+	private String name;
 	private String reference;
 	private boolean isInt;
 
 	public AdjustableParameterObj(AdjustableParameter param, Field field) {
 		this.param = param;
+		this.name = field.getName();
 		this.reference = SherlockHelper.buildFieldReference(field);
 		this.isInt = field.getType().equals(int.class);
 	}
@@ -33,7 +35,7 @@ public class AdjustableParameterObj {
 	/**
 	 * @return The maximum bound for the field
 	 */
-	public float getMaxumumBound() {
+	public float getMaximumBound() {
 		return this.param.maxumumBound();
 	}
 
@@ -45,9 +47,16 @@ public class AdjustableParameterObj {
 	}
 
 	/**
-	 * @return Name for the parameter to be displayed in the UI
+	 * @return Field Name for the parameter for use in the UI backend
 	 */
 	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * @return Display Name for the parameter to be displayed in the UI
+	 */
+	public String getDisplayName() {
 		return this.param.name();
 	}
 

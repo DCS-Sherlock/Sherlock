@@ -165,7 +165,7 @@ public class EntityJob implements IJob, Serializable {
 			return false;
 		}
 
-		if (value < paramObj.getMinimumBound() || value > paramObj.getMaxumumBound()) {
+		if (value < paramObj.getMinimumBound() || value > paramObj.getMaximumBound()) {
 			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, value passed is outside the parameter bounds", this.getPersistentId());
 			return false;
 		}
