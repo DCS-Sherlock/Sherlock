@@ -17,6 +17,10 @@
                         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
                     </div>
 
+                    <div th:if="${success}">
+                        <div class="alert alert-info"><span th:text="#{templates_parameters_updated_msg}"></span></div>
+                    </div>
+
                     <th:block th:each="parameter : *{parameters}">
                         <div class="form-row">
                             <div class="form-group col-md-12">

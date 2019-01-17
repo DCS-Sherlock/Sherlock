@@ -31,7 +31,7 @@ public class ManageDetectorController {
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
 	) {
-		model.addAttribute("parameterForm", new ParameterForm(detectorWrapper.getEngineParameters()));
+		model.addAttribute("parameterForm", new ParameterForm(detectorWrapper));
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());
 		return "dashboard/templates/parameters";
 	}
@@ -47,7 +47,7 @@ public class ManageDetectorController {
 
 		if (!result.hasErrors()) {
 			detectorWrapper.updateParameters(parameterForm, tParameterRepository);
-			result.reject("templates_parameters_updated_msg");
+			model.addAttribute("success", true);
 		}
 
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());
