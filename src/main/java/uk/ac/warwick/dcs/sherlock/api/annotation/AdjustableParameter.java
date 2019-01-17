@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * Annotation to define a parameter as adjustable by the UI. Currently must be a float or int.
  * <p><p>
- *  Can be used in classes which implement {@link uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector} or {@link uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor}
+ * Can be used in classes which implement {@link uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector} or {@link uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor}
  * <p><p>
  * If another type is required please request it on https://github.com/DCS-Sherlock/Sherlock/issues
  * <p><p>

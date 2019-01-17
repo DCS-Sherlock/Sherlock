@@ -28,6 +28,15 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 		this.result = null;
 	}
 
+	private static AbstractModelTaskRawResult runWorker(AbstractDetectorWorker worker) {
+		worker.execute();
+		return worker.getRawResult();
+	}
+
+	public List<AbstractModelTaskRawResult> getResults() {
+		return this.result;
+	}
+
 	@Override
 	protected List<AbstractModelTaskRawResult> compute() {
 		List<AbstractModelTaskRawResult> res;
@@ -37,7 +46,7 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 			int middle = this.begin + (size / 2);
 			WorkDetect t1 = new WorkDetect(this.workers, this.threshold, this.begin, middle);
 			t1.fork();
-			WorkDetect t2 = new WorkDetect(this.workers,this.threshold,  middle, this.end);
+			WorkDetect t2 = new WorkDetect(this.workers, this.threshold, middle, this.end);
 
 			res = t2.compute();
 			res.addAll(t1.join());
@@ -58,14 +67,5 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 		}
 
 		return res;
-	}
-
-	public List<AbstractModelTaskRawResult> getResults() {
-		return this.result;
-	}
-
-	private static AbstractModelTaskRawResult runWorker(AbstractDetectorWorker worker) {
-		worker.execute();
-		return worker.getRawResult();
 	}
 }

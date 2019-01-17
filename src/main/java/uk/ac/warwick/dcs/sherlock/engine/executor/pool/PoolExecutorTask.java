@@ -20,15 +20,13 @@ import java.util.stream.*;
 
 public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 
+	List<ModelDataItem> dataItems;
 	private IPriorityWorkSchedulerWrapper scheduler;
 	private ITask task;
-
 	private Language language;
 	private Class<? extends Lexer> lexerClass;
 	private Class<? extends Parser> parserClass;
 	private List<IPreProcessingStrategy> preProcessingStrategies;
-
-	List<ModelDataItem> dataItems;
 
 	PoolExecutorTask(IPriorityWorkSchedulerWrapper scheduler, ITask task, Language language) {
 		this.scheduler = scheduler;
@@ -54,37 +52,12 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 	}
 
 	@Override
-	public Language getLanguage() {
-		return this.language;
-	}
-
-	@Override
-	public Class<? extends Lexer> getLexerClass() {
-		return this.lexerClass;
-	}
-
-	@Override
-	public Class<? extends Parser> getParserClass() {
-		return this.parserClass;
-	}
-
-	@Override
-	public List<IPreProcessingStrategy> getPreProcessingStrategies() {
-		return preProcessingStrategies;
-	}
-
-	@Override
-	public Class<? extends IDetector> getDetector() {
-		return this.task.getDetector();
-	}
-
-	@Override
 	public Void call() throws IllegalAccessException, InstantiationException {
 		IDetector instance = this.task.getDetector().newInstance();
 		ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
 		List<AbstractDetectorWorker> workers = instance.buildWorkers(this.dataItems);
-		int threshold = Math.min(Math.max(workers.size()/Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
+		int threshold = Math.min(Math.max(workers.size() / Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
 
 		WorkDetect detect = new WorkDetect(workers, threshold);
 		this.scheduler.invokeWork(detect, Priority.DEFAULT);
@@ -117,6 +90,31 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 		}
 
 		return null;
+	}
+
+	@Override
+	public Class<? extends IDetector> getDetector() {
+		return this.task.getDetector();
+	}
+
+	@Override
+	public Language getLanguage() {
+		return this.language;
+	}
+
+	@Override
+	public Class<? extends Lexer> getLexerClass() {
+		return this.lexerClass;
+	}
+
+	@Override
+	public Class<? extends Parser> getParserClass() {
+		return this.parserClass;
+	}
+
+	@Override
+	public List<IPreProcessingStrategy> getPreProcessingStrategies() {
+		return preProcessingStrategies;
 	}
 }
 

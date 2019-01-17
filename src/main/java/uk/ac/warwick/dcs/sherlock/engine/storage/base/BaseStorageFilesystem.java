@@ -74,14 +74,6 @@ public class BaseStorageFilesystem {
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
 	}
 
-	private String loadStorableStr(IStorable storable, String identfier) {
-		byte[] b = this.loadStorable(storable, identfier);
-		if (b == null) {
-			return null;
-		}
-		return StringUtils.toEncodedString(b, StandardCharsets.UTF_8);
-	}
-
 	private InputStream loadStorableIS(IStorable storable, String identfier) {
 		byte[] b = this.loadStorable(storable, identfier);
 		if (b == null) {
@@ -265,6 +257,14 @@ public class BaseStorageFilesystem {
 
 	private String getArchiveName(EntityArchive archive) {
 		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
+	}
+
+	private String loadStorableStr(IStorable storable, String identfier) {
+		byte[] b = this.loadStorable(storable, identfier);
+		if (b == null) {
+			return null;
+		}
+		return StringUtils.toEncodedString(b, StandardCharsets.UTF_8);
 	}
 
 	interface IStorable {

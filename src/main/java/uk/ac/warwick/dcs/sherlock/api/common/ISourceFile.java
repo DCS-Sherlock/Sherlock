@@ -5,7 +5,7 @@ import java.io.InputStream;
 public interface ISourceFile {
 
 	/**
- 	 * @return the content of the file
+	 * @return the content of the file
 	 */
 	InputStream getFileContents();
 

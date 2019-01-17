@@ -101,6 +101,34 @@ public class SherlockRegistry {
 	}
 
 	/**
+	 * Gets the adjustable parameters for a postprocessor
+	 *
+	 * @param postProcessor postprocessor class
+	 *
+	 * @return the list of adjustable parameters
+	 */
+	public static List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor) {
+		if (registry != null) {
+			return registry.getPostProcessorAdjustableParameters(postProcessor);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the adjustable parameters for the corresponding post processor for a detector
+	 *
+	 * @param det detector class
+	 *
+	 * @return the list of adjustable parameters
+	 */
+	public static List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det) {
+		if (registry != null) {
+			return registry.getPostProcessorAdjustableParametersFromDetector(det);
+		}
+		return null;
+	}
+
+	/**
 	 * Fetches the correct {@link IPostProcessor} instance for the raw result type
 	 *
 	 * @param rawClass type to search
@@ -141,33 +169,5 @@ public class SherlockRegistry {
 			return registry.registerPostProcessor(postProcessor, handledResultTypes);
 		}
 		return false;
-	}
-
-	/**
-	 * Gets the adjustable parameters for a postprocessor
-	 *
-	 * @param postProcessor postprocessor class
-	 *
-	 * @return the list of adjustable parameters
-	 */
-	public static List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor) {
-		if (registry != null) {
-			return registry.getPostProcessorAdjustableParameters(postProcessor);
-		}
-		return null;
-	}
-
-	/**
-	 * Gets the adjustable parameters for the corresponding post processor for a detector
-	 *
-	 * @param det detector class
-	 *
-	 * @return the list of adjustable parameters
-	 */
-	public static List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det){
-		if (registry != null) {
-			return registry.getPostProcessorAdjustableParametersFromDetector(det);
-		}
-		return null;
 	}
 }

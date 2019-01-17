@@ -44,8 +44,7 @@ public class EntityJob implements IJob, Serializable {
 	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityTask> tasks = new ArrayList<>();
 
-	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityResult> results = new ArrayList<>();
+	private List<EntityResultJob> results = new ArrayList<>();
 
 	public EntityJob() {
 		super();
@@ -68,34 +67,6 @@ public class EntityJob implements IJob, Serializable {
 		this.prepared = false;
 		this.detectors = new LinkedList<>();
 		this.paramMap = new HashMap<>();
-	}
-
-	@Override
-	public boolean prepare() {
-		this.workspace.getJobs().add(this);
-		BaseStorage.instance.database.storeObject(this);
-
-		this.detectors.forEach(x -> {
-			Map<String, Float> map = new HashMap<>();
-			this.paramMap.forEach((k,v) -> {
-				if (v.getKey().equals(x)) { //if is correct detector
-					map.put(k, v.getValue());
-				}
-			});
-
-			EntityTask newTask = new EntityTask(this, x, map.isEmpty() ? null : map);
-			this.tasks.add(newTask);
-			BaseStorage.instance.database.storeObject(newTask);
-		});
-
-		this.status = WorkStatus.PREPARED;
-		this.prepared = true;
-		return true;
-	}
-
-	@Override
-	public boolean isPrepared() {
-		return this.prepared;
 	}
 
 	@Override
@@ -133,6 +104,89 @@ public class EntityJob implements IJob, Serializable {
 	}
 
 	@Override
+	public boolean isPrepared() {
+		return this.prepared;
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
+	}
+
+	@Override
+	public IResultJob createNewResult() {
+		EntityResultJob j = new EntityResultJob();
+		this.results.add(j);
+		BaseStorage.instance.database.storeObject(j);
+		return j;
+	}
+
+	@Override
+	public long[] getFiles() {
+		return this.filesPresent;
+	}
+
+	@Override
+	public IResultJob getLatestResult() {
+		return null;
+	}
+
+	@Override
+	public List<IResultJob> getResults() {
+		//TODO: do results api so we can write the getter
+		return null;
+	}
+
+	@Override
+	public WorkStatus getStatus() {
+		return this.status;
+	}
+
+	@Override
+	public void setStatus(WorkStatus status) {
+		this.status = status;
+	}
+
+	@Override
+	public List<ITask> getTasks() {
+		BaseStorage.instance.database.refreshObject(this);
+		return new ArrayList<>(this.tasks);
+	}
+
+	@Override
+	public LocalDateTime getTimestamp() {
+		return this.timestamp.toLocalDateTime();
+	}
+
+	@Override
+	public IWorkspace getWorkspace() {
+		return this.workspace;
+	}
+
+	@Override
+	public boolean prepare() {
+		this.workspace.getJobs().add(this);
+		BaseStorage.instance.database.storeObject(this);
+
+		this.detectors.forEach(x -> {
+			Map<String, Float> map = new HashMap<>();
+			this.paramMap.forEach((k, v) -> {
+				if (v.getKey().equals(x)) { //if is correct detector
+					map.put(k, v.getValue());
+				}
+			});
+
+			EntityTask newTask = new EntityTask(this, x, map.isEmpty() ? null : map);
+			this.tasks.add(newTask);
+			BaseStorage.instance.database.storeObject(newTask);
+		});
+
+		this.status = WorkStatus.PREPARED;
+		this.prepared = true;
+		return true;
+	}
+
+	@Override
 	public boolean removeDetector(Class<? extends IDetector> det) {
 		if (this.isPrepared()) {
 			BaseStorage.logger.warn("Could not add detector for job#{}, job already prepared", this.getPersistentId());
@@ -147,6 +201,11 @@ public class EntityJob implements IJob, Serializable {
 		this.detectors.remove(det);
 
 		return true;
+	}
+
+	@Override
+	public boolean resetParameter(AdjustableParameterObj paramObj) {
+		return this.setParameter(paramObj, paramObj.getDefaultValue());
 	}
 
 	@Override
@@ -173,52 +232,5 @@ public class EntityJob implements IJob, Serializable {
 
 		this.paramMap.get(paramObj.getReference()).setValue(value);
 		return true;
-	}
-
-	@Override
-	public boolean resetParameter(AdjustableParameterObj paramObj) {
-		return this.setParameter(paramObj, paramObj.getDefaultValue());
-	}
-
-	@Override
-	public long getPersistentId() {
-		return this.id;
-	}
-
-	@Override
-	public List<ITask> getTasks() {
-		BaseStorage.instance.database.refreshObject(this);
-		return new ArrayList<>(this.tasks);
-	}
-
-	@Override
-	public long[] getFiles() {
-		return this.filesPresent;
-	}
-
-	@Override
-	public LocalDateTime getTimestamp() {
-		return this.timestamp.toLocalDateTime();
-	}
-
-	@Override
-	public IWorkspace getWorkspace() {
-		return this.workspace;
-	}
-
-	@Override
-	public List<IJobResult> getResults() {
-		//TODO: do results api so we can write the getter
-		return null;
-	}
-
-	@Override
-	public WorkStatus getStatus() {
-		return this.status;
-	}
-
-	@Override
-	public void setStatus(WorkStatus status) {
-		this.status = status;
 	}
 }

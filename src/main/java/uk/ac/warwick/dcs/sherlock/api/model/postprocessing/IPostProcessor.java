@@ -12,10 +12,10 @@ public interface IPostProcessor<T extends AbstractModelTaskRawResult> {
 	/**
 	 * Run the post processing and return a data item with the final results in the correct format
 	 *
-	 * @param files the list of files covered by the rawResults passed
+	 * @param files      the list of files covered by the rawResults passed
 	 * @param rawResults the set of rawResults produced by the IDetector
-	 *
-	 * TODO: look to make it possible to support multiple scorers in a single PostProcessor depending on the detector used
+	 *                   <p>
+	 *                   TODO: look to make it possible to support multiple scorers in a single PostProcessor depending on the detector used
 	 */
-	ModelTaskProcessedResults processResults(List<ISourceFile>files, List<T> rawResults);
+	ModelTaskProcessedResults processResults(List<ISourceFile> files, List<T> rawResults);
 }

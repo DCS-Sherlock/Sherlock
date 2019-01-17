@@ -14,7 +14,7 @@ public class WorkPreProcessFiles extends RecursiveAction {
 	private int end;
 
 	public WorkPreProcessFiles(List<IWorkTask> tasks, List<ISourceFile> files) {
-		this(tasks,files, 0, files.size());
+		this(tasks, files, 0, files.size());
 	}
 
 	private WorkPreProcessFiles(List<IWorkTask> tasks, List<ISourceFile> files, int begin, int end) {

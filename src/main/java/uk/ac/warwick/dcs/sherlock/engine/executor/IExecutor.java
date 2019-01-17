@@ -7,12 +7,12 @@ import java.util.*;
 
 public interface IExecutor {
 
-	boolean submitJob(IJob job);
-
 	List<IJob> getCurrentJobs();
 
 	JobStatus getJobStatus(IJob job);
 
 	void shutdown();
+
+	boolean submitJob(IJob job);
 
 }

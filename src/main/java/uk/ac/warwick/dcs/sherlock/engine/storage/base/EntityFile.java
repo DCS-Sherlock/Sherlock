@@ -14,7 +14,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@ManyToOne (fetch = FetchType.LAZY, optional = false)
@@ -49,6 +49,15 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		this.archive = archive;
 	}
 
+	public boolean equals(ISourceFile file) {
+		return file.getPersistentId() == this.getPersistentId();
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
+	}
+
 	public EntityArchive getArchive() {
 		return archive;
 	}
@@ -75,18 +84,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		}
 		build.append(this.filename).append(".").append(this.extension);
 		return build.toString();
-	}
-
-	private void getFileDisplayNameRecurse (StringBuilder build, EntityArchive archive) {
-		if (archive.getParent() != null) {
-			this.getFileDisplayNameRecurse(build, archive.getParent());
-		}
-		build.append(archive.getFilename()).append("/");
-	}
-
-	@Override
-	public long getPersistentId() {
-		return this.id;
 	}
 
 	public String getFilename() {
@@ -130,7 +127,10 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		this.workspace = workspace;
 	}
 
-	public boolean equals(ISourceFile file) {
-		return file.getPersistentId() == this.getPersistentId();
+	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive) {
+		if (archive.getParent() != null) {
+			this.getFileDisplayNameRecurse(build, archive.getParent());
+		}
+		build.append(archive.getFilename()).append("/");
 	}
 }

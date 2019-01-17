@@ -41,8 +41,7 @@ public class BaseStorage implements IStorageWrapper {
 
 		//list = this.database.runQuery("SELECT t from Task t", EntityTask.class).stream().filter(x -> x.getStatus() == WorkStatus.PREPARED).collect(Collectors.toList());
 		List<EntityJob> jobs = this.database.runQuery("SELECT j from Job j", EntityJob.class);
-		jobs.stream().filter(j -> j.getTasks().size() > 0 && j.getStatus() == WorkStatus.ACTIVE).forEach(j ->
-		{
+		jobs.stream().filter(j -> j.getTasks().size() > 0 && j.getStatus() == WorkStatus.ACTIVE).forEach(j -> {
 			if (j.getTasks().stream().anyMatch(i -> i.getStatus() == WorkStatus.PREPARED)) {
 				j.getTasks().stream().filter(i -> i.getStatus() == WorkStatus.PREPARED).forEach(i -> ((EntityTask) i).setStatus(WorkStatus.INTERRUPTED));
 				j.setStatus(WorkStatus.INTERRUPTED);
@@ -74,6 +73,15 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public ISourceFile getSourceFile(long persistentId) {
+		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
+		if (f.size() != 1) {
+			logger.warn("File of id {} does not exist", persistentId);
+		}
+		return f.get(0);
+	}
+
+	@Override
 	public List<IWorkspace> getWorkspaces(List<Long> ids) {
 		return this.getWorkspaces().stream().filter(x -> ids.contains(x.getPersistentId())).collect(Collectors.toList());
 	}
@@ -82,15 +90,6 @@ public class BaseStorage implements IStorageWrapper {
 	public List<IWorkspace> getWorkspaces() {
 		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
 		return new LinkedList<>(l);
-	}
-
-	@Override
-	public ISourceFile getSourceFile(long persistentId) {
-		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
-		if (f.size() != 1) {
-			logger.warn("File of id {} does not exist", persistentId);
-		}
-		return f.get(0);
 	}
 
 	@Override
