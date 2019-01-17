@@ -34,7 +34,7 @@ public class DetectorWrapper {
     ) throws DetectorNotFound {
         Optional<TDetector> optional = tDetectorRepository.findById(id);
 
-        if (optional.isEmpty()) {
+        if (!optional.isPresent()) {
             throw new DetectorNotFound("Detector not found.");
         }
 
