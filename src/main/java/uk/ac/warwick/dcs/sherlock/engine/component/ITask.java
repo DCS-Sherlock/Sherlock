@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
+import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
@@ -28,8 +29,31 @@ public interface ITask {
 	 */
 	WorkStatus getStatus();
 
+	boolean hasResults();
+
+	/**
+	 * Sets the passed adjustable parameter to its default value
+	 *
+	 * @param paramObj The parameter object to reset
+	 *
+	 * @return true if successfully reset
+	 */
+	boolean resetParameter(AdjustableParameterObj paramObj);
+
 	/**
 	 * Used to set task complete if no results are found
 	 */
 	void setComplete();
+
+	/**
+	 * Sets the passed adjustable parameter to the passed value
+	 * <p><p>
+	 * Will return false if the AdjustableParameter is invalid
+	 *
+	 * @param paramObj The parameter object to set
+	 * @param value    new value of the object, if it should be an integer then this will be checked
+	 *
+	 * @return true if successfully set
+	 */
+	boolean setParameter(AdjustableParameterObj paramObj, float value);
 }

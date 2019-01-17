@@ -10,12 +10,14 @@ public class AdjustableParameterObj {
 	private String name;
 	private String reference;
 	private boolean isInt;
+	private boolean isFixed;
 
-	public AdjustableParameterObj(AdjustableParameter param, Field field) {
+	public AdjustableParameterObj(AdjustableParameter param, Field field, boolean isFixed) {
 		this.param = param;
 		this.name = field.getName();
 		this.reference = SherlockHelper.buildFieldReference(field);
 		this.isInt = field.getType().equals(int.class);
+		this.isFixed = isFixed;
 	}
 
 	/**
@@ -30,6 +32,15 @@ public class AdjustableParameterObj {
 	 */
 	public String getDescription() {
 		return this.param.description();
+	}
+
+	/**
+	 * Return if the parameter is fixed, ie. it cannot be modified after a task has been run, for example when it is for a detector
+	 *
+	 * @return is the param fixed after raw results have been generated?
+	 */
+	public boolean isFixed() {
+		return isFixed;
 	}
 
 	/**

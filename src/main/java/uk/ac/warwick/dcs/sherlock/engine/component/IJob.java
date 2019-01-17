@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
-import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 
 import java.time.LocalDateTime;
@@ -111,25 +110,4 @@ public interface IJob {
 	 * @return returns true if removed, false if not present in the job or the job has been prepared
 	 */
 	boolean removeDetector(Class<? extends IDetector> det);
-
-	/**
-	 * Sets the passed detector adjustable parameter to its default value
-	 *
-	 * @param paramObj The parameter object to reset
-	 *
-	 * @return true if successfully reset
-	 */
-	boolean resetParameter(AdjustableParameterObj paramObj);
-
-	/**
-	 * Sets the passed detector adjustable parameter to the passed value TODO: redo the setting and modification interface,
-	 * <p><p>
-	 * Will return false if the AdjustableParameter is invalid
-	 *
-	 * @param paramObj The parameter object to set
-	 * @param value    new value of the object, if it should be an integer then this will be checked
-	 *
-	 * @return true if successfully set
-	 */
-	boolean setParameter(AdjustableParameterObj paramObj, float value);
 }

@@ -1,10 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
-import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.*;
 
 import javax.persistence.*;
@@ -35,9 +31,6 @@ public class EntityJob implements IJob, Serializable {
 	@Transient
 	private List<Class<? extends IDetector>> detectors;
 
-	@Transient
-	private Map<String, ITuple<Class<? extends IDetector>, Float>> paramMap;
-
 	// list of file ids in workspace WHEN creating job, used to warn and prevent report gen if file is removed or updated(remove existing and add updated file as new entity when doing this)
 	private long[] filesPresent;
 
@@ -50,7 +43,6 @@ public class EntityJob implements IJob, Serializable {
 		super();
 		this.prepared = true;
 		this.detectors = null;
-		this.paramMap = null;
 	}
 
 	public EntityJob(EntityWorkspace workspace) {
@@ -66,7 +58,6 @@ public class EntityJob implements IJob, Serializable {
 
 		this.prepared = false;
 		this.detectors = new LinkedList<>();
-		this.paramMap = new HashMap<>();
 	}
 
 	@Override
@@ -87,18 +78,6 @@ public class EntityJob implements IJob, Serializable {
 		}
 
 		this.detectors.add(det);
-
-		List<AdjustableParameterObj> params = SherlockRegistry.getDetectorAdjustableParameters(det);
-		if (params == null || params.isEmpty()) {
-			return false;
-		}
-
-		params.forEach(x -> {
-			if (!this.paramMap.containsKey(x.getReference())) {
-				ITuple t = new Tuple(det, x.getDefaultValue());
-				this.paramMap.put(x.getReference(), t);
-			}
-		});
 
 		return true;
 	}
@@ -169,14 +148,7 @@ public class EntityJob implements IJob, Serializable {
 		BaseStorage.instance.database.storeObject(this);
 
 		this.detectors.forEach(x -> {
-			Map<String, Float> map = new HashMap<>();
-			this.paramMap.forEach((k, v) -> {
-				if (v.getKey().equals(x)) { //if is correct detector
-					map.put(k, v.getValue());
-				}
-			});
-
-			EntityTask newTask = new EntityTask(this, x, map.isEmpty() ? null : map);
+			EntityTask newTask = new EntityTask(this, x);
 			this.tasks.add(newTask);
 			BaseStorage.instance.database.storeObject(newTask);
 		});
@@ -200,37 +172,6 @@ public class EntityJob implements IJob, Serializable {
 
 		this.detectors.remove(det);
 
-		return true;
-	}
-
-	@Override
-	public boolean resetParameter(AdjustableParameterObj paramObj) {
-		return this.setParameter(paramObj, paramObj.getDefaultValue());
-	}
-
-	@Override
-	public boolean setParameter(AdjustableParameterObj paramObj, float value) {
-		if (this.isPrepared()) {
-			BaseStorage.logger.warn("Could not add detector for job#{}, job already prepared", this.getPersistentId());
-			return false;
-		}
-
-		if (paramObj == null || !this.paramMap.containsKey(paramObj.getReference())) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is null", this.getPersistentId());
-			return false;
-		}
-
-		if (paramObj.isInt() && value % 1 != 0) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is not an integer", this.getPersistentId());
-			return false;
-		}
-
-		if (value < paramObj.getMinimumBound() || value > paramObj.getMaximumBound()) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, value passed is outside the parameter bounds", this.getPersistentId());
-			return false;
-		}
-
-		this.paramMap.get(paramObj.getReference()).setValue(value);
 		return true;
 	}
 }

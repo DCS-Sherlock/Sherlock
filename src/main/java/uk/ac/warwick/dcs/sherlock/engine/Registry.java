@@ -241,7 +241,7 @@ public class Registry implements IRegistry {
 						}
 
 						return x;
-					}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
+					}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey(), true)).collect(Collectors.toList());
 
 			if (tuneables.size() > 0) {
 				data.adjustables = tuneables;
@@ -335,7 +335,7 @@ public class Registry implements IRegistry {
 					}
 
 					return x;
-				}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey())).collect(Collectors.toList());
+				}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey(), false)).collect(Collectors.toList());
 
 		if (tuneables.size() > 0) {
 			data.adjustables = tuneables;
