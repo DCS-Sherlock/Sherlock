@@ -12,6 +12,8 @@ import java.util.*;
 public interface IRegistry {
 
 	/**
+	 * Get the description of a detector
+	 *
 	 * @param det detector class
 	 *
 	 * @return description of the detector
@@ -19,6 +21,8 @@ public interface IRegistry {
 	String getDetecorDescription(Class<? extends IDetector> det);
 
 	/**
+	 * Get the adjustable parameters for a detector
+	 *
 	 * @param det detector class
 	 *
 	 * @return adjustable parameters for the detector class
@@ -26,20 +30,26 @@ public interface IRegistry {
 	List<AdjustableParameterObj> getDetectorAdjustableParameters(Class<? extends IDetector> det);
 
 	/**
-	 * @param det detector class
+	 * Get the display name of the detector
 	 *
-	 * @return languages supported by the detector
-	 */
-	String getDetectorDisplayName(Class<? extends IDetector> det);
-
-	/**
 	 * @param det detector class
 	 *
 	 * @return display name of the detector
 	 */
+	String getDetectorDisplayName(Class<? extends IDetector> det);
+
+	/**
+	 * Get the languages supported by the detector
+	 *
+	 * @param det detector class
+	 *
+	 * @return languages supported by the detector
+	 */
 	Language[] getDetectorLanguages(Class<? extends IDetector> det);
 
 	/**
+	 * Get the rank of the detector (Should it be a primary result, or just a reinforcing result (secondary))
+	 *
 	 * @param det detector class
 	 *
 	 * @return the detector rank
@@ -47,6 +57,8 @@ public interface IRegistry {
 	Rank getDetectorRank(Class<? extends IDetector> det);
 
 	/**
+	 * Fetch the set of all detectors registered to Sherlock
+	 *
 	 * @return a set of all detectors registered
 	 */
 	Set<Class<? extends IDetector>> getDetectors();
@@ -59,6 +71,24 @@ public interface IRegistry {
 	 * @return the set of detectors
 	 */
 	Set<Class<? extends IDetector>> getDetectors(Language language);
+
+	/**
+	 * Gets the adjustable parameters for a postprocessor
+	 *
+	 * @param postProcessor postprocessor class
+	 *
+	 * @return the list of adjustable parameters
+	 */
+	List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor);
+
+	/**
+	 * Gets the adjustable parameters for the corresponding post processor for a detector
+	 *
+	 * @param det detector class
+	 *
+	 * @return the list of adjustable parameters
+	 */
+	List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det);
 
 	/**
 	 * Get correct instance of IPostProcessor to process an AbstractModelTaskRawResult object

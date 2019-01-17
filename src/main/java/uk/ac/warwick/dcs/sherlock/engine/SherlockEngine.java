@@ -15,7 +15,6 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.executor.PoolExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
@@ -120,7 +119,7 @@ public class SherlockEngine {
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
 	}
 
-	public static void submitToExecutor(IJob job) {
+	/*public static void submitToExecutor(IJob job) {
 		long startTime = System.nanoTime();
 		SherlockEngine.executor.submitJob(job);
 		long endTime = System.nanoTime();
@@ -128,7 +127,7 @@ public class SherlockEngine {
 		double duration = (endTime - startTime) * 1e-6;
 		duration = duration / 1000;
 		logger.warn("Job duration: " + duration + " seconds");
-	}
+	}*/
 
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");

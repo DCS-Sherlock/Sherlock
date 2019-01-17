@@ -92,11 +92,11 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		return this.objects;
 	}
 
-	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
+		str.append(this.getFile1().getFileDisplayName()).append(" vs ").append(this.getFile2().getFileDisplayName()).append("\n\r");
 		for (int i = 0; i < this.size; i++) {
-			str.append(this.objects.get(i).toString()).append(" - ").append(this.locations.get(i).toString()).append("\n");
+			str.append(this.objects.get(i).toString()).append(" - ").append(this.locations.get(i).toString()).append("\n\r");
 		}
 		return str.toString();
 	}

@@ -19,5 +19,12 @@ public interface ITask {
 
 	List<AbstractModelTaskRawResult> getRawResults();
 
+	/**
+	 * Returns the status of the task
+	 *
+	 * @return the stored status
+	 */
+	WorkStatus getStatus();
+
 	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 }

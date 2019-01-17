@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.IDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
 import java.util.*;
@@ -8,19 +8,19 @@ import java.util.concurrent.*;
 
 public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> {
 
-	private List<IDetectorWorker> workers;
+	private List<AbstractDetectorWorker> workers;
 	private int threshold;
 	private int begin;
 	private int end;
 
 	private List<AbstractModelTaskRawResult> result;
 
-	public WorkDetect(List<IDetectorWorker> workers, int threshold) {
+	public WorkDetect(List<AbstractDetectorWorker> workers, int threshold) {
 		this(workers, threshold, 0, workers.size());
 		this.result = Collections.EMPTY_LIST;
 	}
 
-	private WorkDetect(List<IDetectorWorker> workers, int threshold, int begin, int end) {
+	private WorkDetect(List<AbstractDetectorWorker> workers, int threshold, int begin, int end) {
 		this.workers = workers;
 		this.threshold = threshold;
 		this.begin = begin;
@@ -64,7 +64,7 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 		return this.result;
 	}
 
-	private static AbstractModelTaskRawResult runWorker(IDetectorWorker worker) {
+	private static AbstractModelTaskRawResult runWorker(AbstractDetectorWorker worker) {
 		worker.execute();
 		return worker.getRawResult();
 	}

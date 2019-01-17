@@ -9,7 +9,7 @@ public interface IPriorityWorkSchedulerWrapper {
 	 * @param topAction top level recursive action to fork
 	 * @param priority work priority level
 	 */
-	void invokeWork(ForkJoinTask topAction, PriorityWorkPriorities priority);
+	void invokeWork(ForkJoinTask topAction, Priority priority);
 
 	/**
 	 * Non-blocking, submit the task to the work executor

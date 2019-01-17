@@ -8,7 +8,7 @@ public class PriorityWorkScheduler {
 	private ForkJoinPool priorityWorkForkPool;
 	private ExecutorService priorityWorkScheduler;
 
-	private PriorityBlockingQueue<PriorityWorkTask> priorityQueue;
+	private final PriorityBlockingQueue<PriorityWorkTask> priorityQueue;
 
 	public PriorityWorkScheduler() {
 		this(10);

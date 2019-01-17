@@ -5,9 +5,9 @@ import java.util.concurrent.*;
 public class PriorityWorkTask {
 
 	private ForkJoinTask topAction;
-	private PriorityWorkPriorities priority;
+	private Priority priority;
 
-	public PriorityWorkTask(ForkJoinTask topAction, PriorityWorkPriorities priority) {
+	public PriorityWorkTask(ForkJoinTask topAction, Priority priority) {
 		this.topAction = topAction;
 		this.priority = priority;
 	}
@@ -16,7 +16,7 @@ public class PriorityWorkTask {
 		return topAction;
 	}
 
-	PriorityWorkPriorities getPriority() {
+	Priority getPriority() {
 		return priority;
 	}
 }

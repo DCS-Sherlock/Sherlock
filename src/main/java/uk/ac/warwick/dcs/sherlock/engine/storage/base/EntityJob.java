@@ -5,10 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJobResult;
-import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
-import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,6 +26,8 @@ public class EntityJob implements IJob, Serializable {
 	private EntityWorkspace workspace;
 
 	private Timestamp timestamp;
+
+	private WorkStatus status;
 
 	@Transient
 	private boolean prepared;
@@ -59,6 +58,7 @@ public class EntityJob implements IJob, Serializable {
 		super();
 		this.workspace = workspace;
 		this.timestamp = new Timestamp(System.currentTimeMillis());
+		this.status = WorkStatus.NOT_PREPARED;
 		this.filesPresent = new long[workspace.getFiles().size()];
 
 		for (int i = 0; i < this.filesPresent.length; i++) {
@@ -87,7 +87,8 @@ public class EntityJob implements IJob, Serializable {
 			this.tasks.add(newTask);
 			BaseStorage.instance.database.storeObject(newTask);
 		});
-		
+
+		this.status = WorkStatus.PREPARED;
 		this.prepared = true;
 		return true;
 	}
@@ -209,5 +210,15 @@ public class EntityJob implements IJob, Serializable {
 	public List<IJobResult> getResults() {
 		//TODO: do results api so we can write the getter
 		return null;
+	}
+
+	@Override
+	public WorkStatus getStatus() {
+		return this.status;
+	}
+
+	@Override
+	public void setStatus(WorkStatus status) {
+		this.status = status;
 	}
 }

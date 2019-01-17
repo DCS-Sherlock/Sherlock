@@ -1,7 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-
 import java.util.*;
 import java.util.stream.*;
 
@@ -10,7 +8,7 @@ import java.util.stream.*;
  * <p><p>
  * More advanced implementations should directly implement the IDetector interface.
  */
-public abstract class AbstractPairwiseDetector implements IDetector {
+public abstract class AbstractPairwiseDetector<T extends AbstractPairwiseDetectorWorker> implements IDetector<T> {
 
 	/**
 	 * Recursively creates a list of all the possible combinations (unordered) of a specific size of an input list
@@ -37,48 +35,12 @@ public abstract class AbstractPairwiseDetector implements IDetector {
 	}
 
 	@Override
-	public List<IDetectorWorker> buildWorkers(List<ModelDataItem> data) {
-		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1))).collect(Collectors.toList());
+	public List<T> buildWorkers(List<ModelDataItem> data) {
+		return (List<T>) combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker().putData(x.get(0), x.get(1))).collect(Collectors.toList());
 	}
 
 	/**
 	 * @return a new instance of the worker for this implementation
 	 */
-	public abstract AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker();
-
-	/**
-	 * An extension of the basic worker for standard pairwise matching, implements the basic internal data structures
-	 */
-	public abstract class AbstractPairwiseDetectorWorker implements IDetectorWorker {
-
-		protected ModelDataItem file1;
-		protected ModelDataItem file2;
-		protected AbstractModelTaskRawResult result;
-
-		/**
-		 * Gets the results of the worker execution, only minimal processing should be performed in this method
-		 *
-		 * @return worker results
-		 */
-		@Override
-		public AbstractModelTaskRawResult getRawResult() {
-			return this.result;
-		}
-
-		/**
-		 * Loads data into the worker, called by the {@link AbstractPairwiseDetector#buildWorkers(List)} method
-		 *
-		 * @param file1Data preprocessed data for file 1
-		 * @param file2Data preprocessed data for file 2
-		 *
-		 * @return this (the current worker instance)
-		 */
-		AbstractPairwiseDetectorWorker putData(ModelDataItem file1Data, ModelDataItem file2Data) {
-			this.file1 = file1Data;
-			this.file2 = file2Data;
-
-			return this;
-		}
-	}
-
+	public abstract T getAbstractPairwiseDetectorWorker();
 }

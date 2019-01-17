@@ -18,37 +18,65 @@ public interface IJob {
 	boolean addDetector(Class<? extends IDetector> det);
 
 	/**
-	 * @return the unique id for the job
-	 */
-	long getPersistentId();
-
-	/**
- 	 * @return the list of tasks used to process this job
-	 */
-	List<ITask> getTasks();
-
-	/**
-	 * @return the ids of the files used for this job
+	 * The ids of the files used for this job
+	 *
+	 * @return ids of files used
 	 */
 	long[] getFiles();
 
 	/**
+	 * The unique id for the job
+	 *
+	 * @return the unique id
+	 */
+	long getPersistentId();
+
+	/**
+	 * get the latest processed results for this job
+	 *
+	 * @return latest processed results
+	 */
+	List<IJobResult> getResults();
+
+	/**
+	 * Returns the status of the job
+	 *
+	 * @return the stored status
+	 */
+	WorkStatus getStatus();
+
+	/**
+	 * Sets the status of the job
+	 *
+	 * @param status the new status of the job
+	 */
+	void setStatus(WorkStatus status);
+
+	/**
+	 * The list of tasks used to process this job
+	 *
+	 * @return tasks used for the job
+	 */
+	List<ITask> getTasks();
+
+	/**
+	 * Fetch the timestamp for the job creation;
+	 *
 	 * @return Timestamp when the job was created;
 	 */
 	LocalDateTime getTimestamp();
 
 	/**
-	 * @return get the workspace containing the job
+	 * get the workspace containing the job
+	 *
+	 * @return workspace
 	 */
 	IWorkspace getWorkspace();
 
 	/**
-	 * @return get the latest processed results for this job
-	 */
-	List<IJobResult> getResults();
-
-	/**
-	 * @return has the prepare() method been called?
+	 * Has the prepare() method been called?
+	 *
+	 * @return is prepared?
 	 */
 	boolean isPrepared();
 
@@ -80,7 +108,7 @@ public interface IJob {
 	boolean resetParameter(AdjustableParameterObj paramObj);
 
 	/**
-	 * Sets the passed detector adjustable parameter to the passed value
+	 * Sets the passed detector adjustable parameter to the passed value TODO: redo the setting and modification interface,
 	 * <p><p>
 	 * Will return false if the AdjustableParameter is invalid
 	 *

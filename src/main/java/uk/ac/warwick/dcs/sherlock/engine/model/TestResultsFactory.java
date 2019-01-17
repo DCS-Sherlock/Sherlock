@@ -1,15 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
@@ -117,10 +113,10 @@ public class TestResultsFactory implements IExecutor {
 				return null;
 			}).collect(Collectors.toList());
 
-			List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
-			workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
+			List<AbstractDetectorWorker> workers = instance.buildWorkers(inputData);
+			workers.parallelStream().forEach(AbstractDetectorWorker::execute);
 
-			List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+			/*List<AbstractModelTaskRawResult> raw = workers.stream().map(AbstractDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 			boolean isValid = true;
 			for (int i = 1; i < raw.size(); i++) {
 				if (!raw.get(i).testType(raw.get(0))) {
@@ -151,14 +147,14 @@ public class TestResultsFactory implements IExecutor {
 			for (ICodeBlockGroup g : gs) {
 				g.getCodeBlocks().forEach(x -> System.out.println(x.getFile() + " - " + x.getLineNumbers().toString()));
 				System.out.println();
-			}
+			}*/
 		}
 
 		return "done"; //raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
 
 	@Override
-	public int submitJob(IJob job) {
+	public boolean submitJob(IJob job) {
 		try {
 			this.buildTestResults(job);
 		}
@@ -166,11 +162,11 @@ public class TestResultsFactory implements IExecutor {
 			e.printStackTrace();
 		}
 
-		return 0;
+		return true;
 	}
 
 	@Override
-	public List<IJob> getCurrentActiveJobs() {
+	public List<IJob> getCurrentJobs() {
 		return null;
 	}
 
