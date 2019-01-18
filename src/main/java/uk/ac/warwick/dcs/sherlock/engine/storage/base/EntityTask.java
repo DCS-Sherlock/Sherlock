@@ -216,6 +216,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		}
 
 		this.paramMap.put(paramObj.getReference(), value);
+		BaseStorage.instance.database.storeObject(this);
 		return true;
 	}
 
