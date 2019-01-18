@@ -172,7 +172,6 @@ function submitAjax(url, data, success, type) {
 }
 
 function tooltips() {
-    $('[data-toggle="tooltip"]').unbind();
     $('[data-toggle="tooltip"]').tooltip();
 }
 

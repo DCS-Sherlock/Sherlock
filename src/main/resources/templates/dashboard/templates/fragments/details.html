@@ -76,7 +76,12 @@
             </div>
         </div>
 
-        <button th:if="${template.isOwner()}" type="submit" class="btn btn-primary" th:text="#{link_update}"></button>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <button th:if="${template.isOwner()}" type="submit" class="btn btn-primary float-right" th:text="#{link_update}"></button>
+            </div>
+        </div>
     </form>
 </div>
 

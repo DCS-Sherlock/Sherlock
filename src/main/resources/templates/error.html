@@ -13,7 +13,12 @@
         </div>
         <h1 class="h4 mb-4 text-muted" th:text="#{error_title}"></h1>
 
-        <div class="alert alert-danger"><span th:text="#{''+${msg}}"></span></div>
+        <th:block th:if="${msg}">
+            <div class="alert alert-danger"><span th:text="#{''+${msg}}"></span></div>
+        </th:block>
+        <th:block th:unless="${msg}">
+            <div class="alert alert-danger"><span th:text="#{'error_404'}"></span></div>
+        </th:block>
     </form>
 </main>
 </body>

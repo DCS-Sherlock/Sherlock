@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
@@ -133,14 +134,15 @@ public class WorkspaceWrapper {
 		for (TDetector td : templateWrapper.getTemplate().getDetectors()) {
             Class<? extends IDetector> detector = (Class<? extends IDetector>) Class.forName(td.getName());
             job.addDetector(detector);
-            //TODO: deal with custom parameters
-            //job.setParameter(SherlockRegistry.getDetectorAdjustableParameters(detector).get(0), 7);
 		}
 
 		job.prepare();
 
+		for (ITask task : job.getTasks()) {
+//            task.getDetector().ge
+        }
+
 		SherlockEngine.executor.submitJob(job);
-//		SherlockEngine.submitToExecutor(job); //temporary timed method for benchmarking, usually the above method would be used!
     }
 
     public static List<WorkspaceWrapper> findByAccount(Account account, WorkspaceRepository workspaceRepository) {
