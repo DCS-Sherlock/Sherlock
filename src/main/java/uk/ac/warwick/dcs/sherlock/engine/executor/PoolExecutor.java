@@ -95,7 +95,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 			return false;
 		}
 
-		if (!job.isPrepared() || job.getStatus() == WorkStatus.NOT_PREPARED) {
+		if (!job.isPrepared() || job.getStatus().equals(WorkStatus.NOT_PREPARED)) {
 			synchronized (ExecutorUtils.logger) {
 				ExecutorUtils.logger.error("Job {} has not been prepared", job.getPersistentId());
 			}

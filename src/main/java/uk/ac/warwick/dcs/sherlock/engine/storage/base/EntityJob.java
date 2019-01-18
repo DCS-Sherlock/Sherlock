@@ -145,7 +145,6 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public boolean prepare() {
 		this.workspace.getJobs().add(this);
-		BaseStorage.instance.database.storeObject(this);
 
 		this.detectors.forEach(x -> {
 			EntityTask newTask = new EntityTask(this, x);
@@ -154,6 +153,8 @@ public class EntityJob implements IJob, Serializable {
 		});
 
 		this.setStatus(WorkStatus.PREPARED);
+		BaseStorage.instance.database.storeObject(this);
+
 		this.prepared = true;
 		return true;
 	}
