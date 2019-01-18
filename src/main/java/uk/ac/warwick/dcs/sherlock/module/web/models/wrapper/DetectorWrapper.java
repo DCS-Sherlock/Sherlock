@@ -4,6 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.TDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.TParameter;
@@ -11,10 +12,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.models.forms.ParameterForm;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TParameterRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class DetectorWrapper {
     private TDetector tDetector;
@@ -95,6 +93,16 @@ public class DetectorWrapper {
         }
 
         return new EngineDetectorWrapper(detector);
+    }
+
+    public List<ParameterWrapper> getParametersList() throws ParameterNotFound {
+        List<ParameterWrapper> list = new ArrayList<>();
+
+        for (TParameter p : this.tDetector.getParameters()) {
+            list.add(new ParameterWrapper(p, this.getEngineParametersMap()));
+        }
+
+        return list;
     }
 
     public void updateParameters(ParameterForm parameterForm, TParameterRepository tParameterRepository) {

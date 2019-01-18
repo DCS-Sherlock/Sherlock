@@ -113,7 +113,7 @@ public class ManageWorkspaceController {
     @PostMapping("/dashboard/workspaces/manage/jobs/{pathid}")
     public String jobsPostFragment(
             @PathVariable("pathid") long pathid,
-			@RequestParam(value="template_id", required=true) long template_id,
+            @RequestParam(value="template_id", required=true) long template_id,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("account") Account account,
             @ModelAttribute("isAjax") boolean isAjax,
@@ -125,13 +125,13 @@ public class ManageWorkspaceController {
 
         try {
             workspaceWrapper.runTemplate(templateWrapper);
-            model.addAttribute("success", true);
+            model.addAttribute("success_msg", "workspaces_analysis_started");
         } catch (TemplateContainsNoDetectors e) {
-            //TODO: add error message
-            e.printStackTrace();
+            model.addAttribute("warning_msg", "workspaces_analysis_no_detectors");
         } catch (ClassNotFoundException e) {
-            //TODO: add error message
-            e.printStackTrace();
+            model.addAttribute("warning_msg", "workspaces_analysis_detector_missing");
+        } catch (ParameterNotFound e) {
+            model.addAttribute("warning_msg", "workspaces_analysis_parameter_missing");
         }
 
         model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account, templateRepository));

@@ -32,6 +32,7 @@ public class ManageFilesController {
 
     @GetMapping("/dashboard/workspaces/manage/submission/{pathid}/{fileid}")
     public String fileGet() {
+        //TODO: add other language support
         return "dashboard/workspaces/files/view";
     }
 

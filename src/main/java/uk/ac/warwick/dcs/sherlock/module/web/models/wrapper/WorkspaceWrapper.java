@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
@@ -10,6 +12,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateContainsNoDetectors;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -125,7 +128,7 @@ public class WorkspaceWrapper {
         }
     }
 
-    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException {
+    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound {
 		if (templateWrapper.getTemplate().getDetectors().size() == 0)
 		    throw new TemplateContainsNoDetectors("No detectors in chosen template.");
 
@@ -136,10 +139,23 @@ public class WorkspaceWrapper {
             job.addDetector(detector);
 		}
 
-		job.prepare();
+        job.prepare();
 
+		Logger logger = LoggerFactory.getLogger(WorkspaceWrapper.class);
 		for (ITask task : job.getTasks()) {
-//            task.getDetector().ge
+		    for (DetectorWrapper detectorWrapper : templateWrapper.getDetectors()) {
+		        if (task.getDetector().getName().equals(detectorWrapper.getEngineDetector().getName())) {
+		            for (ParameterWrapper parameterWrapper : detectorWrapper.getParametersList()) {
+		                logger.info("Detector "
+                                + task.getDetector().getName()
+                                + " has had parameter "
+                                + parameterWrapper.getParameterObj().getDisplayName()
+                                + " set to "
+                                + parameterWrapper.getParameter().getValue());
+		                task.setParameter(parameterWrapper.getParameterObj(), parameterWrapper.getParameter().getValue());
+                    }
+                }
+            }
         }
 
 		SherlockEngine.executor.submitJob(job);

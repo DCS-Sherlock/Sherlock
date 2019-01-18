@@ -26,6 +26,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String runtimeError(Model model, Exception e) {
+        e.printStackTrace(); //TODO make dev only
         model.addAttribute("msg", e.getClass().getName());
         return "error";
     }
