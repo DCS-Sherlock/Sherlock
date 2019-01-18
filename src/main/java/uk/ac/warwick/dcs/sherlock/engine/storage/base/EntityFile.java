@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 @Entity (name = "File")
 public class EntityFile implements ISourceFile, IStorable, Serializable {
@@ -74,6 +77,16 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public String getFileContentsAsString() {
 		return BaseStorage.instance.filesystem.loadFileAsString(this);
+	}
+
+	@Override
+	public List<String> getFileContentsAsStringList() {
+		List<String> list = new ArrayList<>();
+		Scanner scanner	= new Scanner(this.getFileContents());
+		while (scanner.hasNextLine()) {
+			list.add(scanner.nextLine());
+		}
+		return list;
 	}
 
 	@Override

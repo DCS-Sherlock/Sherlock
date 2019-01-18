@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{workspaces_submissions_view}"></title>
+</head>
+<body>
+
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{workspaces_submissions_view}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{workspaces_link_manage_return}"></a>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="accordion">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#main">
+                                        <span th:text="${submission.getFileDisplayName()}"></span>
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="main" class="collapse show" data-parent="#accordion">
+                                <div class="card-body">
+                                <pre class="line-numbers language-java" style="white-space:pre-wrap;"><code>
+                                <th:block th:each="line : ${submission.getFileContentsAsStringList()}">
+                                <span th:text="${line}" th:remove="tag"></span></th:block>
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

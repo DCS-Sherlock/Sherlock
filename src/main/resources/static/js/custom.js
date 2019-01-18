@@ -1,12 +1,12 @@
 //Sherlock JS
 function loadAreas(){
-    $("div[data-js='area']").each(function () {
+    $("[data-js='area']").each(function () {
         var input = $(this);
         loadAreaFn(input);
     });
 }
 function triggerAreas(){
-    $("div[data-js='triggerArea']").each(function () {
+    $("[data-js='triggerArea']").each(function () {
         var input = $(this);
         var target = input.attr("data-js-target");
         input.remove();
@@ -27,8 +27,8 @@ function loadAreaFn(input){
 }
 
 function modalLinks(){
-    $("a[data-js='modal']").unbind();
-    $("a[data-js='modal']").click(function () {
+    $("[data-js='modal']").unbind();
+    $("[data-js='modal']").click(function () {
         var input = $(this);
         var url = input.attr("href");
 
@@ -74,8 +74,8 @@ function selectAreas(){
 }
 
 function formSubmitButton() {
-    $("button[data-js='formSubmit']").unbind();
-    $("button[data-js='formSubmit']").each(function() {
+    $("[data-js='formSubmit']").unbind();
+    $("[data-js='formSubmit']").each(function() {
         var input = $(this);
         var target = input.attr("data-js-target");
         if($(target).length == 0) {
@@ -92,8 +92,8 @@ function formSubmitButton() {
 }
 
 function formSubmit(){
-    $("form[data-js='form']").unbind();
-    $("form[data-js='form']").submit(function () {
+    $("[data-js='form']").unbind();
+    $("[data-js='form']").submit(function () {
         var input = $(this);
         var url = input.attr("action");
         var target = $(input.attr("data-js-target"));

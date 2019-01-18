@@ -37,6 +37,22 @@
                     <span th:text="${submission.getFileDisplayName()}"></span>
                 </h6>
             </th>
+            <td>
+                <div class="btn-group btn-group-sm float-right">
+                    <a type="button" class="btn btn-primary"
+                       th:href="@{/dashboard/workspaces/manage/submission/{id}/{file_id}(id=${workspace.getId()},file_id=${submission.getPersistentId()})}"
+                       th:text="#{link_view}"></a>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item"
+                           data-js='modal'
+                           th:href="@{/dashboard/workspaces/manage/submission/{id}/{file_id}/delete(id=${workspace.getId()},file_id=${submission.getPersistentId()})}"
+                           th:text="#{link_delete}"></a>
+                    </div>
+                </div>
+            </td>
         </tr>
     </th:block>
     <tr th:if="${workspace.getFiles().empty}">

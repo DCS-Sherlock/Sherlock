@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
 import java.io.InputStream;
+import java.util.List;
 
 public interface ISourceFile {
 
@@ -13,6 +14,11 @@ public interface ISourceFile {
 	 * @return the content of the file as a string
 	 */
 	String getFileContentsAsString();
+
+	/**
+	 * @return the content of the file as a list of strings
+	 */
+	List<String> getFileContentsAsStringList();
 
 	/**
 	 * @return string containing the name of the file to display, this should be a path including any parent archives

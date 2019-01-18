@@ -33,7 +33,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({
             IWorkspaceNotFound.class,
             WorkspaceNotFound.class,
-            TemplateNotFound.class
+            TemplateNotFound.class,
+            SourceFileNotFound.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFoundError(Model model, Exception e) {
