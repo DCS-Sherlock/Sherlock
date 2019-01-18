@@ -92,6 +92,14 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		return this.objects;
 	}
 
+	public T getObject(int index) {
+		return this.objects.get(index);
+	}
+
+	public PairedTuple<Integer, Integer, Integer, Integer> getLocation(int index) {
+		return this.locations.get(index);
+	}
+
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append(this.getFile1().getFileDisplayName()).append(" vs ").append(this.getFile2().getFileDisplayName()).append("\n\r");

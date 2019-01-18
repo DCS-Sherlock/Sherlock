@@ -52,34 +52,24 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		super();
 		this.job = job;
 		this.detector = detector.getName();
+		this.paramMap = null;
 		this.rank = SherlockRegistry.getDetectorRank(detector);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;
 		this.secure = null;
 		this.status = WorkStatus.PREPARED;
 
-		List<AdjustableParameterObj> params = SherlockRegistry.getDetectorAdjustableParameters(detector);
+		this.addParams(SherlockRegistry.getDetectorAdjustableParameters(detector));
+		this.addParams(SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector));
+	}
 
-		if (params != null) {
-			List<AdjustableParameterObj> params2 = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector);
-			if (params2 != null) {
-				params.addAll(params2);
+	private void addParams(List<AdjustableParameterObj> params) {
+		if (params != null && !params.isEmpty()) {
+			if (this.paramMap == null) {
+				this.paramMap = new HashMap<>();
 			}
-		}
-		else {
-			params = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector);
-		}
-		
-		if (params != null && params.isEmpty()) {
-			this.paramMap = new HashMap<>();
-			params.forEach(x -> {
-				if (!this.paramMap.containsKey(x.getReference())) {
-					this.paramMap.put(x.getReference(), x.getDefaultValue());
-				}
-			});
-		}
-		else {
-			this.paramMap =  null;
+
+			params.forEach(x -> this.paramMap.put(x.getReference(), x.getDefaultValue()));
 		}
 	}
 
@@ -113,6 +103,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public Map<String, Float> getParameterMapping() {
 		return this.paramMap;
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
 	}
 
 	@Override
@@ -165,11 +160,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.status;
 	}
 
-	@Override
-	public boolean hasResults() {
-		return this.hash != null && this.hash.length() > 0;
-	}
-
 	void setStatus(WorkStatus status) {
 		this.status = status;
 	}
@@ -195,6 +185,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.setParameter(paramObj, paramObj.getDefaultValue());
 	}
 
+	@Override
+	public boolean hasResults() {
+		return this.hash != null && this.hash.length() > 0;
+	}
+
 	@SuppressWarnings ("Duplicates")
 	@Override
 	public boolean setParameter(AdjustableParameterObj paramObj, float value) {
@@ -209,22 +204,19 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		}
 
 		if (paramObj.isInt() && value % 1 != 0) {
-			BaseStorage.logger.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', parameter passed is not an integer", paramObj.getName(), this.job.getPersistentId(), this.detector);
+			BaseStorage.logger
+					.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', parameter passed is not an integer", paramObj.getName(), this.job.getPersistentId(), this.detector);
 			return false;
 		}
 
 		if (value < paramObj.getMinimumBound() || value > paramObj.getMaximumBound()) {
-			BaseStorage.logger.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', value passed is outside the parameter bounds", paramObj.getName(), this.job.getPersistentId(), this.detector);
+			BaseStorage.logger.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', value passed is outside the parameter bounds", paramObj.getName(), this.job.getPersistentId(),
+					this.detector);
 			return false;
 		}
 
 		this.paramMap.put(paramObj.getReference(), value);
 		return true;
-	}
-
-	@Override
-	public long getPersistentId() {
-		return this.id;
 	}
 
 	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {
