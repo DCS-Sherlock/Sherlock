@@ -68,75 +68,6 @@ public class BaseStorageFilesystem {
 		}
 	}
 
-	private String computeTaskIdentifier(EntityTask task) {
-		String str = task.getJob().getPersistentId() + "." + task.getPersistentId() + "-" + task.getTimestamp().getTime();
-		str = StringUtils.rightPad(str, 1024, str);
-		return DigestUtils.sha512Hex(str.substring(0, 1024));
-	}
-
-	private InputStream loadStorableIS(IStorable storable, String identfier) {
-		byte[] b = this.loadStorable(storable, identfier);
-		if (b == null) {
-			return null;
-		}
-		return new ByteArrayInputStream(b);
-	}
-
-	/**
-	 * Main method to load a file from the filestore
-	 */
-	private byte[] loadStorable(IStorable storable, String identfier) {
-		File fileToLoad = this.getFileFromIdentifier(identfier);
-		if (!fileToLoad.exists()) {
-			logger.error("File not in storage");
-			return null;
-		}
-
-		try {
-			byte[] rawContent = FileUtils.readFileToByteArray(fileToLoad);
-
-			if (storable.getSecureParam() != null) {
-				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-				cipher.init(Cipher.DECRYPT_MODE, this.getKey(storable), new IvParameterSpec(storable.getSecureParam()));
-				rawContent = cipher.doFinal(rawContent);
-			}
-
-			if (!storable.getHash().equals(DigestUtils.sha512Hex(rawContent))) {
-				logger.error("File loaded does not match stored hash, aborting");
-				return null;
-			}
-
-			return rawContent;
-		}
-		catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
-			logger.error("Error reading file", e);
-		}
-
-		return null;
-	}
-
-	private File getFileFromIdentifier(String fileIdentifier) {
-		String path = SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + this.computeLocator(fileIdentifier);
-		return new File(path);
-	}
-
-	private String computeLocator(String fileIdentifier) {
-		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2, 4) + File.separator + fileIdentifier;
-	}
-
-	private SecretKey getKey(IStorable storable) {
-		try {
-			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-			KeySpec spec = new PBEKeySpec(storable.getHash().toCharArray(), String.format("%08d", storable.getTimestamp().getTime() % 100000000).getBytes(), 65536, 192);
-			SecretKey tmp = factory.generateSecret(spec);
-			return new SecretKeySpec(tmp.getEncoded(), "AES");
-		}
-		catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-			logger.error("Error generating security key", e);
-		}
-		return null;
-	}
-
 	/**
 	 * Stores a file on the filesystem
 	 *
@@ -175,34 +106,6 @@ public class BaseStorageFilesystem {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	/**
-	 * Main method to store data to a file in the filestore
-	 */
-	private boolean storeStorable(IStorable storable, String identifier, byte[] content)
-			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException, IOException, BadPaddingException, IllegalBlockSizeException {
-		storable.setHash(DigestUtils.sha512Hex(content));
-
-		File fileToStore = this.getFileFromIdentifier(identifier);
-		if (fileToStore.exists()) {
-			logger.error("File storage collision, file not stored");
-			return false;
-		}
-
-		if (SherlockEngine.configuration.getEncryptFiles()) {
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, this.getKey(storable));
-			AlgorithmParameters params = cipher.getParameters();
-
-			storable.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
-			FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(content));
-		}
-		else {
-			FileUtils.writeByteArrayToFile(fileToStore, content);
-		}
-
-		return true;
 	}
 
 	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
@@ -255,8 +158,77 @@ public class BaseStorageFilesystem {
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
 	}
 
+	private String computeLocator(String fileIdentifier) {
+		return fileIdentifier.substring(0, 2) + File.separator + fileIdentifier.substring(2, 4) + File.separator + fileIdentifier;
+	}
+
+	private String computeTaskIdentifier(EntityTask task) {
+		String str = task.getJob().getPersistentId() + "." + task.getPersistentId() + "-" + task.getTimestamp().getTime();
+		str = StringUtils.rightPad(str, 1024, str);
+		return DigestUtils.sha512Hex(str.substring(0, 1024));
+	}
+
 	private String getArchiveName(EntityArchive archive) {
 		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
+	}
+
+	private File getFileFromIdentifier(String fileIdentifier) {
+		String path = SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + this.computeLocator(fileIdentifier);
+		return new File(path);
+	}
+
+	private SecretKey getKey(IStorable storable) {
+		try {
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			KeySpec spec = new PBEKeySpec(storable.getHash().toCharArray(), String.format("%08d", storable.getTimestamp().getTime() % 100000000).getBytes(), 65536, 192);
+			SecretKey tmp = factory.generateSecret(spec);
+			return new SecretKeySpec(tmp.getEncoded(), "AES");
+		}
+		catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+			logger.error("Error generating security key", e);
+		}
+		return null;
+	}
+
+	/**
+	 * Main method to load a file from the filestore
+	 */
+	private byte[] loadStorable(IStorable storable, String identfier) {
+		File fileToLoad = this.getFileFromIdentifier(identfier);
+		if (!fileToLoad.exists()) {
+			logger.error("File not in storage");
+			return null;
+		}
+
+		try {
+			byte[] rawContent = FileUtils.readFileToByteArray(fileToLoad);
+
+			if (storable.getSecureParam() != null) {
+				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+				cipher.init(Cipher.DECRYPT_MODE, this.getKey(storable), new IvParameterSpec(storable.getSecureParam()));
+				rawContent = cipher.doFinal(rawContent);
+			}
+
+			if (!storable.getHash().equals(DigestUtils.sha512Hex(rawContent))) {
+				logger.error("File loaded does not match stored hash, aborting");
+				return null;
+			}
+
+			return rawContent;
+		}
+		catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
+			logger.error("Error reading file", e);
+		}
+
+		return null;
+	}
+
+	private InputStream loadStorableIS(IStorable storable, String identfier) {
+		byte[] b = this.loadStorable(storable, identfier);
+		if (b == null) {
+			return null;
+		}
+		return new ByteArrayInputStream(b);
 	}
 
 	private String loadStorableStr(IStorable storable, String identfier) {
@@ -265,6 +237,34 @@ public class BaseStorageFilesystem {
 			return null;
 		}
 		return StringUtils.toEncodedString(b, StandardCharsets.UTF_8);
+	}
+
+	/**
+	 * Main method to store data to a file in the filestore
+	 */
+	private boolean storeStorable(IStorable storable, String identifier, byte[] content)
+			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException, IOException, BadPaddingException, IllegalBlockSizeException {
+		storable.setHash(DigestUtils.sha512Hex(content));
+
+		File fileToStore = this.getFileFromIdentifier(identifier);
+		if (fileToStore.exists()) {
+			logger.error("File storage collision, file not stored");
+			return false;
+		}
+
+		if (SherlockEngine.configuration.getEncryptFiles()) {
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, this.getKey(storable));
+			AlgorithmParameters params = cipher.getParameters();
+
+			storable.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
+			FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(content));
+		}
+		else {
+			FileUtils.writeByteArrayToFile(fileToStore, content);
+		}
+
+		return true;
 	}
 
 	interface IStorable {

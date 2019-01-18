@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api;
 
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
@@ -57,6 +58,7 @@ public class SherlockRegistry {
 	 *
 	 * @return languages supported by the detector
 	 */
+	@Deprecated
 	public static Language[] getDetectorLanguages(Class<? extends IDetector> det) {
 		if (registry != null) {
 			return registry.getDetectorLanguages(det);
@@ -93,6 +95,7 @@ public class SherlockRegistry {
 	 *
 	 * @return the set of detectors
 	 */
+	@Deprecated
 	public static Set<Class<? extends IDetector>> getDetectors(Language language) {
 		if (registry != null) {
 			return registry.getDetectors(language);
@@ -152,6 +155,21 @@ public class SherlockRegistry {
 	public static boolean registerDetector(Class<? extends IDetector> detector) {
 		if (registry != null) {
 			return registry.registerDetector(detector);
+		}
+		return false;
+	}
+
+	/**
+	 * Register a lexer to the language of the name passed, creating the language if the name is not recognised
+	 *
+	 * @param name  Name of the language, not case sensitive
+	 * @param lexer Lexer implementation for the language
+	 *
+	 * @return was successful?
+	 */
+	public static boolean registerLanguage(String name, Class<? extends Lexer> lexer) {
+		if (registry != null) {
+			return registry.registerLanguage(name, lexer);
 		}
 		return false;
 	}

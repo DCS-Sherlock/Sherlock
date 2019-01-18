@@ -35,15 +35,6 @@ public class AdjustableParameterObj {
 	}
 
 	/**
-	 * Return if the parameter is fixed, ie. it cannot be modified after a task has been run, for example when it is for a detector
-	 *
-	 * @return is the param fixed after raw results have been generated?
-	 */
-	public boolean isFixed() {
-		return isFixed;
-	}
-
-	/**
 	 * @return Display Name for the parameter to be displayed in the UI
 	 */
 	public String getDisplayName() {
@@ -80,6 +71,15 @@ public class AdjustableParameterObj {
 	 */
 	public float getStep() {
 		return this.param.step();
+	}
+
+	/**
+	 * Return if the parameter is fixed, ie. it cannot be modified after a task has been run, for example when it is for a detector
+	 *
+	 * @return is the param fixed after raw results have been generated?
+	 */
+	public boolean isFixed() {
+		return isFixed;
 	}
 
 	/**

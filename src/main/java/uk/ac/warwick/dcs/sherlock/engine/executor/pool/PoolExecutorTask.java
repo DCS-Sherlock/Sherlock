@@ -89,7 +89,6 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 			//Save the raw results
 			this.task.setRawResults(rawResults);
 
-
 			// TODO: TEMP BELOW HERE, MOVE BACK TO THE JOB TO ALLOW FOR REPROCESSING
 			try {
 				IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(rawResults.get(0).getClass());

@@ -61,13 +61,13 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	@Override
-	public List<? extends ICodeBlock> getCodeBlocks() {
-		return new LinkedList<>(this.blockMap.values());
+	public ICodeBlock getCodeBlock(ISourceFile file) {
+		return this.blockMap.get(file.getPersistentId());
 	}
 
 	@Override
-	public ICodeBlock getCodeBlock(ISourceFile file) {
-		return this.blockMap.get(file.getPersistentId());
+	public List<? extends ICodeBlock> getCodeBlocks() {
+		return new LinkedList<>(this.blockMap.values());
 	}
 
 	@Override

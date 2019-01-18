@@ -4,13 +4,13 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class ReportGenerator extends AbstractReportGenerator {
 
-	ReportGenerator() { super(); }
+	ReportGenerator() {
+		super();
+	}
 
 	@Override
 	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups) {
@@ -31,7 +31,7 @@ public class ReportGenerator extends AbstractReportGenerator {
 			descriptionSegments.add(baseDescriptions.get(codeBlockGroup.getDetectionType()));
 
 			//If the group has more than 2 blocks, the description must be extended.
-			for(int i = 2; i < codeBlockGroup.getCodeBlocks().size(); i++) {
+			for (int i = 2; i < codeBlockGroup.getCodeBlocks().size(); i++) {
 				descriptionSegments.add(ReportDescriptions.getContinuedDescription());
 			}
 
@@ -45,10 +45,9 @@ public class ReportGenerator extends AbstractReportGenerator {
 				lineNumbers.add(codeBlock.getLineNumbers().get(0));
 			}
 
-
 			//Format each segment of the description with the appropriate line numbers and add to the StringJoiner along the way.
 			//TODO: other formatting including file names, variables, etc.
-			for(int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
+			for (int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
 				String formattedString = String.format(descriptionSegments.get(i), lineNumbers.get(i).getKey(), lineNumbers.get(i).getValue());
 				stringJoiner.add(formattedString);
 			}

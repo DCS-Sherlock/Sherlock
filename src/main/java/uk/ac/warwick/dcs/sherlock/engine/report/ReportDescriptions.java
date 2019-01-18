@@ -30,8 +30,21 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 public class ReportDescriptions {
 
 	/**
+	 * Method to extend a description from getDescription an arbitrary length.
+	 *
+	 * @return a string containing a 'continuation' of a description from getDescription, to account for an arbitrary number of files in a ICodeBlockGroup.
+	 */
+	public static String getContinuedDescription() {
+		//TODO: multiple types of extension needed (e.g. for variable names), and some of the base descriptions need editing to fit better with the continuation.
+		//TODO cont: a better format may be e.g. File X lines 1-4, file Y lines 2-5, file Z lines 3-6...: [description] which can be copied for all descriptions basically.
+		return ", lines %1$d to %2$d in file %3$d";
+	}
+
+	/**
 	 * Method to create a basic description that a ReportGenerator can use in a report.
+	 *
 	 * @param type The type of plagiarism that this description is needed for.
+	 *
 	 * @return A string with a basic description of the provided type of plagiarism, with placeholders for line numbers and so on.
 	 */
 	public static String getDescription(DetectionType type) {
@@ -64,16 +77,6 @@ public class ReportDescriptions {
 		}
 
 		return "";
-	}
-
-	/**
-	 * Method to extend a description from getDescription an arbitrary length.
-	 * @return a string containing a 'continuation' of a description from getDescription, to account for an arbitrary number of files in a ICodeBlockGroup.
-	 */
-	public static String getContinuedDescription() {
-		//TODO: multiple types of extension needed (e.g. for variable names), and some of the base descriptions need editing to fit better with the continuation.
-		//TODO cont: a better format may be e.g. File X lines 1-4, file Y lines 2-5, file Z lines 3-6...: [description] which can be copied for all descriptions basically.
-		return ", lines %1$d to %2$d in file %3$d";
 	}
 
 }

@@ -6,16 +6,17 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import java.util.*;
 
 public interface IResultTask {
-	ITask getTask();
-
-	void setTaskScore(float score);
-
-	float getTaskScore();
 
 	void addFileScore(ISourceFile file, float score);
 
+	List<ICodeBlockGroup> getContainingBlocks();
+
 	Map<ISourceFile, Float> getFileScores();
 
-	List<ICodeBlockGroup> getContainingBlocks();
+	ITask getTask();
+
+	float getTaskScore();
+
+	void setTaskScore(float score);
 
 }

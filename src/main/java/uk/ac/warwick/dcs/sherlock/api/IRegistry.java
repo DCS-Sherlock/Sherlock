@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api;
 
+import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
@@ -45,6 +46,7 @@ public interface IRegistry {
 	 *
 	 * @return languages supported by the detector
 	 */
+	@Deprecated
 	Language[] getDetectorLanguages(Class<? extends IDetector> det);
 
 	/**
@@ -70,6 +72,7 @@ public interface IRegistry {
 	 *
 	 * @return the set of detectors
 	 */
+	@Deprecated
 	Set<Class<? extends IDetector>> getDetectors(Language language);
 
 	/**
@@ -100,13 +103,23 @@ public interface IRegistry {
 	IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass);
 
 	/**
-	 * Registers an {@link IDetector} implementation to Sherlock
+	 * Registers an {@link IDetector} implementation to Sherlock.
 	 *
 	 * @param detector the implementation
 	 *
 	 * @return was successful?
 	 */
 	boolean registerDetector(Class<? extends IDetector> detector);
+
+	/**
+	 * Register a lexer to the language of the name passed, creating the language if the name is not recognised
+	 *
+	 * @param name  Name of the language, not case sensitive
+	 * @param lexer Lexer implementation for the language
+	 *
+	 * @return was successful?
+	 */
+	boolean registerLanguage(String name, Class<? extends Lexer> lexer);
 
 	/**
 	 * Registers an {@link IPostProcessor} implementation to Sherlock, associates it with the {@link AbstractModelTaskRawResult} types it will process
@@ -117,4 +130,7 @@ public interface IRegistry {
 	 * @return was successful?
 	 */
 	boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultTypes);
+
+	/*boolean registerPreProcessor(Class<? extends IPreProcessor> preProcessor);*/
+
 }

@@ -7,9 +7,7 @@ import javax.persistence.*;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @Entity (name = "File")
 public class EntityFile implements ISourceFile, IStorable, Serializable {
@@ -56,11 +54,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		return file.getPersistentId() == this.getPersistentId();
 	}
 
-	@Override
-	public long getPersistentId() {
-		return this.id;
-	}
-
 	public EntityArchive getArchive() {
 		return archive;
 	}
@@ -82,7 +75,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public List<String> getFileContentsAsStringList() {
 		List<String> list = new ArrayList<>();
-		Scanner scanner	= new Scanner(this.getFileContents());
+		Scanner scanner = new Scanner(this.getFileContents());
 		while (scanner.hasNextLine()) {
 			list.add(scanner.nextLine());
 		}
@@ -118,6 +111,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
+	public long getPersistentId() {
+		return this.id;
+	}
+
+	@Override
 	public byte[] getSecureParam() {
 		return this.secure;
 	}
@@ -140,15 +138,15 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		this.workspace = workspace;
 	}
 
+	@Override
+	public String toString() {
+		return this.getFileDisplayName();
+	}
+
 	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive) {
 		if (archive.getParent() != null) {
 			this.getFileDisplayNameRecurse(build, archive.getParent());
 		}
 		build.append(archive.getFilename()).append("/");
-	}
-
-	@Override
-	public String toString() {
-		return this.getFileDisplayName();
 	}
 }

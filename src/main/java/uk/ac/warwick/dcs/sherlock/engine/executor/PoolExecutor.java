@@ -75,11 +75,6 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	}
 
 	@Override
-	public void submitWork(PriorityWorkTask work) {
-		this.scheduler.scheduleJob(work);
-	}
-
-	@Override
 	public void shutdown() {
 		this.scheduler.shutdown();
 		this.exec.shutdownNow();
@@ -131,5 +126,10 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		this.queue.add(j);
 
 		return true;
+	}
+
+	@Override
+	public void submitWork(PriorityWorkTask work) {
+		this.scheduler.scheduleJob(work);
 	}
 }

@@ -30,11 +30,13 @@ public class Registry implements IRegistry {
 	private static Registry instance;
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
-	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
+	private Map<String, LanguageData> languageRegistry;
 
+	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
 	private Map<Class<? extends AbstractModelTaskRawResult>, PostProcessorData> postProcRegistry;
 
 	Registry() {
+		this.languageRegistry = new ConcurrentHashMap<>();
 		this.detectorRegistry = new ConcurrentHashMap<>();
 		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
@@ -128,10 +130,6 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
-	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor) {
-		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(null);
-	}
-
 	@Override
 	public List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
@@ -161,12 +159,22 @@ public class Registry implements IRegistry {
 
 	@Override
 	public boolean registerDetector(Class<? extends IDetector> detector) {
+
+		if (detector == null) {
+			logger.error("Passed null detector");
+			return false;
+		}
+
 		IDetector tester;
 		try {
 			tester = detector.newInstance();
 		}
 		catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Ensure IDetector '{}' has a nullary constructor", detector.getName());
+			return false;
+		}
+		catch (NoClassDefFoundError e) {
+			logger.warn("IDetector '{}' not registered. Could not find the required class dependency '{}'", detector.getName(), e.getMessage());
 			return false;
 		}
 
@@ -254,26 +262,50 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
-	private Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
-		ParameterizedType type = this.getHighestParamType(genericSuperclass);
-		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
-		return Class.forName(typeName);
-	}
+	@Override
+	public boolean registerLanguage(String name, Class<? extends Lexer> lexer) {
+		if (name != null && !name.equals("") && lexer != null) {
+			if (name.length() > 32) {
+				logger.error("Cannot register language '{}', name is too long");
+			}
 
-	private ParameterizedType getHighestParamType(Type type) {
-		while (!(type instanceof ParameterizedType)) {
-			try {
-				type = ((Class<?>) type).getGenericSuperclass();
+			LanguageData data;
+			if (this.languageRegistry.containsKey(name.toLowerCase())) {
+				data = this.languageRegistry.get(name.toLowerCase());
 			}
-			catch (NullPointerException e) {
-				return null;
+			else {
+				data = new LanguageData(name);
+				this.languageRegistry.put(name.toLowerCase(), data);
 			}
+
+			data.lexers.add(lexer);
+			return true;
 		}
-		return (ParameterizedType) type;
+
+		logger.error("Cannot register a language with a blank name or lexer");
+		return false;
 	}
 
 	@Override
 	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultType) {
+
+		if (postProcessor == null || handledResultType == null) {
+			logger.error("PostProcessor and/or AbstractModelTaskRawResult classes cannot be null");
+		}
+
+		try {
+			postProcessor.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e) {
+			logger.error("Ensure IPostProcessor '{}'has a nullary constructors", postProcessor.getName());
+			return false;
+		}
+		catch (NoClassDefFoundError e) {
+			logger.warn("IPostProcessor '{}' not registered. Could not find the required class dependency '{}'", postProcessor.getName(), e.getMessage());
+			return false;
+		}
+
+
 		if (this.postProcRegistry.containsKey(handledResultType)) {
 			logger.error("RawResult class '{}' already mapped to a postprocessor", handledResultType.getName());
 			return false;
@@ -345,6 +377,28 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
+	private Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
+		ParameterizedType type = this.getHighestParamType(genericSuperclass);
+		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
+		return Class.forName(typeName);
+	}
+
+	private ParameterizedType getHighestParamType(Type type) {
+		while (!(type instanceof ParameterizedType)) {
+			try {
+				type = ((Class<?>) type).getGenericSuperclass();
+			}
+			catch (NullPointerException e) {
+				return null;
+			}
+		}
+		return (ParameterizedType) type;
+	}
+
+	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor) {
+		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(null);
+	}
+
 	private class DetectorData {
 
 		String name;
@@ -360,5 +414,27 @@ public class Registry implements IRegistry {
 
 		Class<? extends IPostProcessor> proc;
 		List<AdjustableParameterObj> adjustables;
+	}
+
+	private class PreProcessorData {
+
+		Map<String, Integer> langLexerRef;
+
+		PreProcessorData() {
+			this.langLexerRef = new HashMap<>();
+		}
+	}
+
+	private class LanguageData {
+
+		String dispName;
+		Set<Class<? extends Lexer>> lexers;
+		Set<Class<? extends IDetector>> detectors;
+
+		LanguageData(String dispName) {
+			this.dispName = dispName;
+			this.lexers = new HashSet<>();
+			this.detectors = new HashSet<>();
+		}
 	}
 }

@@ -39,16 +39,6 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 		this.lang = lang;
 	}
 
-	private void storeName(String name) {
-		if (name.length() > 64) {
-			BaseStorage.logger.warn("Workspace name too long [{}]", name);
-			this.name = name.substring(0, 64);
-		}
-		else {
-			this.name = name;
-		}
-	}
-
 	@Override
 	public IJob createJob() {
 		return new EntityJob(this);
@@ -89,6 +79,16 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public long getPersistentId() {
 		return id;
+	}
+
+	private void storeName(String name) {
+		if (name.length() > 64) {
+			BaseStorage.logger.warn("Workspace name too long [{}]", name);
+			this.name = name.substring(0, 64);
+		}
+		else {
+			this.name = name;
+		}
 	}
 
 }

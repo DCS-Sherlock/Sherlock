@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 public class SherlockEngine {
 
 	public static final String version = "@VERSION@";
-	public static final Boolean enableExternalModules = false;
+	public static final Boolean enableExternalModules = true;
 
 	public static Side side = Side.UNKNOWN;
 	public static Configuration configuration = null;
@@ -70,15 +70,32 @@ public class SherlockEngine {
 		SherlockEngine.loadConfiguration();
 	}
 
-	private void shutdown() {
-		logger.info("Stopping SherlockEngine");
+	/**
+	 * Test the presence of a module at the passed classpath, should point to a class within the module
+	 *
+	 * @param classpath the module classpath as a string (to avoid requiring an import). Example for base Sherlock module: "uk.ac.warwick.dcs.sherlock.module.model.base.ModuleModelBase"
+	 *
+	 * @return Whether the module is present
+	 */
+	public static boolean isModulePresent(String classpath) {
 		try {
-			SherlockEngine.storage.close();
-			SherlockEngine.executor.shutdown();
+			Class.forName(classpath);
+			return true;
 		}
-		catch (Exception ignored) {
+		catch (Exception e) {
+			return false;
 		}
 	}
+
+	/*public static void submitToExecutor(IJob job) {
+		long startTime = System.nanoTime();
+		SherlockEngine.executor.submitJob(job);
+		long endTime = System.nanoTime();
+
+		double duration = (endTime - startTime) * 1e-6;
+		duration = duration / 1000;
+		logger.warn("Job duration: " + duration + " seconds");
+	}*/
 
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
@@ -109,16 +126,6 @@ public class SherlockEngine {
 			}
 		}
 	}
-
-	/*public static void submitToExecutor(IJob job) {
-		long startTime = System.nanoTime();
-		SherlockEngine.executor.submitJob(job);
-		long endTime = System.nanoTime();
-
-		double duration = (endTime - startTime) * 1e-6;
-		duration = duration / 1000;
-		logger.warn("Job duration: " + duration + " seconds");
-	}*/
 
 	private static void writeConfiguration() {
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
@@ -173,6 +180,16 @@ public class SherlockEngine {
 
 		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
 		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
+	}
+
+	private void shutdown() {
+		logger.info("Stopping SherlockEngine");
+		try {
+			SherlockEngine.storage.close();
+			SherlockEngine.executor.shutdown();
+		}
+		catch (Exception ignored) {
+		}
 	}
 
 	/*@ResponseHandler

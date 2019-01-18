@@ -8,6 +8,6 @@ public interface IResultJob {
 
 	IResultFile addFile(ISourceFile file);
 
-	List<IResultFile>  getFileResults();
+	List<IResultFile> getFileResults();
 
 }

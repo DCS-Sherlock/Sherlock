@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.*;
 
 public interface ISourceFile {
 
