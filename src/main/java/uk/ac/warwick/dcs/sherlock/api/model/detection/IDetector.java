@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
@@ -33,7 +32,7 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	 *
 	 * @return the lexer class to use
 	 */
-	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(Language lang);
+	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(String lang);
 
 	/**
 	 * Returns the appropriate parser for this strategy and the language of the source files
@@ -42,7 +41,7 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	 *
 	 * @return the parser class to use
 	 */
-	Class<? extends org.antlr.v4.runtime.Parser> getParser(Language lang);
+	Class<? extends org.antlr.v4.runtime.Parser> getParser(String lang);
 
 	/**
 	 * Specify the preprocessors required for this detector.
@@ -69,7 +68,7 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	/**
 	 * @return Array of languages supported by the algorithm
 	 */
-	Language[] getSupportedLanguages();
+	String[] getSupportedLanguages();
 
 	enum Rank {
 		PRIMARY, BACKUP

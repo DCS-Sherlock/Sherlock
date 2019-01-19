@@ -66,7 +66,7 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer, Class<? extends Parser> parser, Language lang) {
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer, Class<? extends Parser> parser, String lang) {
 		return validatePreProcessingStrategy(strategy, lexer.getClass().getName(), lexer.getChannelNames(), parser, lang);
 	}
 
@@ -78,7 +78,7 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels, Class<? extends Parser> parser, Language lang) {
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels, Class<? extends Parser> parser, String lang) {
 
 		if (strategy == null) {
 			return false;

@@ -6,7 +6,6 @@ import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector.TestDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
@@ -17,7 +16,7 @@ import java.util.*;
 
 public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 
-	private static final Language[] languages = { Language.JAVA };
+	private static final String[] languages = { "Java" };
 
 	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
 	public int testParam;
@@ -33,12 +32,12 @@ public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 	}
 
 	@Override
-	public Class<? extends Lexer> getLexer(Language lang) {
+	public Class<? extends Lexer> getLexer(String lang) {
 		return JavaLexer.class;
 	}
 
 	@Override
-	public Class<? extends Parser> getParser(Language lang) {
+	public Class<? extends Parser> getParser(String lang) {
 		return JavaParser.class;
 	}
 
@@ -53,7 +52,7 @@ public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 	}
 
 	@Override
-	public Language[] getSupportedLanguages() {
+	public String[] getSupportedLanguages() {
 		return languages;
 	}
 

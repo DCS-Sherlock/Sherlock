@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceForm;
@@ -44,6 +45,7 @@ public class WorkspacesController {
 	@GetMapping ("/dashboard/workspaces/add")
 	public String addGet(Model model) {
 		model.addAttribute("workspaceForm", new WorkspaceForm());
+		model.addAttribute("languageList", SherlockRegistry.getLanguages());
 		return "dashboard/workspaces/add";
 	}
 
@@ -51,10 +53,13 @@ public class WorkspacesController {
 	public String addPost(
 			@Valid @ModelAttribute WorkspaceForm workspaceForm,
 			BindingResult result,
-			@ModelAttribute("account") Account account
+			@ModelAttribute("account") Account account,
+			Model model
 	) {
-		if (result.hasErrors())
+		if (result.hasErrors()) {
+			model.addAttribute("languageList", SherlockRegistry.getLanguages());
 			return "dashboard/workspaces/add";
+		}
 
 		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceForm, account, workspaceRepository);
 		return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId();

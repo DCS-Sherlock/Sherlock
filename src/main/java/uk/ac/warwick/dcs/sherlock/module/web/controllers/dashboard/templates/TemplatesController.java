@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -16,6 +16,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @Controller
 public class TemplatesController {
@@ -49,9 +50,11 @@ public class TemplatesController {
 
 	@GetMapping ("/dashboard/templates/add")
 	public String addGet(Model model) {
-		Language language = Language.JAVA;
+		Set<String> languages = SherlockRegistry.getLanguages();
+		String language = languages.iterator().next();
 		model.addAttribute("templateForm", new TemplateForm(language));
 		model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(language));
+		model.addAttribute("languageList", languages);
 		return "dashboard/templates/add";
 	}
 
@@ -65,6 +68,7 @@ public class TemplatesController {
 	) throws NotTemplateOwner {
 		if (result.hasErrors()) {
 			model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(templateForm.getLanguage()));
+			model.addAttribute("languageList", SherlockRegistry.getLanguages());
 			return "dashboard/templates/add";
 		}
 
@@ -76,7 +80,7 @@ public class TemplatesController {
 	public String addGetFragment(
 			Model model,
 			@ModelAttribute("isAjax") boolean isAjax,
-			@PathVariable("language") Language language
+			@PathVariable("language") String language
 	) throws NotAjaxRequest {
 		if (!isAjax) throw new NotAjaxRequest("/dashboard/templates");
 

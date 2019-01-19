@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<form th:action="@{/dashboard/workspaces/manage/name/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#name-parent" th:object="${workspaceForm}" method="post">
+<form th:action="@{/dashboard/workspaces/manage/details/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#name-parent" th:object="${workspaceForm}" method="post">
     <div th:if="${#fields.hasAnyErrors()}">
         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
     </div>
@@ -26,7 +26,7 @@
         <div class="form-group col-md-12">
             <label  th:for="*{language}" th:text="#{variable_language}"></label>
             <select class="form-control" th:field="*{language}">
-                <option th:each="language : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
+                <option th:each="language : ${languageList}"
                         th:value="${language}"
                         th:text="${language}">
                 </option>

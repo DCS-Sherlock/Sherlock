@@ -10,7 +10,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
@@ -27,12 +26,12 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 	List<ModelDataItem> dataItems;
 	private IPriorityWorkSchedulerWrapper scheduler;
 	private ITask task;
-	private Language language;
+	private String language;
 	private Class<? extends Lexer> lexerClass;
 	private Class<? extends Parser> parserClass;
 	private List<IPreProcessingStrategy> preProcessingStrategies;
 
-	PoolExecutorTask(IPriorityWorkSchedulerWrapper scheduler, ITask task, Language language) {
+	PoolExecutorTask(IPriorityWorkSchedulerWrapper scheduler, ITask task, String language) {
 		this.scheduler = scheduler;
 		this.task = task;
 		this.language = language;
@@ -129,7 +128,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 	}
 
 	@Override
-	public Language getLanguage() {
+	public String getLanguage() {
 		return this.language;
 	}
 

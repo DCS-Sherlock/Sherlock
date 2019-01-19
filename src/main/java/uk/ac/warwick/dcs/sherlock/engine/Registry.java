@@ -284,7 +284,7 @@ public class Registry implements IRegistry {
 
 		//Do checks on detector, ensure is valid
 		try {
-			for (Language lang : tester.getSupportedLanguages()) {
+			for (String lang : tester.getSupportedLanguages()) {
 				Class<? extends Lexer> lexerClass = tester.getLexer(lang);
 				List<IPreProcessingStrategy> preProcessingStrategies = tester.getPreProcessors();
 
@@ -293,7 +293,7 @@ public class Registry implements IRegistry {
 				for (IPreProcessingStrategy strat : preProcessingStrategies) {
 					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels, tester.getParser(lang), lang)) {
 						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}' and parser '{}'",
-								tester.getDisplayName(), strat.getName(), lang.name(), lexerClass.getName(), tester.getParser(lang).getName());
+								tester.getDisplayName(), strat.getName(), lang, lexerClass.getName(), tester.getParser(lang).getName());
 						return false;
 					}
 				}

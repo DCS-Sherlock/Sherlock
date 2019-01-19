@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
@@ -19,7 +18,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	private long id;
 
 	private String name;
-	private Language lang;
+	private String lang;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityFile> files = new ArrayList<>();
@@ -33,7 +32,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 		this.lang = null;
 	}
 
-	public EntityWorkspace(String name, Language lang) {
+	public EntityWorkspace(String name, String lang) {
 		super();
 		this.storeName(name);
 		this.lang = lang;
@@ -57,12 +56,12 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	}
 
 	@Override
-	public Language getLanguage() {
+	public String getLanguage() {
 		return this.lang;
 	}
 
 	@Override
-	public void setLanguage(Language lang) {
+	public void setLanguage(String lang) {
 		this.lang = lang;
 	}
 

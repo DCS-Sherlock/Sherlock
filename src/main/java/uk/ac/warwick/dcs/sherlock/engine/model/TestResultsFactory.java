@@ -95,7 +95,7 @@ public class TestResultsFactory implements IExecutor {
 							try {
 								ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> t = SherlockRegistry
 										.getAdvancedPostProcessorForLanguage((Class<? extends IAdvancedPreProcessorGroup>) strategy.getPreProcessorClasses().get(0),
-												workspace.getLanguage().name());
+												workspace.getLanguage());
 
 								Lexer lexer = t.getValue().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
 								IAdvancedPreProcessor processor = t.getKey().newInstance();

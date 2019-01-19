@@ -1,12 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.TDetector;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.EngineDetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,7 +21,7 @@ public class TemplateForm {
     public String name;
 
     @NotNull(message = "{error_language_empty}")
-    public Language language;
+    public String language; //TODO: perform validation to check if input is a valid language
 
     @NotNull(message = "{error_public_empty}")
     public boolean isPublic;
@@ -36,7 +30,7 @@ public class TemplateForm {
 
     public TemplateForm() { }
 
-    public TemplateForm(Language language) {
+    public TemplateForm(String language) {
         this.language = language;
     }
 
@@ -55,11 +49,11 @@ public class TemplateForm {
         this.name = name;
     }
 
-    public Language getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 

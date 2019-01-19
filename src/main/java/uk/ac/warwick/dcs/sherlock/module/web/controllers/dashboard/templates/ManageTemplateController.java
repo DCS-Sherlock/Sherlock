@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.TemplateForm;
@@ -40,6 +41,7 @@ public class ManageTemplateController {
 
         model.addAttribute("templateForm", new TemplateForm(templateWrapper));
         model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(templateWrapper.getTemplate().getLanguage()));
+        model.addAttribute("languageList", SherlockRegistry.getLanguages());
         return "dashboard/templates/fragments/details";
     }
 
@@ -61,6 +63,7 @@ public class ManageTemplateController {
 
         model.addAttribute("templateForm", templateForm);
         model.addAttribute("detectorList", EngineDetectorWrapper.getDetectors(templateWrapper.getTemplate().getLanguage()));
+        model.addAttribute("languageList", SherlockRegistry.getLanguages());
         return "dashboard/templates/fragments/details";
     }
 

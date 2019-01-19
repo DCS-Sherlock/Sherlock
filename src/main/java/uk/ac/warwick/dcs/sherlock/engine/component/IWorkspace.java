@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
@@ -27,12 +26,12 @@ public interface IWorkspace {
 	/**
 	 * @return the language for the workspace
 	 */
-	Language getLanguage();
+	String getLanguage();
 
 	/**
 	 * @param lang set the workspace to use this language
 	 */
-	void setLanguage(Language lang);
+	void setLanguage(String lang);
 
 	/**
 	 * @return the name of the workspace

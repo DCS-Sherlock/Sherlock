@@ -31,6 +31,6 @@ public interface IGeneralPreProcessor extends IPreProcessor {
 	 *
 	 * @return output list of filtered tokens
 	 */
-	List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang);
+	List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, String lang);
 
 }

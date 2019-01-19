@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
@@ -24,7 +23,7 @@ public class CommentExtractor implements IGeneralPreProcessor {
 	 * @return stream of tokens containing comments
 	 */
 	@Override
-	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang) {
+	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, String lang) {
 		//Parallel version: return tokens.parallelStream().filter(t -> StandardLexerSpecification.channels.values()[t.getChannel()] == StandardLexerSpecification.channels.COMMENT).collect(Collectors.toList());
 
 		List<Token> result = new ArrayList<>();

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
@@ -61,7 +60,7 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public IWorkspace createWorkspace(String name, Language lang) {
+	public IWorkspace createWorkspace(String name, String lang) {
 		IWorkspace w = new EntityWorkspace(name, lang);
 		this.database.storeObject(w);
 		return w;

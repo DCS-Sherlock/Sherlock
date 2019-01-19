@@ -6,7 +6,6 @@ import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector.NGramDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
@@ -303,7 +302,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 * @return Returns the lexer to be used in the detector.
 	 */
 	@Override
-	public Class<? extends Lexer> getLexer(Language lang) {
+	public Class<? extends Lexer> getLexer(String lang) {
 		return JavaLexer.class;
 	}
 
@@ -315,7 +314,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 * @return Returns the parser to be used in the detector.
 	 */
 	@Override
-	public Class<? extends Parser> getParser(Language lang) {
+	public Class<? extends Parser> getParser(String lang) {
 		return JavaParser.class;
 	}
 
@@ -343,8 +342,10 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 * @return A full list of surported languages.
 	 */
 	@Override
-	public Language[] getSupportedLanguages() {
-		return Language.values(); //All possible values for the language
+	public String[] getSupportedLanguages() {
+		String[] languages = {"Java"};
+		return languages;
+//		return Language.values(); //All possible values for the language
 	}
 
 	/**
