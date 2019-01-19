@@ -3,11 +3,13 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -40,26 +42,25 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	// Store as a file in case too large for db field, store refs to files in this object
 	private transient List<AbstractModelTaskRawResult> rawResults;
 
-	//private List<ModelTaskProcessedResults> finalResults;
+	private WorkStatus status;
 
 	public EntityTask() {
 		super();
 	}
 
-	private void deserialize() {
-		BaseStorage.instance.filesystem.loadTaskRawResults(this);
-		this.rawResults.forEach(System.out::println);
-	}
-
-	public EntityTask(EntityJob job, Class<? extends IDetector> detector, Map<String, Float> mapping) {
+	public EntityTask(EntityJob job, Class<? extends IDetector> detector) {
 		super();
 		this.job = job;
 		this.detector = detector.getName();
-		this.paramMap = mapping;
+		this.paramMap = null;
 		this.rank = SherlockRegistry.getDetectorRank(detector);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;
 		this.secure = null;
+		this.status = WorkStatus.PREPARED;
+
+		this.addParams(SherlockRegistry.getDetectorAdjustableParameters(detector));
+		this.addParams(SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector));
 	}
 
 	@Override
@@ -116,12 +117,8 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
+		this.setComplete();
 		this.serialize();
-	}
-
-	private void serialize() {
-		BaseStorage.instance.filesystem.storeTaskRawResults(this);
-		BaseStorage.instance.database.storeObject(this);
 	}
 
 	@Override
@@ -135,12 +132,96 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
+	public WorkStatus getStatus() {
+		return this.status;
+	}
+
+	void setStatus(WorkStatus status) {
+		this.status = status;
+	}
+
+	@Override
 	public Timestamp getTimestamp() {
 		return this.timestamp;
 	}
 
+	@Override
+	public boolean hasResults() {
+		return this.hash != null && this.hash.length() > 0;
+	}
+
+	@SuppressWarnings ("Duplicates")
+	@Override
+	public boolean resetParameter(AdjustableParameterObj paramObj) {
+		if (paramObj == null || !this.paramMap.containsKey(paramObj.getReference())) {
+			BaseStorage.logger.warn("Could not reset adjustable parameter for job#{} detector '{}', parameter passed is null", this.job.getPersistentId(), this.detector);
+			return false;
+		}
+
+		if (paramObj.isFixed() && (this.status == WorkStatus.COMPLETE || this.hasResults())) {
+			BaseStorage.logger.warn("Parameter '{}' for job#{} detector '{}', cannot be modified after a task is run", paramObj.getName(), this.job.getPersistentId(), this.detector);
+			return false;
+		}
+
+		return this.setParameter(paramObj, paramObj.getDefaultValue());
+	}
+
+	@Override
+	public void setComplete() {
+		this.status = WorkStatus.COMPLETE;
+	}
+
+	@SuppressWarnings ("Duplicates")
+	@Override
+	public boolean setParameter(AdjustableParameterObj paramObj, float value) {
+		if (paramObj == null || !this.paramMap.containsKey(paramObj.getReference())) {
+			BaseStorage.logger.warn("Could not set adjustable parameter for job#{} detector '{}', parameter passed is null", this.job.getPersistentId(), this.detector);
+			return false;
+		}
+
+		if (paramObj.isFixed() && (this.status == WorkStatus.COMPLETE || this.hasResults())) {
+			BaseStorage.logger.warn("Parameter '{}' for job#{} detector '{}', cannot be modified after a task is run", paramObj.getName(), this.job.getPersistentId(), this.detector);
+			return false;
+		}
+
+		if (paramObj.isInt() && value % 1 != 0) {
+			BaseStorage.logger
+					.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', parameter passed is not an integer", paramObj.getName(), this.job.getPersistentId(), this.detector);
+			return false;
+		}
+
+		if (value < paramObj.getMinimumBound() || value > paramObj.getMaximumBound()) {
+			BaseStorage.logger.warn("Could not set adjustable parameter '{}' for job#{} detector '{}', value passed is outside the parameter bounds", paramObj.getName(), this.job.getPersistentId(),
+					this.detector);
+			return false;
+		}
+
+		this.paramMap.put(paramObj.getReference(), value);
+		BaseStorage.instance.database.storeObject(this);
+		return true;
+	}
+
 	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
+	}
+
+	private void addParams(List<AdjustableParameterObj> params) {
+		if (params != null && !params.isEmpty()) {
+			if (this.paramMap == null) {
+				this.paramMap = new HashMap<>();
+			}
+
+			params.forEach(x -> this.paramMap.put(x.getReference(), x.getDefaultValue()));
+		}
+	}
+
+	private void deserialize() {
+		BaseStorage.instance.filesystem.loadTaskRawResults(this);
+	}
+
+	private void serialize() {
+		BaseStorage.instance.filesystem.storeTaskRawResults(this);
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 }

@@ -2,16 +2,14 @@ package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericGeneralPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
@@ -30,6 +28,33 @@ import java.util.stream.*;
 @Deprecated
 public class TestResultsFactory implements IExecutor {
 
+	@Override
+	public List<IJob> getCurrentJobs() {
+		return null;
+	}
+
+	@Override
+	public JobStatus getJobStatus(IJob job) {
+		return null;
+	}
+
+	@Override
+	public void shutdown() {
+
+	}
+
+	@Override
+	public boolean submitJob(IJob job) {
+		try {
+			this.buildTestResults(job);
+		}
+		catch (IllegalAccessException | InstantiationException e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+
 	@SuppressWarnings ("Duplicates")
 	@Deprecated
 	private String buildTestResults(IJob job) throws IllegalAccessException, InstantiationException {
@@ -46,7 +71,7 @@ public class TestResultsFactory implements IExecutor {
 		IWorkspace workspace = job.getWorkspace();
 
 		//ITask task = job.getTasks().get(0);
-		for(ITask task : job.getTasks()) {
+		for (ITask task : job.getTasks()) {
 			IDetector instance = task.getDetector().newInstance();
 
 			List<ISourceFile> files = workspace.getFiles();
@@ -62,31 +87,35 @@ public class TestResultsFactory implements IExecutor {
 			}*/
 
 			List<ModelDataItem> inputData = files.parallelStream().map(file -> {
-				try {
-					Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents())); // build new lexer for each file
-					List<? extends Token> tokensMaster = lexer.getAllTokens();
+				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
-					ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
+				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
+					if (strategy.isAdvanced()) {
+						if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
+							try {
+								ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> t = SherlockRegistry
+										.getAdvancedPostProcessorForLanguage((Class<? extends IAdvancedPreProcessorGroup>) strategy.getPreProcessorClasses().get(0),
+												workspace.getLanguage());
 
-					preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
-						if (strategy.isParserBased()) {
-							if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
-								Class<? extends IPreProcessor> processorClass = strategy.getPreProcessorClasses().get(0);
-								try {
-									IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
-									map.put(strategy.getName(), processor.processTokens(lexer, parserClass, workspace.getLanguage()));
-								}
-								catch (InstantiationException | IllegalAccessException e) {
-									e.printStackTrace();
-								}
+								Lexer lexer = t.getValue().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
+								IAdvancedPreProcessor processor = t.getKey().newInstance();
+								map.put(strategy.getName(), processor.process(lexer));
+							}
+							catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IOException | InvocationTargetException e) {
+								e.printStackTrace();
 							}
 						}
-						else {
+					}
+					else {
+						try {
+							Lexer lexerOld = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
+							List<? extends Token> tokensMaster = lexerOld.getAllTokens();
+
 							List<? extends Token> tokens = new LinkedList<>(tokensMaster);
 							for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 								try {
-									ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
-									tokens = processor.process(tokens, lexer.getVocabulary(), workspace.getLanguage());
+									IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
+									tokens = processor.process(tokens, lexerOld.getVocabulary(), workspace.getLanguage());
 								}
 								catch (InstantiationException | IllegalAccessException e) {
 									e.printStackTrace();
@@ -97,30 +126,28 @@ public class TestResultsFactory implements IExecutor {
 							if (strategy.getStringifier() != null) {
 								stringifier = strategy.getStringifier();
 							}
-							else if (strategy instanceof GenericTokenPreProcessingStrategy && ((GenericTokenPreProcessingStrategy) strategy).isResultTokenised()) {
+							else if (strategy instanceof GenericGeneralPreProcessingStrategy && ((GenericGeneralPreProcessingStrategy) strategy).isResultTokenised()) {
 								stringifier = new StandardTokeniser();
 							}
 							else {
 								stringifier = new StandardStringifier();
 							}
 
-							map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
+							map.put(strategy.getName(), stringifier.processTokens(tokens, lexerOld.getVocabulary()));
 						}
-					});
+						catch (IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 
-					return new ModelDataItem(file, map);
-				}
-				catch (InstantiationException | IllegalAccessException | IOException | NoSuchMethodException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-
-				return null;
+				return new ModelDataItem(file, map);
 			}).collect(Collectors.toList());
 
-			List<IDetector.IDetectorWorker> workers = instance.buildWorkers(inputData);
-			workers.parallelStream().forEach(IDetector.IDetectorWorker::execute);
+			List<AbstractDetectorWorker> workers = instance.buildWorkers(inputData);
+			workers.parallelStream().forEach(AbstractDetectorWorker::execute);
 
-			List<AbstractModelTaskRawResult> raw = workers.stream().map(IDetector.IDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+			/*List<AbstractModelTaskRawResult> raw = workers.stream().map(AbstractDetectorWorker::getRawResult).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 			boolean isValid = true;
 			for (int i = 1; i < raw.size(); i++) {
 				if (!raw.get(i).testType(raw.get(0))) {
@@ -151,36 +178,9 @@ public class TestResultsFactory implements IExecutor {
 			for (ICodeBlockGroup g : gs) {
 				g.getCodeBlocks().forEach(x -> System.out.println(x.getFile() + " - " + x.getLineNumbers().toString()));
 				System.out.println();
-			}
+			}*/
 		}
 
 		return "done"; //raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
-	}
-
-	@Override
-	public int submitJob(IJob job) {
-		try {
-			this.buildTestResults(job);
-		}
-		catch (IllegalAccessException | InstantiationException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
-	}
-
-	@Override
-	public List<IJob> getCurrentActiveJobs() {
-		return null;
-	}
-
-	@Override
-	public JobStatus getJobStatus(IJob job) {
-		return null;
-	}
-
-	@Override
-	public void shutdown() {
-
 	}
 }

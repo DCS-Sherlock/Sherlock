@@ -1,17 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
 /**
  * Interface for implementing a detection algorithm
- *
+ * <p>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
-public interface IDetector {
+public interface IDetector<T extends AbstractDetectorWorker> {
 
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
@@ -20,7 +18,7 @@ public interface IDetector {
 	 *
 	 * @return list of configured workers ready to be executed
 	 */
-	List<IDetectorWorker> buildWorkers(List<ModelDataItem> data);
+	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
 	 * @return display name of the algorithm
@@ -34,7 +32,7 @@ public interface IDetector {
 	 *
 	 * @return the lexer class to use
 	 */
-	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(Language lang);
+	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(String lang);
 
 	/**
 	 * Returns the appropriate parser for this strategy and the language of the source files
@@ -43,7 +41,7 @@ public interface IDetector {
 	 *
 	 * @return the parser class to use
 	 */
-	Class<? extends org.antlr.v4.runtime.Parser> getParser(Language lang);
+	Class<? extends org.antlr.v4.runtime.Parser> getParser(String lang);
 
 	/**
 	 * Specify the preprocessors required for this detector.
@@ -70,29 +68,9 @@ public interface IDetector {
 	/**
 	 * @return Array of languages supported by the algorithm
 	 */
-	Language[] getSupportedLanguages();
+	String[] getSupportedLanguages();
 
 	enum Rank {
 		PRIMARY, BACKUP
 	}
-
-	/**
-	 * Top level interface workers are required to implement
-	 */
-	interface IDetectorWorker {
-
-		/**
-		 * Do work and create the results
-		 */
-		void execute();
-
-		/**
-		 * Gets the results of the worker execution, only minimal processing should be performed in this method
-		 *
-		 * @return worker results
-		 */
-		AbstractModelTaskRawResult getRawResult();
-
-	}
-
 }

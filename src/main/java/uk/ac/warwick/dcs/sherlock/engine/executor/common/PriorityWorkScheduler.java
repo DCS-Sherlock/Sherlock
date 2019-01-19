@@ -5,10 +5,9 @@ import java.util.concurrent.*;
 
 public class PriorityWorkScheduler {
 
+	private final PriorityBlockingQueue<PriorityWorkTask> priorityQueue;
 	private ForkJoinPool priorityWorkForkPool;
 	private ExecutorService priorityWorkScheduler;
-
-	private PriorityBlockingQueue<PriorityWorkTask> priorityQueue;
 
 	public PriorityWorkScheduler() {
 		this(10);

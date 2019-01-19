@@ -1,7 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.db;
 
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +17,7 @@ public class Template {
     private String name;
 
     @Column(name = "language")
-    private Language language;
+    private String language;
 
     @Column(name = "is_public")
     private boolean isPublic;
@@ -29,14 +27,10 @@ public class Template {
     private Account account;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "template", cascade = CascadeType.REMOVE)
-    private Set<TemplateDetector> detectors = new HashSet<>();
+    private Set<TDetector> tDetectors = new HashSet<>();
 
     public Template() {
 
-    }
-
-    public Template(Account account) {
-        this.account = account;
     }
 
     public long getId() {
@@ -71,19 +65,19 @@ public class Template {
         isPublic = aPublic;
     }
 
-    public Set<TemplateDetector> getDetectors() {
-        return detectors;
+    public Set<TDetector> getDetectors() {
+        return tDetectors;
     }
 
-    public void setDetectors(Set<TemplateDetector> detectors) {
-        this.detectors = detectors;
+    public void setDetectors(Set<TDetector> detectors) {
+        this.tDetectors = detectors;
     }
 
-    public Language getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 }

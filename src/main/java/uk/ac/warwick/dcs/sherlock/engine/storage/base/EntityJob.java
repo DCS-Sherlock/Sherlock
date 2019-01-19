@@ -1,14 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
-import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJobResult;
-import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
-import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,14 +23,13 @@ public class EntityJob implements IJob, Serializable {
 
 	private Timestamp timestamp;
 
+	private WorkStatus status;
+
 	@Transient
 	private boolean prepared;
 
 	@Transient
 	private List<Class<? extends IDetector>> detectors;
-
-	@Transient
-	private Map<String, ITuple<Class<? extends IDetector>, Float>> paramMap;
 
 	// list of file ids in workspace WHEN creating job, used to warn and prevent report gen if file is removed or updated(remove existing and add updated file as new entity when doing this)
 	private long[] filesPresent;
@@ -45,20 +37,19 @@ public class EntityJob implements IJob, Serializable {
 	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityTask> tasks = new ArrayList<>();
 
-	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityResult> results = new ArrayList<>();
+	private List<EntityResultJob> results = new ArrayList<>();
 
 	public EntityJob() {
 		super();
 		this.prepared = true;
 		this.detectors = null;
-		this.paramMap = null;
 	}
 
 	public EntityJob(EntityWorkspace workspace) {
 		super();
 		this.workspace = workspace;
 		this.timestamp = new Timestamp(System.currentTimeMillis());
+		this.status = WorkStatus.NOT_PREPARED;
 		this.filesPresent = new long[workspace.getFiles().size()];
 
 		for (int i = 0; i < this.filesPresent.length; i++) {
@@ -67,34 +58,6 @@ public class EntityJob implements IJob, Serializable {
 
 		this.prepared = false;
 		this.detectors = new LinkedList<>();
-		this.paramMap = new HashMap<>();
-	}
-
-	@Override
-	public boolean prepare() {
-		this.workspace.getJobs().add(this);
-		BaseStorage.instance.database.storeObject(this);
-
-		this.detectors.forEach(x -> {
-			Map<String, Float> map = new HashMap<>();
-			this.paramMap.forEach((k,v) -> {
-				if (v.getKey().equals(x)) { //if is correct detector
-					map.put(k, v.getValue());
-				}
-			});
-
-			EntityTask newTask = new EntityTask(this, x, map.isEmpty() ? null : map);
-			this.tasks.add(newTask);
-			BaseStorage.instance.database.storeObject(newTask);
-		});
-		
-		this.prepared = true;
-		return true;
-	}
-
-	@Override
-	public boolean isPrepared() {
-		return this.prepared;
 	}
 
 	@Override
@@ -116,18 +79,83 @@ public class EntityJob implements IJob, Serializable {
 
 		this.detectors.add(det);
 
-		List<AdjustableParameterObj> params = SherlockRegistry.getDetectorAdjustableParameters(det);
-		if (params == null || params.isEmpty()) {
-			return false;
-		}
+		return true;
+	}
 
-		params.forEach(x -> {
-			if (!this.paramMap.containsKey(x.getReference())) {
-				ITuple t = new Tuple(det, x.getDefaultValue());
-				this.paramMap.put(x.getReference(), t);
-			}
+	@Override
+	public IResultJob createNewResult() {
+		EntityResultJob j = new EntityResultJob();
+		this.results.add(j);
+		BaseStorage.instance.database.storeObject(j);
+		return j;
+	}
+
+	@Override
+	public long[] getFiles() {
+		return this.filesPresent;
+	}
+
+	@Override
+	public IResultJob getLatestResult() {
+		return null;
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
+	}
+
+	@Override
+	public List<IResultJob> getResults() {
+		//TODO: do results api so we can write the getter
+		return null;
+	}
+
+	@Override
+	public WorkStatus getStatus() {
+		return this.status;
+	}
+
+	@Override
+	public void setStatus(WorkStatus status) {
+		this.status = status;
+	}
+
+	@Override
+	public List<ITask> getTasks() {
+		BaseStorage.instance.database.refreshObject(this);
+		return new ArrayList<>(this.tasks);
+	}
+
+	@Override
+	public LocalDateTime getTimestamp() {
+		return this.timestamp.toLocalDateTime();
+	}
+
+	@Override
+	public IWorkspace getWorkspace() {
+		return this.workspace;
+	}
+
+	@Override
+	public boolean isPrepared() {
+		return this.prepared;
+	}
+
+	@Override
+	public boolean prepare() {
+		this.workspace.getJobs().add(this);
+
+		this.detectors.forEach(x -> {
+			EntityTask newTask = new EntityTask(this, x);
+			this.tasks.add(newTask);
+			BaseStorage.instance.database.storeObject(newTask);
 		});
 
+		this.setStatus(WorkStatus.PREPARED);
+		BaseStorage.instance.database.storeObject(this);
+
+		this.prepared = true;
 		return true;
 	}
 
@@ -146,68 +174,5 @@ public class EntityJob implements IJob, Serializable {
 		this.detectors.remove(det);
 
 		return true;
-	}
-
-	@Override
-	public boolean setParameter(AdjustableParameterObj paramObj, float value) {
-		if (this.isPrepared()) {
-			BaseStorage.logger.warn("Could not add detector for job#{}, job already prepared", this.getPersistentId());
-			return false;
-		}
-
-		if (paramObj == null || !this.paramMap.containsKey(paramObj.getReference())) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is null", this.getPersistentId());
-			return false;
-		}
-
-		if (paramObj.isInt() && value % 1 != 0) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, parameter passed is not an integer", this.getPersistentId());
-			return false;
-		}
-
-		if (value < paramObj.getMinimumBound() || value > paramObj.getMaxumumBound()) {
-			BaseStorage.logger.warn("Could not set adjustable parameter for job#{}, value passed is outside the parameter bounds", this.getPersistentId());
-			return false;
-		}
-
-		this.paramMap.get(paramObj.getReference()).setValue(value);
-		return true;
-	}
-
-	@Override
-	public boolean resetParameter(AdjustableParameterObj paramObj) {
-		return this.setParameter(paramObj, paramObj.getDefaultValue());
-	}
-
-	@Override
-	public long getPersistentId() {
-		return this.id;
-	}
-
-	@Override
-	public List<ITask> getTasks() {
-		BaseStorage.instance.database.refreshObject(this);
-		return new ArrayList<>(this.tasks);
-	}
-
-	@Override
-	public long[] getFiles() {
-		return this.filesPresent;
-	}
-
-	@Override
-	public LocalDateTime getTimestamp() {
-		return this.timestamp.toLocalDateTime();
-	}
-
-	@Override
-	public IWorkspace getWorkspace() {
-		return this.workspace;
-	}
-
-	@Override
-	public List<IJobResult> getResults() {
-		//TODO: do results api so we can write the getter
-		return null;
 	}
 }

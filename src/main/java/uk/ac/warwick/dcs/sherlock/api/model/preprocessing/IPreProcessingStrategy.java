@@ -21,8 +21,8 @@ public interface IPreProcessingStrategy {
 	 * @return Generic strategy for the passed parameters
 	 */
 	@SafeVarargs
-	static IPreProcessingStrategy of(String name, Class<? extends ITokenPreProcessor>... preProcessor) {
-		return new GenericTokenPreProcessingStrategy(name, false, Arrays.asList(preProcessor));
+	static IPreProcessingStrategy of(String name, Class<? extends IGeneralPreProcessor>... preProcessor) {
+		return new GenericGeneralPreProcessingStrategy(name, false, Arrays.asList(preProcessor));
 	}
 
 	/**
@@ -37,8 +37,8 @@ public interface IPreProcessingStrategy {
 	 * @return Generic strategy for the passed parameters
 	 */
 	@SafeVarargs
-	static IPreProcessingStrategy of(String name, boolean tokenise, Class<? extends ITokenPreProcessor>... preProcessor) {
-		return new GenericTokenPreProcessingStrategy(name, tokenise, Arrays.asList(preProcessor));
+	static IPreProcessingStrategy of(String name, boolean tokenise, Class<? extends IGeneralPreProcessor>... preProcessor) {
+		return new GenericGeneralPreProcessingStrategy(name, tokenise, Arrays.asList(preProcessor));
 	}
 
 	/**
@@ -49,8 +49,8 @@ public interface IPreProcessingStrategy {
 	 *
 	 * @return Generic strategy for the passed parameters
 	 */
-	static IPreProcessingStrategy of(String name, Class<? extends IParserPreProcessor> preProcessor) {
-		return new GenericParserPreProcessingStrategy(name, preProcessor);
+	static IPreProcessingStrategy of(String name, Class<? extends IAdvancedPreProcessorGroup> preProcessor) {
+		return new GenericAdvancedPreProcessingStrategy(name, preProcessor);
 	}
 
 	/**
@@ -75,18 +75,18 @@ public interface IPreProcessingStrategy {
 	 *
 	 * @return
 	 */
-	boolean isParserBased();
+	boolean isAdvanced();
 
 	/**
 	 * Generic implementation of the IPreProcessingStrategy interface
 	 */
-	class GenericTokenPreProcessingStrategy implements IPreProcessingStrategy {
+	class GenericGeneralPreProcessingStrategy implements IPreProcessingStrategy {
 
 		private String name;
 		private boolean tokenise;
 		private List<Class<? extends IPreProcessor>> preProcessors;
 
-		private GenericTokenPreProcessingStrategy(String name, boolean tokenise, List<Class<? extends ITokenPreProcessor>> preProcessors) {
+		private GenericGeneralPreProcessingStrategy(String name, boolean tokenise, List<Class<? extends IGeneralPreProcessor>> preProcessors) {
 			this.name = name;
 			this.tokenise = tokenise;
 			this.preProcessors = preProcessors.parallelStream().map(x -> (Class<? extends IPreProcessor>) x).collect(Collectors.toList());
@@ -103,7 +103,7 @@ public interface IPreProcessingStrategy {
 		}
 
 		@Override
-		public boolean isParserBased() {
+		public boolean isAdvanced() {
 			return false;
 		}
 
@@ -112,12 +112,12 @@ public interface IPreProcessingStrategy {
 		}
 	}
 
-	class GenericParserPreProcessingStrategy implements IPreProcessingStrategy {
+	class GenericAdvancedPreProcessingStrategy implements IPreProcessingStrategy {
 
 		private String name;
-		private Class<? extends IParserPreProcessor> preProcessor;
+		private Class<? extends IAdvancedPreProcessorGroup> preProcessor;
 
-		private GenericParserPreProcessingStrategy(String name, Class<? extends IParserPreProcessor> preProcessor) {
+		private GenericAdvancedPreProcessingStrategy(String name, Class<? extends IAdvancedPreProcessorGroup> preProcessor) {
 			this.name = name;
 			this.preProcessor = preProcessor;
 		}
@@ -133,7 +133,7 @@ public interface IPreProcessingStrategy {
 		}
 
 		@Override
-		public boolean isParserBased() {
+		public boolean isAdvanced() {
 			return true;
 		}
 	}

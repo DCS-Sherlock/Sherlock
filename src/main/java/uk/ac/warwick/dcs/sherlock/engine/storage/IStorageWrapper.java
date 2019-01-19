@@ -2,9 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 *
 	 * @return instance
 	 */
-	IWorkspace createWorkspace(String name, Language lang);
+	IWorkspace createWorkspace(String name, String lang);
 
 	/**
 	 * Fetches the class of ICodeBlockGroup used in this IStorageWrapper implementation
@@ -45,7 +44,7 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * Store file in the database
 	 *
 	 * @param workspace   workspace to add file to
-	 * @param filename  filename uploaded, used as the identifier to show to the user, identifying the file or files
+	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
 	 * @param fileContent raw content of the file
 	 */
 	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;

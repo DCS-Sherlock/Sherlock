@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 import org.antlr.v4.runtime.*;
 import org.junit.jupiter.api.Test;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
@@ -26,7 +25,7 @@ class TestDetectorTest {
 	@Test
 	void getLexer() {
 		TestDetector t = new TestDetector();
-		assertTrue(Lexer.class.isAssignableFrom(t.getLexer(Language.JAVA)));
+		assertTrue(Lexer.class.isAssignableFrom(t.getLexer("Java")));
 	}
 
 	@Test
@@ -39,7 +38,7 @@ class TestDetectorTest {
 	@Test
 	void getSupportedLanguages() {
 		TestDetector t = new TestDetector();
-		Language[] supportedLanguages = t.getSupportedLanguages();
+		String[] supportedLanguages = t.getSupportedLanguages();
 		//assertAll(() -> assertEquals(1, supportedLanguages.size()), () -> assertEquals(Language.JAVA, supportedLanguages.get(0)), () -> assertNotEquals(Language.HASKELL, supportedLanguages.get(0)));
 		//redo this, sorry :(
 	}

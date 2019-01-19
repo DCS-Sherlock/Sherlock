@@ -7,9 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventBus;
 @Controller
 public class DashboardController {
 
-	public DashboardController() {
-		EventBus.registerEventSubscriber(this);
-	}
+	public DashboardController() { }
 
 	@GetMapping ("/dashboard/index")
 	public String index() {

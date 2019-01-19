@@ -15,7 +15,6 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.executor.PoolExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
@@ -27,7 +26,7 @@ import java.lang.reflect.Field;
 public class SherlockEngine {
 
 	public static final String version = "@VERSION@";
-	public static final Boolean enableExternalModules = false;
+	public static final Boolean enableExternalModules = true;
 
 	public static Side side = Side.UNKNOWN;
 	public static Configuration configuration = null;
@@ -71,56 +70,24 @@ public class SherlockEngine {
 		SherlockEngine.loadConfiguration();
 	}
 
-	private void shutdown() {
-		logger.info("Stopping SherlockEngine");
+	/**
+	 * Test the presence of a module at the passed classpath, should point to a class within the module
+	 *
+	 * @param classpath the module classpath as a string (to avoid requiring an import). Example for base Sherlock module: "uk.ac.warwick.dcs.sherlock.module.model.base.ModuleModelBase"
+	 *
+	 * @return Whether the module is present
+	 */
+	public static boolean isModulePresent(String classpath) {
 		try {
-			SherlockEngine.storage.close();
-			SherlockEngine.executor.shutdown();
+			Class.forName(classpath);
+			return true;
 		}
-		catch (Exception ignored) {
+		catch (Exception e) {
+			return false;
 		}
 	}
 
-	public void initialise() {
-		logger.info("Starting SherlockEngine on Side.{}", side.name());
-
-		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
-
-		SherlockEngine.executor = new PoolExecutor();
-		//SherlockEngine.executor = new TestResultsFactory();
-
-		try {
-			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.storage);
-
-			field = SherlockHelper.class.getDeclaredField("codeBlockGroupClass");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.storage.getCodeBlockGroupClass());
-		}
-		catch (NoSuchFieldException | IllegalAccessException e) {
-			logger.error("Could not set processed results class", e);
-		}
-
-		AnnotationLoader modules = new AnnotationLoader();
-		modules.registerModules();
-		modules.registerRequestProcessors();
-		modules.registerResponseHandlers();
-
-		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
-		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
-		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
-
-		//Cleanup init events, we don't need them any more
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
-		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
-
-		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
-	}
-
-	public static void submitToExecutor(IJob job) {
+	/*public static void submitToExecutor(IJob job) {
 		long startTime = System.nanoTime();
 		SherlockEngine.executor.submitJob(job);
 		long endTime = System.nanoTime();
@@ -128,7 +95,7 @@ public class SherlockEngine {
 		double duration = (endTime - startTime) * 1e-6;
 		duration = duration / 1000;
 		logger.warn("Job duration: " + duration + " seconds");
-	}
+	}*/
 
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
@@ -173,6 +140,56 @@ public class SherlockEngine {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void initialise() {
+		logger.info("Starting SherlockEngine on Side.{}", side.name());
+
+		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
+
+		SherlockEngine.executor = new PoolExecutor();
+		//SherlockEngine.executor = new TestResultsFactory();
+
+		try {
+			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.storage);
+
+			field = SherlockHelper.class.getDeclaredField("codeBlockGroupClass");
+			field.setAccessible(true);
+			field.set(null, SherlockEngine.storage.getCodeBlockGroupClass());
+		}
+		catch (NoSuchFieldException | IllegalAccessException e) {
+			logger.error("Could not set processed results class", e);
+		}
+
+		AnnotationLoader modules = new AnnotationLoader();
+		modules.registerModules();
+		modules.registerRequestProcessors();
+		modules.registerResponseHandlers();
+
+		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
+		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
+		SherlockEngine.registry.analyseDetectors();
+		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
+
+		//Cleanup init events, we don't need them any more
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
+		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
+
+		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
+		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
+	}
+
+	private void shutdown() {
+		logger.info("Stopping SherlockEngine");
+		try {
+			SherlockEngine.storage.close();
+			SherlockEngine.executor.shutdown();
+		}
+		catch (Exception ignored) {
 		}
 	}
 

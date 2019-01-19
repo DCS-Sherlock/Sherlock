@@ -11,18 +11,18 @@
         <tr>
             <th class="align-middle">
                 <h5 class="mb-0">
-                    <span th:text="${template.getName()}"></span>
+                    <span th:text="${template.getTemplate().getName()}"></span>
                 </h5>
             </th>
             <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getId()})}" th:text="#{link_manage}"></a>
+                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_manage}"></a>
             </td>
         </tr>
     </th:block>
     <tr th:if="${templates.empty}">
         <th>
             <h5 class="mb-0">
-                <span th:text="#{templates_message_no_templates}"></span>
+                <span th:text="#{templates_none_msg}"></span>
             </h5>
         </th>
     </tr>

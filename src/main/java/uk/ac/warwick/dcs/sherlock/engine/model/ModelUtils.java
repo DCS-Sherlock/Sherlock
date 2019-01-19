@@ -4,8 +4,8 @@ import com.google.common.collect.Streams;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -66,7 +66,7 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer, Class<? extends Parser> parser, Language lang) {
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, Lexer lexer, Class<? extends Parser> parser, String lang) {
 		return validatePreProcessingStrategy(strategy, lexer.getClass().getName(), lexer.getChannelNames(), parser, lang);
 	}
 
@@ -78,23 +78,23 @@ public class ModelUtils {
 	 *
 	 * @return is the strategy valid
 	 */
-	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels, Class<? extends Parser> parser, Language lang) {
+	public static boolean validatePreProcessingStrategy(IPreProcessingStrategy strategy, String lexerName, String[] lexerChannels, Class<? extends Parser> parser, String lang) {
 
 		if (strategy == null) {
 			return false;
 		}
 
-		if (strategy.isParserBased()) {
+		if (strategy.isAdvanced()) {
 			List<Class<? extends IPreProcessor>> s = strategy.getPreProcessorClasses();
 			if (s.size() != 1) {
 				return false;
 			}
 
 			try {
-				IParserPreProcessor processor = (IParserPreProcessor) s.get(0).newInstance();
-				if (!processor.getParserUsed(lang).equals(parser)) {
+				IAdvancedPreProcessorGroup processor = (IAdvancedPreProcessorGroup) s.get(0).newInstance();
+				/*if (!processor.getParserUsed(lang).equals(parser)) {
 					return false;
-				}
+				}*/
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -104,7 +104,7 @@ public class ModelUtils {
 			List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
 			for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 				try {
-					ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
+					IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
 					if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
 						Logger logger = LoggerFactory.getLogger(ModelUtils.class);
 						logger.error(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here

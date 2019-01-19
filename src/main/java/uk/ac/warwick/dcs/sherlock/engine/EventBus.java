@@ -54,16 +54,9 @@ class EventBus implements IEventBus {
 		});
 	}
 
-	private void addInvocation(Class<? extends IEvent> event, EventInvocation invocation) {
-		if (!this.eventMap.containsKey(event)) {
-			this.eventMap.put(event, new LinkedList<>());
-		}
-		this.eventMap.get(event).add(invocation);
-	}
-
 	void registerModule(Class<?> module) {
 		if (!module.getAnnotation(SherlockModule.class).side().valid(SherlockEngine.side)) {
-			logger.debug("{} not loaded, running on Side.{}", module.getName(), SherlockEngine.side.name());
+			logger.info("{} not loaded, running on Side.{}", module.getName(), SherlockEngine.side.name());
 			return;
 		}
 
@@ -93,10 +86,20 @@ class EventBus implements IEventBus {
 		catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+		catch (NoClassDefFoundError e) {
+			logger.warn("{} not loaded, could not find the required class dependency '{}'", module.getName(), e.getMessage());
+		}
 	}
 
 	void removeInvocationsOfEvent(Class<? extends IEvent> event) {
 		this.eventMap.remove(event);
+	}
+
+	private void addInvocation(Class<? extends IEvent> event, EventInvocation invocation) {
+		if (!this.eventMap.containsKey(event)) {
+			this.eventMap.put(event, new LinkedList<>());
+		}
+		this.eventMap.get(event).add(invocation);
 	}
 
 	static class EventInvocation extends Tuple<Method, Object> {

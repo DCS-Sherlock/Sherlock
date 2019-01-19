@@ -1,21 +1,34 @@
 //Sherlock JS
 function loadAreas(){
-    $("div[data-js='area']").each(function () {
+    $("[data-js='area']").each(function () {
         var input = $(this);
-        var url = input.attr("data-js-href");
-
-        getAjax(
-            url,
-            function(result, status, xhr) {
-                input.html(result);
-            }
-        );
+        loadAreaFn(input);
+    });
+}
+function triggerAreas(){
+    $("[data-js='triggerArea']").each(function () {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        input.remove();
+        $(target).html("...");
+        loadAreaFn($(target), true);
     });
 }
 
+function loadAreaFn(input){
+    var url = input.attr("data-js-href");
+
+    getAjax(
+        url,
+        function(result, status, xhr) {
+            input.html(result);
+        }
+    );
+}
+
 function modalLinks(){
-    $("a[data-js='modal']").unbind();
-    $("a[data-js='modal']").click(function () {
+    $("[data-js='modal']").unbind();
+    $("[data-js='modal']").click(function () {
         var input = $(this);
         var url = input.attr("href");
 
@@ -28,7 +41,7 @@ function modalLinks(){
                 $("#modal").html(result);
                 $("#modal").modal('show');
                 selectAreas();
-                $("select[data-js='select']").trigger('change');
+                // $("select[data-js='select']").trigger('change');
             }
         );
 
@@ -61,8 +74,8 @@ function selectAreas(){
 }
 
 function formSubmitButton() {
-    $("button[data-js='formSubmit']").unbind();
-    $("button[data-js='formSubmit']").each(function() {
+    $("[data-js='formSubmit']").unbind();
+    $("[data-js='formSubmit']").each(function() {
         var input = $(this);
         var target = input.attr("data-js-target");
         if($(target).length == 0) {
@@ -79,8 +92,8 @@ function formSubmitButton() {
 }
 
 function formSubmit(){
-    $("form[data-js='form']").unbind();
-    $("form[data-js='form']").submit(function () {
+    $("[data-js='form']").unbind();
+    $("[data-js='form']").submit(function () {
         var input = $(this);
         var url = input.attr("action");
         var target = $(input.attr("data-js-target"));
@@ -159,7 +172,6 @@ function submitAjax(url, data, success, type) {
 }
 
 function tooltips() {
-    $('[data-toggle="tooltip"]').unbind();
     $('[data-toggle="tooltip"]').tooltip();
 }
 
@@ -170,11 +182,12 @@ function bindPage() {
     formSubmit();
     hideCloseButtons();
     formSubmitButton();
+    triggerAreas();
 }
 
 $(function () {
     loadAreas();
     bindPage();
     $('form[data-js="autoSubmit"]').submit();
-    $("select[data-js='select']").trigger('change');
+    // $("select[data-js='select']").trigger('change');
 });

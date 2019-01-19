@@ -2,36 +2,24 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class EngineDetectorWrapper {
     private String displayName;
     private String className;
-    private Language[] languages;
+    private Set<String> languages;
     private String description;
 
     public EngineDetectorWrapper() { }
 
     public EngineDetectorWrapper(Class<? extends IDetector> detector) {
         this.className = detector.getName();
-
-//        try {
-//            IDetector tester = detector.newInstance();
-//            this.displayName = tester.getDisplayName();
-//            this.languages = tester.getSupportedLanguages();
-////            this.description = tester.getDescription();
-//            this.description = "NOT IMPLEMENTED YET";
-//        } catch (InstantiationException | IllegalAccessException e) {
-//            e.printStackTrace(); //TODO: catch error properly
-//        }
-
         this.displayName = SherlockRegistry.getDetectorDisplayName(detector);
         this.languages = SherlockRegistry.getDetectorLanguages(detector);
         this.description = SherlockRegistry.getDetecorDescription(detector);
-
     }
 
     public String getDisplayName() {
@@ -50,11 +38,11 @@ public class EngineDetectorWrapper {
         this.className = className;
     }
 
-    public Language[] getLanguages() {
+    public Set<String> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(Language[] languages) {
+    public void setLanguages(Set<String> languages) {
         this.languages = languages;
     }
 
@@ -66,13 +54,13 @@ public class EngineDetectorWrapper {
         this.description = description;
     }
 
-    public static List<EngineDetectorWrapper> getDetectors(Language language) {
+    public static List<EngineDetectorWrapper> getDetectors(String language) {
         List<EngineDetectorWrapper> list = new ArrayList<>();
         SherlockRegistry.getDetectors(language).forEach(d -> list.add(new EngineDetectorWrapper(d)));
         return list;
     }
 
-    public static List<String> getDetectorNames(Language language) {
+    public static List<String> getDetectorNames(String language) {
         List<String> list = new ArrayList<>();
         SherlockRegistry.getDetectors(language).forEach(d -> list.add(d.getName()));
         return list;

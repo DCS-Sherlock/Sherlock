@@ -1,18 +1,17 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import java.util.*;
-
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
+
+import java.util.*;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).
  *
  * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending
  * the relevant information to the actual report generator in use.
- *
- * very wip
  */
 
 /**
@@ -61,26 +60,92 @@ public class ReportManager {
 	 */
 	private Map<Long, FileReport> reports;
 
-	private AbstractReportGenerator reportGenerator;
+	private IReportGenerator reportGenerator;
 
 	/**
 	 *
-	 * @param reportGenerator The implementation of AbstractReportGenerator that will generate all reports for this project.
+	 * @param reportGenerator The implementation of IReportGenerator that will generate all reports for this project.
 	 */
-	public ReportManager(AbstractReportGenerator reportGenerator) {
+	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
-		reports = new HashMap<Long, FileReport>();
-		fileIds = new ArrayList<Long>();
-		codeBlockGroups = new ArrayList<ICodeBlockGroup>();
-		variableNames = new HashMap<Long, List<String>>();
-		methodNames = new HashMap<Long, List<String>>();
+		reports = new HashMap<>();
+		fileIds = new ArrayList<>();
+		codeBlockGroups = new ArrayList<>();
+		variableNames = new HashMap<>();
+		methodNames = new HashMap<>();
 	}
 
-	//TODO
-	public void GenerateReports() {
+	//TODO: fix stuff
+	public FileReport GenerateReport(long fileId) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
 	}
+	/*
+	/**
+	 * Generates a report for a single specified file, stores it, and returns it.
+	 * @param fileId The persistent ID of the file to generate a report for.
+	 * @return The FileReport object that is generated.
+	 *
+	public FileReport GenerateReport(long fileId) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		//Get all the codeblockgroups which contain the desired file.
+		//this is kind of gross honestly with the current setup
+		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+
+			boolean fileInGroup = false;
+			for(ICodeBlock codeBlock : codeBlocks) {
+				if(codeBlock.getFile().getPersistentId() == fileId) {
+					fileInGroup = true;
+					break;
+				}
+			}
+
+			relevantGroups.add(codeBlockGroup);
+		}
+
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
+	}
+
+	/**
+	 * Generates a report for a single specified file, stores it, and returns it.
+	 * @param sourceFile The file object for which the report is to be generated for.
+	 * @return The FileReport object that is generated.
+	 *
+	public FileReport GenerateReport(ISourceFile sourceFile) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		//Get all the codeblockgroups which contain the desired file.
+		//this is kind of gross honestly with the current setup
+		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+
+			boolean fileInGroup = false;
+			for(ICodeBlock codeBlock : codeBlocks) {
+				if(codeBlock.getFile() == sourceFile) {
+					fileInGroup = true;
+					break;
+				}
+			}
+
+			relevantGroups.add(codeBlockGroup);
+		}
+
+		FileReport fileReport = reportGenerator.GenerateReport(sourceFile.getPersistentId(), relevantGroups);
+
+		reports.put(sourceFile.getPersistentId(), fileReport);
+		return fileReport;
+	}
+	*/
 
 	/**
 	 * To be called by the Post-Processor.

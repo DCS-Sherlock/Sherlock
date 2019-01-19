@@ -1,19 +1,46 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers;
 
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Controller
 public class HelpController {
 	public HelpController() { }
 
+	//TODO: Add locale support
 	@RequestMapping ("/help")
-	public String index() {
+	public String index(Model model) {
+		Resource resource = new ClassPathResource("/help.properties");
+		Properties properties = null;
+		Map<String, String> questions = new HashMap<>();
+
+		try {
+			properties = PropertiesLoaderUtils.loadProperties(resource);
+		} catch (IOException e) {
+			e.printStackTrace(); //TODO: deal with error
+		}
+
+		if (properties != null) {
+			for (String s : properties.stringPropertyNames()) {
+				if (!s.endsWith("_answer")) {
+					questions.put(
+							properties.getProperty(s, ""),
+							properties.getProperty(s+"_answer", "")
+					);
+				}
+			}
+		}
+
+		model.addAttribute("questions", questions);
 		return "help/index";
 	}
 

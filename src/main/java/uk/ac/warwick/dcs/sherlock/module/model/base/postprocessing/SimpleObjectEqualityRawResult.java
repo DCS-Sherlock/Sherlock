@@ -82,7 +82,7 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 	public boolean testType(AbstractModelTaskRawResult baseline) {
 		if (baseline instanceof SimpleObjectEqualityRawResult) {
 			SimpleObjectEqualityRawResult bl = (SimpleObjectEqualityRawResult) baseline;
-			return bl.getObjects().get(0).getClass().equals(this.getObjects().get(0).getClass());
+			return bl.getObjects().get(0).getClass().equals(this.getObjects().get(0).getClass()); // Check generic type is the same
 		}
 
 		return false;
@@ -92,11 +92,19 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		return this.objects;
 	}
 
-	@Override
+	public T getObject(int index) {
+		return this.objects.get(index);
+	}
+
+	public PairedTuple<Integer, Integer, Integer, Integer> getLocation(int index) {
+		return this.locations.get(index);
+	}
+
 	public String toString() {
 		StringBuilder str = new StringBuilder();
+		str.append(this.getFile1().getFileDisplayName()).append(" vs ").append(this.getFile2().getFileDisplayName()).append("\n\r");
 		for (int i = 0; i < this.size; i++) {
-			str.append(this.objects.get(i).toString()).append(" - ").append(this.locations.get(i).toString()).append("\n");
+			str.append(this.objects.get(i).toString()).append(" - ").append(this.locations.get(i).toString()).append("\n\r");
 		}
 		return str.toString();
 	}

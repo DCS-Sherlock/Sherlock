@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
-import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
 import java.io.ByteArrayInputStream;
@@ -33,19 +33,25 @@ public class BaseStorage implements IStorageWrapper {
 		this.filesystem = new BaseStorageFilesystem();
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
-		List<Object> orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
+		List orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
 		if (orphans != null && orphans.size() > 0) {
 			this.database.removeObject(orphans);
 		}
 
-		orphans = this.database.runQuery("SELECT j from Job j", EntityJob.class).stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
-		if (orphans.size() > 0) {
-			logger.warn("removing jobs with no tasks");
-			this.database.removeObject(orphans);
-		}
+		//list = this.database.runQuery("SELECT t from Task t", EntityTask.class).stream().filter(x -> x.getStatus() == WorkStatus.PREPARED).collect(Collectors.toList());
+		List<EntityJob> jobs = this.database.runQuery("SELECT j from Job j", EntityJob.class);
+		jobs.stream().filter(j -> j.getTasks().size() > 0 && j.getStatus() == WorkStatus.ACTIVE).forEach(j -> {
+			if (j.getTasks().stream().anyMatch(i -> i.getStatus() == WorkStatus.PREPARED)) {
+				j.getTasks().stream().filter(i -> i.getStatus() == WorkStatus.PREPARED).forEach(i -> ((EntityTask) i).setStatus(WorkStatus.INTERRUPTED));
+				j.setStatus(WorkStatus.INTERRUPTED);
+			}
+		});
 
-		//List<EntityTask> tasks = this.database.runQuery("SELECT t from Task t", EntityTask.class);
-		//logger.warn(tasks.get(0).getRawResults().stream().map(Objects::toString).collect(Collectors.joining("\n----\n")));
+		jobs = jobs.stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
+		if (jobs.size() > 0) {
+			logger.warn("Removing jobs with no tasks...");
+			this.database.removeObject(jobs);
+		}
 	}
 
 	@Override
@@ -54,7 +60,7 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public IWorkspace createWorkspace(String name, Language lang) {
+	public IWorkspace createWorkspace(String name, String lang) {
 		IWorkspace w = new EntityWorkspace(name, lang);
 		this.database.storeObject(w);
 		return w;
@@ -66,6 +72,15 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public ISourceFile getSourceFile(long persistentId) {
+		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
+		if (f.size() != 1) {
+			logger.warn("File of id {} does not exist", persistentId);
+		}
+		return f.get(0);
+	}
+
+	@Override
 	public List<IWorkspace> getWorkspaces(List<Long> ids) {
 		return this.getWorkspaces().stream().filter(x -> ids.contains(x.getPersistentId())).collect(Collectors.toList());
 	}
@@ -74,11 +89,6 @@ public class BaseStorage implements IStorageWrapper {
 	public List<IWorkspace> getWorkspaces() {
 		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
 		return new LinkedList<>(l);
-	}
-
-	@Override
-	public ISourceFile getSourceFile(long persistentId) {
-		return null;
 	}
 
 	@Override

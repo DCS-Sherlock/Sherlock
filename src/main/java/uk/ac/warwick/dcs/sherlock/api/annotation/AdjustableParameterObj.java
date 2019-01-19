@@ -7,13 +7,17 @@ import java.lang.reflect.Field;
 public class AdjustableParameterObj {
 
 	private AdjustableParameter param;
+	private String name;
 	private String reference;
 	private boolean isInt;
+	private boolean isFixed;
 
-	public AdjustableParameterObj(AdjustableParameter param, Field field) {
+	public AdjustableParameterObj(AdjustableParameter param, Field field, boolean isFixed) {
 		this.param = param;
+		this.name = field.getName();
 		this.reference = SherlockHelper.buildFieldReference(field);
 		this.isInt = field.getType().equals(int.class);
+		this.isFixed = isFixed;
 	}
 
 	/**
@@ -31,9 +35,16 @@ public class AdjustableParameterObj {
 	}
 
 	/**
+	 * @return Display Name for the parameter to be displayed in the UI
+	 */
+	public String getDisplayName() {
+		return this.param.name();
+	}
+
+	/**
 	 * @return The maximum bound for the field
 	 */
-	public float getMaxumumBound() {
+	public float getMaximumBound() {
 		return this.param.maxumumBound();
 	}
 
@@ -45,10 +56,10 @@ public class AdjustableParameterObj {
 	}
 
 	/**
-	 * @return Name for the parameter to be displayed in the UI
+	 * @return Field Name for the parameter for use in the UI backend
 	 */
 	public String getName() {
-		return this.param.name();
+		return this.name;
 	}
 
 	public String getReference() {
@@ -60,6 +71,15 @@ public class AdjustableParameterObj {
 	 */
 	public float getStep() {
 		return this.param.step();
+	}
+
+	/**
+	 * Return if the parameter is fixed, ie. it cannot be modified after a task has been run, for example when it is for a detector
+	 *
+	 * @return is the param fixed after raw results have been generated?
+	 */
+	public boolean isFixed() {
+		return isFixed;
 	}
 
 	/**

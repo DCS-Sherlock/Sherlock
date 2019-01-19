@@ -4,8 +4,9 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector.TestDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
@@ -13,16 +14,16 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtrac
 
 import java.util.*;
 
-public class TestDetector extends AbstractPairwiseDetector {
+public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 
-	private static final Language[] languages = { Language.JAVA };
+	private static final String[] languages = { "Java" };
 
 	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
 	public int testParam;
 
 	@Override
-	public AbstractPairwiseDetector.AbstractPairwiseDetectorWorker getAbstractPairwiseDetectorWorker() {
-		return new TestDetectorWorker();
+	public TestDetectorWorker getAbstractPairwiseDetectorWorker() {
+		return new TestDetector.TestDetectorWorker();
 	}
 
 	@Override
@@ -31,12 +32,12 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public Class<? extends Lexer> getLexer(Language lang) {
+	public Class<? extends Lexer> getLexer(String lang) {
 		return JavaLexer.class;
 	}
 
 	@Override
-	public Class<? extends Parser> getParser(Language lang) {
+	public Class<? extends Parser> getParser(String lang) {
 		return JavaParser.class;
 	}
 
@@ -51,11 +52,11 @@ public class TestDetector extends AbstractPairwiseDetector {
 	}
 
 	@Override
-	public Language[] getSupportedLanguages() {
+	public String[] getSupportedLanguages() {
 		return languages;
 	}
 
-	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker {
+	public class TestDetectorWorker extends AbstractPairwiseDetectorWorker<SimpleObjectEqualityRawResult<String>> {
 
 		@Override
 		public void execute() {
@@ -69,8 +70,7 @@ public class TestDetector extends AbstractPairwiseDetector {
 			SimpleObjectEqualityRawResult<String> res = new SimpleObjectEqualityRawResult<>(this.file1.getFile(), this.file2.getFile(), linesF1.size(), linesF2.size());
 
 			for (IndexedString checkLine : linesF1) {
-				linesF2.stream().filter(x -> x.valueEquals(checkLine) && !usedIndexesF2.contains(x.getKey())).peek(x -> res.put(checkLine.getValue(), checkLine.getKey(), x.getKey()))
-						.findFirst().ifPresent(x -> usedIndexesF2.add(x.getKey()));
+				linesF2.stream().filter(x -> x.valueEquals(checkLine)).forEach(x -> res.put(checkLine.getValue(), checkLine.getKey(), x.getKey()));
 			}
 
 			this.result = res;

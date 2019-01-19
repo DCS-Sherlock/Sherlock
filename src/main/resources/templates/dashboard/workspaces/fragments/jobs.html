@@ -8,23 +8,38 @@
 <form th:action="@{/dashboard/workspaces/manage/jobs/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#jobs-parent" method="post">
     <div th:if="${templates.empty}">
         <h6 class="mb-0">
-            <span th:text="#{templates_message_no_templates}"></span>
-            <span th:text="#{templates_message_add_templates}"></span>
+            <span th:text="#{workspaces_analysis_templates_none_msg}"></span>
         </h6>
     </div>
+
+    <div th:if="${success_msg}">
+        <div class="alert alert-info"><span th:text="#{workspaces_analysis_started}"></span></div>
+        <div data-js="triggerArea" data-js-target="#results-parent"></div>
+    </div>
+
+    <div th:if="${warning_msg}">
+        <div class="alert alert-warning"><span th:text="#{${warning_msg}}"></span></div>
+        <div data-js="triggerArea" data-js-target="#results-parent"></div>
+    </div>
+
     <div th:unless="${templates.empty}">
         <div class="form-row">
             <div class="form-group col-md-12">
                 <label for="template_id" th:text="#{variable_template}"></label>
                 <select class="form-control" id="template_id" name="template_id">
                     <option th:each="template : ${templates}"
-                            th:value="${template.getId()}"
-                            th:text="${template.getName()}">
+                            th:value="${template.getTemplate().getId()}"
+                            th:text="${template.getTemplate().getName()}">
                     </option>
                 </select>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" th:text="#{link_run}"></button>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <button type="submit" class="btn btn-primary float-right" th:text="#{link_run}"></button>
+            </div>
+        </div>
     </div>
 </form>
 

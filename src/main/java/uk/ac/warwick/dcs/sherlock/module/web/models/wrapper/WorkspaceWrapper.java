@@ -1,23 +1,43 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateContainsNoDetectors;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.models.db.TDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
+import uk.ac.warwick.dcs.sherlock.module.web.models.forms.SubmissionsForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceForm;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
+import java.io.IOException;
 import java.util.*;
 
 public class WorkspaceWrapper {
     private Workspace workspace;
     private IWorkspace iWorkspace;
+
+    public WorkspaceWrapper(
+            WorkspaceForm workspaceForm,
+            Account account,
+            WorkspaceRepository workspaceRepository
+    ) {
+        this.iWorkspace = SherlockEngine.storage.createWorkspace(workspaceForm.getName(), workspaceForm.getLanguage());
+        this.workspace = new Workspace(account, this.iWorkspace.getPersistentId());
+        workspaceRepository.save(this.workspace);
+    }
 
     public WorkspaceWrapper(Workspace workspace) throws IWorkspaceNotFound {
         this.init(workspace);
@@ -33,17 +53,11 @@ public class WorkspaceWrapper {
         this.init(workspace);
     }
 
-    public WorkspaceWrapper(String name, Language language, Account account, WorkspaceRepository workspaceRepository) {
-        this.iWorkspace = SherlockEngine.storage.createWorkspace(name, language);
-        this.workspace = new Workspace(account, this.iWorkspace.getPersistentId());
-        workspaceRepository.save(this.workspace);
-    }
-
     private void init(Workspace workspace) throws IWorkspaceNotFound {
         this.workspace = workspace;
 
-        List<Long> id = Collections.singletonList(this.workspace.getEngineId());
-        List<IWorkspace> iWorkspaces = SherlockEngine.storage.getWorkspaces(id);
+        List<Long> engineId = Collections.singletonList(this.workspace.getEngineId());
+        List<IWorkspace> iWorkspaces = SherlockEngine.storage.getWorkspaces(engineId);
 
         if (iWorkspaces.size() == 1) {
             this.iWorkspace = iWorkspaces.get(0);
@@ -72,7 +86,7 @@ public class WorkspaceWrapper {
         return this.iWorkspace.getName();
     }
 
-    public Language getLanguage() {
+    public String getLanguage() {
         return this.iWorkspace.getLanguage();
     }
 
@@ -88,11 +102,66 @@ public class WorkspaceWrapper {
         this.iWorkspace.setName(name);
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(String language) {
         this.iWorkspace.setLanguage(language);
     }
 
-    public static List<WorkspaceWrapper> getWorkspacesByAccount(Account account, WorkspaceRepository workspaceRepository) {
+    public void set(WorkspaceForm workspaceForm) {
+        this.setName(workspaceForm.getName());
+        this.setLanguage(workspaceForm.getLanguage());
+    }
+
+    public void delete(WorkspaceRepository workspaceRepository) {
+        workspaceRepository.delete(this.workspace);
+    }
+
+    public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) {
+        for(MultipartFile file : submissionsForm.getFiles()) {
+            if (file.getSize() > 0) {
+                try {
+                    SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
+                } catch (IOException | WorkspaceUnsupportedException e) {
+                    //TODO: this is a major issue, we should probably quit here
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound {
+		if (templateWrapper.getTemplate().getDetectors().size() == 0)
+		    throw new TemplateContainsNoDetectors("No detectors in chosen template.");
+
+		IJob job = this.iWorkspace.createJob();
+
+		for (TDetector td : templateWrapper.getTemplate().getDetectors()) {
+            Class<? extends IDetector> detector = (Class<? extends IDetector>) Class.forName(td.getName());
+            job.addDetector(detector);
+		}
+
+        job.prepare();
+
+		Logger logger = LoggerFactory.getLogger(WorkspaceWrapper.class);
+		for (ITask task : job.getTasks()) {
+		    for (DetectorWrapper detectorWrapper : templateWrapper.getDetectors()) {
+		        if (task.getDetector().getName().equals(detectorWrapper.getEngineDetector().getName())) {
+		            for (ParameterWrapper parameterWrapper : detectorWrapper.getParametersList()) {
+		                logger.info("Detector "
+                                + task.getDetector().getName()
+                                + " has had parameter "
+                                + parameterWrapper.getParameterObj().getDisplayName()
+                                + " set to "
+                                + parameterWrapper.getParameter().getValue());
+		                task.setParameter(parameterWrapper.getParameterObj(), parameterWrapper.getParameter().getValue());
+                    }
+                }
+            }
+        }
+
+		SherlockEngine.executor.submitJob(job);
+    }
+
+    public static List<WorkspaceWrapper> findByAccount(Account account, WorkspaceRepository workspaceRepository) {
         List<Workspace> workspaces = workspaceRepository.findByAccount(account);
         List<WorkspaceWrapper> wrappers = new ArrayList<>();
 
