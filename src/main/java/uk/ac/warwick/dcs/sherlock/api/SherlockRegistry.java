@@ -121,6 +121,18 @@ public class SherlockRegistry {
 	}
 
 	/**
+	 * Returns the set of registered languages
+	 *
+	 * @return set of languages
+	 */
+	public static Set<String> getLanguages() {
+		if (registry != null) {
+			return registry.getLanguages();
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the adjustable parameters for a postprocessor
 	 *
 	 * @param postProcessor postprocessor class

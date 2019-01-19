@@ -71,6 +71,13 @@ public interface IRegistry {
 	Rank getDetectorRank(Class<? extends IDetector> det);
 
 	/**
+	 * Returns the set of registered languages
+	 *
+	 * @return set of languages
+	 */
+	Set<String> getLanguages();
+
+	/**
 	 * Fetch the set of all detectors registered to Sherlock
 	 *
 	 * @return a set of all detectors registered

@@ -123,6 +123,11 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
+	public Set<String> getLanguages() {
+		return this.languageRegistry.keySet();
+	}
+
+	@Override
 	public Set<Class<? extends IDetector>> getDetectors() {
 		return this.detectorRegistry.keySet();
 	}
