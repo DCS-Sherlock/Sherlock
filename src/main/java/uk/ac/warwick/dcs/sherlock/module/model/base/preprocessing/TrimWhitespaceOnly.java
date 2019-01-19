@@ -2,12 +2,11 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ITokenPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
 
 import java.util.*;
 
-public class TrimWhitespaceOnly implements ITokenPreProcessor {
+public class TrimWhitespaceOnly implements IGeneralPreProcessor {
 
 	@Override
 	public ILexerSpecification getLexerSpecification() {
@@ -24,7 +23,7 @@ public class TrimWhitespaceOnly implements ITokenPreProcessor {
 	 * @return stream of tokens containing comments
 	 */
 	@Override
-	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang) {
+	public List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, String lang) {
 		List<Token> result = new ArrayList<>();
 
 		for (Token t : tokens) {

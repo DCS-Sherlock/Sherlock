@@ -49,6 +49,20 @@ public class AnnotationLoader {
 				}
 				return null;
 			}).collect(Collectors.toList()));
+
+			//Load libs to
+			File libs = new File("module/libs");
+			if (!libs.exists()) {
+				libs.mkdir();
+			}
+			Arrays.stream(Objects.requireNonNull(libs.listFiles())).forEach(f -> {
+				try {
+					this.addURLToClasspath(f.toURI().toURL());
+				}
+				catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.engine"));
@@ -63,19 +77,6 @@ public class AnnotationLoader {
 		this.ref = new Reflections(config);
 	}
 
-	private void addURLToClasspath(URL u) {
-		try {
-			URLClassLoader urlClassLoader = (URLClassLoader) this.getClass().getClassLoader();
-			Class<URLClassLoader> urlClass = URLClassLoader.class;
-			Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-			method.setAccessible(true);
-			method.invoke(urlClassLoader, u);
-		}
-		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
 	void registerModules() {
 		this.ref.getTypesAnnotatedWith(SherlockModule.class).stream().peek(x -> logger.info("Registering Sherlock module: {}", x.getName())).forEach(SherlockEngine.eventBus::registerModule);
 	}
@@ -88,6 +89,19 @@ public class AnnotationLoader {
 	void registerResponseHandlers() {
 		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}.{}", x.getDeclaringClass().getName(), x.getName()))
 				.forEach(SherlockEngine.requestBus::registerResponseHandler);
+	}
+
+	private void addURLToClasspath(URL u) {
+		try {
+			URLClassLoader urlClassLoader = (URLClassLoader) this.getClass().getClassLoader();
+			Class<URLClassLoader> urlClass = URLClassLoader.class;
+			Method method = urlClass.getDeclaredMethod("addURL", URL.class);
+			method.setAccessible(true);
+			method.invoke(urlClassLoader, u);
+		}
+		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

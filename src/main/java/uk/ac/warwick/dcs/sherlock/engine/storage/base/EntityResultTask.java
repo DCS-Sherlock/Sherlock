@@ -34,23 +34,13 @@ public class EntityResultTask implements IResultTask, Serializable {
 	}
 
 	@Override
-	public ITask getTask() {
-		return null;
-	}
-
-	@Override
-	public void setTaskScore(float score) {
-
-	}
-
-	@Override
-	public float getTaskScore() {
-		return 0;
-	}
-
-	@Override
 	public void addFileScore(ISourceFile file, float score) {
 
+	}
+
+	@Override
+	public List<ICodeBlockGroup> getContainingBlocks() {
+		return null;
 	}
 
 	@Override
@@ -59,7 +49,17 @@ public class EntityResultTask implements IResultTask, Serializable {
 	}
 
 	@Override
-	public List<ICodeBlockGroup> getContainingBlocks() {
+	public ITask getTask() {
 		return null;
+	}
+
+	@Override
+	public float getTaskScore() {
+		return 0;
+	}
+
+	@Override
+	public void setTaskScore(float score) {
+
 	}
 }

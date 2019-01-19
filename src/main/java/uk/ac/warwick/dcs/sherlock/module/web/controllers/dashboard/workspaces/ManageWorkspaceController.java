@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -32,7 +33,7 @@ public class ManageWorkspaceController {
 		return "dashboard/workspaces/manage";
 	}
 
-    @GetMapping("/dashboard/workspaces/manage/name/{pathid}")
+    @GetMapping("/dashboard/workspaces/manage/details/{pathid}")
     public String nameGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -42,10 +43,11 @@ public class ManageWorkspaceController {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
         model.addAttribute("workspaceForm", new WorkspaceForm(workspaceWrapper));
-        return "dashboard/workspaces/fragments/name";
+        model.addAttribute("languageList", SherlockRegistry.getLanguages());
+        return "dashboard/workspaces/fragments/details";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/name/{pathid}")
+    @PostMapping("/dashboard/workspaces/manage/details/{pathid}")
     public String namePostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -61,7 +63,8 @@ public class ManageWorkspaceController {
             model.addAttribute("success", true);
 		}
 
-        return "dashboard/workspaces/fragments/name";
+        model.addAttribute("languageList", SherlockRegistry.getLanguages());
+        return "dashboard/workspaces/fragments/details";
     }
 
     @GetMapping("/dashboard/workspaces/manage/submissions/{pathid}")

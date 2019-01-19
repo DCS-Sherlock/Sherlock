@@ -4,7 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.*;
 

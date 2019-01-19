@@ -63,16 +63,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.addParams(SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(detector));
 	}
 
-	private void addParams(List<AdjustableParameterObj> params) {
-		if (params != null && !params.isEmpty()) {
-			if (this.paramMap == null) {
-				this.paramMap = new HashMap<>();
-			}
-
-			params.forEach(x -> this.paramMap.put(x.getReference(), x.getDefaultValue()));
-		}
-	}
-
 	@Override
 	public Class<? extends IDetector> getDetector() {
 		try {
@@ -124,25 +114,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.rawResults;
 	}
 
-	private void deserialize() {
-		BaseStorage.instance.filesystem.loadTaskRawResults(this);
-	}
-
 	@Override
 	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
 		this.setComplete();
 		this.serialize();
-	}
-
-	private void serialize() {
-		BaseStorage.instance.filesystem.storeTaskRawResults(this);
-		BaseStorage.instance.database.storeObject(this);
-	}
-
-	@Override
-	public void setComplete() {
-		this.status = WorkStatus.COMPLETE;
 	}
 
 	@Override
@@ -169,6 +145,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return this.timestamp;
 	}
 
+	@Override
+	public boolean hasResults() {
+		return this.hash != null && this.hash.length() > 0;
+	}
+
 	@SuppressWarnings ("Duplicates")
 	@Override
 	public boolean resetParameter(AdjustableParameterObj paramObj) {
@@ -186,8 +167,8 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
-	public boolean hasResults() {
-		return this.hash != null && this.hash.length() > 0;
+	public void setComplete() {
+		this.status = WorkStatus.COMPLETE;
 	}
 
 	@SuppressWarnings ("Duplicates")
@@ -222,6 +203,25 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
+	}
+
+	private void addParams(List<AdjustableParameterObj> params) {
+		if (params != null && !params.isEmpty()) {
+			if (this.paramMap == null) {
+				this.paramMap = new HashMap<>();
+			}
+
+			params.forEach(x -> this.paramMap.put(x.getReference(), x.getDefaultValue()));
+		}
+	}
+
+	private void deserialize() {
+		BaseStorage.instance.filesystem.loadTaskRawResults(this);
+	}
+
+	private void serialize() {
+		BaseStorage.instance.filesystem.storeTaskRawResults(this);
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 }

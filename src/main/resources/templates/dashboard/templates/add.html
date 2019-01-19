@@ -28,7 +28,7 @@
                         <div class="form-group col-md-12">
                             <label  th:for="*{language}" th:text="#{variable_language}"></label>
                             <select class="form-control" th:field="*{language}" data-js="select" data-js-target="#detector-list" th:data-js-href="@{/dashboard/templates/detectors/}">
-                                <option th:each="language : ${T(uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language).values()}"
+                                <option th:each="language : ${languageList}"
                                         th:value="${language}"
                                         th:text="${language}">
                                 </option>

@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -79,7 +78,7 @@ public class TemplateWrapper {
         return wrapperList;
     }
 
-    public static List<TemplateWrapper> findByAccountAndPublicAndLanguage(Account account, TemplateRepository templateRepository, Language language) {
+    public static List<TemplateWrapper> findByAccountAndPublicAndLanguage(Account account, TemplateRepository templateRepository, String language) {
         List<TemplateWrapper> wrapperList = new ArrayList<>();
         List<Template> templateList = templateRepository.findByAccountAndPublicAndLanguage(account, language);
         templateList.forEach(t -> wrapperList.add(new TemplateWrapper(t, account)));

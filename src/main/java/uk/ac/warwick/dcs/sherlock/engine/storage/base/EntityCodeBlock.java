@@ -45,28 +45,6 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		lines.forEach(this::addLineToList);
 	}
 
-	private void addLineToList(ITuple<Integer, Integer> line) {
-		if (this.getLineNumbers().stream().noneMatch(line::equals)) {
-			this.lines.add(line.getKey());
-			this.lines.add(line.getValue());
-			this.size++;
-		}
-	}
-
-	private ITuple<Integer, Integer> getLineFromList(int index) {
-		return new Tuple<>(this.lines.get(index * 2), this.lines.get((index * 2) + 1));
-	}
-
-	void append(float score, ITuple<Integer, Integer> lines) {
-		this.score = ((this.score * this.size) + score) / (this.size + 1); //new avg score
-		this.addLineToList(lines);
-	}
-
-	void append(float score, List<ITuple<Integer, Integer>> lines) {
-		this.score = ((this.score * this.size) + score) / (this.size + lines.size()); //new avg score
-		lines.forEach(this::addLineToList);
-	}
-
 	@Override
 	public float getBlockScore() {
 		return this.score;
@@ -80,5 +58,27 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 	@Override
 	public List<ITuple<Integer, Integer>> getLineNumbers() {
 		return IntStream.range(0, this.size).mapToObj(this::getLineFromList).collect(Collectors.toList());
+	}
+
+	void append(float score, ITuple<Integer, Integer> lines) {
+		this.score = ((this.score * this.size) + score) / (this.size + 1); //new avg score
+		this.addLineToList(lines);
+	}
+
+	void append(float score, List<ITuple<Integer, Integer>> lines) {
+		this.score = ((this.score * this.size) + score) / (this.size + lines.size()); //new avg score
+		lines.forEach(this::addLineToList);
+	}
+
+	private void addLineToList(ITuple<Integer, Integer> line) {
+		if (this.getLineNumbers().stream().noneMatch(line::equals)) {
+			this.lines.add(line.getKey());
+			this.lines.add(line.getValue());
+			this.size++;
+		}
+	}
+
+	private ITuple<Integer, Integer> getLineFromList(int index) {
+		return new Tuple<>(this.lines.get(index * 2), this.lines.get((index * 2) + 1));
 	}
 }

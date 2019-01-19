@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.utils.PreprocessorParamsProvider;
 import uk.ac.warwick.dcs.sherlock.module.model.base.utils.TestJavaFile;
@@ -33,7 +32,7 @@ class TrimWhitespaceOnlyTest {
 		Class<? extends Lexer> lexerClass = JavaLexer.class;
 		Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromFileName(file.getName()));
 		List<? extends Token> tokensMaster = lexer.getAllTokens();
-		List<? extends Token> tokens = (new TrimWhitespaceOnly()).process(tokensMaster, lexer.getVocabulary(), Language.JAVA);
+		List<? extends Token> tokens = (new TrimWhitespaceOnly()).process(tokensMaster, lexer.getVocabulary(), "Java");
 		Iterator<? extends Token> t = tokens.iterator();
 		List<String> ls = new ArrayList<>();
 		while (t.hasNext()) {
@@ -47,7 +46,7 @@ class TrimWhitespaceOnlyTest {
 	@ArgumentsSource (PreprocessorParamsProvider.class)
 	void processUnit(TestJavaFile testJavaFile) throws Exception {
 		List<? extends Token> tokensMaster = testJavaFile.getTokens();
-		List<? extends Token> tokens = (new TrimWhitespaceOnly()).process(tokensMaster, null, Language.JAVA);
+		List<? extends Token> tokens = (new TrimWhitespaceOnly()).process(tokensMaster, null, "Java");
 		Iterator<? extends Token> t = tokens.iterator();
 		List<String> ls = new ArrayList<>();
 		while (t.hasNext()) {

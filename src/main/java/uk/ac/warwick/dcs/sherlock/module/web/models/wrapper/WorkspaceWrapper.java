@@ -3,9 +3,9 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
@@ -86,7 +86,7 @@ public class WorkspaceWrapper {
         return this.iWorkspace.getName();
     }
 
-    public Language getLanguage() {
+    public String getLanguage() {
         return this.iWorkspace.getLanguage();
     }
 
@@ -102,7 +102,7 @@ public class WorkspaceWrapper {
         this.iWorkspace.setName(name);
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(String language) {
         this.iWorkspace.setLanguage(language);
     }
 

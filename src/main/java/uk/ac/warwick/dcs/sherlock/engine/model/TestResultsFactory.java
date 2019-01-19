@@ -1,13 +1,15 @@
 package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericTokenPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericGeneralPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
@@ -85,31 +87,35 @@ public class TestResultsFactory implements IExecutor {
 			}*/
 
 			List<ModelDataItem> inputData = files.parallelStream().map(file -> {
-				try {
-					Lexer lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents())); // build new lexer for each file
-					List<? extends Token> tokensMaster = lexer.getAllTokens();
+				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
-					ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
+				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
+					if (strategy.isAdvanced()) {
+						if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
+							try {
+								ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> t = SherlockRegistry
+										.getAdvancedPostProcessorForLanguage((Class<? extends IAdvancedPreProcessorGroup>) strategy.getPreProcessorClasses().get(0),
+												workspace.getLanguage());
 
-					preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
-						if (strategy.isParserBased()) {
-							if (strategy.getPreProcessorClasses().size() == 1) { //this is checked by the registry on startup
-								Class<? extends IPreProcessor> processorClass = strategy.getPreProcessorClasses().get(0);
-								try {
-									IParserPreProcessor processor = (IParserPreProcessor) processorClass.newInstance();
-									map.put(strategy.getName(), processor.processTokens(lexer, parserClass, workspace.getLanguage()));
-								}
-								catch (InstantiationException | IllegalAccessException e) {
-									e.printStackTrace();
-								}
+								Lexer lexer = t.getValue().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
+								IAdvancedPreProcessor processor = t.getKey().newInstance();
+								map.put(strategy.getName(), processor.process(lexer));
+							}
+							catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IOException | InvocationTargetException e) {
+								e.printStackTrace();
 							}
 						}
-						else {
+					}
+					else {
+						try {
+							Lexer lexerOld = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
+							List<? extends Token> tokensMaster = lexerOld.getAllTokens();
+
 							List<? extends Token> tokens = new LinkedList<>(tokensMaster);
 							for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 								try {
-									ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
-									tokens = processor.process(tokens, lexer.getVocabulary(), workspace.getLanguage());
+									IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
+									tokens = processor.process(tokens, lexerOld.getVocabulary(), workspace.getLanguage());
 								}
 								catch (InstantiationException | IllegalAccessException e) {
 									e.printStackTrace();
@@ -120,24 +126,22 @@ public class TestResultsFactory implements IExecutor {
 							if (strategy.getStringifier() != null) {
 								stringifier = strategy.getStringifier();
 							}
-							else if (strategy instanceof GenericTokenPreProcessingStrategy && ((GenericTokenPreProcessingStrategy) strategy).isResultTokenised()) {
+							else if (strategy instanceof GenericGeneralPreProcessingStrategy && ((GenericGeneralPreProcessingStrategy) strategy).isResultTokenised()) {
 								stringifier = new StandardTokeniser();
 							}
 							else {
 								stringifier = new StandardStringifier();
 							}
 
-							map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
+							map.put(strategy.getName(), stringifier.processTokens(tokens, lexerOld.getVocabulary()));
 						}
-					});
+						catch (IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 
-					return new ModelDataItem(file, map);
-				}
-				catch (InstantiationException | IllegalAccessException | IOException | NoSuchMethodException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-
-				return null;
+				return new ModelDataItem(file, map);
 			}).collect(Collectors.toList());
 
 			List<AbstractDetectorWorker> workers = instance.buildWorkers(inputData);

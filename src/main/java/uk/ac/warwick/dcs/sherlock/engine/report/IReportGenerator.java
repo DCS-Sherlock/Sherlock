@@ -9,14 +9,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Implementations of this class are used by the Report Manager to generate reports for files where plagiarism is suspected (though it can be run for any file in principle).
+ * Implementations of this interface are used by the Report Manager to generate reports for files where plagiarism is suspected (though it can be run for any file in principle).
  */
-public abstract class AbstractReportGenerator {
-
-
-	public AbstractReportGenerator() {
-
-	}
+public interface IReportGenerator {
 
 	/**
 	 * Generate a report for a single file.
@@ -25,5 +20,5 @@ public abstract class AbstractReportGenerator {
 	 * @param codeBlockGroups The ICodeBlockGroups that contain ICodeBlocks from the file whose report will be generated. Supplied by the Report Manager.
 	 * @return The report itself.
 	 */
-	public abstract FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups);
+	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups);
 }

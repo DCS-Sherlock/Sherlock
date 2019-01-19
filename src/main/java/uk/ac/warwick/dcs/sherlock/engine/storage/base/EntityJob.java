@@ -83,16 +83,6 @@ public class EntityJob implements IJob, Serializable {
 	}
 
 	@Override
-	public boolean isPrepared() {
-		return this.prepared;
-	}
-
-	@Override
-	public long getPersistentId() {
-		return this.id;
-	}
-
-	@Override
 	public IResultJob createNewResult() {
 		EntityResultJob j = new EntityResultJob();
 		this.results.add(j);
@@ -108,6 +98,11 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public IResultJob getLatestResult() {
 		return null;
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
 	}
 
 	@Override
@@ -140,6 +135,11 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public IWorkspace getWorkspace() {
 		return this.workspace;
+	}
+
+	@Override
+	public boolean isPrepared() {
+		return this.prepared;
 	}
 
 	@Override

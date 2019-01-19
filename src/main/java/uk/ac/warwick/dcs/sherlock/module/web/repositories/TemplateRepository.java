@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.module.web.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Template;
 
@@ -17,5 +16,5 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
     List<Template> findByAccountAndPublic(@Param("account") Account account);
 
     @Query("SELECT t FROM Template t WHERE t.language = :language AND (t.account = :account OR t.isPublic = true)")
-    List<Template> findByAccountAndPublicAndLanguage(@Param("account") Account account, @Param("language") Language language);
+    List<Template> findByAccountAndPublicAndLanguage(@Param("account") Account account, @Param("language") String language);
 }

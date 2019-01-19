@@ -4,14 +4,14 @@ import org.antlr.v4.runtime.*;
 
 import java.util.*;
 
-public interface ITokenPreProcessor extends IPreProcessor {
+public interface IGeneralPreProcessor extends IPreProcessor {
 
 	/**
 	 * Specify a set of dependencies which must be present in and executed prior to this preprocessor in a {@link IPreProcessingStrategy}
 	 *
 	 * @return list of dependencies, ordered.
 	 */
-	default List<Class<? extends ITokenPreProcessor>> getDependencies() {
+	default List<Class<? extends IGeneralPreProcessor>> getDependencies() {
 		return null;
 	}
 
@@ -31,6 +31,6 @@ public interface ITokenPreProcessor extends IPreProcessor {
 	 *
 	 * @return output list of filtered tokens
 	 */
-	List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, Language lang);
+	List<? extends Token> process(List<? extends Token> tokens, Vocabulary vocab, String lang);
 
 }

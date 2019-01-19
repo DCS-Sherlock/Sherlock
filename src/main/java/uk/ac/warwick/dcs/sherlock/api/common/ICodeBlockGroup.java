@@ -29,16 +29,18 @@ public interface ICodeBlockGroup {
 	void addCodeBlock(ISourceFile file, float score, List<ITuple<Integer, Integer>> lines);
 
 	/**
-	 * @return the blocks of code that were flagged as similar
-	 */
-	List<? extends ICodeBlock> getCodeBlocks();
-
-	/**
 	 * return the block of code for a specific file
+	 *
 	 * @param file file to search
+	 *
 	 * @return the files blocks
 	 */
 	ICodeBlock getCodeBlock(ISourceFile file);
+
+	/**
+	 * @return the blocks of code that were flagged as similar
+	 */
+	List<? extends ICodeBlock> getCodeBlocks();
 
 	/**
 	 * @return extra string comment or detail regarding this code block
