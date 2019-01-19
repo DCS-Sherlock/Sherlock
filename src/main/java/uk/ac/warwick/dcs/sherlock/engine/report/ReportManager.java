@@ -5,6 +5,8 @@ import java.util.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.EntityCodeBlock;
+import uk.ac.warwick.dcs.sherlock.engine.storage.base.EntityCodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 /**
@@ -69,11 +71,11 @@ public class ReportManager {
 	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
-		reports = new HashMap<Long, FileReport>();
-		fileIds = new ArrayList<Long>();
-		codeBlockGroups = new ArrayList<ICodeBlockGroup>();
-		variableNames = new HashMap<Long, List<String>>();
-		methodNames = new HashMap<Long, List<String>>();
+		reports = new HashMap<>();
+		fileIds = new ArrayList<>();
+		codeBlockGroups = new ArrayList<>();
+		variableNames = new HashMap<>();
+		methodNames = new HashMap<>();
 	}
 
 	/**
