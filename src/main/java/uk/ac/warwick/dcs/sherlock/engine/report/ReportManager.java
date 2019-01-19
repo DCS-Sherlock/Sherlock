@@ -1,11 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import java.util.*;
-
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
+
+import java.util.*;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).

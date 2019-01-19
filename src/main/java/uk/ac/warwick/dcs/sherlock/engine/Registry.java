@@ -346,6 +346,13 @@ public class Registry implements IRegistry {
 
 	@Override
 	public boolean registerGeneralPreProcessor(Class<? extends IGeneralPreProcessor> preProcessor) {
+
+		this.languageRegistry.forEach((k,v) -> {
+			for (Class<? extends Lexer> lex : v.lexers){
+
+			}
+		});
+
 		return false;
 	}
 
