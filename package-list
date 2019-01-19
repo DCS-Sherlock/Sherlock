@@ -27,10 +27,12 @@ uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing
 uk.ac.warwick.dcs.sherlock.module.model.base.scoring
 uk.ac.warwick.dcs.sherlock.module.web
 uk.ac.warwick.dcs.sherlock.module.web.configurations
+uk.ac.warwick.dcs.sherlock.module.web.controlleradvice
 uk.ac.warwick.dcs.sherlock.module.web.controllers
 uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard
+uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.templates
+uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces
 uk.ac.warwick.dcs.sherlock.module.web.controllers.settings
-uk.ac.warwick.dcs.sherlock.module.web.controllers.test
 uk.ac.warwick.dcs.sherlock.module.web.exceptions
 uk.ac.warwick.dcs.sherlock.module.web.filters
 uk.ac.warwick.dcs.sherlock.module.web.models.db
