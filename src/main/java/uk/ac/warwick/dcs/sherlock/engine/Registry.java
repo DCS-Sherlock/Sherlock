@@ -124,7 +124,7 @@ public class Registry implements IRegistry {
 
 	@Override
 	public Set<String> getLanguages() {
-		return this.languageRegistry.keySet();
+		return this.languageRegistry.values().stream().map(v -> v.dispName).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -134,8 +134,8 @@ public class Registry implements IRegistry {
 
 	@Override
 	public Set<Class<? extends IDetector>> getDetectors(String language) {
-		if (this.languageRegistry.containsKey(language)) {
-			return this.languageRegistry.get(language).detectors;
+		if (this.languageRegistry.containsKey(language.toLowerCase())) {
+			return this.languageRegistry.get(language.toLowerCase()).detectors;
 		}
 
 		return null;
