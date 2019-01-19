@@ -4,6 +4,7 @@ import java.util.*;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 /**
@@ -86,7 +87,7 @@ public class ReportManager {
 		//Get all the codeblockgroups which contain the desired file.
 		//this is kind of gross honestly with the current setup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			List<ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
 
 			boolean fileInGroup = false;
 			for(ICodeBlock codeBlock : codeBlocks) {
@@ -116,7 +117,7 @@ public class ReportManager {
 		//Get all the codeblockgroups which contain the desired file.
 		//this is kind of gross honestly with the current setup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			List<ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
 
 			boolean fileInGroup = false;
 			for(ICodeBlock codeBlock : codeBlocks) {
@@ -129,9 +130,9 @@ public class ReportManager {
 			relevantGroups.add(codeBlockGroup);
 		}
 
-		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+		FileReport fileReport = reportGenerator.GenerateReport(sourceFile.getPersistentId(), relevantGroups);
 
-		reports.put(fileId, fileReport);
+		reports.put(sourceFile.getPersistentId(), fileReport);
 		return fileReport;
 	}
 
