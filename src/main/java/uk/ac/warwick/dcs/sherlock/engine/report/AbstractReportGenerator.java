@@ -13,18 +13,9 @@ import java.util.*;
  */
 public abstract class AbstractReportGenerator {
 
-	/**
-	 * The unformatted descriptions are stored in this map of strings
-	 */
-	protected Map<DetectionType, String> baseDescriptions;
-
 
 	public AbstractReportGenerator() {
-		baseDescriptions = new HashMap<DetectionType, String>();
 
-		for(DetectionType type : DetectionType.values()) {
-			baseDescriptions.put(type, ReportDescriptions.getDescription(type));
-		}
 	}
 
 	/**
