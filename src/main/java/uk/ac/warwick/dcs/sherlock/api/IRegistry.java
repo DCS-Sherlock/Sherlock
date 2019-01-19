@@ -9,7 +9,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
@@ -60,8 +59,7 @@ public interface IRegistry {
 	 *
 	 * @return languages supported by the detector
 	 */
-	@Deprecated
-	Language[] getDetectorLanguages(Class<? extends IDetector> det);
+	Set<String> getDetectorLanguages(Class<? extends IDetector> det);
 
 	/**
 	 * Get the rank of the detector (Should it be a primary result, or just a reinforcing result (secondary))
@@ -82,12 +80,11 @@ public interface IRegistry {
 	/**
 	 * Returns a set of all detectors registered which support the language specified
 	 *
-	 * @param language the language to search
+	 * @param language the language string to search
 	 *
 	 * @return the set of detectors
 	 */
-	@Deprecated
-	Set<Class<? extends IDetector>> getDetectors(Language language);
+	Set<Class<? extends IDetector>> getDetectors(String language);
 
 	/**
 	 * Gets the adjustable parameters for a postprocessor

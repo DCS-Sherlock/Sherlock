@@ -7,19 +7,22 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
+import uk.ac.warwick.dcs.sherlock.module.model.base.lang.HaskellLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramPostProcessor;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityPostProcessor;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
-import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor;
-import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractorJava;
+import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.*;
 
 @SherlockModule
 public class ModuleModelBase {
 
 	@EventHandler
 	public void initialisation(EventInitialisation event) {
+		SherlockRegistry.registerGeneralPreProcessor(CommentExtractor.class);
+		SherlockRegistry.registerGeneralPreProcessor(CommentRemover.class);
+		SherlockRegistry.registerGeneralPreProcessor(TrimWhitespaceOnly.class);
 		SherlockRegistry.registerAdvancedPreProcessorImplementation("uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor", VariableExtractorJava.class);
 
 		SherlockRegistry.registerDetector(TestDetector.class);
@@ -33,6 +36,8 @@ public class ModuleModelBase {
 	@EventHandler
 	public void preInitialisation(EventPreInitialisation event) {
 		SherlockRegistry.registerLanguage("Java", JavaLexer.class);
+		SherlockRegistry.registerLanguage("Haskell", HaskellLexer.class); //Testing, will be moved to a separate module for testing purposes
+
 		SherlockRegistry.registerAdvancedPreProcessorGroup(VariableExtractor.class);
 	}
 

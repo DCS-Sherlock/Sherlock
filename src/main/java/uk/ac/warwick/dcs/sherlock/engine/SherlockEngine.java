@@ -171,6 +171,7 @@ public class SherlockEngine {
 
 		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
 		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
+		SherlockEngine.registry.analyseDetectors();
 		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
 
 		//Cleanup init events, we don't need them any more

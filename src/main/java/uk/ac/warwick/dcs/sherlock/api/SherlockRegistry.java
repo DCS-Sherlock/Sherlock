@@ -9,7 +9,6 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
@@ -78,8 +77,7 @@ public class SherlockRegistry {
 	 *
 	 * @return languages supported by the detector
 	 */
-	@Deprecated
-	public static Language[] getDetectorLanguages(Class<? extends IDetector> det) {
+	public static Set<String> getDetectorLanguages(Class<? extends IDetector> det) {
 		if (registry != null) {
 			return registry.getDetectorLanguages(det);
 		}
@@ -115,8 +113,7 @@ public class SherlockRegistry {
 	 *
 	 * @return the set of detectors
 	 */
-	@Deprecated
-	public static Set<Class<? extends IDetector>> getDetectors(Language language) {
+	public static Set<Class<? extends IDetector>> getDetectors(String language) {
 		if (registry != null) {
 			return registry.getDetectors(language);
 		}

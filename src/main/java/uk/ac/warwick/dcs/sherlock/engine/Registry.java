@@ -16,6 +16,7 @@ import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -104,9 +105,9 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public Language[] getDetectorLanguages(Class<? extends IDetector> det) {
+	public Set<String> getDetectorLanguages(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
-			return this.detectorRegistry.get(det).langs;
+			return this.detectorRegistry.get(det).languages;
 		}
 
 		return null;
@@ -127,18 +128,12 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public Set<Class<? extends IDetector>> getDetectors(Language language) {
-		return this.detectorRegistry.keySet().stream().filter(x -> {
-			Language[] langs = this.detectorRegistry.get(x).langs;
+	public Set<Class<? extends IDetector>> getDetectors(String language) {
+		if (this.languageRegistry.containsKey(language)) {
+			return this.languageRegistry.get(language).detectors;
+		}
 
-			// can this be done more efficiently??
-			for (Language l : langs) {
-				if (l.equals(language)) {
-					return true;
-				}
-			}
-			return false;
-		}).collect(Collectors.toSet());
+		return null;
 	}
 
 	@Override
@@ -308,7 +303,7 @@ public class Registry implements IRegistry {
 			data.name = tester.getDisplayName();
 			data.desc = "NOT YET IMPLEMENTED, SORRY";
 			data.rank = tester.getRank();
-			data.langs = tester.getSupportedLanguages();
+			data.strategies = tester.getPreProcessors();
 			data.resultClass = resultsClass;
 			this.detectorRegistry.put(detector, data);
 
@@ -347,12 +342,35 @@ public class Registry implements IRegistry {
 	@Override
 	public boolean registerGeneralPreProcessor(Class<? extends IGeneralPreProcessor> preProcessor) {
 
-		this.languageRegistry.forEach((k,v) -> {
-			for (Class<? extends Lexer> lex : v.lexers){
+		PreProcessorData data = new PreProcessorData();
 
-			}
-		});
+		try {
+			ILexerSpecification spec = preProcessor.newInstance().getLexerSpecification();
+			this.languageRegistry.forEach((k, v) -> {
+				for (Class<? extends Lexer> lex : v.lexers) {
+					try {
+						Field field = lex.getDeclaredField("channelNames");
+						field.setAccessible(true);
+						if (ModelUtils.checkLexerAgainstSpecification((String[]) field.get(new String[] {}), spec)) {
+							data.langLexerRef.put(k, lex);
+							break;
+						}
+					}
+					catch (IllegalAccessException | NoClassDefFoundError | NoSuchFieldException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		catch (NoClassDefFoundError e) {
+			logger.warn("IGeneralPreProcessor '{}' not registered. Could not find the required class dependency '{}'", preProcessor.getName(), e.getMessage());
+			return false;
+		}
 
+		this.preProcessorRegistry.put(preProcessor, data);
 		return false;
 	}
 
@@ -470,6 +488,38 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
+	void analyseDetectors() {
+		this.detectorRegistry.forEach((k,v) -> {
+			Set<String> supportedLanguages = new HashSet<>();
+
+			for (IPreProcessingStrategy strat : v.strategies) {
+				if (strat.isAdvanced()){
+					this.insersectSets(supportedLanguages, this.advPreProcessorRegistry.get(strat.getPreProcessorClasses().get(0).getName()).preProcessors.keySet());
+				}
+				else {
+					strat.getPreProcessorClasses().forEach(x -> {
+						if (this.preProcessorRegistry.containsKey(x)) {
+							this.insersectSets(supportedLanguages, this.preProcessorRegistry.get(x).langLexerRef.keySet());
+						}
+					});
+				}
+			}
+
+			v.languages = supportedLanguages;
+			supportedLanguages.forEach(l -> this.languageRegistry.get(l).detectors.add(k));
+			//logger.error(k.getName() + " - " + supportedLanguages.toString());
+		});
+	}
+
+	private void insersectSets(Set master, Set s2) {
+		if (master.size() == 0) {
+			master.addAll(s2);
+		}
+		else {
+			master.retainAll(s2);
+		}
+	}
+
 	private Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
 		ParameterizedType type = this.getHighestParamType(genericSuperclass);
 		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
@@ -497,7 +547,8 @@ public class Registry implements IRegistry {
 		String name;
 		String desc;
 		Rank rank;
-		Language[] langs;
+		Set<String> languages;
+		List<IPreProcessingStrategy> strategies;
 		List<AdjustableParameterObj> adjustables;
 		Class<? extends AbstractModelTaskRawResult> resultClass;
 
