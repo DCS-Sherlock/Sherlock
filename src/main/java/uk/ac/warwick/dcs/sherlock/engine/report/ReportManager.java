@@ -5,8 +5,6 @@ import java.util.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.EntityCodeBlock;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.EntityCodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 /**
@@ -78,11 +76,12 @@ public class ReportManager {
 		methodNames = new HashMap<>();
 	}
 
+	/*
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
 	 * @param fileId The persistent ID of the file to generate a report for.
 	 * @return The FileReport object that is generated.
-	 */
+	 *
 	public FileReport GenerateReport(long fileId) {
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
@@ -112,7 +111,7 @@ public class ReportManager {
 	 * Generates a report for a single specified file, stores it, and returns it.
 	 * @param sourceFile The file object for which the report is to be generated for.
 	 * @return The FileReport object that is generated.
-	 */
+	 *
 	public FileReport GenerateReport(ISourceFile sourceFile) {
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
@@ -137,6 +136,7 @@ public class ReportManager {
 		reports.put(sourceFile.getPersistentId(), fileReport);
 		return fileReport;
 	}
+	*/
 
 	/**
 	 * To be called by the Post-Processor.
