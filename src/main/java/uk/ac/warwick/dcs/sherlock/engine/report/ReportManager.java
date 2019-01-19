@@ -76,6 +76,15 @@ public class ReportManager {
 		methodNames = new HashMap<>();
 	}
 
+	//TODO: fix stuff
+	public FileReport GenerateReport(long fileId) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
+	}
 	/*
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
