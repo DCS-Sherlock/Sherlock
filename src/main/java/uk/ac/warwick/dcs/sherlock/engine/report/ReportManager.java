@@ -11,8 +11,6 @@ import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
  *
  * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending
  * the relevant information to the actual report generator in use.
- *
- * very wip
  */
 
 /**
@@ -61,13 +59,13 @@ public class ReportManager {
 	 */
 	private Map<Long, FileReport> reports;
 
-	private AbstractReportGenerator reportGenerator;
+	private IReportGenerator reportGenerator;
 
 	/**
 	 *
-	 * @param reportGenerator The implementation of AbstractReportGenerator that will generate all reports for this project.
+	 * @param reportGenerator The implementation of IReportGenerator that will generate all reports for this project.
 	 */
-	public ReportManager(AbstractReportGenerator reportGenerator) {
+	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
 		reports = new HashMap<Long, FileReport>();
@@ -80,11 +78,56 @@ public class ReportManager {
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
 	 * @param fileId The persistent ID of the file to generate a report for.
-	 * @return The FileReport object that has just been generated.
+	 * @return The FileReport object that is generated.
 	 */
 	public FileReport GenerateReport(long fileId) {
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-		//TODO: get all the groups with a block from this file.
+
+		//Get all the codeblockgroups which contain the desired file.
+		//this is kind of gross honestly with the current setup
+		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			List<ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+
+			boolean fileInGroup = false;
+			for(ICodeBlock codeBlock : codeBlocks) {
+				if(codeBlock.getFile().getPersistentId() == fileId) {
+					fileInGroup = true;
+					break;
+				}
+			}
+
+			relevantGroups.add(codeBlockGroup);
+		}
+
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
+	}
+
+	/**
+	 * Generates a report for a single specified file, stores it, and returns it.
+	 * @param sourceFile The file object for which the report is to be generated for.
+	 * @return The FileReport object that is generated.
+	 */
+	public FileReport GenerateReport(ISourceFile sourceFile) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		//Get all the codeblockgroups which contain the desired file.
+		//this is kind of gross honestly with the current setup
+		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			List<ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+
+			boolean fileInGroup = false;
+			for(ICodeBlock codeBlock : codeBlocks) {
+				if(codeBlock.getFile() == sourceFile) {
+					fileInGroup = true;
+					break;
+				}
+			}
+
+			relevantGroups.add(codeBlockGroup);
+		}
 
 		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class ReportGenerator extends AbstractReportGenerator {
+public class ReportGenerator implements IReportGenerator {
 
 	ReportGenerator() { }
 
