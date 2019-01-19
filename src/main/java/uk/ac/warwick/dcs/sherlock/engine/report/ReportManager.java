@@ -1,14 +1,17 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-
 import java.util.*;
+
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).
- * <p>
- * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending the relevant information to the actual report generator in use.
- * <p>
+ *
+ * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending
+ * the relevant information to the actual report generator in use.
+ *
  * very wip
  */
 
@@ -75,12 +78,18 @@ public class ReportManager {
 	}
 
 	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
+	 * Generates a report for a single specified file, stores it, and returns it.
+	 * @param fileId The persistent ID of the file to generate a report for.
+	 * @return The FileReport object that has just been generated.
 	 */
-	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
-		this.codeBlockGroups.addAll(codeBlockGroups);
+	public FileReport GenerateReport(long fileId) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+		//TODO: get all the groups with a block from this file.
+
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
 	}
 
 	/**
@@ -93,12 +102,12 @@ public class ReportManager {
 	}
 
 	/**
-	 * To be called by the PostProcessor.
+	 * To be called by the Post-Processor.
 	 *
-	 * @param methodNames Each list contains every method name for each file.
+	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
 	 */
-	public void AddMethodNames(Map<Long, List<String>> methodNames) {
-		this.methodNames.putAll(methodNames);
+	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
+		this.codeBlockGroups.addAll(codeBlockGroups);
 	}
 
 	/**
@@ -110,9 +119,13 @@ public class ReportManager {
 		this.variableNames.putAll(variableNames);
 	}
 
-	//TODO
-	public void GenerateReports() {
-
+	/**
+	 * To be called by the PostProcessor.
+	 *
+	 * @param methodNames Each list contains every method name for each file.
+	 */
+	public void AddMethodNames(Map<Long, List<String>> methodNames) {
+		this.methodNames.putAll(methodNames);
 	}
 
 }
