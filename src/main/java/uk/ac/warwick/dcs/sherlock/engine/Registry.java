@@ -11,8 +11,8 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
@@ -32,11 +32,15 @@ public class Registry implements IRegistry {
 
 	private Map<String, LanguageData> languageRegistry;
 
+	private Map<Class<? extends IGeneralPreProcessor>, PreProcessorData> preProcessorRegistry;
+	private Map<String, AdvPreProcessorGroupData> advPreProcessorRegistry;
 	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
 	private Map<Class<? extends AbstractModelTaskRawResult>, PostProcessorData> postProcRegistry;
 
 	Registry() {
 		this.languageRegistry = new ConcurrentHashMap<>();
+		this.preProcessorRegistry = new ConcurrentHashMap<>();
+		this.advPreProcessorRegistry = new ConcurrentHashMap<>();
 		this.detectorRegistry = new ConcurrentHashMap<>();
 		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
@@ -54,6 +58,23 @@ public class Registry implements IRegistry {
 		}
 		return reference;
 	}*/
+
+	@Override
+	public ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> getAdvancedPostProcessorForLanguage(Class<? extends IAdvancedPreProcessorGroup> group, String language) {
+		if (this.advPreProcessorRegistry.containsKey(group.getName())) {
+			AdvPreProcessorGroupData g = this.advPreProcessorRegistry.get(group.getName());
+			if (g.preProcessors.containsKey(language.toLowerCase())) {
+				AdvPreProcessorData data = g.preProcessors.get(language.toLowerCase());
+				return new Tuple<>(data.clazz, data.lexer);
+			}
+			else {
+				logger.error("Language not valid for group, this should have been validated and stopped from happening by disallowing the detector for this language");
+				return null;
+			}
+		}
+		logger.error("Group has not been registered, this should have been validated and disallowed the detector");
+		return null;
+	}
 
 	@Override
 	public String getDetecorDescription(Class<? extends IDetector> det) {
@@ -155,6 +176,67 @@ public class Registry implements IRegistry {
 			logger.warn("Could not find IPostProcessor instance to process {} object", rawClass.getName());
 			return null;
 		}
+	}
+
+	@Override
+	public boolean registerAdvancedPreProcessorGroup(Class<? extends IAdvancedPreProcessorGroup> preProcessorGroup) {
+		if (preProcessorGroup == null) {
+			logger.error("Cannot register a null IAdvancedPreProcessorGroup");
+			return false;
+		}
+
+		if (!this.advPreProcessorRegistry.containsKey(preProcessorGroup.getName())) {
+			this.advPreProcessorRegistry.put(preProcessorGroup.getName(), new AdvPreProcessorGroupData());
+			return true;
+		}
+
+		logger.info("A group for '{}' is already registered", preProcessorGroup.getName());
+		return false;
+	}
+
+	@Override
+	public boolean registerAdvancedPreProcessorImplementation(String groupClassPath, Class<? extends IAdvancedPreProcessor> preProcessor) {
+		if (groupClassPath == null || groupClassPath.equals("")) {
+			logger.error("Cannot register to a group will a blank name");
+			return false;
+		}
+
+		if (preProcessor == null) {
+			logger.error("Cannot register a null PreProcessor to group '{}'", groupClassPath);
+			return false;
+		}
+
+		if (this.advPreProcessorRegistry.containsKey(groupClassPath)) {
+			AdvPreProcessorGroupData group = this.advPreProcessorRegistry.get(groupClassPath);
+
+			Class<?> type = Arrays.stream(preProcessor.getDeclaredMethods()).filter(x -> x.getName().equals("process")).map(x -> x.getParameterTypes()[0]).findAny().orElse(null);
+
+			if (type == null) {
+				logger.error("Could not verify the generic type for the IAdvancedPreProcessor '{}' is correct, not registering", preProcessor.getName());
+				return false;
+			}
+
+			AdvPreProcessorData data = new AdvPreProcessorData();
+			data.lexer = (Class<? extends Lexer>) type;
+			data.clazz = preProcessor;
+
+			this.languageRegistry.forEach((k, v) -> {
+				if (v.lexers.contains(data.lexer)) {
+					if (!group.preProcessors.containsKey(k)) {
+						group.preProcessors.put(k, data);
+					}
+					else {
+						logger.warn("IAdvancedPreProcessorGroup '{}' already contains a PreProcessor for language '{}', not registering '{}' for this language even though it is valid", groupClassPath,
+								v.dispName, preProcessor.getName());
+					}
+				}
+			});
+
+			return true;
+		}
+
+		logger.info("Group at classpath '{}' does not exist", groupClassPath);
+		return false;
 	}
 
 	@Override
@@ -263,6 +345,11 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
+	public boolean registerGeneralPreProcessor(Class<? extends IGeneralPreProcessor> preProcessor) {
+		return false;
+	}
+
+	@Override
 	public boolean registerLanguage(String name, Class<? extends Lexer> lexer) {
 		if (name != null && !name.equals("") && lexer != null) {
 			if (name.length() > 32) {
@@ -304,7 +391,6 @@ public class Registry implements IRegistry {
 			logger.warn("IPostProcessor '{}' not registered. Could not find the required class dependency '{}'", postProcessor.getName(), e.getMessage());
 			return false;
 		}
-
 
 		if (this.postProcRegistry.containsKey(handledResultType)) {
 			logger.error("RawResult class '{}' already mapped to a postprocessor", handledResultType.getName());
@@ -418,10 +504,34 @@ public class Registry implements IRegistry {
 
 	private class PreProcessorData {
 
-		Map<String, Integer> langLexerRef;
+		Map<String, Class<? extends Lexer>> langLexerRef;
 
 		PreProcessorData() {
 			this.langLexerRef = new HashMap<>();
+		}
+	}
+
+	private class AdvPreProcessorGroupData {
+
+		Map<String, AdvPreProcessorData> preProcessors;
+
+		AdvPreProcessorGroupData() {
+			this.preProcessors = new HashMap<>();
+		}
+
+	}
+
+	private class AdvPreProcessorData {
+
+		Class<? extends IAdvancedPreProcessor> clazz;
+		Class<? extends Lexer> lexer;
+
+		public Class<? extends IAdvancedPreProcessor> getClazz() {
+			return clazz;
+		}
+
+		public Class<? extends Lexer> getLexer() {
+			return lexer;
 		}
 	}
 

@@ -12,14 +12,16 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramPostProc
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityPostProcessor;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
+import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor;
+import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractorJava;
 
 @SherlockModule
 public class ModuleModelBase {
 
 	@EventHandler
 	public void initialisation(EventInitialisation event) {
+		SherlockRegistry.registerAdvancedPreProcessorImplementation("uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.VariableExtractor", VariableExtractorJava.class);
 
-		//Test detector registration
 		SherlockRegistry.registerDetector(TestDetector.class);
 		SherlockRegistry.registerPostProcessor(SimpleObjectEqualityPostProcessor.class, SimpleObjectEqualityRawResult.class);
 
@@ -31,6 +33,7 @@ public class ModuleModelBase {
 	@EventHandler
 	public void preInitialisation(EventPreInitialisation event) {
 		SherlockRegistry.registerLanguage("Java", JavaLexer.class);
+		SherlockRegistry.registerAdvancedPreProcessorGroup(VariableExtractor.class);
 	}
 
 }

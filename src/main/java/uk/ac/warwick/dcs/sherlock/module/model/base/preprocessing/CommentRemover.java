@@ -2,12 +2,12 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ILexerSpecification;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.ITokenPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
 
 import java.util.*;
 
-public class CommentRemover implements ITokenPreProcessor {
+public class CommentRemover implements IGeneralPreProcessor {
 
 	@Override
 	public ILexerSpecification getLexerSpecification() {

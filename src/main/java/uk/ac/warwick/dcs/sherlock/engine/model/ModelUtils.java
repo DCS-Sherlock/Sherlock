@@ -84,17 +84,17 @@ public class ModelUtils {
 			return false;
 		}
 
-		if (strategy.isParserBased()) {
+		if (strategy.isAdvanced()) {
 			List<Class<? extends IPreProcessor>> s = strategy.getPreProcessorClasses();
 			if (s.size() != 1) {
 				return false;
 			}
 
 			try {
-				IParserPreProcessor processor = (IParserPreProcessor) s.get(0).newInstance();
-				if (!processor.getParserUsed(lang).equals(parser)) {
+				IAdvancedPreProcessorGroup processor = (IAdvancedPreProcessorGroup) s.get(0).newInstance();
+				/*if (!processor.getParserUsed(lang).equals(parser)) {
 					return false;
-				}
+				}*/
 			}
 			catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -104,7 +104,7 @@ public class ModelUtils {
 			List<Class<? extends IPreProcessor>> checkedProcessors = new LinkedList<>();
 			for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 				try {
-					ITokenPreProcessor processor = (ITokenPreProcessor) processorClass.newInstance();
+					IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
 					if (!checkLexerAgainstSpecification(lexerChannels, processor.getLexerSpecification())) {
 						Logger logger = LoggerFactory.getLogger(ModelUtils.class);
 						logger.error(String.format("%s does not conform to the required lexer specification for %s", lexerName, processorClass.getName())); //throw exception here

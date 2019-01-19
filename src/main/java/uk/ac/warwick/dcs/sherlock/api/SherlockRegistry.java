@@ -6,7 +6,11 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.Language;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
 
@@ -16,6 +20,22 @@ import java.util.*;
 public class SherlockRegistry {
 
 	private static IRegistry registry;
+
+	/**
+	 * Fetches a tuple containing the correct AdvancedPreProcessor and Lexer implementations for this group/language combination
+	 *
+	 * @param group    the group to find a valid preprocessor for
+	 * @param language the language string in use, should have been already validated to work with this group
+	 *
+	 * @return the tuple
+	 */
+	public static ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> getAdvancedPostProcessorForLanguage(Class<? extends IAdvancedPreProcessorGroup> group, String language) {
+		if (registry != null) {
+			return registry.getAdvancedPostProcessorForLanguage(group, language);
+		}
+
+		return null;
+	}
 
 	/**
 	 * @param det detector class
@@ -146,6 +166,35 @@ public class SherlockRegistry {
 	}
 
 	/**
+	 * Registers a grouping for {@link IAdvancedPreProcessor} to Sherlock. These groups of multiple Advanced PreProcessors all perform the same function, for different languages, laxers and parsers
+	 *
+	 * @param preProcessorGroup the group
+	 *
+	 * @return was successful?
+	 */
+	public static boolean registerAdvancedPreProcessorGroup(Class<? extends IAdvancedPreProcessorGroup> preProcessorGroup) {
+		if (registry != null) {
+			return registry.registerAdvancedPreProcessorGroup(preProcessorGroup);
+		}
+		return false;
+	}
+
+	/**
+	 * Registers an {@link IAdvancedPreProcessor} implementation to a group
+	 *
+	 * @param groupClassPath the ClassPath for the group object to register to. The preProcessor MUST perform the groups assigned function, this cannot be checked!!!
+	 * @param preProcessor   the implementation
+	 *
+	 * @return was successful?
+	 */
+	public static boolean registerAdvancedPreProcessorImplementation(String groupClassPath, Class<? extends IAdvancedPreProcessor> preProcessor) {
+		if (registry != null) {
+			return registry.registerAdvancedPreProcessorImplementation(groupClassPath, preProcessor);
+		}
+		return false;
+	}
+
+	/**
 	 * Registers an {@link IDetector} implementation to Sherlock
 	 *
 	 * @param detector the implementation
@@ -155,6 +204,20 @@ public class SherlockRegistry {
 	public static boolean registerDetector(Class<? extends IDetector> detector) {
 		if (registry != null) {
 			return registry.registerDetector(detector);
+		}
+		return false;
+	}
+
+	/**
+	 * Registers an {@link IGeneralPreProcessor} implementation to Sherlock
+	 *
+	 * @param preProcessor the implementation
+	 *
+	 * @return was successful?
+	 */
+	public static boolean registerGeneralPreProcessor(Class<? extends IGeneralPreProcessor> preProcessor) {
+		if (registry != null) {
+			return registry.registerGeneralPreProcessor(preProcessor);
 		}
 		return false;
 	}
