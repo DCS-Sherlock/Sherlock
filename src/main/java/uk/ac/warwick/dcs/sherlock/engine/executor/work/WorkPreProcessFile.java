@@ -108,7 +108,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 					}
 					else {
 						synchronized (ExecutorUtils.logger) {
-							ExecutorUtils.logger.error("Strategy is not valid for the passed language, this should have been caught at startup!!!!");
+							ExecutorUtils.logger.error("Strategy is not valid for the passed language, this should have been caught at startup!");
 						}
 					}
 				}

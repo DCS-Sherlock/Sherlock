@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.util.PairedTuple;
 
 import java.io.Serializable;
@@ -50,8 +50,20 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		return file2NumObjs;
 	}
 
+	public PairedTuple<Integer, Integer, Integer, Integer> getLocation(int index) {
+		return this.locations.get(index);
+	}
+
 	public List<PairedTuple<Integer, Integer, Integer, Integer>> getLocations() {
 		return this.locations;
+	}
+
+	public T getObject(int index) {
+		return this.objects.get(index);
+	}
+
+	public List<T> getObjects() {
+		return this.objects;
 	}
 
 	public int getSize() {
@@ -60,7 +72,7 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 
 	@Override
 	public boolean isEmpty() {
-		return this.size <= 0;
+		return this.size == 0;
 	}
 
 	public void put(T object, int file1Loc, int file2Loc) {
@@ -86,18 +98,6 @@ public class SimpleObjectEqualityRawResult<T extends Serializable> extends Abstr
 		}
 
 		return false;
-	}
-
-	public List<T> getObjects() {
-		return this.objects;
-	}
-
-	public T getObject(int index) {
-		return this.objects.get(index);
-	}
-
-	public PairedTuple<Integer, Integer, Integer, Integer> getLocation(int index) {
-		return this.locations.get(index);
 	}
 
 	public String toString() {

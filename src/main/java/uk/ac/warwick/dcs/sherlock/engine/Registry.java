@@ -44,6 +44,33 @@ public class Registry implements IRegistry {
 		this.strategyLexerCache = new ConcurrentHashMap<>();
 	}
 
+	/**
+	 * Fetches the top level generic type
+	 *
+	 * @param genericSuperclass class.getGenericSuperclass()
+	 *
+	 * @return The generic type class if found
+	 *
+	 * @throws ClassNotFoundException
+	 */
+	public static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
+		ParameterizedType type = getHighestParamType(genericSuperclass);
+		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
+		return Class.forName(typeName);
+	}
+
+	private static ParameterizedType getHighestParamType(Type type) {
+		while (!(type instanceof ParameterizedType)) {
+			try {
+				type = ((Class<?>) type).getGenericSuperclass();
+			}
+			catch (NullPointerException e) {
+				return null;
+			}
+		}
+		return (ParameterizedType) type;
+	}
+
 	@Override
 	public ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> getAdvancedPostProcessorForLanguage(Class<? extends IAdvancedPreProcessorGroup> group, String language) {
 		if (this.advPreProcessorRegistry.containsKey(group.getName())) {
@@ -550,24 +577,6 @@ public class Registry implements IRegistry {
 		}
 
 		return true;
-	}
-
-	private Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
-		ParameterizedType type = this.getHighestParamType(genericSuperclass);
-		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
-		return Class.forName(typeName);
-	}
-
-	private ParameterizedType getHighestParamType(Type type) {
-		while (!(type instanceof ParameterizedType)) {
-			try {
-				type = ((Class<?>) type).getGenericSuperclass();
-			}
-			catch (NullPointerException e) {
-				return null;
-			}
-		}
-		return (ParameterizedType) type;
 	}
 
 	private PostProcessorData getPostProcessorData(Class<? extends IPostProcessor> postProcessor) {

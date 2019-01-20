@@ -68,7 +68,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 			}
 		}
 
-		rawResults = rawResults.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		rawResults = rawResults.stream().filter(Objects::nonNull).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 		if (rawResults.size() > 0) {
 
 			// validate the raw result types, are they all the same?
