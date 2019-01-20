@@ -34,7 +34,6 @@ public class SherlockEngine {
 	public static IExecutor executor = null;
 
 	static EventBus eventBus = null;
-	static RequestBus requestBus = null;
 	static Registry registry = null;
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
@@ -49,11 +48,6 @@ public class SherlockEngine {
 			Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.eventBus);
-
-			SherlockEngine.requestBus = new RequestBus();
-			field = uk.ac.warwick.dcs.sherlock.api.request.RequestBus.class.getDeclaredField("bus");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.requestBus);
 
 			SherlockEngine.registry = new Registry();
 			field = SherlockRegistry.class.getDeclaredField("registry");
@@ -166,8 +160,6 @@ public class SherlockEngine {
 
 		AnnotationLoader modules = new AnnotationLoader();
 		modules.registerModules();
-		modules.registerRequestProcessors();
-		modules.registerResponseHandlers();
 
 		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
 		SherlockEngine.eventBus.publishEvent(new EventInitialisation());

@@ -9,8 +9,6 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.annotation.RequestProcessor;
-import uk.ac.warwick.dcs.sherlock.api.annotation.ResponseHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
 
 import java.io.File;
@@ -79,16 +77,6 @@ public class AnnotationLoader {
 
 	void registerModules() {
 		this.ref.getTypesAnnotatedWith(SherlockModule.class).stream().peek(x -> logger.info("Registering Sherlock module: {}", x.getName())).forEach(SherlockEngine.eventBus::registerModule);
-	}
-
-	void registerRequestProcessors() {
-		this.ref.getTypesAnnotatedWith(RequestProcessor.class).stream().peek(x -> logger.info("Registering Sherlock request processor: {}", x.getName()))
-				.forEach(SherlockEngine.requestBus::registerProcessor);
-	}
-
-	void registerResponseHandlers() {
-		this.ref.getMethodsAnnotatedWith(ResponseHandler.class).stream().peek(x -> logger.info("Registering Sherlock request response handler: {}.{}", x.getDeclaringClass().getName(), x.getName()))
-				.forEach(SherlockEngine.requestBus::registerResponseHandler);
 	}
 
 	private void addURLToClasspath(URL u) {

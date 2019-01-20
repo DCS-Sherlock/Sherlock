@@ -46,20 +46,6 @@ public class Registry implements IRegistry {
 		this.postProcRegistry = new ConcurrentHashMap<>();
 	}
 
-	/*@PostHandler
-	public AbstractRequest handlePost(AbstractRequest reference) {
-		if (reference instanceof RequestDatabase.RegistryRequests.GetDetectors) {
-			reference.setResponse(new HashMap<>(this.detectorRegistry));
-		}
-		else if (reference instanceof RequestDatabase.RegistryRequests.GetDetectorNames) {
-			reference.setResponse(new LinkedList<>(this.detectorRegistry.keySet()));
-		}
-		else if (reference instanceof RegistryRequests.GetTuneableParameters) {
-			reference.setResponse(this.getTuneableParameters((String) reference.getPayload()));
-		}
-		return reference;
-	}*/
-
 	@Override
 	public ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> getAdvancedPostProcessorForLanguage(Class<? extends IAdvancedPreProcessorGroup> group, String language) {
 		if (this.advPreProcessorRegistry.containsKey(group.getName())) {
