@@ -29,10 +29,10 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 
 	/**
 	 * Specify the preprocessors required for this detector.
-	 * <br/><br/>
+	 * <br><br>
 	 * The individual strategies in the list can be produced using the generic methods {@link PreProcessingStrategy#of(String, Class...)} or {@link PreProcessingStrategy#of(String, boolean,
 	 * Class...)} in the interface, or using a fully custom {@link PreProcessingStrategy} class.
-	 * <br/><br/>
+	 * <br><br>
 	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List)} method
 	 *
 	 * @return a list of the required preprocessing strategies
