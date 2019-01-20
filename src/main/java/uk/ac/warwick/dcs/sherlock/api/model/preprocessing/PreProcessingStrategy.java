@@ -8,7 +8,7 @@ import java.util.stream.*;
  * <p><p>
  * The preprocessors are executed in list order. The Stringifier can be set to allow for special output processing or tokenising.
  */
-public interface IPreProcessingStrategy {
+public interface PreProcessingStrategy {
 
 	/**
 	 * A construction method for a generic preprocessing strategy
@@ -21,7 +21,7 @@ public interface IPreProcessingStrategy {
 	 * @return Generic strategy for the passed parameters
 	 */
 	@SafeVarargs
-	static IPreProcessingStrategy of(String name, Class<? extends IGeneralPreProcessor>... preProcessor) {
+	static PreProcessingStrategy of(String name, Class<? extends IGeneralPreProcessor>... preProcessor) {
 		return new GenericGeneralPreProcessingStrategy(name, false, Arrays.asList(preProcessor));
 	}
 
@@ -37,7 +37,7 @@ public interface IPreProcessingStrategy {
 	 * @return Generic strategy for the passed parameters
 	 */
 	@SafeVarargs
-	static IPreProcessingStrategy of(String name, boolean tokenise, Class<? extends IGeneralPreProcessor>... preProcessor) {
+	static PreProcessingStrategy of(String name, boolean tokenise, Class<? extends IGeneralPreProcessor>... preProcessor) {
 		return new GenericGeneralPreProcessingStrategy(name, tokenise, Arrays.asList(preProcessor));
 	}
 
@@ -49,7 +49,7 @@ public interface IPreProcessingStrategy {
 	 *
 	 * @return Generic strategy for the passed parameters
 	 */
-	static IPreProcessingStrategy of(String name, Class<? extends IAdvancedPreProcessorGroup> preProcessor) {
+	static PreProcessingStrategy of(String name, Class<? extends IAdvancedPreProcessorGroup> preProcessor) {
 		return new GenericAdvancedPreProcessingStrategy(name, preProcessor);
 	}
 
@@ -78,9 +78,9 @@ public interface IPreProcessingStrategy {
 	boolean isAdvanced();
 
 	/**
-	 * Generic implementation of the IPreProcessingStrategy interface
+	 * Generic implementation of the PreProcessingStrategy interface
 	 */
-	class GenericGeneralPreProcessingStrategy implements IPreProcessingStrategy {
+	class GenericGeneralPreProcessingStrategy implements PreProcessingStrategy {
 
 		private String name;
 		private boolean tokenise;
@@ -112,7 +112,7 @@ public interface IPreProcessingStrategy {
 		}
 	}
 
-	class GenericAdvancedPreProcessingStrategy implements IPreProcessingStrategy {
+	class GenericAdvancedPreProcessingStrategy implements PreProcessingStrategy {
 
 		private String name;
 		private Class<? extends IAdvancedPreProcessorGroup> preProcessor;

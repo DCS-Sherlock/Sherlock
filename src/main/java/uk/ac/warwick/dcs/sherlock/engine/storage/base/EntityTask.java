@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
@@ -32,7 +32,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	private String detector;
 	private Map<String, Float> paramMap;
-	private Rank rank;
+	private DetectorRank rank;
 
 	private Timestamp timestamp;
 	private String hash;
@@ -101,7 +101,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	}
 
 	@Override
-	public IDetector.Rank getRank() {
+	public DetectorRank getRank() {
 		return rank;
 	}
 

@@ -7,36 +7,32 @@ import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.model.ModelUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
-//@RequestProcessor (apiFieldName = "registry")
 public class Registry implements IRegistry {
 
-	//@Instance
-	private static Registry instance;
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
 	private Map<String, LanguageData> languageRegistry;
-
 	private Map<Class<? extends IGeneralPreProcessor>, PreProcessorData> preProcessorRegistry;
 	private Map<String, AdvPreProcessorGroupData> advPreProcessorRegistry;
 	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
 	private Map<Class<? extends AbstractModelTaskRawResult>, PostProcessorData> postProcRegistry;
+
+	private Map<PreProcessingStrategy, Map<String, Class<? extends Lexer>>> strategyLexerCache;
 
 	Registry() {
 		this.languageRegistry = new ConcurrentHashMap<>();
@@ -44,6 +40,8 @@ public class Registry implements IRegistry {
 		this.advPreProcessorRegistry = new ConcurrentHashMap<>();
 		this.detectorRegistry = new ConcurrentHashMap<>();
 		this.postProcRegistry = new ConcurrentHashMap<>();
+
+		this.strategyLexerCache = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -100,17 +98,12 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public Rank getDetectorRank(Class<? extends IDetector> det) {
+	public DetectorRank getDetectorRank(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
 			return this.detectorRegistry.get(det).rank;
 		}
 
 		return null;
-	}
-
-	@Override
-	public Set<String> getLanguages() {
-		return this.languageRegistry.values().stream().map(v -> v.dispName).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -125,6 +118,64 @@ public class Registry implements IRegistry {
 		}
 
 		return null;
+	}
+
+	@Override
+	public Set<String> getLanguages() {
+		return this.languageRegistry.values().stream().map(v -> v.dispName).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Class<? extends Lexer> getLexerForStrategy(PreProcessingStrategy strategy, String language) {
+		if (strategy == null) {
+			logger.error("Strategy cannot be null");
+			return null;
+		}
+
+		if (language == null || language.equals("")) {
+			logger.error("Language cannot be null");
+			return null;
+		}
+
+		if (!this.languageRegistry.containsKey(language.toLowerCase())) {
+			logger.error("Language '{}' is has not been registered");
+			return null;
+		}
+
+		if (strategy.isAdvanced()) {
+			return this.advPreProcessorRegistry.get(strategy.getPreProcessorClasses().get(0).getName()).preProcessors.getOrDefault(language.toLowerCase(), null).lexer;
+		}
+		else {
+			if (!this.strategyLexerCache.containsKey(strategy)) {
+				this.strategyLexerCache.put(strategy, new HashMap<>());
+			}
+
+			if (this.strategyLexerCache.get(strategy).containsKey(language.toLowerCase())) {
+				return this.strategyLexerCache.get(strategy).get(language.toLowerCase());
+			}
+			else {
+				Set<Class<? extends Lexer>> lexers = this.languageRegistry.get(language.toLowerCase()).lexers;
+
+				for (Class<? extends Lexer> lexer : lexers) {
+					boolean inAll = strategy.getPreProcessorClasses().stream().allMatch(s -> {
+						PreProcessorData data = this.preProcessorRegistry.get(s);
+						if (data.langLexerRef.containsKey(language.toLowerCase())) {
+							return data.langLexerRef.get(language.toLowerCase()).contains(lexer);
+						}
+						else {
+							return false;
+						}
+					});
+
+					if (inAll) {
+						this.strategyLexerCache.get(strategy).put(language.toLowerCase(), lexer);
+						return lexer;
+					}
+				}
+
+				return null;
+			}
+		}
 	}
 
 	@Override
@@ -268,65 +319,45 @@ public class Registry implements IRegistry {
 			return false;
 		}
 
-		//Do checks on detector, ensure is valid
-		try {
-			for (String lang : tester.getSupportedLanguages()) {
-				Class<? extends Lexer> lexerClass = tester.getLexer(lang);
-				List<IPreProcessingStrategy> preProcessingStrategies = tester.getPreProcessors();
+		//Do checks on actuall detector, ensure is valid
+		if (this.detectorRegistry.containsKey(tester)) {
+			logger.warn("Detector '{}' not registered, registry already contains detector with same name", tester.getDisplayName());
+			return false;
+		}
 
-				// Get the lexer channel list only once and store
-				String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
-				for (IPreProcessingStrategy strat : preProcessingStrategies) {
-					if (!ModelUtils.validatePreProcessingStrategy(strat, lexerClass.getName(), lexerChannels, tester.getParser(lang), lang)) {
-						logger.warn("Detector '{}' not registered, the PreProcessingStrategy '{}' contains a preprocessor which is not valid for the {} lexer '{}' and parser '{}'",
-								tester.getDisplayName(), strat.getName(), lang, lexerClass.getName(), tester.getParser(lang).getName());
-						return false;
+		DetectorData data = new DetectorData();
+		data.name = tester.getDisplayName();
+		data.desc = "NOT YET IMPLEMENTED, SORRY";
+		data.rank = tester.getRank();
+		data.strategies = tester.getPreProcessors();
+		data.resultClass = resultsClass;
+
+		//Do @DetectorParameter stuff - find the annotations for the params in the detector, check them and add to the map
+		List<AdjustableParameterObj> tuneables =
+				Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
+					if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
+						logger.warn("Detector '{}' not registered, contains @DetectorParameter {} which is not an int or float", tester.getDisplayName(), x.getKey().getName());
+						return null;
 					}
-				}
 
-				if (this.detectorRegistry.containsKey(tester)) {
-					logger.warn("Detector '{}' not registered, registry already contains detector with same name", tester.getDisplayName());
-					return false;
-				}
-			}
-
-			DetectorData data = new DetectorData();
-			data.name = tester.getDisplayName();
-			data.desc = "NOT YET IMPLEMENTED, SORRY";
-			data.rank = tester.getRank();
-			data.strategies = tester.getPreProcessors();
-			data.resultClass = resultsClass;
-			this.detectorRegistry.put(detector, data);
-
-			//Do @DetectorParameter stuff - find the annotations for the params in the detector, check them and add to the map
-			List<AdjustableParameterObj> tuneables =
-					Arrays.stream(detector.getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).map(x -> {
-						if (!(x.getKey().getType().equals(float.class) || x.getKey().getType().equals(int.class))) {
-							logger.warn("Detector '{}' not registered, contains @DetectorParameter {} which is not an int or float", tester.getDisplayName(), x.getKey().getName());
-							return null;
-						}
-
-						if (x.getKey().getType().equals(int.class)) {
-							float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
-							for (float f : vals) {
-								if (f % 1 != 0) {
-									logger.warn("Detector '{}' not registered, contains @DetectorParameter {} of type int, with a float parameter", tester.getDisplayName(), x.getKey().getName());
-									return null;
-								}
+					if (x.getKey().getType().equals(int.class)) {
+						float[] vals = { x.getValue()[0].defaultValue(), x.getValue()[0].maxumumBound(), x.getValue()[0].minimumBound(), x.getValue()[0].step() };
+						for (float f : vals) {
+							if (f % 1 != 0) {
+								logger.warn("Detector '{}' not registered, contains @DetectorParameter {} of type int, with a float parameter", tester.getDisplayName(), x.getKey().getName());
+								return null;
 							}
 						}
+					}
 
-						return x;
-					}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey(), true)).collect(Collectors.toList());
+					return x;
+				}).filter(Objects::nonNull).map(x -> new AdjustableParameterObj(x.getValue()[0], x.getKey(), true)).collect(Collectors.toList());
 
-			if (tuneables.size() > 0) {
-				data.adjustables = tuneables;
-			}
-		}
-		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-			e.printStackTrace();
+		if (tuneables.size() > 0) {
+			data.adjustables = tuneables;
 		}
 
+		this.detectorRegistry.put(detector, data);
 		return true;
 	}
 
@@ -342,8 +373,13 @@ public class Registry implements IRegistry {
 					try {
 						Field field = lex.getDeclaredField("channelNames");
 						field.setAccessible(true);
-						if (ModelUtils.checkLexerAgainstSpecification((String[]) field.get(new String[] {}), spec)) {
-							data.langLexerRef.put(k, lex);
+						if (this.checkLexerAgainstSpecification((String[]) field.get(new String[] {}), spec)) {
+							if (data.langLexerRef.containsKey(k)) {
+								data.langLexerRef.get(k).add(lex);
+							}
+							else {
+								data.langLexerRef.put(k, Collections.singletonList(lex));
+							}
 							break;
 						}
 					}
@@ -394,6 +430,7 @@ public class Registry implements IRegistry {
 
 		if (postProcessor == null || handledResultType == null) {
 			logger.error("PostProcessor and/or AbstractModelTaskRawResult classes cannot be null");
+			return false;
 		}
 
 		try {
@@ -420,33 +457,27 @@ public class Registry implements IRegistry {
 
 		PostProcessorData data = new PostProcessorData();
 
-		if (postProcessor != null && handledResultType != null) {
-			//get the type T of the postprocessor
-			try {
-				ParameterizedType type =
-						Arrays.stream(postProcessor.getDeclaredMethods()).filter(x -> x.getName().equals("processResults")).map(x -> (ParameterizedType) x.getGenericParameterTypes()[1]).findAny()
-								.orElse(null);
+		//get the type T of the postprocessor
+		try {
+			ParameterizedType type =
+					Arrays.stream(postProcessor.getDeclaredMethods()).filter(x -> x.getName().equals("processResults")).map(x -> (ParameterizedType) x.getGenericParameterTypes()[1]).findAny()
+							.orElse(null);
 
-				if (type == null) {
-					logger.error("Could not verify the generic type for the IPostProcessor '{}' is correct", postProcessor.getName());
-					return false;
-				}
-
-				if (handledResultType.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
-					data.proc = postProcessor;
-				}
-				else {
-					logger.error("Generic type of the IPostProcessor '{}', does not match the type it has been registered with ('{}')", postProcessor.getName(), handledResultType.getName());
-					return false;
-				}
+			if (type == null) {
+				logger.error("Could not verify the generic type for the IPostProcessor '{}' is correct", postProcessor.getName());
+				return false;
 			}
-			catch (ClassCastException e) {
-				logger.error("IPostProcessor has no raw result type (its generic parameter), this is not allowed. A generic type MUST be given");
+
+			if (handledResultType.getName().equals(type.getActualTypeArguments()[0].getTypeName())) {
+				data.proc = postProcessor;
+			}
+			else {
+				logger.error("Generic type of the IPostProcessor '{}', does not match the type it has been registered with ('{}')", postProcessor.getName(), handledResultType.getName());
 				return false;
 			}
 		}
-		else {
-			logger.warn("Bad IPostProcessor registration");
+		catch (ClassCastException e) {
+			logger.error("IPostProcessor has no raw result type (its generic parameter), this is not allowed. A generic type MUST be given");
 			return false;
 		}
 
@@ -480,35 +511,45 @@ public class Registry implements IRegistry {
 	}
 
 	void analyseDetectors() {
-		this.detectorRegistry.forEach((k,v) -> {
+		this.detectorRegistry.forEach((k, v) -> {
 			Set<String> supportedLanguages = new HashSet<>();
 
-			for (IPreProcessingStrategy strat : v.strategies) {
-				if (strat.isAdvanced()){
+			for (PreProcessingStrategy strat : v.strategies) {
+				if (strat.isAdvanced()) {
 					this.insersectSets(supportedLanguages, this.advPreProcessorRegistry.get(strat.getPreProcessorClasses().get(0).getName()).preProcessors.keySet());
 				}
 				else {
-					strat.getPreProcessorClasses().forEach(x -> {
-						if (this.preProcessorRegistry.containsKey(x)) {
-							this.insersectSets(supportedLanguages, this.preProcessorRegistry.get(x).langLexerRef.keySet());
-						}
-					});
+					Set<String> temp = this.languageRegistry.keySet().stream().filter(l -> this.getLexerForStrategy(strat, l) != null).collect(Collectors.toSet());
+					this.insersectSets(supportedLanguages, temp);
 				}
 			}
 
 			v.languages = supportedLanguages;
 			supportedLanguages.forEach(l -> this.languageRegistry.get(l).detectors.add(k));
-			//logger.error(k.getName() + " - " + supportedLanguages.toString());
 		});
 	}
 
-	private void insersectSets(Set master, Set s2) {
-		if (master.size() == 0) {
-			master.addAll(s2);
+	/**
+	 * Verifies a a set of lexer channel conforms to a specification
+	 *
+	 * @param lexerChannels Set of channel names used in the lexer
+	 * @param specification the specification to check
+	 *
+	 * @return does lexer meet specification?
+	 */
+	private boolean checkLexerAgainstSpecification(String[] lexerChannels, ILexerSpecification specification) {
+
+		if (lexerChannels.length < specification.getChannelNames().length) {
+			return false;
 		}
-		else {
-			master.retainAll(s2);
+
+		for (int i = 0; i < specification.getChannelNames().length; i++) {
+			if (!lexerChannels[i].equals(specification.getChannelNames()[i]) && !specification.getChannelNames().equals("-")) {
+				return false;
+			}
 		}
+
+		return true;
 	}
 
 	private Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
@@ -533,13 +574,22 @@ public class Registry implements IRegistry {
 		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(null);
 	}
 
+	private void insersectSets(Set master, Set s2) {
+		if (master.size() == 0) {
+			master.addAll(s2);
+		}
+		else {
+			master.retainAll(s2);
+		}
+	}
+
 	private class DetectorData {
 
 		String name;
 		String desc;
-		Rank rank;
+		DetectorRank rank;
 		Set<String> languages;
-		List<IPreProcessingStrategy> strategies;
+		List<PreProcessingStrategy> strategies;
 		List<AdjustableParameterObj> adjustables;
 		Class<? extends AbstractModelTaskRawResult> resultClass;
 
@@ -553,7 +603,7 @@ public class Registry implements IRegistry {
 
 	private class PreProcessorData {
 
-		Map<String, Class<? extends Lexer>> langLexerRef;
+		Map<String, List<Class<? extends Lexer>>> langLexerRef;
 
 		PreProcessorData() {
 			this.langLexerRef = new HashMap<>();

@@ -7,7 +7,7 @@ import java.util.*;
 public interface IGeneralPreProcessor extends IPreProcessor {
 
 	/**
-	 * Specify a set of dependencies which must be present in and executed prior to this preprocessor in a {@link IPreProcessingStrategy}
+	 * Specify a set of dependencies which must be present in and executed prior to this preprocessor in a {@link PreProcessingStrategy}
 	 *
 	 * @return list of dependencies, ordered.
 	 */

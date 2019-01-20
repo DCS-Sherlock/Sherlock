@@ -1,14 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
-import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector.NGramDetectorWorker;
-import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
-import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.TrimWhitespaceOnly;
 
@@ -295,57 +293,21 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	}
 
 	/**
-	 * Gets the relevent lexer for detection.
-	 *
-	 * @param lang Allows the specification of language used, allowing language custom lexing.
-	 *
-	 * @return Returns the lexer to be used in the detector.
-	 */
-	@Override
-	public Class<? extends Lexer> getLexer(String lang) {
-		return JavaLexer.class;
-	}
-
-	/**
-	 * Gets the relevent parser for detection.
-	 *
-	 * @param lang Allows the specification of language used, allowing language custom parsing.
-	 *
-	 * @return Returns the parser to be used in the detector.
-	 */
-	@Override
-	public Class<? extends Parser> getParser(String lang) {
-		return JavaParser.class;
-	}
-
-	/**
 	 * Gets the set of preprocessors to be used in detection
 	 *
 	 * @return A list of preprocessors to be used in detection
 	 */
 	@Override
-	public List<IPreProcessingStrategy> getPreProcessors() {
-		return Collections.singletonList(IPreProcessingStrategy.of("no_whitespace", TrimWhitespaceOnly.class));
+	public List<PreProcessingStrategy> getPreProcessors() {
+		return Collections.singletonList(PreProcessingStrategy.of("no_whitespace", TrimWhitespaceOnly.class));
 	}
 
 	/**
 	 * @return
 	 */
 	@Override
-	public Rank getRank() {
-		return Rank.PRIMARY;
-	}
-
-	/**
-	 * Used to check which languages the detector surports to ensure compatability.
-	 *
-	 * @return A full list of surported languages.
-	 */
-	@Override
-	public String[] getSupportedLanguages() {
-		String[] languages = {"Java"};
-		return languages;
-//		return Language.values(); //All possible values for the language
+	public DetectorRank getRank() {
+		return DetectorRank.PRIMARY;
 	}
 
 	/**

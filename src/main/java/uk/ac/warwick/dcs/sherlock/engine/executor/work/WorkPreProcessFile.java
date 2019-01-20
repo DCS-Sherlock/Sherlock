@@ -6,8 +6,9 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericGeneralPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy.GenericGeneralPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardStringifier;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.StandardTokeniser;
 
@@ -76,32 +77,40 @@ public class WorkPreProcessFile extends RecursiveAction {
 			}
 			else {
 				try {
-					Lexer lexer = task.getLexerClass().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString(this.fileContent));
-					List<? extends Token> tokensMaster = lexer.getAllTokens();
+					Class<? extends Lexer> clazz = SherlockRegistry.getLexerForStrategy(strategy, task.getLanguage());
+					if (clazz != null) {
+						Lexer lexer = clazz.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString(this.fileContent));
+						List<? extends Token> tokensMaster = lexer.getAllTokens();
 
-					List<? extends Token> tokens = new LinkedList<>(tokensMaster);
-					for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
-						try {
-							IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
-							tokens = processor.process(tokens, lexer.getVocabulary(), task.getLanguage());
+						List<? extends Token> tokens = new LinkedList<>(tokensMaster);
+						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
+							try {
+								IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
+								tokens = processor.process(tokens, lexer.getVocabulary(), task.getLanguage());
+							}
+							catch (InstantiationException | IllegalAccessException e) {
+								e.printStackTrace();
+							}
 						}
-						catch (InstantiationException | IllegalAccessException e) {
-							e.printStackTrace();
-						}
-					}
 
-					ITokenStringifier stringifier;
-					if (strategy.getStringifier() != null) {
-						stringifier = strategy.getStringifier();
-					}
-					else if (strategy instanceof GenericGeneralPreProcessingStrategy && ((GenericGeneralPreProcessingStrategy) strategy).isResultTokenised()) {
-						stringifier = new StandardTokeniser();
+						ITokenStringifier stringifier;
+						if (strategy.getStringifier() != null) {
+							stringifier = strategy.getStringifier();
+						}
+						else if (strategy instanceof GenericGeneralPreProcessingStrategy && ((GenericGeneralPreProcessingStrategy) strategy).isResultTokenised()) {
+							stringifier = new StandardTokeniser();
+						}
+						else {
+							stringifier = new StandardStringifier();
+						}
+
+						map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
 					}
 					else {
-						stringifier = new StandardStringifier();
+						synchronized (ExecutorUtils.logger) {
+							ExecutorUtils.logger.error("Strategy is not valid for the passed language, this should have been caught at startup!!!!");
+						}
 					}
-
-					map.put(strategy.getName(), stringifier.processTokens(tokens, lexer.getVocabulary()));
 				}
 				catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
 					e.printStackTrace();

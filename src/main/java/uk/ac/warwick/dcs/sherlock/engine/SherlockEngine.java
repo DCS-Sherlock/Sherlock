@@ -53,9 +53,6 @@ public class SherlockEngine {
 			field = SherlockRegistry.class.getDeclaredField("registry");
 			field.setAccessible(true);
 			field.set(null, SherlockEngine.registry);
-			field = Registry.class.getDeclaredField("instance");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.registry);
 		}
 		catch (IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
@@ -81,20 +78,8 @@ public class SherlockEngine {
 		}
 	}
 
-	/*public static void submitToExecutor(IJob job) {
-		long startTime = System.nanoTime();
-		SherlockEngine.executor.submitJob(job);
-		long endTime = System.nanoTime();
-
-		double duration = (endTime - startTime) * 1e-6;
-		duration = duration / 1000;
-		logger.warn("Job duration: " + duration + " seconds");
-	}*/
-
 	private static void loadConfiguration() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
-
-		logger.info(SherlockEngine.configDir.getAbsolutePath());
 
 		if (!SherlockEngine.configDir.exists()) {
 			if (!SherlockEngine.configDir.mkdir()) {
@@ -141,9 +126,7 @@ public class SherlockEngine {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
-
 		SherlockEngine.executor = new PoolExecutor();
-		//SherlockEngine.executor = new TestResultsFactory();
 
 		try {
 			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
@@ -170,9 +153,6 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
-
-		//SherlockEngine.eventBus.publishEvent(new EventPublishResults(runSherlockTest()));
-		//uk.ac.warwick.dcs.sherlock.api.request.RequestBus.post(new RequestDatabase.RegistryRequests.GetDetectors().setPayload(""), this);
 	}
 
 	private void shutdown() {
@@ -184,9 +164,4 @@ public class SherlockEngine {
 		catch (Exception ignored) {
 		}
 	}
-
-	/*@ResponseHandler
-	public void responseHandler(AbstractRequest request) {
-		logger.info("got response: " + request.getResponse());
-	}*/
 }
