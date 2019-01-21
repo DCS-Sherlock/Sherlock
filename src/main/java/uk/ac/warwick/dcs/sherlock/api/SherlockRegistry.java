@@ -2,13 +2,14 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
@@ -89,7 +90,7 @@ public class SherlockRegistry {
 	 *
 	 * @return the detector rank
 	 */
-	public static Rank getDetectorRank(Class<? extends IDetector> det) {
+	public static DetectorRank getDetectorRank(Class<? extends IDetector> det) {
 		if (registry != null) {
 			return registry.getDetectorRank(det);
 		}
@@ -128,6 +129,21 @@ public class SherlockRegistry {
 	public static Set<String> getLanguages() {
 		if (registry != null) {
 			return registry.getLanguages();
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns a valid lexer for the preprocessing stragety, if one cannot be found returns null
+	 *
+	 * @param strategy the PreProcessingStrategy
+	 * @param language the language string to prcess
+	 *
+	 * @return valid lexer or null
+	 */
+	public static Class<? extends Lexer> getLexerForStrategy(PreProcessingStrategy strategy, String language) {
+		if (registry != null) {
+			return registry.getLexerForStrategy(strategy, language);
 		}
 		return null;
 	}

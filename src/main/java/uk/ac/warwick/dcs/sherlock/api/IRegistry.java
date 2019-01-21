@@ -2,13 +2,14 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector.Rank;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessorGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IGeneralPreProcessor;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
@@ -68,14 +69,7 @@ public interface IRegistry {
 	 *
 	 * @return the detector rank
 	 */
-	Rank getDetectorRank(Class<? extends IDetector> det);
-
-	/**
-	 * Returns the set of registered languages
-	 *
-	 * @return set of languages
-	 */
-	Set<String> getLanguages();
+	DetectorRank getDetectorRank(Class<? extends IDetector> det);
 
 	/**
 	 * Fetch the set of all detectors registered to Sherlock
@@ -92,6 +86,23 @@ public interface IRegistry {
 	 * @return the set of detectors
 	 */
 	Set<Class<? extends IDetector>> getDetectors(String language);
+
+	/**
+	 * Returns the set of registered languages
+	 *
+	 * @return set of languages
+	 */
+	Set<String> getLanguages();
+
+	/**
+	 * Finds and returns a valid lexer for the preprocessing stragety, if one cannot be found returns null
+	 *
+	 * @param strategy the PreProcessingStrategy
+	 * @param language the language string to prcess
+	 *
+	 * @return valid lexer or null
+	 */
+	Class<? extends Lexer> getLexerForStrategy(PreProcessingStrategy strategy, String language);
 
 	/**
 	 * Gets the adjustable parameters for a postprocessor

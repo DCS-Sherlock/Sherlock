@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
@@ -16,7 +17,7 @@ public interface ITask {
 
 	long getPersistentId();
 
-	IDetector.Rank getRank();
+	DetectorRank getRank();
 
 	List<AbstractModelTaskRawResult> getRawResults();
 
@@ -47,7 +48,7 @@ public interface ITask {
 
 	/**
 	 * Sets the passed adjustable parameter to the passed value
-	 * <p><p>
+	 * <br><br>
 	 * Will return false if the AdjustableParameter is invalid
 	 *
 	 * @param paramObj The parameter object to set

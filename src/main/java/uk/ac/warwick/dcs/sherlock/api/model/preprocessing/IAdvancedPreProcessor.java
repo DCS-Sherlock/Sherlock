@@ -12,7 +12,7 @@ public interface IAdvancedPreProcessor<T extends Lexer> {
 	 *
 	 * @param lexer lexer instance
 	 *
-	 * @return
+	 * @return list of processed strings, indexed by line number
 	 */
 	List<IndexedString> process(T lexer);
 

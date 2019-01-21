@@ -1,12 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 
 import java.util.*;
 
 /**
  * Interface for implementing a detection algorithm
- * <p>
+ * <br><br>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
 public interface IDetector<T extends AbstractDetectorWorker> {
@@ -21,56 +21,28 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
-	 * @return display name of the algorithm
+	 * Fetches the display name for a detector
+	 *
+	 * @return the display name
 	 */
 	String getDisplayName();
 
 	/**
-	 * Returns the appropriate lexer for this strategy and the language of the source files
-	 *
-	 * @param lang the language of the source files
-	 *
-	 * @return the lexer class to use
-	 */
-	Class<? extends org.antlr.v4.runtime.Lexer> getLexer(String lang);
-
-	/**
-	 * Returns the appropriate parser for this strategy and the language of the source files
-	 *
-	 * @param lang the language of the source files
-	 *
-	 * @return the parser class to use
-	 */
-	Class<? extends org.antlr.v4.runtime.Parser> getParser(String lang);
-
-	/**
 	 * Specify the preprocessors required for this detector.
-	 * <p><p>
-	 * The individual strategies in the list can be produced using the generic methods {@link IPreProcessingStrategy#of(String, Class...)} or {@link IPreProcessingStrategy#of(String, boolean,
-	 * Class...)} in the interface, or using a fully custom {@link IPreProcessingStrategy} class.
-	 * <p><p>
+	 * <br><br>
+	 * The individual strategies in the list can be produced using the generic methods {@link PreProcessingStrategy#of(String, Class...)} or {@link PreProcessingStrategy#of(String, boolean, Class...)}
+	 * in the interface, or using a fully custom {@link PreProcessingStrategy} class.
+	 * <br><br>
 	 * The string name of each of the strategies is used as the key reference in the preprocessed dataset given to the {@link IDetector#buildWorkers(List)} method
 	 *
 	 * @return a list of the required preprocessing strategies
 	 */
-	List<IPreProcessingStrategy> getPreProcessors();
+	List<PreProcessingStrategy> getPreProcessors();
 
 	/**
-	 * @return the post processor to use
+	 * Detectors are ranked either PRIMARY or SUPPORTING to indicate to Sherlock how to treat their results when combining multiple detectors to increase the quality of the final results
+	 *
+	 * @return the rank of the detector
 	 */
-	//Class<? extends AbstractPostProcessor> getPostProcessor();
-
-	/**
-	 * @return the rank of the detector, either
-	 */
-	Rank getRank();
-
-	/**
-	 * @return Array of languages supported by the algorithm
-	 */
-	String[] getSupportedLanguages();
-
-	enum Rank {
-		PRIMARY, BACKUP
-	}
+	DetectorRank getRank();
 }

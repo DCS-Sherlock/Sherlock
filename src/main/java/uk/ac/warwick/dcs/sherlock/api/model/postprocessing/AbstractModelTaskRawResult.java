@@ -6,6 +6,11 @@ public abstract class AbstractModelTaskRawResult implements Serializable {
 
 	private static final long serialVersionUID = 24L;
 
+	/**
+	 * Tests if the rawResult set should be discarded, as it contains no results data
+	 *
+	 * @return is empty of data
+	 */
 	public abstract boolean isEmpty();
 
 	/**

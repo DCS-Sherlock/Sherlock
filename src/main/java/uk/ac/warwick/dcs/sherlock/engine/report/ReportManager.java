@@ -2,16 +2,13 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 import java.util.*;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).
- *
- * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending
- * the relevant information to the actual report generator in use.
+ * <p>
+ * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending the relevant information to the actual report generator in use.
  */
 
 /**
@@ -76,86 +73,6 @@ public class ReportManager {
 		methodNames = new HashMap<>();
 	}
 
-	//TODO: fix stuff
-	public FileReport GenerateReport(long fileId) {
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
-
-		reports.put(fileId, fileReport);
-		return fileReport;
-	}
-	/*
-	/**
-	 * Generates a report for a single specified file, stores it, and returns it.
-	 * @param fileId The persistent ID of the file to generate a report for.
-	 * @return The FileReport object that is generated.
-	 *
-	public FileReport GenerateReport(long fileId) {
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		//Get all the codeblockgroups which contain the desired file.
-		//this is kind of gross honestly with the current setup
-		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
-
-			boolean fileInGroup = false;
-			for(ICodeBlock codeBlock : codeBlocks) {
-				if(codeBlock.getFile().getPersistentId() == fileId) {
-					fileInGroup = true;
-					break;
-				}
-			}
-
-			relevantGroups.add(codeBlockGroup);
-		}
-
-		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
-
-		reports.put(fileId, fileReport);
-		return fileReport;
-	}
-
-	/**
-	 * Generates a report for a single specified file, stores it, and returns it.
-	 * @param sourceFile The file object for which the report is to be generated for.
-	 * @return The FileReport object that is generated.
-	 *
-	public FileReport GenerateReport(ISourceFile sourceFile) {
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		//Get all the codeblockgroups which contain the desired file.
-		//this is kind of gross honestly with the current setup
-		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
-
-			boolean fileInGroup = false;
-			for(ICodeBlock codeBlock : codeBlocks) {
-				if(codeBlock.getFile() == sourceFile) {
-					fileInGroup = true;
-					break;
-				}
-			}
-
-			relevantGroups.add(codeBlockGroup);
-		}
-
-		FileReport fileReport = reportGenerator.GenerateReport(sourceFile.getPersistentId(), relevantGroups);
-
-		reports.put(sourceFile.getPersistentId(), fileReport);
-		return fileReport;
-	}
-	*/
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param fileIds A list of very file's unique, persistent id.
-	 */
-	public void AddFileIds(List<Long> fileIds) {
-		this.fileIds.addAll(fileIds);
-	}
-
 	/**
 	 * To be called by the Post-Processor.
 	 *
@@ -168,10 +85,10 @@ public class ReportManager {
 	/**
 	 * To be called by the Post-Processor.
 	 *
-	 * @param variableNames Each list contains every variable name for each file.
+	 * @param fileIds A list of very file's unique, persistent id.
 	 */
-	public void AddVariableNames(Map<Long, List<String>> variableNames) {
-		this.variableNames.putAll(variableNames);
+	public void AddFileIds(List<Long> fileIds) {
+		this.fileIds.addAll(fileIds);
 	}
 
 	/**
@@ -181,6 +98,45 @@ public class ReportManager {
 	 */
 	public void AddMethodNames(Map<Long, List<String>> methodNames) {
 		this.methodNames.putAll(methodNames);
+	}
+
+	/**
+	 * To be called by the Post-Processor.
+	 *
+	 * @param variableNames Each list contains every variable name for each file.
+	 */
+	public void AddVariableNames(Map<Long, List<String>> variableNames) {
+		this.variableNames.putAll(variableNames);
+	}
+
+	/**
+	 * Generates a report for a single specified file, stores it, and returns it.
+	 * @param fileId The persistent ID of the file to generate a report for.
+	 * @return The FileReport object that is generated.
+	 */
+	public FileReport GenerateReport(long fileId) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		//Get all the codeblockgroups which contain the desired file.
+		//this is kind of gross honestly with the current setup
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
+
+			boolean fileInGroup = false;
+			for (ICodeBlock codeBlock : codeBlocks) {
+				if (codeBlock.getFile().getPersistentId() == fileId) {
+					fileInGroup = true;
+					break;
+				}
+			}
+
+			relevantGroups.add(codeBlockGroup);
+		}
+
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+
+		reports.put(fileId, fileReport);
+		return fileReport;
 	}
 
 }

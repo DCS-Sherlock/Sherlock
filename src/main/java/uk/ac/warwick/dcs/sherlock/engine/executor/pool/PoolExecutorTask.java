@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
-import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
@@ -9,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
@@ -27,9 +26,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 	private IPriorityWorkSchedulerWrapper scheduler;
 	private ITask task;
 	private String language;
-	private Class<? extends Lexer> lexerClass;
-	private Class<? extends Parser> parserClass;
-	private List<IPreProcessingStrategy> preProcessingStrategies;
+	private List<PreProcessingStrategy> preProcessingStrategies;
 
 	PoolExecutorTask(IPriorityWorkSchedulerWrapper scheduler, ITask task, String language) {
 		this.scheduler = scheduler;
@@ -40,9 +37,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 
 		try {
 			IDetector instance = task.getDetector().newInstance();
-			this.lexerClass = instance.getLexer(language);
-			this.parserClass = instance.getParser(language);
-			this.preProcessingStrategies = instance.getPreProcessors(); // TODO: update this to be by language (for parser based stuff)
+			this.preProcessingStrategies = instance.getPreProcessors();
 		}
 		catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
@@ -73,7 +68,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 			}
 		}
 
-		rawResults = rawResults.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		rawResults = rawResults.stream().filter(Objects::nonNull).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 		if (rawResults.size() > 0) {
 
 			// validate the raw result types, are they all the same?
@@ -133,17 +128,7 @@ public class PoolExecutorTask implements Callable<Void>, IWorkTask {
 	}
 
 	@Override
-	public Class<? extends Lexer> getLexerClass() {
-		return this.lexerClass;
-	}
-
-	@Override
-	public Class<? extends Parser> getParserClass() {
-		return this.parserClass;
-	}
-
-	@Override
-	public List<IPreProcessingStrategy> getPreProcessingStrategies() {
+	public List<PreProcessingStrategy> getPreProcessingStrategies() {
 		return preProcessingStrategies;
 	}
 }

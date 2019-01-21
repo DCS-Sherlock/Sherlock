@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.engine.model;
+/*package uk.ac.warwick.dcs.sherlock.engine.model;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
@@ -8,7 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
-import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IPreProcessingStrategy.GenericGeneralPreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy.GenericGeneralPreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 /* TODO: temporary implementation*/
-@Deprecated
+/*@Deprecated
 public class TestResultsFactory implements IExecutor {
 
 	@Override
@@ -79,14 +79,14 @@ public class TestResultsFactory implements IExecutor {
 			Class<? extends Lexer> lexerClass = instance.getLexer(workspace.getLanguage());
 			Class<? extends Parser> parserClass = instance.getParser(workspace.getLanguage());
 
-			List<IPreProcessingStrategy> preProcessingStrategies = instance.getPreProcessors();
+			List<PreProcessingStrategy> preProcessingStrategies = instance.getPreProcessors();
 			/*String[] lexerChannels = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromString("")).getChannelNames();
-			if (!preProcessingStrategies.stream().allMatch(x -> ModelUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
+			if (!preProcessingStrategies.stream().allMatch(x -> RegistryUtils.validatePreProcessingStrategy(x, lexerClass.getName(), lexerChannels))) {
 				// strategy is not valid
 				return null;
 			}*/
 
-			List<ModelDataItem> inputData = files.parallelStream().map(file -> {
+			/*List<ModelDataItem> inputData = files.parallelStream().map(file -> {
 				ConcurrentMap<String, List<IndexedString>> map = new ConcurrentHashMap<>();
 
 				preProcessingStrategies.parallelStream().forEach(strategy -> {  //now with 100% more parallel [maybe don't run this in parallel if we have lots of files?]
@@ -179,8 +179,8 @@ public class TestResultsFactory implements IExecutor {
 				g.getCodeBlocks().forEach(x -> System.out.println(x.getFile() + " - " + x.getLineNumbers().toString()));
 				System.out.println();
 			}*/
-		}
+		/*}
 
 		return "done"; //raw.stream().map(Objects::toString).collect(Collectors.joining("\n----\n"));
 	}
-}
+}*/

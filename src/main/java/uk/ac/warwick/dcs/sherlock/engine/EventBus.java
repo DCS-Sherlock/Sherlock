@@ -39,12 +39,15 @@ class EventBus implements IEventBus {
 			if (x.getParameterTypes().length != 1) {
 				logger.warn("Event Handlers can only have 1 parameter, {}.{} has {}", subscriber.getClass().getName(), x.getName(), x.getParameterTypes().length);
 			}
+			else if (!x.getAnnotation(EventHandler.class).side().valid(SherlockEngine.side)) {
+				logger.info("{} not registered, running on Side.{}", x.toGenericString().split(" ")[2], SherlockEngine.side.name());
+			}
 			else if (Arrays.asList(x.getParameterTypes()[0].getInterfaces()).contains(IEventModule.class)) {
 				try {
 					logger.warn("Could not register {}, subscribers may not handle SherlockModule events", x.toGenericString().split(" ")[2]);
 				}
 				catch (Exception e) {
-					logger.warn("Could not register subscriber", x.toGenericString().split(" ")[2]);
+					logger.warn("Could not register {}", x.toGenericString().split(" ")[2]);
 				}
 			}
 			else if (Arrays.asList(x.getParameterTypes()[0].getInterfaces()).contains(IEvent.class)) {
@@ -56,7 +59,7 @@ class EventBus implements IEventBus {
 
 	void registerModule(Class<?> module) {
 		if (!module.getAnnotation(SherlockModule.class).side().valid(SherlockEngine.side)) {
-			logger.info("{} not loaded, running on Side.{}", module.getName(), SherlockEngine.side.name());
+			logger.info("{} not registered, running on Side.{}", module.getName(), SherlockEngine.side.name());
 			return;
 		}
 
@@ -69,7 +72,7 @@ class EventBus implements IEventBus {
 				field.get(0).set(obj, obj);
 			}
 			else if (field.size() > 1) {
-				logger.error("{} not loaded, contains more than one @Instance annotation", module.getName());
+				logger.error("{} not registered, contains more than one @Instance annotation", module.getName());
 				return;
 			}
 
@@ -87,7 +90,7 @@ class EventBus implements IEventBus {
 			e.printStackTrace();
 		}
 		catch (NoClassDefFoundError e) {
-			logger.warn("{} not loaded, could not find the required class dependency '{}'", module.getName(), e.getMessage());
+			logger.warn("{} not registered, could not find the required class dependency '{}'", module.getName(), e.getMessage());
 		}
 	}
 
