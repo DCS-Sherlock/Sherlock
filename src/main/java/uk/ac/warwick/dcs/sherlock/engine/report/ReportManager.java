@@ -2,16 +2,13 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.report.FileReport;
 
 import java.util.*;
 
 /**
  * A class to handle report generation in general (does not generate reports itself).
- *
- * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending
- * the relevant information to the actual report generator in use.
+ * <p>
+ * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending the relevant information to the actual report generator in use.
  */
 
 /**
@@ -76,6 +73,41 @@ public class ReportManager {
 		methodNames = new HashMap<>();
 	}
 
+	/**
+	 * To be called by the Post-Processor.
+	 *
+	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
+	 */
+	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
+		this.codeBlockGroups.addAll(codeBlockGroups);
+	}
+
+	/**
+	 * To be called by the Post-Processor.
+	 *
+	 * @param fileIds A list of very file's unique, persistent id.
+	 */
+	public void AddFileIds(List<Long> fileIds) {
+		this.fileIds.addAll(fileIds);
+	}
+
+	/**
+	 * To be called by the PostProcessor.
+	 *
+	 * @param methodNames Each list contains every method name for each file.
+	 */
+	public void AddMethodNames(Map<Long, List<String>> methodNames) {
+		this.methodNames.putAll(methodNames);
+	}
+
+	/**
+	 * To be called by the Post-Processor.
+	 *
+	 * @param variableNames Each list contains every variable name for each file.
+	 */
+	public void AddVariableNames(Map<Long, List<String>> variableNames) {
+		this.variableNames.putAll(variableNames);
+	}
 
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
@@ -105,42 +137,6 @@ public class ReportManager {
 
 		reports.put(fileId, fileReport);
 		return fileReport;
-	}
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param fileIds A list of very file's unique, persistent id.
-	 */
-	public void AddFileIds(List<Long> fileIds) {
-		this.fileIds.addAll(fileIds);
-	}
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
-	 */
-	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
-		this.codeBlockGroups.addAll(codeBlockGroups);
-	}
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param variableNames Each list contains every variable name for each file.
-	 */
-	public void AddVariableNames(Map<Long, List<String>> variableNames) {
-		this.variableNames.putAll(variableNames);
-	}
-
-	/**
-	 * To be called by the PostProcessor.
-	 *
-	 * @param methodNames Each list contains every method name for each file.
-	 */
-	public void AddMethodNames(Map<Long, List<String>> methodNames) {
-		this.methodNames.putAll(methodNames);
 	}
 
 }

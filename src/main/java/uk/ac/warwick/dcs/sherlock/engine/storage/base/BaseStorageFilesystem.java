@@ -54,7 +54,7 @@ public class BaseStorageFilesystem {
 	/**
 	 * Loads a tasks raw results from the filesystem
 	 *
-	 * @param task
+	 * @param task task to load
 	 */
 	void loadTaskRawResults(EntityTask task) {
 		try {
@@ -71,27 +71,21 @@ public class BaseStorageFilesystem {
 	/**
 	 * Stores a file on the filesystem
 	 *
-	 * @param file
-	 * @param fileContent
+	 * @param file        the file to store
+	 * @param fileContent content of the file
 	 *
 	 * @return successful
 	 */
 	boolean storeFile(EntityFile file, byte[] fileContent) {
-		try {
-			return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
-		}
-		catch (NoSuchPaddingException | InvalidParameterSpecException | IOException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
 	}
 
 	/**
 	 * Stores a tasks raw results on the filesystem
 	 *
-	 * @param task
+	 * @param task task to store
 	 *
-	 * @return
+	 * @return successful
 	 */
 	boolean storeTaskRawResults(EntityTask task) {
 		try {
@@ -102,12 +96,20 @@ public class BaseStorageFilesystem {
 
 			return this.storeStorable(task, this.computeTaskIdentifier(task), baos.toByteArray());
 		}
-		catch (IOException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | InvalidParameterSpecException | BadPaddingException | IllegalBlockSizeException e) {
+		catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
+	/**
+	 * Checks the filestore, ensures files are accounted for and that no extra files are present
+	 *
+	 * @param allFiles Current files in database
+	 * @param allTasks Current tasks in database
+	 *
+	 * @return Objects to be removed from the database (files and tasks)
+	 */
 	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
 		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
 
@@ -191,7 +193,12 @@ public class BaseStorageFilesystem {
 	}
 
 	/**
-	 * Main method to load a file from the filestore
+	 * Main method to load a storable from the database
+	 *
+	 * @param storable  storable implementation to load
+	 * @param identfier the identifier for the storable, computed using the other methods in this class
+	 *
+	 * @return successful?
 	 */
 	private byte[] loadStorable(IStorable storable, String identfier) {
 		File fileToLoad = this.getFileFromIdentifier(identfier);
@@ -240,10 +247,15 @@ public class BaseStorageFilesystem {
 	}
 
 	/**
-	 * Main method to store data to a file in the filestore
+	 * Main method to store a storable in the database
+	 *
+	 * @param storable   storable implementation to store
+	 * @param identifier the identifier for the storable, computed using the other methods in this class
+	 * @param content    the content to store for the storable
+	 *
+	 * @return successful?
 	 */
-	private boolean storeStorable(IStorable storable, String identifier, byte[] content)
-			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException, IOException, BadPaddingException, IllegalBlockSizeException {
+	private boolean storeStorable(IStorable storable, String identifier, byte[] content) {
 		storable.setHash(DigestUtils.sha512Hex(content));
 
 		File fileToStore = this.getFileFromIdentifier(identifier);
@@ -252,21 +264,31 @@ public class BaseStorageFilesystem {
 			return false;
 		}
 
-		if (SherlockEngine.configuration.getEncryptFiles()) {
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, this.getKey(storable));
-			AlgorithmParameters params = cipher.getParameters();
+		try {
+			if (SherlockEngine.configuration.getEncryptFiles()) {
+				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+				cipher.init(Cipher.ENCRYPT_MODE, this.getKey(storable));
+				AlgorithmParameters params = cipher.getParameters();
 
-			storable.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
-			FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(content));
+				storable.setSecureParam(params.getParameterSpec(IvParameterSpec.class).getIV());
+				FileUtils.writeByteArrayToFile(fileToStore, cipher.doFinal(content));
+			}
+			else {
+				FileUtils.writeByteArrayToFile(fileToStore, content);
+			}
 		}
-		else {
-			FileUtils.writeByteArrayToFile(fileToStore, content);
+		catch (IOException | IllegalBlockSizeException | InvalidParameterSpecException | BadPaddingException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException e) {
+			e.printStackTrace();
 		}
 
 		return true;
 	}
 
+	/**
+	 * Interface for utility methods for database objects with files also in the filestore
+	 * <br><br>
+	 * Aids in getting and setting the required parameters for file retrieval
+	 */
 	interface IStorable {
 
 		String getHash();

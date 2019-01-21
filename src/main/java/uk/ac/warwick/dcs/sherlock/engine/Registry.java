@@ -51,7 +51,7 @@ public class Registry implements IRegistry {
 	 *
 	 * @return The generic type class if found
 	 *
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException if could not find a superclass with a static generic type
 	 */
 	public static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
 		ParameterizedType type = getHighestParamType(genericSuperclass);

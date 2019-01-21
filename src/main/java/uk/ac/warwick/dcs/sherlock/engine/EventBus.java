@@ -40,7 +40,7 @@ class EventBus implements IEventBus {
 				logger.warn("Event Handlers can only have 1 parameter, {}.{} has {}", subscriber.getClass().getName(), x.getName(), x.getParameterTypes().length);
 			}
 			else if (!x.getAnnotation(EventHandler.class).side().valid(SherlockEngine.side)) {
-				logger.info("{} not registered, running on Side.{}",x.toGenericString().split(" ")[2], SherlockEngine.side.name());
+				logger.info("{} not registered, running on Side.{}", x.toGenericString().split(" ")[2], SherlockEngine.side.name());
 			}
 			else if (Arrays.asList(x.getParameterTypes()[0].getInterfaces()).contains(IEventModule.class)) {
 				try {

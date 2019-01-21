@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 /**
  * An abstract IDetector implementation which constructs an individual, parallel worker for each combination of files in the dataset. This can be used as a base for pairwise matching algorithms.
- * <p><p>
+ * <br><br>
  * More advanced implementations should directly implement the IDetector interface.
  */
 public abstract class AbstractPairwiseDetector<T extends AbstractPairwiseDetectorWorker> implements IDetector<T> {
@@ -40,7 +40,9 @@ public abstract class AbstractPairwiseDetector<T extends AbstractPairwiseDetecto
 	}
 
 	/**
-	 * @return a new instance of the worker for this implementation
+	 * Fetches a new instance of the worker for this implementation
+	 *
+	 * @return the new worker instance
 	 */
 	public abstract T getAbstractPairwiseDetectorWorker();
 }

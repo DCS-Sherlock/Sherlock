@@ -17,6 +17,9 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	/**
 	 * Create a new IWorkspace instance
 	 *
+	 * @param name name to create workspace under
+	 * @param lang language of the workspace
+	 *
 	 * @return instance
 	 */
 	IWorkspace createWorkspace(String name, String lang);
@@ -24,7 +27,7 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	/**
 	 * Fetches the class of ICodeBlockGroup used in this IStorageWrapper implementation
 	 *
-	 * @return
+	 * @return class for ICodeBlockGroup
 	 */
 	Class<? extends ICodeBlockGroup> getCodeBlockGroupClass();
 
@@ -36,6 +39,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	List<IWorkspace> getWorkspaces(List<Long> ids);
 
 	/**
+	 * Get all stored workspaces
+	 *
 	 * @return a list of all workspaces in the database
 	 */
 	List<IWorkspace> getWorkspaces();

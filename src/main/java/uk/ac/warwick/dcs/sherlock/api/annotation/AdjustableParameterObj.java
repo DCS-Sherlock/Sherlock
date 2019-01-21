@@ -4,6 +4,9 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
 
 import java.lang.reflect.Field;
 
+/**
+ * An object to wrap an adjustable parameter annotation with other information commonly required when working with it
+ */
 public class AdjustableParameterObj {
 
 	private AdjustableParameter param;
@@ -21,53 +24,72 @@ public class AdjustableParameterObj {
 	}
 
 	/**
-	 * @return Default value the parameter takes
+	 * Default value the parameter takes
+	 *
+	 * @return the default value
 	 */
 	public float getDefaultValue() {
 		return this.param.defaultValue();
 	}
 
 	/**
-	 * @return Optional, detailed description of what the parameter does
+	 * Optional, detailed description of what the parameter does
+	 *
+	 * @return the description string
 	 */
 	public String getDescription() {
 		return this.param.description();
 	}
 
 	/**
-	 * @return Display Name for the parameter to be displayed in the UI
+	 * Display Name for the parameter to be displayed in the UI
+	 *
+	 * @return the display name
 	 */
 	public String getDisplayName() {
 		return this.param.name();
 	}
 
 	/**
-	 * @return The maximum bound for the field
+	 * The maximum bound for the field
+	 *
+	 * @return the max bound
 	 */
 	public float getMaximumBound() {
 		return this.param.maxumumBound();
 	}
 
 	/**
-	 * @return Minimum bound for field
+	 * Minimum bound for field
+	 *
+	 * @return the min bound
 	 */
 	public float getMinimumBound() {
 		return this.param.minimumBound();
 	}
 
 	/**
-	 * @return Field Name for the parameter for use in the UI backend
+	 * Field Name for the parameter for use in the UI backend
+	 *
+	 * @return backend name
 	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Fetches the reference string for the adjustable parameter represented by this object
+	 *
+	 * @return the parameter specific string
+	 */
 	public String getReference() {
 		return this.reference;
 	}
 
 	/**
-	 * @return The step to increment or decrement the parameter by in the UI
+	 * The step to increment or decrement the parameter by in the UI
+	 *
+	 * @return the step value
 	 */
 	public float getStep() {
 		return this.param.step();
@@ -83,7 +105,9 @@ public class AdjustableParameterObj {
 	}
 
 	/**
-	 * @return is the parameter an integer parameter? (if not is a float)
+	 * is the parameter an integer parameter? (if not is a float)
+	 *
+	 * @return is an integer?
 	 */
 	public boolean isInt() {
 		return isInt;

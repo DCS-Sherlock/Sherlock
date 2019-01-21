@@ -48,7 +48,7 @@ public interface ITask {
 
 	/**
 	 * Sets the passed adjustable parameter to the passed value
-	 * <p><p>
+	 * <br><br>
 	 * Will return false if the AdjustableParameter is invalid
 	 *
 	 * @param paramObj The parameter object to set
