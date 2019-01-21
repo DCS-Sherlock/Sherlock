@@ -6,7 +6,6 @@ uk.ac.warwick.dcs.sherlock.api.model.detection
 uk.ac.warwick.dcs.sherlock.api.model.postprocessing
 uk.ac.warwick.dcs.sherlock.api.model.preprocessing
 uk.ac.warwick.dcs.sherlock.api.model.scoring
-uk.ac.warwick.dcs.sherlock.api.request
 uk.ac.warwick.dcs.sherlock.api.util
 uk.ac.warwick.dcs.sherlock.engine
 uk.ac.warwick.dcs.sherlock.engine.component
@@ -15,7 +14,6 @@ uk.ac.warwick.dcs.sherlock.engine.executor
 uk.ac.warwick.dcs.sherlock.engine.executor.common
 uk.ac.warwick.dcs.sherlock.engine.executor.pool
 uk.ac.warwick.dcs.sherlock.engine.executor.work
-uk.ac.warwick.dcs.sherlock.engine.model
 uk.ac.warwick.dcs.sherlock.engine.report
 uk.ac.warwick.dcs.sherlock.engine.storage
 uk.ac.warwick.dcs.sherlock.engine.storage.base
