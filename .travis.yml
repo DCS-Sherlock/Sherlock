@@ -21,12 +21,12 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 
-before_deploy:
-  # Set up git user name and tag this commit
-  - git config --local user.name "Travis Bot"
-  - git config --local user.email "bot@travis.travis"
-  - export TRAVIS_TAG=$(cat version.txt)
-  - git tag $TRAVIS_TAG
+#before_deploy:
+#  # Set up git user name and tag this commit
+#  - git config --local user.name "Travis Bot"
+#  - git config --local user.email "bot@travis.travis"
+#  - export TRAVIS_TAG=$(cat version.txt)
+#  - git tag $TRAVIS_TAG
 
 deploy:
   - provider: pages
@@ -37,12 +37,12 @@ deploy:
     on:
       branch: master
       jdk: oraclejdk8
-  - provider: releases
-    skip-cleanup: true
-    api_key: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-    file_glob: true
-    file: "build/out/*"
-    on:
-      tags: true
-      branch: master
-      jdk: oraclejdk8
+#  - provider: releases
+#    skip-cleanup: true
+#    api_key: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+#    file_glob: true
+#    file: "build/out/*"
+#    on:
+#      tags: true
+#      branch: master
+#      jdk: oraclejdk8

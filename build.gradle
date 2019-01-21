@@ -116,7 +116,7 @@ if (grgit != null) {
 if (System.env.TRAVIS == "true") {
     println "Building on travis"
     build.dependsOn javadoc
-    new File("version.txt").text = """${project.ext.lastTag}/${project.version}"""
+    new File("version.txt").text = """build/${project.version}"""
 }
 
 
