@@ -23,8 +23,8 @@ cache:
 
 before_deploy:
   # Set up git user name and tag this commit
-  # - git config --local user.name "YOUR GIT USER NAME"
-  # - git config --local user.email "YOUR GIT USER EMAIL"
+  - git config --local user.name "Travis Bot"
+  - git config --local user.email "bot@travis.travis"
   - export TRAVIS_TAG=$(cat version.txt)
   - git tag $TRAVIS_TAG
 
