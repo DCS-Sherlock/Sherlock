@@ -13,13 +13,12 @@
     </div>
 
     <div th:if="${success_msg}">
-        <div class="alert alert-info"><span th:text="#{workspaces_analysis_started}"></span></div>
+        <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
         <div data-js="triggerArea" data-js-target="#results-parent"></div>
     </div>
 
     <div th:if="${warning_msg}">
         <div class="alert alert-warning"><span th:text="#{${warning_msg}}"></span></div>
-        <div data-js="triggerArea" data-js-target="#results-parent"></div>
     </div>
 
     <div th:unless="${templates.empty}">

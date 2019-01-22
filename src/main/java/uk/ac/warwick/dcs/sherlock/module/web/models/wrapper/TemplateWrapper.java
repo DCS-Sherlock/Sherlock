@@ -129,7 +129,6 @@ public class TemplateWrapper {
                 templateDetectorRepository.delete(
                         templateDetectorRepository.findByNameAndTemplate(check, template)
                 );
-                //TODO: detector no longer exists or not supported by the language, should return an error
             }
         }
     }

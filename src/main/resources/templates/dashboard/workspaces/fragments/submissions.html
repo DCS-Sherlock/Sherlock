@@ -11,8 +11,8 @@
         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
     </div>
 
-    <div th:if="${success}">
-        <div class="alert alert-info"><span th:text="#{workspaces_submissions_uploaded_msg}"></span></div>
+    <div th:if="${success_msg}">
+        <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
     </div>
 
     <div class="form-row">

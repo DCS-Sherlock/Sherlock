@@ -54,11 +54,11 @@ public class DetectorWrapper {
         this.tDetector = tDetector;
     }
 
-    public List<AdjustableParameterObj> getEngineParameters() {
+    public List<AdjustableParameterObj> getEngineParameters() throws DetectorNotFound {
         return SherlockRegistry.getDetectorAdjustableParameters(this.getEngineDetector());
     }
 
-    public Map<String, AdjustableParameterObj> getEngineParametersMap() {
+    public Map<String, AdjustableParameterObj> getEngineParametersMap() throws DetectorNotFound {
 		Map<String, AdjustableParameterObj> map = new HashMap<>();
 		for (AdjustableParameterObj p : this.getEngineParameters()) {
 			map.put(p.getName(), p);
@@ -70,24 +70,19 @@ public class DetectorWrapper {
         return this.tDetector.getId();
     }
 
-    public Class<? extends IDetector> getEngineDetector() {
+    public Class<? extends IDetector> getEngineDetector() throws DetectorNotFound {
         Class<? extends IDetector> detector = null;
         try {
             detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName());
         } catch (ClassNotFoundException e) {
-            //TODO: deal with error
-            e.printStackTrace();
+            throw new DetectorNotFound("Detector no longer exists");
         }
         return detector;
     }
 
-    public EngineDetectorWrapper getWrapper() {
-        Class<? extends IDetector> detector = null;
-        try {
-            detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace(); //TODO: deal with error
-        }
+    public EngineDetectorWrapper getWrapper() throws DetectorNotFound {
+        Class<? extends IDetector> detector = this.getEngineDetector();
+
         if (detector == null) {
             return null;
         }
@@ -95,7 +90,7 @@ public class DetectorWrapper {
         return new EngineDetectorWrapper(detector);
     }
 
-    public List<ParameterWrapper> getParametersList() throws ParameterNotFound {
+    public List<ParameterWrapper> getParametersList() throws ParameterNotFound, DetectorNotFound {
         List<ParameterWrapper> list = new ArrayList<>();
 
         for (TParameter p : this.tDetector.getParameters()) {

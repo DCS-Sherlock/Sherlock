@@ -58,7 +58,7 @@ public class ManageTemplateController {
 
         if (!result.hasErrors()) {
             templateWrapper.update(templateForm, templateRepository, tDetectorRepository);
-            model.addAttribute("success", true);
+            model.addAttribute("success_msg", "templates_basic_updated_msg");
         }
 
         model.addAttribute("templateForm", templateForm);

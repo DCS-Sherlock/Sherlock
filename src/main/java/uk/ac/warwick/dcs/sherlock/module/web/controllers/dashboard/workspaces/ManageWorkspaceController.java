@@ -34,7 +34,7 @@ public class ManageWorkspaceController {
 	}
 
     @GetMapping("/dashboard/workspaces/manage/details/{pathid}")
-    public String nameGetFragment(
+    public String detailsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
@@ -48,7 +48,7 @@ public class ManageWorkspaceController {
     }
 
     @PostMapping("/dashboard/workspaces/manage/details/{pathid}")
-    public String namePostFragment(
+    public String detailsPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
@@ -60,7 +60,7 @@ public class ManageWorkspaceController {
 
 		if (!result.hasErrors()) {
 		    workspaceWrapper.set(workspaceForm);
-            model.addAttribute("success", true);
+            model.addAttribute("success_msg", "workspaces_basic_updated_msg");
 		}
 
         model.addAttribute("languageList", SherlockRegistry.getLanguages());
@@ -92,8 +92,14 @@ public class ManageWorkspaceController {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
         if (!result.hasErrors()) {
-            workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
-            model.addAttribute("success", true);
+            try {
+                workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
+                model.addAttribute("success_msg", "workspaces_submissions_uploaded_msg");
+            } catch (NoFilesUploaded e) {
+                result.reject("error_file_empty");
+            } catch (FileUploadFailed e) {
+                result.reject("error_file_failed");
+            }
         }
 
         return "dashboard/workspaces/fragments/submissions";
@@ -131,7 +137,7 @@ public class ManageWorkspaceController {
             model.addAttribute("success_msg", "workspaces_analysis_started");
         } catch (TemplateContainsNoDetectors e) {
             model.addAttribute("warning_msg", "workspaces_analysis_no_detectors");
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | DetectorNotFound e) {
             model.addAttribute("warning_msg", "workspaces_analysis_detector_missing");
         } catch (ParameterNotFound e) {
             model.addAttribute("warning_msg", "workspaces_analysis_parameter_missing");

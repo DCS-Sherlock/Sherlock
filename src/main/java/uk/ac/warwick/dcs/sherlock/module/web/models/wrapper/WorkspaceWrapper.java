@@ -11,10 +11,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateContainsNoDetectors;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.TDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Workspace;
@@ -115,20 +112,26 @@ public class WorkspaceWrapper {
         workspaceRepository.delete(this.workspace);
     }
 
-    public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) {
+    public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) throws NoFilesUploaded, FileUploadFailed {
+        int count = 0;
+
         for(MultipartFile file : submissionsForm.getFiles()) {
             if (file.getSize() > 0) {
                 try {
                     SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
                 } catch (IOException | WorkspaceUnsupportedException e) {
-                    //TODO: this is a major issue, we should probably quit here
-                    e.printStackTrace();
+                    throw new FileUploadFailed(e.getMessage());
                 }
+                count++;
             }
+        }
+
+        if (count == 0) {
+            throw new NoFilesUploaded("No submissions uploaded");
         }
     }
 
-    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound {
+    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound, DetectorNotFound {
 		if (templateWrapper.getTemplate().getDetectors().size() == 0)
 		    throw new TemplateContainsNoDetectors("No detectors in chosen template.");
 
@@ -169,7 +172,8 @@ public class WorkspaceWrapper {
             try {
                 wrappers.add(new WorkspaceWrapper(workspace));
             } catch (IWorkspaceNotFound iWorkspaceNotFound) {
-                //TODO: log error
+                //Workspace no longer found in Engine database, remove from UI databsae
+                workspaceRepository.delete(workspace);
             }
         }
 

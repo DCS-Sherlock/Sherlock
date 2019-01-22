@@ -30,7 +30,7 @@ public class ManageDetectorController {
 	public String parmetersGet(
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
-	) {
+	) throws DetectorNotFound {
 		model.addAttribute("parameterForm", new ParameterForm(detectorWrapper));
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());
 		return "dashboard/templates/parameters";
@@ -42,12 +42,12 @@ public class ManageDetectorController {
 			BindingResult result,
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
-	) {
+	) throws DetectorNotFound {
     	result = parameterForm.validate(result, detectorWrapper.getEngineParameters());
 
 		if (!result.hasErrors()) {
 			detectorWrapper.updateParameters(parameterForm, tParameterRepository);
-			model.addAttribute("success", true);
+			model.addAttribute("success_msg", "templates_parameters_updated_msg");
 		}
 
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());

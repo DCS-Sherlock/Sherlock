@@ -6,6 +6,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.LoadingHelpFailed;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class HelpController {
 
 	//TODO: Add locale support
 	@RequestMapping ("/help")
-	public String index(Model model) {
+	public String index(Model model) throws LoadingHelpFailed {
 		Resource resource = new ClassPathResource("/help.properties");
 		Properties properties = null;
 		Map<String, String> questions = new HashMap<>();
@@ -26,7 +27,7 @@ public class HelpController {
 		try {
 			properties = PropertiesLoaderUtils.loadProperties(resource);
 		} catch (IOException e) {
-			e.printStackTrace(); //TODO: deal with error
+			throw new LoadingHelpFailed("Loading help.properties file failed.");
 		}
 
 		if (properties != null) {

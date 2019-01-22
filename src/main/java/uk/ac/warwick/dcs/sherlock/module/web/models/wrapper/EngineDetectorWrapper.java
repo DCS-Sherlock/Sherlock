@@ -56,13 +56,17 @@ public class EngineDetectorWrapper {
 
     public static List<EngineDetectorWrapper> getDetectors(String language) {
         List<EngineDetectorWrapper> list = new ArrayList<>();
-        SherlockRegistry.getDetectors(language).forEach(d -> list.add(new EngineDetectorWrapper(d)));
+        if (SherlockRegistry.getLanguages().contains(language)) {
+            SherlockRegistry.getDetectors(language).forEach(d -> list.add(new EngineDetectorWrapper(d)));
+        }
         return list;
     }
 
     public static List<String> getDetectorNames(String language) {
         List<String> list = new ArrayList<>();
-        SherlockRegistry.getDetectors(language).forEach(d -> list.add(d.getName()));
+        if (SherlockRegistry.getLanguages().contains(language)) {
+            SherlockRegistry.getDetectors(language).forEach(d -> list.add(d.getName()));
+        }
         return list;
     }
 }
