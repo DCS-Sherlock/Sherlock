@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{workspaces_results_view}"></title>
+</head>
+<body>
+
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{workspaces_results_view}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{workspaces_link_manage_return}"></a>
+                    </h4>
+                    <div class="btn-toolbar float-right">
+                        <div class="btn-group">
+                            <div class="btn-group">
+                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/delete(id=${workspace.getId()},job_id=${job.getPersistentId()})}" th:text="#{link_delete}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>
+                                    <span th:text="#{workspaces_results_status}"></span>
+                                </h5>
+                                <p>
+                                    <span th:text="#{${job.getStatus()}}"></span>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <h5>
+                                    <span th:text="#{workspaces_results_job_id}"></span>
+                                </h5>
+                                <p>
+                                    <span th:text="${job.getPersistentId()}"></span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>
+                                    <span th:text="#{workspaces_results_timestamp}"></span>
+                                </h5>
+                                <p>
+                                    <span th:text="${job.getTimestamp()}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>
+                                    <span th:text="#{workspaces_results_submissions}"></span>
+                                </h5>
+                                <p>
+                                    <span th:text="${job.getNumSubmissions()}"></span>
+                                </p>
+                            </div>
+                            <div class="col-md-9">
+                                <h5>
+                                    <span th:text="#{workspaces_results_detectors}"></span>
+                                </h5>
+                                <th:block th:each="task : ${job.getTasks()}">
+                                    <button type="button" class="btn btn-secondary"
+                                            th:text="${task.getDisplayName()}"
+                                            th:title="#{workspaces_results_parameters}"
+                                            th:data-content="${task.getParameterString()}"
+                                            data-toggle="popover" data-placement="top" data-html="true" data-trigger="focus"
+                                    ></button>
+                                </th:block>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
