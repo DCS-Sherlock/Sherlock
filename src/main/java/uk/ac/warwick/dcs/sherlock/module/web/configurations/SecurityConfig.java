@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.SecurityProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 
@@ -27,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private Environment environment;
+	@Autowired
+	private SecurityProperties securityProperties;
 	@Autowired
 	private SetupProperties setupProperties;
 	@Autowired
@@ -120,7 +123,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http
 				.logout()
-				.permitAll();
+				.deleteCookies("JSESSIONID");
+
+		http
+				.rememberMe()
+				.key(securityProperties.getKey());
 
 		//TODO: Re-enable later
 		http.csrf().disable();
