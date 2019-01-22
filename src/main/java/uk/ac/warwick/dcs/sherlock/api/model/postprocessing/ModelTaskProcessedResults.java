@@ -2,9 +2,11 @@ package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.scoring.IScoreFunction;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Processed results for a task (for a single IDetector instance)
@@ -47,6 +49,15 @@ public class ModelTaskProcessedResults {
 	 */
 	public List<ICodeBlockGroup> getGroups() {
 		return groups;
+	}
+
+	/**
+	 * Fetches a list of groups containing the passed file
+	 *
+	 * @return list of groups
+	 */
+	public List<ICodeBlockGroup> getGroups(ISourceFile file) {
+		return groups.stream().filter(g -> g.filePresent(file)).collect(Collectors.toList());
 	}
 
 	/**

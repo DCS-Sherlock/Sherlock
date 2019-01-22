@@ -6,7 +6,7 @@ import java.util.*;
 
 public interface IResultFile {
 
-	boolean addFileScore(ISourceFile file, float score);
+	/*boolean addFileScore(ISourceFile file, float score);*/
 
 	IResultTask addTaskResult(ITask task);
 
@@ -16,7 +16,7 @@ public interface IResultFile {
 
 	float getOverallScore();
 
-	void setOverallScore(float score);
+	/*void setOverallScore(float score);*/
 
 	List<IResultTask> getTaskResults();
 

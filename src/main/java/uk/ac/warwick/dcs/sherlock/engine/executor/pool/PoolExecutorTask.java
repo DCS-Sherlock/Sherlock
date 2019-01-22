@@ -65,10 +65,6 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		return null;
 	}
 
-	public WorkStatus getStatus() {
-		return this.task.getStatus();
-	}
-
 	@Override
 	public Class<? extends IDetector> getDetector() {
 		return this.task.getDetector();
@@ -82,6 +78,14 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 	@Override
 	public List<PreProcessingStrategy> getPreProcessingStrategies() {
 		return preProcessingStrategies;
+	}
+
+	public WorkStatus getStatus() {
+		return this.task.getStatus();
+	}
+
+	public ITask getTask() {
+		return task;
 	}
 
 	private void runDetector() {

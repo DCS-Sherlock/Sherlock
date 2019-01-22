@@ -72,6 +72,25 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups) {
+		List<Object> objects = new LinkedList<>();
+		for (ICodeBlockGroup group : groups){
+			if (group instanceof EntityCodeBlockGroup) {
+				EntityCodeBlockGroup g = (EntityCodeBlockGroup) group;
+				objects.addAll(g.blockMap.values());
+				objects.add(g);
+			}
+		}
+
+		if (objects.size() > 0) {
+			this.database.storeObject(objects);
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public ISourceFile getSourceFile(long persistentId) {
 		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
 		if (f.size() != 1) {

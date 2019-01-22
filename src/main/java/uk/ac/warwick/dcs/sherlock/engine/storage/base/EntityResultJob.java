@@ -27,7 +27,6 @@ public class EntityResultJob implements IResultJob, Serializable {
 		if (file instanceof EntityFile) {
 			EntityResultFile f = new EntityResultFile((EntityFile) file);
 			this.fileResults.add(f);
-			BaseStorage.instance.database.storeObject(f);
 			return f;
 		}
 
@@ -37,5 +36,13 @@ public class EntityResultJob implements IResultJob, Serializable {
 	@Override
 	public List<IResultFile> getFileResults() {
 		return new LinkedList<>(this.fileResults);
+	}
+
+	@Override
+	public void store() {
+		List<Object> list = new LinkedList<>();
+		this.fileResults.forEach(f -> list.addAll(f.store()));
+		list.add(this);
+		BaseStorage.instance.database.storeObject(list);
 	}
 }

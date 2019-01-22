@@ -16,10 +16,10 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	Map<Long, EntityCodeBlock> blockMap;
+
 	private DetectionType type;
 	private String comment;
-
-	private Map<Long, EntityCodeBlock> blockMap;
 
 	public EntityCodeBlockGroup() {
 		super();
@@ -58,6 +58,11 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 				BaseStorage.logger.error("Could not add file {}, it is not from the database", file.getFileDisplayName());
 			}
 		}
+	}
+
+	@Override
+	public boolean filePresent(ISourceFile file) {
+		return this.blockMap.containsKey(file.getPersistentId());
 	}
 
 	@Override

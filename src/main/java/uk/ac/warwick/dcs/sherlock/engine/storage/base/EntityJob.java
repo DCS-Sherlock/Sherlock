@@ -97,7 +97,7 @@ public class EntityJob implements IJob, Serializable {
 
 	@Override
 	public IResultJob getLatestResult() {
-		return null;
+		return this.results.size() > 0 ? this.results.get(this.results.size() - 1) : null;
 	}
 
 	@Override

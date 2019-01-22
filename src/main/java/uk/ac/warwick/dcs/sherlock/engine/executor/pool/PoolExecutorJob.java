@@ -1,7 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.component.*;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
@@ -66,13 +71,47 @@ public class PoolExecutorJob implements Runnable {
 		}
 
 		// do the post stuff
-		tasks.forEach( x -> x.callType = 2);
+		tasks.forEach(x -> x.callType = 2);
 		List<PoolExecutorTask> postTasks = tasks.stream().filter(x -> x.getStatus() == WorkStatus.COMPLETE).collect(Collectors.toList());
+		List<ITuple<ITask, ModelTaskProcessedResults>> results = new LinkedList<>();
+
 		try {
-			exServ.invokeAll(postTasks);
+			List<Future<ModelTaskProcessedResults>> tmp = exServ.invokeAll(postTasks);
+			for (int i = 0; i < postTasks.size(); i++) {
+				ModelTaskProcessedResults m = tmp.get(i).get();
+				if (m != null && m.getGroups().size() > 0) {
+					results.add(new Tuple<>(postTasks.get(i).getTask(), m));
+				}
+			}
 		}
-		catch (InterruptedException e) {
+		catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+		}
+
+		synchronized (ExecutorUtils.logger) {
+			ExecutorUtils.logger.warn("Results");
+		}
+
+		if (results.size() > 0) {
+			List<ICodeBlockGroup> allGroups = results.stream().flatMap(f -> f.getValue().getGroups().stream()).collect(Collectors.toList());
+			SherlockEngine.storage.storeCodeBlockGroups(allGroups);
+
+			IResultJob jobRes = this.job.createNewResult();
+			for (ISourceFile file : this.job.getWorkspace().getFiles()) {
+				IResultFile fileRes = jobRes.addFile(file);
+				for (ITuple<ITask, ModelTaskProcessedResults> t : results) {
+					IResultTask taskRes = fileRes.addTaskResult(t.getKey());
+					taskRes.addContainingBlock(t.getValue().getGroups(file));
+
+					//TODO: DO SCORING
+				}
+			}
+			jobRes.store();
+		}
+		else {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.warn("No Results");
+			}
 		}
 
 		job.setStatus(WorkStatus.COMPLETE);

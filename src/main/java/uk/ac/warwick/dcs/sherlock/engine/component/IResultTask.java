@@ -7,7 +7,11 @@ import java.util.*;
 
 public interface IResultTask {
 
-	void addFileScore(ISourceFile file, float score);
+	/*void addFileScore(ISourceFile file, float score);*/
+
+	void addContainingBlock(ICodeBlockGroup blockGroup);
+
+	void addContainingBlock(Collection<ICodeBlockGroup> blockGroups);
 
 	List<ICodeBlockGroup> getContainingBlocks();
 
@@ -17,6 +21,6 @@ public interface IResultTask {
 
 	float getTaskScore();
 
-	void setTaskScore(float score);
+	/*void setTaskScore(float score);*/
 
 }
