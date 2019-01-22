@@ -141,6 +141,8 @@ public class ManageWorkspaceController {
             model.addAttribute("warning_msg", "workspaces_analysis_detector_missing");
         } catch (ParameterNotFound e) {
             model.addAttribute("warning_msg", "workspaces_analysis_parameter_missing");
+        } catch (NoFilesUploaded e) {
+            model.addAttribute("warning_msg", "workspaces_analysis_no_files");
         }
 
         model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account, templateRepository));

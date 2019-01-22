@@ -131,9 +131,13 @@ public class WorkspaceWrapper {
         }
     }
 
-    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound, DetectorNotFound {
+    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound, DetectorNotFound, NoFilesUploaded {
 		if (templateWrapper.getTemplate().getDetectors().size() == 0)
 		    throw new TemplateContainsNoDetectors("No detectors in chosen template.");
+
+		if (this.getFiles().size() == 0) {
+		    throw new NoFilesUploaded("No files in workspace");
+        }
 
 		IJob job = this.iWorkspace.createJob();
 
