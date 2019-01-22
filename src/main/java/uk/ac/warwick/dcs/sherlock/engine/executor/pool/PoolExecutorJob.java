@@ -38,25 +38,26 @@ public class PoolExecutorJob implements Runnable {
 
 	@Override
 	public void run() {
-		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS)) {
+		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
+		ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
+
+		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS) && tasks.size() > 0) {
 			job.setStatus(WorkStatus.ACTIVE);
 
-			List<PoolExecutorTask> tasks = job.getTasks().stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage()))
-					.collect(Collectors.toList());
+			List<PoolExecutorTask> detTasks = tasks.stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).collect(Collectors.toList());
 
-			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(tasks), this.job.getWorkspace().getFiles());
+			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(detTasks), this.job.getWorkspace().getFiles());
 			this.scheduler.invokeWork(preProcess, Priority.DEFAULT);
 
 			// Check that preprocessing went okay
-			tasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {
+			detTasks.stream().filter(x -> x.dataItems.size() == 0).peek(x -> {
 				synchronized (ExecutorUtils.logger) {
 					ExecutorUtils.logger.error("PreProcessing output for detector {} is empty, this detector will be ignored.", x.getDetector().getName());
 				}
-			}).forEach(tasks::remove);
+			}).forEach(detTasks::remove);
 
-			ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
 			try {
-				exServ.invokeAll(new LinkedList<>(tasks));
+				exServ.invokeAll(detTasks);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
@@ -64,25 +65,15 @@ public class PoolExecutorJob implements Runnable {
 			job.setStatus(WorkStatus.REGEN_RESULTS);
 		}
 
-		//REGEN THE RESULTS
-		/*IPostProcessor postProcessor = SherlockRegistry.getPostProcessorInstance(rawResults.get(0).getClass());
-		if (postProcessor == null) {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Could not find a postprocessor for '{}', check that it is being correctly registered", rawResults.get(0).getClass().getName());
-				return null;
-			}
+		// do the post stuff
+		tasks.forEach( x -> x.callType = 2);
+		List<PoolExecutorTask> postTasks = tasks.stream().filter(x -> x.getStatus() == WorkStatus.COMPLETE).collect(Collectors.toList());
+		try {
+			exServ.invokeAll(postTasks);
 		}
-		ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
-
-		//TEMP CODE FROM HERE
-		List<ICodeBlockGroup> gs = processedResults.getGroups();
-		synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
-			for (ICodeBlockGroup g : gs) {
-				g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {}", x.getFile(), x.getLineNumbers().toString()));
-				System.out.println();
-			}
-		}*/
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		job.setStatus(WorkStatus.COMPLETE);
 	}
