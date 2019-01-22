@@ -30,6 +30,6 @@ public class SecurityController {
             return "security/loginLocal";
 		}
 
-		return "info/login";
+		return "security/login";
 	}
 }
