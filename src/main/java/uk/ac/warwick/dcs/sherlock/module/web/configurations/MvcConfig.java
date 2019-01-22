@@ -14,13 +14,15 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import uk.ac.warwick.dcs.sherlock.module.web.properties.SecurityProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.WebmasterProperties;
 
 import java.util.Locale;
 
 @Configuration
 @EnableConfigurationProperties({
+        SecurityProperties.class,
         SetupProperties.class,
-        SecurityProperties.class
+        WebmasterProperties.class
 })
 public class MvcConfig implements WebMvcConfigurer {
     @Bean
