@@ -30,6 +30,10 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 					PoolExecutorJob job;
 					job = this.queue.take();
 
+					synchronized (ExecutorUtils.logger) {
+						ExecutorUtils.logger.info("Job {} starting", job.getId());
+					}
+
 					job.getStatus().startJob();
 
 					Future f = this.exec.submit(job);
@@ -38,7 +42,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 					job.getStatus().finishJob();
 
 					synchronized (ExecutorUtils.logger) {
-						ExecutorUtils.logger.warn("Job {} took: {}", job.getId(), job.getStatus().formatDuration());
+						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().formatDuration());
 					}
 				}
 				catch (InterruptedException | ExecutionException e) {
@@ -124,6 +128,10 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 		PoolExecutorJob j = new PoolExecutorJob(this, job, s);
 		this.queue.add(j);
+
+		synchronized (ExecutorUtils.logger) {
+			ExecutorUtils.logger.info("Job {} added to queue", job.getPersistentId());
+		}
 
 		return true;
 	}

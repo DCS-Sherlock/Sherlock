@@ -119,6 +119,7 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public void setStatus(WorkStatus status) {
 		this.status = status;
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 	@Override

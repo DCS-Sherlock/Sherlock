@@ -49,6 +49,10 @@ public class PoolExecutorJob implements Runnable {
 		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS) && tasks.size() > 0) {
 			job.setStatus(WorkStatus.ACTIVE);
 
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.info("Job {} preprocessing", job.getPersistentId());
+			}
+
 			List<PoolExecutorTask> detTasks = tasks.stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).collect(Collectors.toList());
 
 			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(detTasks), this.job.getWorkspace().getFiles());
@@ -61,6 +65,10 @@ public class PoolExecutorJob implements Runnable {
 				}
 			}).forEach(detTasks::remove);
 
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.info("Job {} detecting", job.getPersistentId());
+			}
+
 			try {
 				exServ.invokeAll(detTasks);
 			}
@@ -68,6 +76,10 @@ public class PoolExecutorJob implements Runnable {
 				e.printStackTrace();
 			}
 			job.setStatus(WorkStatus.REGEN_RESULTS);
+		}
+
+		synchronized (ExecutorUtils.logger) {
+			ExecutorUtils.logger.info("Job {} postprocessing", job.getPersistentId());
 		}
 
 		// do the post stuff
@@ -88,11 +100,11 @@ public class PoolExecutorJob implements Runnable {
 			e.printStackTrace();
 		}
 
-		synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.warn("Results");
-		}
-
 		if (results.size() > 0) {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.info("Job {} finalising", job.getPersistentId());
+			}
+
 			List<ICodeBlockGroup> allGroups = results.stream().flatMap(f -> f.getValue().getGroups().stream()).collect(Collectors.toList());
 			SherlockEngine.storage.storeCodeBlockGroups(allGroups);
 
@@ -110,7 +122,7 @@ public class PoolExecutorJob implements Runnable {
 		}
 		else {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.warn("No Results");
+				ExecutorUtils.logger.info("Job {} produced no results", job.getPersistentId());
 			}
 		}
 
