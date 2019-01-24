@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
@@ -90,6 +91,8 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		return filePro;
 	}
 
+	// TODO in loadNgram functions skip lines under ngram_size
+
 	/**
 	 * Load the contents of a file into an N-gram map for easy retrival
 	 * <p>
@@ -113,6 +116,10 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		for (IndexedString lineC : file) {
 			// acquire line
 			line = lineC.getValue();
+			// if line is shorter than the ngram_size skip it
+			if (line.length() < ngram_size) {
+				continue;
+			}
 			// acquire line number
 			line_number = lineC.getKey();
 			// for each N-gram in a line
@@ -183,6 +190,10 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		for (IndexedString lineC : file) {
 			// acquire line
 			line = lineC.getValue();
+			// if line is shorter than the ngram_size skip it
+			if (line.length() < ngram_size) {
+				continue;
+			}
 			// acquire line number
 			line_number = lineC.getKey();
 			// for each N-gram in a line
@@ -244,36 +255,17 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		return (float) same / ((float) same + (float) dis1 + (float) dis2);
 	}
 
-	// for display and demo purposes, remove after testing
-	public String ngramToSegment(ArrayList<Ngram> strings) {
-		String temp = "";
-		// add first N-gram
-		temp += strings.get(0).getNgram();
-		// add last char of each N-gram after first
-		// TODO add check for new line and add whole N-gram on new line found
-		for (int i = 1; i < strings.size(); i++) {
-			temp += strings.get(i).getNgram().substring(ngram_size - 1);
-		}
-		return temp;
-	}
-
 	// add line markers
-	public void matchFound(ArrayList<Ngram> reference, ArrayList<Ngram> check, Ngram head, float last_peak, int since_last_peak) {
+	public void matchFound(ArrayList<Ngram> reference, ArrayList<Ngram> check, Ngram head, float last_peak, int since_last_peak, ISourceFile file1, ISourceFile file2) {
 		// take out values back to the last peak
 		for (int i = 0; i < since_last_peak; i++) {
 			reference.remove(reference.size() - 1);
 			check.remove(check.size() - 1);
 		}
-		// output matching data
-		//		System.out.println("Suspicious segment found");
-		//		System.out.println("Line " + check.get(1).getLineNumber() + " to " + check.get(check.size()-1).getLineNumber());
-		//		System.out.println("Similarity:\n" + last_peak);
-		//		System.out.println("Reference:\n" + ngramToSegment(reference));
-		//		System.out.println("Check:\n" + ngramToSegment(check) + "\n");
 
 		// build an N-Gram match object to send to the post processor
-		NgramMatch temp = new NgramMatch(reference.get(1).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(1).getLineNumber(), check.get(check.size() - 1).getLineNumber(),
-				last_peak);
+		NgramMatch temp = new NgramMatch(reference.get(1).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
+				check.get(1).getLineNumber(), check.get(check.size()-1).getLineNumber(), last_peak, file1, file2);
 		// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
 		res.put(temp, reference.get(1).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(1).getLineNumber(), check.get(check.size() - 1).getLineNumber());
 
@@ -413,7 +405,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					}
 					else if (reference.size() > minimum_window && sim_val < threshold) {
 						System.out.println("hit1");
-						matchFound(reference, check, head, last_peak, since_last_peak);
+						matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 						ngram_id = 0;
 						// set head to null so a new reference can be made
 						head = null;
@@ -427,7 +419,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			if (compare(reference, check) > threshold) {
 				System.out.println("hit2");
 				// if at EOF there is a match then output it
-				matchFound(reference, check, head, last_peak, since_last_peak);
+				matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 				ngram_id = 0;
 			}
 
