@@ -79,6 +79,7 @@ public class NGramScorer implements IScoreFunction {
 		public FileInfo(float similarity, Tuple<Integer, Integer> lines) {
 			total_similarity = similarity;
 			similar_files = 1;
+			this.lines = lines;
 		}
 
 		public void addToFileInfo(float similarity) {

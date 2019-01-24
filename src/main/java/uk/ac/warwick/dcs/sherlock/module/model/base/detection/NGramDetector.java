@@ -363,8 +363,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					if (head == null) {
 						head = storage_map.get(ngram_string + ngram_id);
 						reference.add(head);
-						if (head == null)
-							java.awt.Toolkit.getDefaultToolkit().beep();
 					}
 					else {
 						head = head.getNextNgram();
