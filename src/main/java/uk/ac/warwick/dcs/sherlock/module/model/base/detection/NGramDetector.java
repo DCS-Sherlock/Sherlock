@@ -363,11 +363,14 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					if (head == null) {
 						head = storage_map.get(ngram_string + ngram_id);
 						reference.add(head);
+						if (head == null)
+							java.awt.Toolkit.getDefaultToolkit().beep();
 					}
 					else {
 						head = head.getNextNgram();
 						if (head == null) {
-							//TODO add case for EOF (is this needed, it seems to work without anything here?)
+							// EOF in reference reached, abandon loop and then check for match (post loop check)
+							break;
 						}
 						else {
 							reference.add(head);
