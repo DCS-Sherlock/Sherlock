@@ -18,8 +18,14 @@ public class NGramScorer implements IScoreFunction {
 
 	private float threshold;
 
+	// Lists to store file info by file index
 	public ArrayList<ISourceFile> file_list;		// public to allow use in external loops
 	private ArrayList<FileInfo> file_info;
+
+	// List to store file pairs by file index
+	// TODO add a mechanism whereby any block in a group that is skipped due to high count is removed
+	private ArrayList<MatchList> file_matches;
+	private ArrayList<ISourceFile> match_list;
 
 	/**
 	 * Object constructor.
@@ -27,11 +33,48 @@ public class NGramScorer implements IScoreFunction {
 	 */
 	public NGramScorer(float threshold) {
 		this.threshold = threshold;
+		file_matches = new ArrayList<>();
+		match_list = new ArrayList<>();
 	}
 
+	/**
+	 * Returns the total similarity score between the 2 passed files
+	 * <p>
+	 *     WARNING: This currently returns a total of ALL matches between the two files, it does not ignore those
+	 *     considered common and removed from final scoring groups. In future this issue will be resolved
+	 *     // TODO: add a filter onto the final group score construction to instruct removal of no applicable pairs
+	 * </p>
+	 * @param mainFile      the subject of the scoring function.
+	 * @param referenceFile the reference to score the subject against
+	 * @param mutualGroups  the ICodeBlockGroups where both the main and subject files are present
+	 *
+	 * @return Total similarity score for all relevant file match pairs
+	 */
 	@Override
 	public float score(ISourceFile mainFile, ISourceFile referenceFile, List<ICodeBlockGroup> mutualGroups) {
-		return 0;
+//		return 0;
+		// add a 3rd list which contains all match cases where the file is first in a pair
+		// search this list for both files, and where the pair is the 2 files add the score to an accumulator
+		int index = match_list.lastIndexOf(mainFile);
+		float accumulator = 0.0f;
+		// for every file matched with the main file, find where the file was the reference file
+		for (NgramMatch match : file_matches.get(index).matches) {
+			if (match.file2.equals(referenceFile)) {
+				// where the match is between the 2 files passed increment the accumulator
+				accumulator += match.similarity;
+			}
+		}
+		// perform above for opposite match direction
+		// NOTE: (In theory this should never run, and is here for the sake of completeness)
+		index = match_list.lastIndexOf(referenceFile);
+		for (NgramMatch match : file_matches.get(index).matches) {
+			if (match.file1.equals(mainFile)) {
+				// where the match is between the 2 files passed increment the accumulator
+				accumulator += match.similarity;
+			}
+		}
+		// return cumulative score
+		return accumulator;
 	}
 
 	/**
@@ -51,10 +94,15 @@ public class NGramScorer implements IScoreFunction {
 		if (file_list.contains(pair.file1)) {
 			// acquire the respective file_info index and update it with the new similarity score
 			file_info.get(file_list.indexOf(pair.file1)).addToFileInfo(pair.similarity);
+			// add the pair to the match lists
+			file_matches.get(match_list.indexOf(pair.file1)).matches.add(pair);
 		} else {
 			// add the new file and a respective FileInfo object (ass they are always added in pairs the indexes will always match)
 			file_list.add(pair.file1);
 			file_info.add(new FileInfo(pair.similarity, pair.reference_lines));
+			// create a new match list and add the pair to it
+			match_list.add(pair.file1);
+			file_matches.add(new MatchList(pair));
 		}
 		// duplicate of above for the second file in the pair. TODO: find a way to merge these dupicate code blocks (may require NgramMatch changes)
 		if (file_list.contains(pair.file2)) {
@@ -101,6 +149,16 @@ public class NGramScorer implements IScoreFunction {
 		public void addToFileInfo(float similarity) {
 			total_similarity += similarity;
 			similar_files++;
+		}
+	}
+
+	class MatchList {
+
+		public ArrayList<NgramMatch> matches;
+
+		public MatchList(NgramMatch pair) {
+			matches = new ArrayList<>();
+			matches.add(pair);
 		}
 	}
 }
