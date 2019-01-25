@@ -94,4 +94,9 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	public void setDetectionType(DetectionType type) {
 		this.type = type;
 	}
+
+	@Override
+	public boolean isPopulated() {
+		return this.blockMap.size() > 1;
+	}
 }

@@ -146,6 +146,11 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 						}
 					}
 					ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
+					if (processedResults.cleanGroups()) {
+						synchronized (ExecutorUtils.logger) {
+							ExecutorUtils.logger.warn("At least one result group does not have it's detection type set");
+						}
+					}
 
 					List<ICodeBlockGroup> gs = processedResults.getGroups();
 					synchronized (ExecutorUtils.logger) {

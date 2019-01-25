@@ -52,6 +52,16 @@ public class ModelTaskProcessedResults {
 	}
 
 	/**
+	 * Remove a group from the list of groups
+	 * @param group group to remove
+	 */
+	public void removeGroup(ICodeBlockGroup group) {
+		if (group != null) {
+			this.groups.remove(group);
+		}
+	}
+
+	/**
 	 * Fetches a list of groups containing the passed file
 	 *
 	 * @return list of groups
@@ -65,5 +75,13 @@ public class ModelTaskProcessedResults {
 	 */
 	public IScoreFunction getScorer() {
 		return scorer;
+	}
+
+	/**
+	 * Remove any empty groups from the list
+	 */
+	public boolean cleanGroups() {
+		this.groups = this.groups.stream().filter(ICodeBlockGroup::isPopulated).collect(Collectors.toList());
+		return this.groups.stream().anyMatch(x -> x.getDetectionType() == null);
 	}
 }

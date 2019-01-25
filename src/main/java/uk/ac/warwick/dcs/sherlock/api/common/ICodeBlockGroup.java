@@ -77,4 +77,10 @@ public interface ICodeBlockGroup {
 	 * @param type detection type
 	 */
 	void setDetectionType(DetectionType type);
+
+	/**
+	 * Check whether the group covers at least two files
+	 * @return
+	 */
+	boolean isPopulated();
 }
