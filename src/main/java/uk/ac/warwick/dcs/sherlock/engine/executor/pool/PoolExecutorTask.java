@@ -156,9 +156,9 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 					synchronized (ExecutorUtils.logger) {
 						ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
 						for (ICodeBlockGroup g : gs) {
-							ExecutorUtils.logger.warn("{}", g.getComment());
+							ExecutorUtils.logger.warn("{} - {}", g.getComment() == null ? "No Comment" : g.getComment(), g.getDetectionType());
 							ExecutorUtils.logger.warn("==================");
-							g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {}", x.getFile(), x.getLineNumbers().toString()));
+							g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {} - {}%", x.getFile(), x.getLineNumbers().toString(), x.getBlockScore() * 100));
 							System.out.println();
 						}
 					}
