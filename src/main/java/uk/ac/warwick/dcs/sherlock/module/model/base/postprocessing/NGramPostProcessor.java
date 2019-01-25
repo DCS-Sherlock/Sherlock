@@ -12,13 +12,28 @@ import java.util.*;
 
 public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 
+	/**
+	 * Threshold determining when to ignore large sets of matches.
+	 * <p>
+	 *     If a block of code is common among a large set of files it is less likely to be plagiarism and
+	 *     more likely a common code pattern or something given to the students (e.g. skeleton files).
+	 *     This threshold determines the percentage of files over which matches will be ignored, to avoid
+	 *     false detections.
+	 * </p>
+	 */
 	@AdjustableParameter (name = "Common Threshold", defaultValue = 0.3f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f)
 	public float threshold;
 
-	// method to check for a link between pairs
+	/**
+	 * A method to check if 2 match objects are for the same code block.
+	 * @param first The first match to compare.
+	 * @param second The second match to compare.
+	 * @return A boolean showing if the 2 matches are on the same code block or not.
+	 */
 	private boolean isLinked(NgramMatch first, NgramMatch second) {
 		// TODO resolve to also accept similar line combos, as wells as identical ones
-		// TODO check this comparison works / find a better way to do this
+		// TODO find a better way to do this
+		// for each possible pair check if they are the same file and the line numbers match up
 		if (first.file1.equals(second.file1)) {
 			return first.reference_lines.getKey() == second.reference_lines.getKey() && first.reference_lines.getValue() == second.reference_lines.getValue();
 		} else if (first.file1.equals(second.file2)) {
@@ -28,20 +43,27 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		} else if (first.file2.equals(second.file2)) {
 			return first.check_lines.getKey() == second.check_lines.getKey() && first.check_lines.getValue() == second.check_lines.getValue();
 		}
+		// if no match is found
 		return false;
 	}
 
+	/**
+	 * Add a matched pair to the matched groups data structure.
+	 * @param match The match to be added to the structure.
+	 * @param matches The structure to add the match to.
+	 */
 	private void addToMatches(NgramMatch match, ArrayList<ArrayList<NgramMatch>> matches) {
-		// for each list check for a link in the list by checking all contained objects. Add to any link or make a new list
+		// for each list check for a link in the list by checking all contained objects. Add to any list wish a link or make a new list
 		for (ArrayList<NgramMatch> check_list : matches) {
 			for (NgramMatch check : check_list) {
+				// if link found add to list
 				if (isLinked(match, check)) {
 					check_list.add(match);
 					return;
 				}
 			}
 		}
-		// if no link is found make new list to add match to
+		// if no link is found make new list to add match to it
 		matches.add(new ArrayList<>());
 		matches.get(matches.size()-1).add(match);
 	}
@@ -49,7 +71,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	// TODO modularise this function as it's essentially the postproccessors main and shouldn't be doing much processing
 	@Override
 	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<NGramRawResult> rawResults) {
-		// TODO pass data to scorer once scoring method has been figured out
+
 		ModelTaskProcessedResults results = new ModelTaskProcessedResults(new NGramScorer(threshold));
 
 		ArrayList<ArrayList<NgramMatch>> matches = new ArrayList<>();
@@ -78,17 +100,6 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		}
 		// now all data is in the structure we can filter it
 
-		// first we remove anything that occurs in over a threshold portion of the files
-		// NOTE: this is currently being replaced with a more functional solution.
-//		int num_of_files = files.size();
-//		for (ArrayList<NgramMatch> list : matches) {
-//			// if the match occurs commonly remove it from the list
-//			if ((list.size() / num_of_files) >= threshold) {
-//				matches.remove(list);
-//			}
-//		}
-
-		// then we are left with only the cases where the matches are uncommon
 		/* can check here for if the matches are all connected for each list, if no then you can try and merge lists or cull from them to get
 		a more informative result TODO: Implement this and attach it to a bool setting*/
 

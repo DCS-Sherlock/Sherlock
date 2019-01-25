@@ -21,6 +21,10 @@ public class NGramScorer implements IScoreFunction {
 	public ArrayList<ISourceFile> file_list;		// public to allow use in external loops
 	private ArrayList<FileInfo> file_info;
 
+	/**
+	 * Object constructor.
+	 * @param threshold The threshold used by the postprocessor to determine if cases are common.
+	 */
 	public NGramScorer(float threshold) {
 		this.threshold = threshold;
 	}
@@ -30,11 +34,18 @@ public class NGramScorer implements IScoreFunction {
 		return 0;
 	}
 
+	/**
+	 * Resets/Initialises the group info storage for each match group.
+	 */
 	public void newGroup() {
 		file_list = new ArrayList<>();
 		file_info = new ArrayList<>();
 	}
 
+	/**
+	 * Adds files and their score info to the group data structure.
+	 * @param pair The pair of files and their local match score.
+	 */
 	public void add(NgramMatch pair) {
 		// check for if the files exist in file_list, if they do add to them, if not make a new object to add to the list
 		if (file_list.contains(pair.file1)) {
@@ -56,6 +67,11 @@ public class NGramScorer implements IScoreFunction {
 		}
 	}
 
+	/**
+	 * Check if the set of files is enough to be considered "common".
+	 * @param file_count The number of files the system is comparing.
+	 * @return A boolean saying if the file group should be ignored or not.
+	 */
 	public boolean checkSize(int file_count) {
 		return (file_list.size() / file_count) <= threshold;
 	}

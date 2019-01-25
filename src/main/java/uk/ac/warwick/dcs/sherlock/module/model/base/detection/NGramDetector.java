@@ -26,7 +26,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 * In theory smaller is more sensitive, but realistically you don't want to use lower than 3 or higher than 8.
 	 * </p>
 	 */
-	@AdjustableParameter (name = "N-Gram Size", defaultValue = 4, minimumBound = 0, maxumumBound = 10, step = 1)
+	@AdjustableParameter (name = "N-Gram Size", defaultValue = 4, minimumBound = 1, maxumumBound = 10, step = 1)
 	public int ngram_size;
 
 	/**
@@ -54,44 +54,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	public NGramDetectorWorker getAbstractPairwiseDetectorWorker() {
 		return new NGramDetectorWorker();
 	}
-
-	/**
-	 * Preprocess a file for use in annotated detection
-	 * <p>
-	 * Retrieve each line from the file and remove all whitespace, then add it to a list of strings. This allows line data to be retained for later use, while removing the whitespace for N-gram
-	 * processing.
-	 * </p>
-	 *
-	 * @param file_path The path to the file being processed
-	 *
-	 * @return The now processed file
-	 */
-	private static ArrayList<String> preprocess(String file_path) {
-		// load the file
-		File file = new File(file_path);
-		// init the processed file list
-		ArrayList<String> filePro = new ArrayList<String>();
-
-		try {
-			// start file reader
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String st;
-			// while there is still a line to be read
-			while ((st = br.readLine()) != null) {
-				// this replaces all whitespace characters with nothing. effectivly removing all whitespace
-				// \\s = any whitespace character
-				st = st.replaceAll("\\s+", "");
-				// add the processed line to the processed list
-				filePro.add(st);
-			}
-		}
-		catch (Exception e) {
-			System.out.println("Something went wrong");
-		}
-		return filePro;
-	}
-
-	// TODO in loadNgram functions skip lines under ngram_size
 
 	/**
 	 * Load the contents of a file into an N-gram map for easy retrival
@@ -262,13 +224,14 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			reference.remove(reference.size() - 1);
 			check.remove(check.size() - 1);
 		}
-
-		// build an N-Gram match object to send to the post processor
-		NgramMatch temp = new NgramMatch(reference.get(0).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
-				check.get(0).getLineNumber(), check.get(check.size()-1).getLineNumber(), last_peak, file1, file2);
-		// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
-		res.put(temp, reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber());
-
+		// if the last peak is before the minimum window size skip the match construction (ignore case)
+		if (reference.size() >= minimum_window) {
+			// build an N-Gram match object to send to the post processor
+			NgramMatch temp = new NgramMatch(reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(),
+					check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber(), last_peak, file1, file2);
+			// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
+			res.put(temp, reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber());
+		}
 		reference.clear();
 		check.clear();
 		//		head = null;
@@ -414,7 +377,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 						since_last_peak = 0;
 						last_val = 0.0f;
 					}
-					// need to handle EOF case
 				}
 			}
 			if (compare(reference, check) > threshold) {
@@ -429,44 +391,86 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		}
 	}
 
-	// TODO abstract to elsewhere, can in theory be left here, but is bad practice
+	/**
+	 * Object to store N-Gram data in a refined structure.
+	 */
 	class Ngram {
 
-		private String segement;
+		/**
+		 * The N-Gram itself in string form.
+		 */
+		private String segment;
+		/**
+		 * The line the N-Gram starts on.
+		 */
 		private int line_number;
+		/**
+		 * The id of the N-Gram to allow differentiation of duplicates.
+		 */
 		private int id;
 
+		/**
+		 * Linked List pointer to allow the next N-Gram in a reference file to be found when the start is acquired from a hashmap.
+		 */
 		private Ngram next_ngram;
 
-		public Ngram(String segement, int line_number) {
-			this.segement = segement;
+		/**
+		 * Object constructor.
+		 * @param segment The N-Gram being stored.
+		 * @param line_number	The line number the N-Gram starts on.
+		 */
+		public Ngram(String segment, int line_number) {
+			this.segment = segment;
 			this.line_number = line_number;
 		}
 
+		/**
+		 * Checks if 2 N-Grams are the same string.
+		 * @param ngram The N-Gram to compare to.
+		 * @return True if strings are equal, false otherwise.
+		 */
 		public boolean equals(Ngram ngram) {
-			return this.segement == ngram.getNgram();
+			return this.segment == ngram.getNgram();
 		}
 
+		/**
+		 * @return The N-Gram string.
+		 */
 		public String getNgram() {
-			return segement;
+			return segment;
 		}
 
+		/**
+		 * @return The line number at the start of the N-Gram.
+		 */
 		public int getLineNumber() {
 			return line_number;
 		}
 
+		/**
+		 * @param id The ID to allow duplicates to exist.
+		 */
 		public void setId(int id) {
 			this.id = id;
 		}
 
+		/**
+		 * @return The version ID of this N-Gram.
+		 */
 		public int getId() {
 			return id;
 		}
 
+		/**
+		 * @param ngram The next N-Gram in the file.
+		 */
 		public void setNextNgram(Ngram ngram) {
 			next_ngram = ngram;
 		}
 
+		/**
+		 * @return The next N-Gram in the file.
+		 */
 		public Ngram getNextNgram() {
 			return next_ngram;
 		}
@@ -478,4 +482,3 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 // TODO prevent back to peak going bellow min window value
 // TODO finish commenting
-// TODO lable in way of explaining how to make a detector object
