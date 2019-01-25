@@ -264,10 +264,10 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		}
 
 		// build an N-Gram match object to send to the post processor
-		NgramMatch temp = new NgramMatch(reference.get(1).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
-				check.get(1).getLineNumber(), check.get(check.size()-1).getLineNumber(), last_peak, file1, file2);
+		NgramMatch temp = new NgramMatch(reference.get(0).getLineNumber(), reference.get(reference.size()-1).getLineNumber(),
+				check.get(0).getLineNumber(), check.get(check.size()-1).getLineNumber(), last_peak, file1, file2);
 		// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
-		res.put(temp, reference.get(1).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(1).getLineNumber(), check.get(check.size() - 1).getLineNumber());
+		res.put(temp, reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber());
 
 		reference.clear();
 		check.clear();
