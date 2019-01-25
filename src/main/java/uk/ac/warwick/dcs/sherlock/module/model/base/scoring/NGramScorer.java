@@ -76,14 +76,14 @@ public class NGramScorer implements IScoreFunction {
 		return (file_list.size() / file_count) <= threshold;
 	}
 
-	public float getScore(ISourceFile file, ICodeBlockGroup out_group) {
+	public void getScore(ISourceFile file, ICodeBlockGroup out_group) {
 		// calculate a suitable score for the inputted file based on the available data
 		int index = file_list.indexOf(file);
 		// placeholder score, currently produces an index weighted by rarity and general match strength
 		float score = file_info.get(index).total_similarity / file_list.size();
 
 		out_group.addCodeBlock(file, score, file_info.get(index).lines);
-		return 0;
+		return;
 	}
 
 	class FileInfo {

@@ -103,6 +103,9 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		/* can check here for if the matches are all connected for each list, if no then you can try and merge lists or cull from them to get
 		a more informative result TODO: Implement this and attach it to a bool setting*/
 
+		// make new group in results
+		ICodeBlockGroup out_group = results.addGroup();
+
 		// once all processing is done make and score each results object
 		for (ArrayList<NgramMatch> list : matches) {
 			// make new scorer group
@@ -111,14 +114,21 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 				// add all matches in a group to the scoring data structure
 				((NGramScorer)results.getScorer()).add(item);
 			}
-			// make new group in results
-			ICodeBlockGroup out_group = results.addGroup();
+			// if last group was used make new group in results
+			if (out_group.getCodeBlocks().size() != 0) {
+				out_group = results.addGroup();
+			}
 			// if group is bellow the threshold add all items to the group along with a score
 			if (((NGramScorer)results.getScorer()).checkSize(files.size())) {
 				for (ISourceFile file : ((NGramScorer)results.getScorer()).file_list) {
 					((NGramScorer)results.getScorer()).getScore(file, out_group);
 				}
 			}
+		}
+
+		// if last group is common removed then remove the empty group from results
+		if (out_group.getCodeBlocks().size() == 0) {
+			results.removeGroup(out_group);
 		}
 
 
@@ -145,3 +155,5 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		return results;
 	}
 }
+
+// TODO: remove empty groups that are being added
