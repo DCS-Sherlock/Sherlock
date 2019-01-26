@@ -40,4 +40,13 @@ public class FileReport {
 	public void AddReportString(List<String> content) {
 		reportBody.addAll(content);
 	}
+
+	/**
+	 * Retrieves the reportBody.
+	 *
+	 * @return reportBody, the stored List of strings making up the report.
+	 */
+	public List<String> GetReport() {
+		return reportBody;
+	}
 }
