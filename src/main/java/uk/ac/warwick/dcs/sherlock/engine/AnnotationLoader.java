@@ -27,13 +27,15 @@ public class AnnotationLoader {
 
 	AnnotationLoader() {
 		List<URL> moduleURLS = new LinkedList<>();
+		String modulesPath = (SherlockEngine.modulesPath == null || SherlockEngine.modulesPath.equals("")) ? "module/" : SherlockEngine.modulesPath;
+		if (!modulesPath.endsWith("/")) {
+			modulesPath += "/";
+		}
 
 		if (SherlockEngine.enableExternalModules) {
-			File modules = new File("module/");
+			File modules = new File(modulesPath);
 			if (!modules.exists()) {
-				if (modules.mkdir()) {
-					//get default jar and put in here
-				}
+				modules.mkdir();
 			}
 
 			moduleURLS.addAll(Arrays.stream(Objects.requireNonNull(modules.listFiles())).map(f -> {
@@ -49,7 +51,7 @@ public class AnnotationLoader {
 			}).collect(Collectors.toList()));
 
 			//Load libs to
-			File libs = new File("module/libs");
+			File libs = new File(modulesPath + "libs/");
 			if (!libs.exists()) {
 				libs.mkdir();
 			}
@@ -66,9 +68,6 @@ public class AnnotationLoader {
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.engine"));
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.module"));
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.launch"));
-		if (!SherlockEngine.devClasspath.equals("")) {
-			moduleURLS.addAll(ClasspathHelper.forPackage(SherlockEngine.devClasspath));
-		}
 
 		ConfigurationBuilder config = new ConfigurationBuilder();
 		config.addClassLoader(this.getClass().getClassLoader());

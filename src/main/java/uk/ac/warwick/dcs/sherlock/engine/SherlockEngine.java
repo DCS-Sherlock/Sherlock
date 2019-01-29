@@ -35,7 +35,7 @@ public class SherlockEngine {
 
 	static EventBus eventBus = null;
 	static Registry registry = null;
-	static String devClasspath = "";
+	static String modulesPath = "";
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	private static File configDir;
@@ -107,6 +107,10 @@ public class SherlockEngine {
 		}
 	}
 
+	public static void setModulesPath(String classpath) {
+		SherlockEngine.modulesPath = classpath;
+	}
+
 	private static void writeConfiguration() {
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		try {
@@ -154,10 +158,6 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
-	}
-
-	public static void setDevClasspath(String classpath) {
-		SherlockEngine.devClasspath = classpath;
 	}
 
 	private void shutdown() {

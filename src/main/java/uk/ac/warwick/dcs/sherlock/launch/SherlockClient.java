@@ -22,9 +22,10 @@ public class SherlockClient {
 	public static void main(String[] args) {
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 
-		String devClasspath = System.getProperty("devClasspath");
-		if (devClasspath != null && !devClasspath.equals("")) {
-			SherlockEngine.setDevClasspath(devClasspath);
+		//If "-Dmodules" is in the JVM arguments, set the path to provided
+		String modulesPath = System.getProperty("modules");
+		if (modulesPath != null && !modulesPath.equals("")) {
+			SherlockEngine.setModulesPath(modulesPath);
 		}
 
 		//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
