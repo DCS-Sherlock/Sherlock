@@ -97,7 +97,7 @@ public class EntityJob implements IJob, Serializable {
 
 	@Override
 	public IResultJob getLatestResult() {
-		return null;
+		return this.results.size() > 0 ? this.results.get(this.results.size() - 1) : null;
 	}
 
 	@Override
@@ -119,6 +119,7 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public void setStatus(WorkStatus status) {
 		this.status = status;
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 	@Override

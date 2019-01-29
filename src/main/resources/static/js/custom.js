@@ -173,6 +173,7 @@ function submitAjax(url, data, success, type) {
 
 function tooltips() {
     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover()
 }
 
 function bindPage() {

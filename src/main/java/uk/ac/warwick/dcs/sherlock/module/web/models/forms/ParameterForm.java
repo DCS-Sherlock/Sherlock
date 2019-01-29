@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import org.springframework.validation.BindingResult;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.DetectorWrapper;
 
 import java.util.*;
@@ -12,7 +13,7 @@ public class ParameterForm {
 
     public ParameterForm() {}
 
-    public ParameterForm(DetectorWrapper detectorWrapper) {
+    public ParameterForm(DetectorWrapper detectorWrapper) throws DetectorNotFound {
         List<AdjustableParameterObj> parameterObjList = detectorWrapper.getEngineParameters();
 
         Map<String, Float> parameterMap = new HashMap<>();

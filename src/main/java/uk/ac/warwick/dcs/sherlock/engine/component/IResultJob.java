@@ -10,4 +10,6 @@ public interface IResultJob {
 
 	List<IResultFile> getFileResults();
 
+	void store();
+
 }

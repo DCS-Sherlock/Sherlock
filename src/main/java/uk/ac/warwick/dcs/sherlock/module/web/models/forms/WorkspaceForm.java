@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidLanguage;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,7 +20,8 @@ public class WorkspaceForm {
     public String name;
 
     @NotNull(message = "{error_language_empty}")
-    public String language; //TODO: perform validation to check if input is a valid language
+    @ValidLanguage
+    public String language;
 
     public WorkspaceForm() { }
 

@@ -116,9 +116,13 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	@Override
 	public void setRawResults(List<AbstractModelTaskRawResult> rawResults) {
-		this.rawResults = rawResults;
-		this.setComplete();
-		this.serialize();
+		if (this.rawResults == null && this.hash == null) {
+			this.rawResults = rawResults;
+			this.serialize();
+		}
+		else {
+			logger.error("task {} already has results", this.id);
+		}
 	}
 
 	@Override

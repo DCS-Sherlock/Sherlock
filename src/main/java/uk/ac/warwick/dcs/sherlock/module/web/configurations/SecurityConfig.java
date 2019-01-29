@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.SecurityProperties;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 
 import java.util.Arrays;
@@ -27,6 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private Environment environment;
 	@Autowired
+	private SecurityProperties securityProperties;
+	@Autowired
+	private SetupProperties setupProperties;
+	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Bean
@@ -35,7 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	};
 
 	@Autowired
-	@SuppressWarnings("Duplicates")
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
 			//Try to find the "local user"
@@ -45,21 +50,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//Add the "local user" if not found
 			if (account == null) {
 				account = new Account(email, bCryptPasswordEncoder.encode("local_password"), "Local User");
-				Set<Role> roles = new HashSet<Role>();
+				Set<Role> roles = new HashSet<>();
 				roles.add(new Role("USER", account));
 				roles.add(new Role("LOCAL_USER", account));
 				account.setRoles(roles);
 				accountRepository.save(account);
 			}
 		} else {
-			//Todo: remove temp code for servers when setup is implemented
-			//Try to find the "server user"
-			String email = "server.sherlock@example.com";
-			Account account = accountRepository.findByEmail(email);
-			//Add the "local user" if not found
-			if (account == null) {
-				account = new Account(email, bCryptPasswordEncoder.encode("server_password"), "Admin");
-				Set<Role> roles = new HashSet<Role>();
+			if (accountRepository.count() == 0) {
+				Account account = new Account(
+						setupProperties.getEmail(),
+						bCryptPasswordEncoder.encode(setupProperties.getPassword()),
+						setupProperties.getName());
+				Set<Role> roles = new HashSet<>();
 				roles.add(new Role("USER", account));
 				roles.add(new Role("ADMIN", account));
 				account.setRoles(roles);
@@ -120,7 +123,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http
 				.logout()
-				.permitAll();
+				.deleteCookies("JSESSIONID");
+
+		http
+				.rememberMe()
+				.key(securityProperties.getKey());
 
 		//TODO: Re-enable later
 		http.csrf().disable();

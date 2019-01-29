@@ -5,13 +5,13 @@
 </head>
 <body>
 
-<form th:action="@{/dashboard/workspaces/manage/details/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#name-parent" th:object="${workspaceForm}" method="post">
+<form th:action="@{/dashboard/workspaces/manage/details/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#details-parent" th:object="${workspaceForm}" method="post">
     <div th:if="${#fields.hasAnyErrors()}">
         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
     </div>
 
-    <div th:if="${success}">
-        <div class="alert alert-info"><span th:text="#{workspaces_basic_updated_msg}"></span></div>
+    <div th:if="${success_msg}">
+        <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
         <div data-js="triggerArea" data-js-target="#jobs-parent"></div>
     </div>
 

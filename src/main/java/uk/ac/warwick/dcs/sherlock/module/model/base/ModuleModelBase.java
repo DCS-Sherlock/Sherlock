@@ -7,7 +7,6 @@ import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.TestDetector;
-import uk.ac.warwick.dcs.sherlock.module.model.base.lang.HaskellLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramPostProcessor;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
@@ -36,7 +35,7 @@ public class ModuleModelBase {
 	@EventHandler
 	public void preInitialisation(EventPreInitialisation event) {
 		SherlockRegistry.registerLanguage("Java", JavaLexer.class);
-		SherlockRegistry.registerLanguage("Haskell", HaskellLexer.class); //Testing, will be moved to a separate module for testing purposes
+		//SherlockRegistry.registerLanguage("Haskell", HaskellLexer.class); -- found in Sherlock-Extra
 
 		SherlockRegistry.registerAdvancedPreProcessorGroup(VariableExtractor.class);
 	}

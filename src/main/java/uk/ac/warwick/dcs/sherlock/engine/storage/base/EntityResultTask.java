@@ -33,33 +33,48 @@ public class EntityResultTask implements IResultTask, Serializable {
 		this.containingBlocks = new LinkedList<>();
 	}
 
-	@Override
+	/*@Override
 	public void addFileScore(ISourceFile file, float score) {
 
+	}*/
+
+	@Override
+	public void addContainingBlock(ICodeBlockGroup blockGroup) {
+		if (blockGroup instanceof EntityCodeBlockGroup) {
+			EntityCodeBlockGroup g = (EntityCodeBlockGroup) blockGroup;
+			this.containingBlocks.add(g);
+		}
+	}
+
+	@Override
+	public void addContainingBlock(Collection<ICodeBlockGroup> blockGroups) {
+		if (blockGroups != null && blockGroups.size() > 0) {
+			blockGroups.forEach(this::addContainingBlock);
+		}
 	}
 
 	@Override
 	public List<ICodeBlockGroup> getContainingBlocks() {
-		return null;
+		return new LinkedList(this.containingBlocks);
 	}
 
 	@Override
 	public Map<ISourceFile, Float> getFileScores() {
-		return null;
+		return new HashMap<>(this.fileScores);
 	}
 
 	@Override
 	public ITask getTask() {
-		return null;
+		return this.task;
 	}
 
 	@Override
 	public float getTaskScore() {
-		return 0;
+		return this.taskScore;
 	}
 
-	@Override
+	/*@Override
 	public void setTaskScore(float score) {
 
-	}
+	}*/
 }

@@ -16,13 +16,14 @@ public class AttributesControllerAdvice {
     private AccountRepository accountRepository;
 
     @ModelAttribute("account")
-    public Account getAccount(Authentication authentication)
+    public Account getAccount(Model model, Authentication authentication)
     {
         if (authentication == null)
             return new Account();
 
         Account account = accountRepository.findByEmail(authentication.getName());
 
+        model.addAttribute("account", account);
         return account;
     }
 

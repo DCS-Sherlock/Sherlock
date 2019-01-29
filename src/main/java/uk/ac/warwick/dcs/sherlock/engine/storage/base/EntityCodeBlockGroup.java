@@ -16,10 +16,10 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	Map<Long, EntityCodeBlock> blockMap;
+
 	private DetectionType type;
 	private String comment;
-
-	private Map<Long, EntityCodeBlock> blockMap;
 
 	public EntityCodeBlockGroup() {
 		super();
@@ -61,6 +61,11 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	@Override
+	public boolean filePresent(ISourceFile file) {
+		return this.blockMap.containsKey(file.getPersistentId());
+	}
+
+	@Override
 	public ICodeBlock getCodeBlock(ISourceFile file) {
 		return this.blockMap.get(file.getPersistentId());
 	}
@@ -88,5 +93,10 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	@Override
 	public void setDetectionType(DetectionType type) {
 		this.type = type;
+	}
+
+	@Override
+	public boolean isPopulated() {
+		return this.blockMap.size() > 1;
 	}
 }

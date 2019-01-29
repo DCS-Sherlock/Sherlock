@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.configurations;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,18 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.SecurityProperties;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
+import uk.ac.warwick.dcs.sherlock.module.web.properties.WebmasterProperties;
 
 import java.util.Locale;
 
 @Configuration
+@EnableConfigurationProperties({
+        SecurityProperties.class,
+        SetupProperties.class,
+        WebmasterProperties.class
+})
 public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public LocaleResolver localeResolver() {

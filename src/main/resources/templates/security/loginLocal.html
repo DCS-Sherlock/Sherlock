@@ -22,7 +22,7 @@
 
         <input type="hidden" id="username" name="username" class="form-control" th:value="${local_username}">
         <input type="hidden" id="password" name="password" class="form-control" th:value="${local_password}">
-
+        <input type="checkbox" id="remember-me" name="remember-me" class="d-none" checked="checked">
 
         <div style="width: 400px">
             <span th:text="#{login_local_start}"></span><button class="btn btn-link" type="submit" th:text="#{login_local_link}"></button><span th:text="#{login_local_end}"></span>

@@ -24,11 +24,11 @@ import java.io.PrintWriter;
 import java.util.List;
 
 @Controller
-public class ManageFilesController {
+public class ManageSubmissionController {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
-    public ManageFilesController() { }
+    public ManageSubmissionController() { }
 
     @GetMapping("/dashboard/workspaces/manage/submission/{pathid}/{fileid}")
     public String fileGet() {
@@ -69,11 +69,9 @@ public class ManageFilesController {
             Model model) throws SourceFileNotFound {
         ISourceFile sourceFile = null;
 
-        for (ISourceFile file : workspaceWrapper.getFiles()) {
-            if (file.getPersistentId() == fileid) {
+        for (ISourceFile file : workspaceWrapper.getFiles())
+            if (file.getPersistentId() == fileid)
                 sourceFile = file;
-            }
-        }
 
         if (sourceFile == null) throw new SourceFileNotFound("File not found.");
 

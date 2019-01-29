@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
@@ -61,12 +62,13 @@ public class SherlockServer extends SpringBootServletInitializer {
 
 	@Bean
 	@Primary
+	@Profile("client")
 	public DataSource dataSource() {
 		return DataSourceBuilder
 				.create()
 				.username("sa")
 				.password("")
-				.url("jdbc:h2:file:" + SherlockEngine.configuration.getDataPath() + "/Sherlock-" + (SherlockEngine.side == Side.CLIENT ? "Client" : "Server"))
+				.url("jdbc:h2:file:" + SherlockEngine.configuration.getDataPath() + "/Sherlock-Web")
 				.driverClassName("org.h2.Driver")
 				.build();
 	}

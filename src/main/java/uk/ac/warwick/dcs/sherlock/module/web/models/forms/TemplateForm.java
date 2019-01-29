@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidLanguage;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,7 +22,8 @@ public class TemplateForm {
     public String name;
 
     @NotNull(message = "{error_language_empty}")
-    public String language; //TODO: perform validation to check if input is a valid language
+    @ValidLanguage
+    public String language;
 
     @NotNull(message = "{error_public_empty}")
     public boolean isPublic;

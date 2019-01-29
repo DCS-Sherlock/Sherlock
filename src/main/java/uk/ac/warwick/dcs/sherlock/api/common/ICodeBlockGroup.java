@@ -29,6 +29,15 @@ public interface ICodeBlockGroup {
 	void addCodeBlock(ISourceFile file, float score, List<ITuple<Integer, Integer>> lines);
 
 	/**
+	 * Tests whether a passed file is included in the group
+	 *
+	 * @param file file to test
+	 *
+	 * @return is the file present?
+	 */
+	boolean filePresent(ISourceFile file);
+
+	/**
 	 * return the block of code for a specific file
 	 *
 	 * @param file file to search
@@ -68,4 +77,10 @@ public interface ICodeBlockGroup {
 	 * @param type detection type
 	 */
 	void setDetectionType(DetectionType type);
+
+	/**
+	 * Check whether the group covers at least two files
+	 * @return
+	 */
+	boolean isPopulated();
 }

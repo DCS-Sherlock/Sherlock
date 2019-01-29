@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
@@ -12,26 +13,23 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups) {
+	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups,
+									 List<String> variableNames) {
 		FileReport fileReport = new FileReport(persistentId);
 
 		StringJoiner stringJoiner = new StringJoiner("", "", ".");
 
-		/*
-		 * for each codeBlockGroup:
-		 * get base description
-		 * get continuation of description as many times as needed
-		 * fill in blanks: line numbers, files to start with
-		 * combine strings into one string, add to report
-		 */
+		//Each codeBlockGroup represents a different similarity; each gets its own string added to the report.
 		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			DetectionType detectionType = codeBlockGroup.getDetectionType();
+
 			//Get the base description for this type of plagiarism
 			List<String> descriptionSegments = new ArrayList<>();
-			descriptionSegments.add(ReportDescriptions.getLocationDescription());
+			descriptionSegments.add(ReportDescriptions.getLocationDescription(detectionType, false));
 
 			//Extend the description for the number of files in the group.
 			for (int i = 1; i < codeBlockGroup.getCodeBlocks().size(); i++) {
-				descriptionSegments.add(ReportDescriptions.getContinuedDescription());
+				descriptionSegments.add(ReportDescriptions.getLocationDescription(detectionType, true));
 			}
 
 			/*
@@ -49,7 +47,12 @@ public class ReportGenerator implements IReportGenerator {
 			//Format each segment of the description with the appropriate file name and line numbers and add to the StringJoiner along the way.
 			//TODO: other formatting including variables, score etc.
 			for (int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
-				String formattedString = String.format(descriptionSegments.get(i), fileNames.get(i), lineNumbers.get(i).getKey(), lineNumbers.get(i).getValue());
+				String formattedString;
+				if(detectionType == detectionType.IDENTIFIER) {
+					formattedString = String.format(descriptionSegments.get(i), fileNames.get(i), lineNumbers.get(i).getKey());
+				} else {
+					formattedString = String.format(descriptionSegments.get(i), fileNames.get(i), lineNumbers.get(i).getKey(), lineNumbers.get(i).getValue());
+				}
 				stringJoiner.add(formattedString);
 			}
 

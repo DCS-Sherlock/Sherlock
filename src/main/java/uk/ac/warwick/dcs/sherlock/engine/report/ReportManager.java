@@ -133,7 +133,7 @@ public class ReportManager {
 			relevantGroups.add(codeBlockGroup);
 		}
 
-		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups);
+		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups, variableNames.get(fileId));
 
 		reports.put(fileId, fileReport);
 		return fileReport;
