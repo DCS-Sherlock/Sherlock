@@ -35,6 +35,7 @@ public class SherlockEngine {
 
 	static EventBus eventBus = null;
 	static Registry registry = null;
+	static String devClasspath = "";
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	private static File configDir;
@@ -153,6 +154,10 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
+	}
+
+	public static void setDevClasspath(String classpath) {
+		SherlockEngine.devClasspath = classpath;
 	}
 
 	private void shutdown() {

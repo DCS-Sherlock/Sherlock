@@ -22,6 +22,11 @@ public class SherlockClient {
 	public static void main(String[] args) {
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 
+		String devClasspath = System.getProperty("devClasspath");
+		if (devClasspath != null && !devClasspath.equals("")) {
+			SherlockEngine.setDevClasspath(devClasspath);
+		}
+
 		//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
 		String override = System.getProperty("override");
 		if (override != null && override.equals("True")) {

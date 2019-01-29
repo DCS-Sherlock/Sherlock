@@ -66,6 +66,9 @@ public class AnnotationLoader {
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.engine"));
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.module"));
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.launch"));
+		if (!SherlockEngine.devClasspath.equals("")) {
+			moduleURLS.addAll(ClasspathHelper.forPackage(SherlockEngine.devClasspath));
+		}
 
 		ConfigurationBuilder config = new ConfigurationBuilder();
 		config.addClassLoader(this.getClass().getClassLoader());
