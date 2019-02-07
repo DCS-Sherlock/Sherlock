@@ -50,6 +50,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		this.archive = archive;
 	}
 
+	@Override
 	public boolean equals(ISourceFile file) {
 		return file.getPersistentId() == this.getPersistentId();
 	}

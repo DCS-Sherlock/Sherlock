@@ -17,7 +17,7 @@ public class EntityResultFile implements IResultFile, Serializable {
 	private EntityFile file;
 	private float overallScore;
 
-	private Map<EntityFile, Float> overallFileScores;
+	private Map<EntityFile, Float> fileScores;
 	private List<EntityResultTask> taskResults;
 
 	EntityResultFile() {
@@ -29,14 +29,16 @@ public class EntityResultFile implements IResultFile, Serializable {
 		this.file = file;
 		this.overallScore = 0;
 
-		this.overallFileScores = new HashMap<>();
+		this.fileScores = new HashMap<>();
 		this.taskResults = new LinkedList<>();
 	}
 
-	/*@Override
-	public boolean addFileScore(ISourceFile file, float score) {
-		return false;
-	}*/
+	@Override
+	public void addFileScore(ISourceFile file, float score) {
+		if (file instanceof EntityFile) {
+			this.fileScores.put((EntityFile) file, score);
+		}
+	}
 
 	@Override
 	public IResultTask addTaskResult(ITask task) {
@@ -57,8 +59,17 @@ public class EntityResultFile implements IResultFile, Serializable {
 	}
 
 	@Override
-	public Map<ISourceFile, Float> getOverallFileScores() {
-		return new HashMap<>(this.overallFileScores);
+	public float getFileScore(ISourceFile file) {
+		if (file instanceof EntityFile) {
+			return this.fileScores.getOrDefault(file, 0f);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public Map<ISourceFile, Float> getFileScores() {
+		return new HashMap<>(this.fileScores);
 	}
 
 	@Override
@@ -66,10 +77,10 @@ public class EntityResultFile implements IResultFile, Serializable {
 		return this.overallScore;
 	}
 
-	/*@Override
+	@Override
 	public void setOverallScore(float score) {
 		this.overallScore = score;
-	}*/
+	}
 
 	@Override
 	public List<IResultTask> getTaskResults() {

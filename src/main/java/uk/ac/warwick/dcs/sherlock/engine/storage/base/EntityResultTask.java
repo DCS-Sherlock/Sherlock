@@ -33,11 +33,6 @@ public class EntityResultTask implements IResultTask, Serializable {
 		this.containingBlocks = new LinkedList<>();
 	}
 
-	/*@Override
-	public void addFileScore(ISourceFile file, float score) {
-
-	}*/
-
 	@Override
 	public void addContainingBlock(ICodeBlockGroup blockGroup) {
 		if (blockGroup instanceof EntityCodeBlockGroup) {
@@ -54,8 +49,24 @@ public class EntityResultTask implements IResultTask, Serializable {
 	}
 
 	@Override
+	public void addFileScore(ISourceFile file, float score) {
+		if (file instanceof EntityFile) {
+			this.fileScores.put((EntityFile) file, score);
+		}
+	}
+
+	@Override
 	public List<ICodeBlockGroup> getContainingBlocks() {
 		return new LinkedList(this.containingBlocks);
+	}
+
+	@Override
+	public float getFileScore(ISourceFile file) {
+		if (file instanceof EntityFile) {
+			return this.fileScores.getOrDefault(file, 0f);
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -73,8 +84,8 @@ public class EntityResultTask implements IResultTask, Serializable {
 		return this.taskScore;
 	}
 
-	/*@Override
+	@Override
 	public void setTaskScore(float score) {
-
-	}*/
+		this.taskScore = score;
+	}
 }

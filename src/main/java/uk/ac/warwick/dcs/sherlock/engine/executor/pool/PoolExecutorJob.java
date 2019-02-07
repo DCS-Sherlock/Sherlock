@@ -108,16 +108,37 @@ public class PoolExecutorJob implements Runnable {
 			List<ICodeBlockGroup> allGroups = results.stream().flatMap(f -> f.getValue().getGroups().stream()).collect(Collectors.toList());
 			SherlockEngine.storage.storeCodeBlockGroups(allGroups);
 
+			// TODO: thread scoring loops
+			float s;
 			IResultJob jobRes = this.job.createNewResult();
 			for (ISourceFile file : this.job.getWorkspace().getFiles()) {
 				IResultFile fileRes = jobRes.addFile(file);
 				for (ITuple<ITask, ModelTaskProcessedResults> t : results) {
 					IResultTask taskRes = fileRes.addTaskResult(t.getKey());
-					taskRes.addContainingBlock(t.getValue().getGroups(file));
+					List<ICodeBlockGroup> groupsContainingFile = t.getValue().getGroups(file);
+					taskRes.addContainingBlock(groupsContainingFile);
 
-					//TODO: DO SCORING
+					//DO SCORING
+					for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
+						if (!fileComp.equals(file)) {
+							s = t.getValue().getScorer().score(file, fileComp, groupsContainingFile.stream().filter(g -> g.filePresent(fileComp)).collect(Collectors.toList()));
+							taskRes.addFileScore(fileComp, s);
+						}
+					}
+					taskRes.setTaskScore(ExecutorUtils.aggregateScores(taskRes.getFileScores().values()));
 				}
+
+				// DO SCORING
+				for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
+					if (!fileComp.equals(file)) {
+						s = (float) fileRes.getTaskResults().stream().mapToDouble(t -> t.getFileScore(fileComp)).average().orElse(0);
+						fileRes.addFileScore(fileComp, s);
+					}
+				}
+				fileRes.setOverallScore(ExecutorUtils.aggregateScores(fileRes.getFileScores().values()));
 			}
+
+
 			jobRes.store();
 		}
 		else {

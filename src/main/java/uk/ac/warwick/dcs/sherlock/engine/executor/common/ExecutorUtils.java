@@ -60,4 +60,8 @@ public class ExecutorUtils {
 		});
 	}
 
+	public static float aggregateScores(Collection<Float> scores) {
+		return (float) scores.stream().mapToDouble(x -> x).average().orElse(-1);
+	}
+
 }

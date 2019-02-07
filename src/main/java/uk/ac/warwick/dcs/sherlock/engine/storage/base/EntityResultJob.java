@@ -17,7 +17,7 @@ public class EntityResultJob implements IResultJob, Serializable {
 
 	EntityResultJob() {
 		super();
-		this.fileResults = new LinkedList<>();
+		this.fileResults = Collections.synchronizedList(new LinkedList<>());
 	}
 
 	@Override

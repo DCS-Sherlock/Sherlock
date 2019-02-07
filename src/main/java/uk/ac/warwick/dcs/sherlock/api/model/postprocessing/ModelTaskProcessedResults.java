@@ -64,10 +64,22 @@ public class ModelTaskProcessedResults {
 	/**
 	 * Fetches a list of groups containing the passed file
 	 *
+	 * @param file file present in all groups
 	 * @return list of groups
 	 */
 	public List<ICodeBlockGroup> getGroups(ISourceFile file) {
 		return groups.stream().filter(g -> g.filePresent(file)).collect(Collectors.toList());
+	}
+
+	/**
+	 * Fetches a list of groups containing the passed files
+	 *
+	 * @param file1 file present in all groups
+	 * @param file2 file present in all groups
+	 * @return list of groups
+	 */
+	public List<ICodeBlockGroup> getGroups(ISourceFile file1, ISourceFile file2) {
+		return groups.stream().filter(g -> g.filePresent(file1) && g.filePresent(file2)).collect(Collectors.toList());
 	}
 
 	/**
