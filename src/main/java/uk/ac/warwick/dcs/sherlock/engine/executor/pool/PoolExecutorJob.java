@@ -138,7 +138,6 @@ public class PoolExecutorJob implements Runnable {
 				fileRes.setOverallScore(ExecutorUtils.aggregateScores(fileRes.getFileScores().values()));
 			}
 
-
 			jobRes.store();
 		}
 		else {

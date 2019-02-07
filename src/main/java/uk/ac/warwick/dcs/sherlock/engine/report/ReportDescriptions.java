@@ -50,7 +50,7 @@ public class ReportDescriptions {
 	 * Method to create the part of the description containing the file names and relevant line numbers.
 	 *
 	 * @param detectionType The type of plagiarism for this description. This is needed because some types need blocks of code while others need specific, individual lines.
-	 * @param isContinued If true, a semicolon and space is placed at the start of the string so the result can be appended to a previous location description.
+	 * @param isContinued   If true, a semicolon and space is placed at the start of the string so the result can be appended to a previous location description.
 	 *
 	 * @return A string containing placeholders for the file names and line numbers, to be filled in by a ReportGenerator.
 	 */
@@ -60,9 +60,10 @@ public class ReportDescriptions {
 			output = "; ";
 		}
 
-		if(detectionType == DetectionType.IDENTIFIER) {
+		if (detectionType == DetectionType.IDENTIFIER) {
 			output += "File %1$s: first appearance at line %2$d";
-		} else {
+		}
+		else {
 			output += "File %1$s: lines %2$d to %3$d";
 		}
 

@@ -32,13 +32,6 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	Class<? extends ICodeBlockGroup> getCodeBlockGroupClass();
 
 	/**
-	 * Stores the passed code block groups to the database
-	 * @param groups list of the code block groups to store
-	 * @return was successful?
-	 */
-	boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups);
-
-	/**
 	 * @param ids workspace ids to fetch
 	 *
 	 * @return a list of all workspaces matching the passed ids in the database
@@ -51,6 +44,15 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @return a list of all workspaces in the database
 	 */
 	List<IWorkspace> getWorkspaces();
+
+	/**
+	 * Stores the passed code block groups to the database
+	 *
+	 * @param groups list of the code block groups to store
+	 *
+	 * @return was successful?
+	 */
+	boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups);
 
 	/**
 	 * Store file in the database

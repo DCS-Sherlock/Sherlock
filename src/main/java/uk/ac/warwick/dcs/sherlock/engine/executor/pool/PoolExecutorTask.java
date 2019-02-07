@@ -148,7 +148,8 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 					ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
 					if (processedResults.cleanGroups()) {
 						synchronized (ExecutorUtils.logger) {
-							ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set", this.getTask().getJob().getPersistentId(), this.getTask().getPersistentId());
+							ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set", this.getTask().getJob().getPersistentId(),
+									this.getTask().getPersistentId());
 						}
 					}
 

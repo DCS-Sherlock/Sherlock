@@ -13,14 +13,10 @@ import java.util.*;
 
 /**
  * Notes on generating a report:
- *
- * FileReport basically gets a list of strings
- * Have some collection of codeblockgroups
- * to make a report, take all codeblockgroups from that collection that have stuff from the file in question
- * give those codeblockgroups to a report generator, which goes through each codeblockgroup and generates a string(s) for it, and puts it in the FileReport
- * Reorder the list in FileReport if necessary/desired
- * add anything else to the FileReport if needed
- * done
+ * <p>
+ * FileReport basically gets a list of strings Have some collection of codeblockgroups to make a report, take all codeblockgroups from that collection that have stuff from the file in question give
+ * those codeblockgroups to a report generator, which goes through each codeblockgroup and generates a string(s) for it, and puts it in the FileReport Reorder the list in FileReport if
+ * necessary/desired add anything else to the FileReport if needed done
  */
 
 public class ReportManager {
@@ -46,7 +42,7 @@ public class ReportManager {
 
 	/**
 	 * These two contain, for every file being examined (based on their unique persistentId), a list of their variable and method names respectively.
-	 *
+	 * <p>
 	 * TODO: may be a better way of combining this with codeBlockGroups?
 	 */
 	private Map<Long, List<String>> variableNames;
@@ -60,7 +56,6 @@ public class ReportManager {
 	private IReportGenerator reportGenerator;
 
 	/**
-	 *
 	 * @param reportGenerator The implementation of IReportGenerator that will generate all reports for this project.
 	 */
 	public ReportManager(IReportGenerator reportGenerator) {
@@ -111,7 +106,9 @@ public class ReportManager {
 
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
+	 *
 	 * @param fileId The persistent ID of the file to generate a report for.
+	 *
 	 * @return The FileReport object that is generated.
 	 */
 	public FileReport GenerateReport(long fileId) {

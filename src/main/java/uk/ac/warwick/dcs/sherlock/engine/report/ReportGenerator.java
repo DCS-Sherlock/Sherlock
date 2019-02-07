@@ -13,8 +13,7 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups,
-									 List<String> variableNames) {
+	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups, List<String> variableNames) {
 		FileReport fileReport = new FileReport(persistentId);
 
 		StringJoiner stringJoiner = new StringJoiner("", "", ".");
@@ -48,9 +47,10 @@ public class ReportGenerator implements IReportGenerator {
 			//TODO: other formatting including variables, score etc.
 			for (int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
 				String formattedString;
-				if(detectionType == detectionType.IDENTIFIER) {
+				if (detectionType == detectionType.IDENTIFIER) {
 					formattedString = String.format(descriptionSegments.get(i), fileNames.get(i), lineNumbers.get(i).getKey());
-				} else {
+				}
+				else {
 					formattedString = String.format(descriptionSegments.get(i), fileNames.get(i), lineNumbers.get(i).getKey(), lineNumbers.get(i).getValue());
 				}
 				stringJoiner.add(formattedString);

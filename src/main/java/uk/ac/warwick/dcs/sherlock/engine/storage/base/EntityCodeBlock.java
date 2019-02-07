@@ -71,8 +71,7 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 	}
 
 	private void addLineToList(ITuple<Integer, Integer> line) {
-		if (line == null || line.getKey() == null || line.getValue() == null)
-		{
+		if (line == null || line.getKey() == null || line.getValue() == null) {
 			BaseStorage.logger.warn("Null line tuple added to code block");
 			return;
 		}
