@@ -1,12 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='home'">
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='account'">
 <head>
     <title th:text="#{account_title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
     <div class="row">
-
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{account_title}"></span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 th:text="#{account_details_subtitle}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/account/details})"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 th:text="#{account_password_subtitle}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='password-parent', arealink=@{/account/password})"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 </body>

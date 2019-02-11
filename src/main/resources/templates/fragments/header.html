@@ -49,13 +49,13 @@
                         <a class="nav-link" th:href="@{/admin}" th:classappend="${page == 'settings' ? 'active' : ''}" th:text="#{nav_settings}"></a>
                     </li>
                     <span sec:authorize="isAuthenticated() && !hasAuthority('LOCAL_USER')">
-                        <li class="nav-item dropdown" th:classappend="${page == 'settings' || page == 'account' ? 'active' : ''}">
+                        <li class="nav-item dropdown" th:classappend="${page == 'admin' || page == 'account' ? 'active' : ''}">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span th:text="#{nav_hello}"></span>, <span th:text="${account.getName()}"></span>!
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" th:href="@{/account}" th:classappend="${page == 'account' ? 'active' : ''}" th:text="#{nav_account_settings}"></a>
-                                <a class="dropdown-item" sec:authorize="isAuthenticated() && hasAuthority('ADMIN')" th:href="@{/admin}" th:classappend="${page == 'settings' ? 'active' : ''}" th:text="#{nav_system_settings}"></a>
+                                <a class="dropdown-item" sec:authorize="isAuthenticated() && hasAuthority('ADMIN')" th:href="@{/admin}" th:classappend="${page == 'admin' ? 'active' : ''}" th:text="#{nav_system_settings}"></a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" th:href="@{/logout}" th:text="#{nav_logout}"></a>
                             </div>

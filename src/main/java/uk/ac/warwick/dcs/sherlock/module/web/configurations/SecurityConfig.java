@@ -83,7 +83,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/image/**")
 				.permitAll();
 
+		String accountRole = "USER";
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
+			accountRole = "ADMIN";
 			http
 					.authorizeRequests()
 					.antMatchers(
@@ -107,6 +109,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers("/dashboard/**")
 				.hasAuthority("USER");
+
+		http
+				.authorizeRequests()
+				.antMatchers("/account/**")
+				.hasAuthority(accountRole);
 
 		http
 				.authorizeRequests()
