@@ -1,34 +1,23 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.PasswordsMatch;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class AccountForm {
-    @NotNull(message = "{error_old_password_invalid}")
-    public String oldPassword;
-
-    @NotNull(message = "{error_name_empty}")
-    @Size.List({
-            @Size(
-                    min = 1,
-                    message = "{error_name_empty}"),
-            @Size(
-                    max = 64,
-                    message = "{error_name_length_max}")
-    })
-    public String name;
-
+public class AccountEmailForm {
     @NotNull(message = "{error_email_empty}")
     @Email(message = "{error_email_invalid}")
     public String email;
 
-    public AccountForm() { }
+    @NotNull(message = "{error_old_password_invalid}")
+    public String oldPassword;
 
-    public AccountForm(Account account){
-        this.name = account.getName();
+    public AccountEmailForm() { }
+
+    public AccountEmailForm(Account account) {
         this.email = account.getEmail();
     }
 
@@ -38,14 +27,6 @@ public class AccountForm {
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {

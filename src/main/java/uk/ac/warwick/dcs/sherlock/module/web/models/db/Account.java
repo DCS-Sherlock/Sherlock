@@ -20,7 +20,7 @@ public class Account {
     private String password;
 
     @Column(name="name")
-    private String name;
+    private String username;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "account")
     private Set<Role> roles = new HashSet<>();
@@ -35,10 +35,10 @@ public class Account {
 
     }
 
-    public Account(String email, String password, String name) {
+    public Account(String email, String password, String username) {
         this.email = email;
         this.password = password;
-        this.name = name;
+        this.username = username;
     }
 
     public long getId() {
@@ -73,12 +73,12 @@ public class Account {
         this.roles = roles;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Set<Workspace> getWorkspaces() {

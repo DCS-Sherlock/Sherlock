@@ -17,8 +17,11 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6">
-                                <h5 th:text="#{account_details_subtitle}"></h5>
-                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/account/details})"></div>
+                                <h5 th:text="#{account_name_subtitle}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='name-parent', arealink=@{/account/name})"></div>
+
+                                <h5 th:text="#{account_email_subtitle}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='email-parent', arealink=@{/account/email})"></div>
                             </div>
                             <div class="col-md-6">
                                 <h5 th:text="#{account_password_subtitle}"></h5>

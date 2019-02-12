@@ -14,6 +14,14 @@ function triggerAreas(){
         loadAreaFn($(target), true);
     });
 }
+function triggerNameChange(){
+    $("[data-js='triggerNameChange']").each(function () {
+        var input = $(this);
+        var name = $('#username').val();
+        $('#account-username').text(name)
+        input.remove();
+    });
+}
 
 function loadAreaFn(input){
     var url = input.attr("data-js-href");
@@ -184,6 +192,7 @@ function bindPage() {
     hideCloseButtons();
     formSubmitButton();
     triggerAreas();
+    triggerNameChange();
 }
 
 $(function () {

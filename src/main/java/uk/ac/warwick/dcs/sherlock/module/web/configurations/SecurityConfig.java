@@ -137,7 +137,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.key(securityProperties.getKey());
 
 		//TODO: Re-enable later
-		http.csrf().disable();
+//		http.csrf().disable();
 
 		//Fixes access to h2 console in dev mode
 		if (Arrays.asList(environment.getActiveProfiles()).contains("dev")){

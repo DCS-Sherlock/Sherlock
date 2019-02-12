@@ -5,20 +5,13 @@
 </head>
 <body>
 
-<form th:action="@{/account/details}" data-js='form' data-js-target="#details-parent" th:object="${accountForm}" method="post">
+<form th:action="@{/account/email}" data-js='form' data-js-target="#email-parent" th:object="${accountEmailForm}" method="post">
     <div th:if="${#fields.hasAnyErrors()}">
         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
     </div>
 
     <div th:if="${success_msg}">
         <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <label for="name" th:text="#{variable_name}"></label>
-            <input type="text" id="name" name="name" class="form-control" th:placeholder="#{variable_name}" th:value="*{name}">
-        </div>
     </div>
 
     <div class="form-row">
@@ -31,7 +24,7 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="oldPassword" th:text="#{variable_old_password}"></label>
-            <input type="password" class="form-control" id="oldPassword" name="oldPassword" th:placeholder="#{variable_old_password}" th:value="*{oldPassword}" />
+            <input type="password" class="form-control" name="oldPassword" th:placeholder="#{variable_old_password}" th:value="*{oldPassword}" />
         </div>
     </div>
 
@@ -42,7 +35,6 @@
     </div>
 
 </form>
-
 
 </body>
 </html>
