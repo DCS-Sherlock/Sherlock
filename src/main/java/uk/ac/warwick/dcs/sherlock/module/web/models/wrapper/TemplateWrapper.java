@@ -65,6 +65,14 @@ public class TemplateWrapper {
         isOwner = owner;
     }
 
+    public String getOwnerName() {
+        return this.template.getAccount().getUsername();
+    }
+
+    public boolean isPublic() {
+        return this.template.isPublic();
+    }
+
     public List<DetectorWrapper> getDetectors() {
         List<DetectorWrapper> wrapperList = new ArrayList<>();
         this.template.getDetectors().forEach(d -> wrapperList.add(new DetectorWrapper(d, this.isOwner)));

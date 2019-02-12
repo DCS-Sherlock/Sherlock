@@ -12,6 +12,12 @@
             <th class="align-middle">
                 <h5 class="mb-0">
                     <span th:text="${template.getTemplate().getName()}"></span>
+                    <span th:if="${template.isPublic() && template.isOwner()}" class="badge badge-primary">
+                        <span th:text="#{templates_public}"></span>
+                    </span>
+                    <span th:if="${!template.isOwner()}" class="badge badge-primary">
+                        <span th:text="#{templates_created_by}"></span> <span th:text="${template.getOwnerName()}"></span>
+                    </span>
                 </h5>
             </th>
             <td class="align-middle text-right">
