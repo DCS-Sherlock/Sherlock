@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.TemplateForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.EngineDetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
@@ -34,7 +34,7 @@ public class TemplatesController {
 
 	@RequestMapping ("/dashboard/templates/list")
 	public String listGetFragment(
-			@ModelAttribute("account") Account account,
+			@ModelAttribute("account") AccountWrapper account,
 			@ModelAttribute("isAjax") boolean isAjax,
 			Model model
 	) throws NotAjaxRequest {
@@ -42,7 +42,7 @@ public class TemplatesController {
 
 		model.addAttribute(
 				"templates",
-				TemplateWrapper.findByAccountAndPublic(account, templateRepository)
+				TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository)
 		);
 
 		return "dashboard/templates/fragments/list";
@@ -62,7 +62,7 @@ public class TemplatesController {
 	public String addPost(
 			@Valid @ModelAttribute TemplateForm templateForm,
 			BindingResult result,
-			@ModelAttribute("account") Account account,
+			@ModelAttribute("account") AccountWrapper account,
 			@ModelAttribute("isAjax") boolean isAjax,
 			Model model
 	) throws NotTemplateOwner {
@@ -72,7 +72,7 @@ public class TemplatesController {
 			return "dashboard/templates/add";
 		}
 
-		TemplateWrapper templateWrapper = new TemplateWrapper(templateForm, account, templateRepository, tDetectorRepository);
+		TemplateWrapper templateWrapper = new TemplateWrapper(templateForm, account.getAccount(), templateRepository, tDetectorRepository);
 		return "redirect:/dashboard/templates/manage/" + templateWrapper.getTemplate().getId();
 	}
 

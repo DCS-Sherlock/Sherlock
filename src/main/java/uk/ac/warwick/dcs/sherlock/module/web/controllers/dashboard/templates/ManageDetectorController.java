@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.ParameterForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.DetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TParameterRepository;
@@ -55,13 +55,13 @@ public class ManageDetectorController {
 	}
 
 	@ModelAttribute("detector")
-	public DetectorWrapper getDetectorRepository(
-            @ModelAttribute("account") Account account,
+	public DetectorWrapper getDetectorWrapper(
+            @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
         throws DetectorNotFound
     {
-        DetectorWrapper detectorWrapper = new DetectorWrapper(pathid, account, tDetectorRepository);
+        DetectorWrapper detectorWrapper = new DetectorWrapper(pathid, account.getAccount(), tDetectorRepository);
         model.addAttribute("detector", detectorWrapper);
 		return detectorWrapper;
 	}

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.SubmissionsForm;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
@@ -109,13 +109,13 @@ public class ManageWorkspaceController {
     public String jobsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("account") Account account,
+            @ModelAttribute("account") AccountWrapper account,
             @ModelAttribute("isAjax") boolean isAjax,
             Model model
     ) throws NotAjaxRequest {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
-        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublicAndLanguage(account, templateRepository, workspaceWrapper.getLanguage()));
+        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublicAndLanguage(account.getAccount(), templateRepository, workspaceWrapper.getLanguage()));
         return "dashboard/workspaces/fragments/jobs";
     }
 
@@ -124,13 +124,13 @@ public class ManageWorkspaceController {
             @PathVariable("pathid") long pathid,
             @RequestParam(value="template_id", required=true) long template_id,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("account") Account account,
+            @ModelAttribute("account") AccountWrapper account,
             @ModelAttribute("isAjax") boolean isAjax,
             Model model
     ) throws NotAjaxRequest, TemplateNotFound {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
-        TemplateWrapper templateWrapper = new TemplateWrapper(template_id, account, templateRepository);
+        TemplateWrapper templateWrapper = new TemplateWrapper(template_id, account.getAccount(), templateRepository);
 
         try {
             workspaceWrapper.runTemplate(templateWrapper);
@@ -145,7 +145,7 @@ public class ManageWorkspaceController {
             model.addAttribute("warning_msg", "workspaces_analysis_no_files");
         }
 
-        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account, templateRepository));
+        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
         return "dashboard/workspaces/fragments/jobs";
     }
 
@@ -177,12 +177,12 @@ public class ManageWorkspaceController {
 
 	@ModelAttribute("workspace")
 	public WorkspaceWrapper getWorkspaceWrapper(
-            @ModelAttribute("account") Account account,
+            @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
         throws IWorkspaceNotFound, WorkspaceNotFound
     {
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account, workspaceRepository);
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account.getAccount(), workspaceRepository);
 		model.addAttribute("workspace", workspaceWrapper);
 		return workspaceWrapper;
 	}

@@ -7,8 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceForm;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
@@ -28,7 +28,7 @@ public class WorkspacesController {
 
 	@RequestMapping ("/dashboard/workspaces/list")
 	public String listGetFragment(
-			@ModelAttribute("account") Account account,
+			@ModelAttribute("account") AccountWrapper account,
 			@ModelAttribute("isAjax") boolean isAjax,
 			Model model
 	) throws NotAjaxRequest {
@@ -36,7 +36,7 @@ public class WorkspacesController {
 
 		model.addAttribute(
 				"workspaces",
-				WorkspaceWrapper.findByAccount(account, workspaceRepository)
+				WorkspaceWrapper.findByAccount(account.getAccount(), workspaceRepository)
 		);
 
 		return "dashboard/workspaces/fragments/list";
@@ -53,7 +53,7 @@ public class WorkspacesController {
 	public String addPost(
 			@Valid @ModelAttribute WorkspaceForm workspaceForm,
 			BindingResult result,
-			@ModelAttribute("account") Account account,
+			@ModelAttribute("account") AccountWrapper account,
 			Model model
 	) {
 		if (result.hasErrors()) {
@@ -61,7 +61,7 @@ public class WorkspacesController {
 			return "dashboard/workspaces/add";
 		}
 
-		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceForm, account, workspaceRepository);
+		WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(workspaceForm, account.getAccount(), workspaceRepository);
 		return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId();
 	}
 }

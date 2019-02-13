@@ -3,25 +3,12 @@ package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.SubmissionsForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.WorkspaceForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
 @Controller
 public class ManageSubmissionController {
@@ -52,12 +39,12 @@ public class ManageSubmissionController {
 
     @ModelAttribute("workspace")
     public WorkspaceWrapper getWorkspaceWrapper(
-            @ModelAttribute("account") Account account,
+            @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
             throws IWorkspaceNotFound, WorkspaceNotFound
     {
-        WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account, workspaceRepository);
+        WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account.getAccount(), workspaceRepository);
         model.addAttribute("workspace", workspaceWrapper);
         return workspaceWrapper;
     }

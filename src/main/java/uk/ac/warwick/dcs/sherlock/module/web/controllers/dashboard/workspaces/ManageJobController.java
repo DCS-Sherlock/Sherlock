@@ -7,13 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.JobNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.SourceFileNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.JobWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
@@ -46,12 +44,12 @@ public class ManageJobController {
 
     @ModelAttribute("workspace")
     public WorkspaceWrapper getWorkspaceWrapper(
-            @ModelAttribute("account") Account account,
+            @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
             throws IWorkspaceNotFound, WorkspaceNotFound
     {
-        WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account, workspaceRepository);
+        WorkspaceWrapper workspaceWrapper = new WorkspaceWrapper(pathid, account.getAccount(), workspaceRepository);
         model.addAttribute("workspace", workspaceWrapper);
         return workspaceWrapper;
     }

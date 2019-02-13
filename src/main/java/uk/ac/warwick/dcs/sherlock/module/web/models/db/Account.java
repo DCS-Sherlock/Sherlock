@@ -9,7 +9,7 @@ import java.util.Set;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id")
     private long id;
 
@@ -22,14 +22,14 @@ public class Account {
     @Column(name="name")
     private String username;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "account")
-    private Set<Role> roles = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, mappedBy = "account")
+    private Set<Role> roles;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.REMOVE)
-    private Set<Workspace> workspaces = new HashSet<>();
+    private Set<Workspace> workspaces;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.REMOVE)
-    private Set<Template> templates = new HashSet<>();
+    private Set<Template> templates;
 
     public Account() {
 

@@ -14,6 +14,17 @@ function triggerAreas(){
         loadAreaFn($(target), true);
     });
 }
+
+function triggerAreaLink(){
+    $("[data-js='triggerAreaLink']").unbind();
+    $("[data-js='triggerAreaLink']").click(function () {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+        $(target).html("...");
+        loadAreaFn($(target), true);
+        $("#modal").modal('hide');
+    });
+}
 function triggerNameChange(){
     $("[data-js='triggerNameChange']").each(function () {
         var input = $(this);
@@ -102,6 +113,8 @@ function formSubmitButton() {
 function formSubmit(){
     $("[data-js='form']").unbind();
     $("[data-js='form']").submit(function () {
+        console.log("submitting form");
+
         var input = $(this);
         var url = input.attr("action");
         var target = $(input.attr("data-js-target"));
@@ -192,6 +205,7 @@ function bindPage() {
     hideCloseButtons();
     formSubmitButton();
     triggerAreas();
+    triggerAreaLink();
     triggerNameChange();
 }
 

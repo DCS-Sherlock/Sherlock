@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class AccountEmailForm {
-    @NotNull(message = "{error_email_empty}")
+    @Size(min = 1, message = "{error_email_empty}")
     @Email(message = "{error_email_invalid}")
     public String email;
 

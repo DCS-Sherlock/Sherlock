@@ -14,6 +14,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
 import uk.ac.warwick.dcs.sherlock.module.web.properties.SecurityProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.repositories.RoleRepository;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private Environment environment;
+	@Autowired
+	private RoleRepository roleRepository;
 	@Autowired
 	private SecurityProperties securityProperties;
 	@Autowired
@@ -50,23 +53,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//Add the "local user" if not found
 			if (account == null) {
 				account = new Account(email, bCryptPasswordEncoder.encode("local_password"), "Local User");
-				Set<Role> roles = new HashSet<>();
-				roles.add(new Role("USER", account));
-				roles.add(new Role("LOCAL_USER", account));
-				account.setRoles(roles);
 				accountRepository.save(account);
+				roleRepository.save(new Role("USER", account));
+				roleRepository.save(new Role("LOCAL_USER", account));
 			}
 		} else {
 			if (accountRepository.count() == 0) {
 				Account account = new Account(
 						setupProperties.getEmail(),
 						bCryptPasswordEncoder.encode(setupProperties.getPassword()),
-						setupProperties.getName());
-				Set<Role> roles = new HashSet<>();
-				roles.add(new Role("USER", account));
-				roles.add(new Role("ADMIN", account));
-				account.setRoles(roles);
+						setupProperties.getName()
+				);
 				accountRepository.save(account);
+				roleRepository.save(new Role("USER", account));
+				roleRepository.save(new Role("ADMIN", account));
 			}
 		}
 

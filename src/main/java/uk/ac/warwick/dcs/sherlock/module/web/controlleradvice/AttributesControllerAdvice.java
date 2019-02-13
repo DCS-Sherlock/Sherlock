@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,15 +17,15 @@ public class AttributesControllerAdvice {
     private AccountRepository accountRepository;
 
     @ModelAttribute("account")
-    public Account getAccount(Model model, Authentication authentication)
+    public AccountWrapper getAccount(Model model, Authentication authentication)
     {
         if (authentication == null)
-            return new Account();
+            return new AccountWrapper();
 
-        Account account = accountRepository.findByEmail(authentication.getName());
+        AccountWrapper accountWrapper = new AccountWrapper(accountRepository.findByEmail(authentication.getName()));
 
-        model.addAttribute("account", account);
-        return account;
+        model.addAttribute("account", accountWrapper);
+        return accountWrapper;
     }
 
     @ModelAttribute
