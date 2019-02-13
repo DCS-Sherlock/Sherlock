@@ -19,8 +19,15 @@ public class ManageSubmissionController {
 
     @GetMapping("/dashboard/workspaces/manage/submission/{pathid}/{fileid}")
     public String fileGet() {
-        //TODO: add other language support
         return "dashboard/workspaces/files/view";
+    }
+
+    @GetMapping(value = "/dashboard/workspaces/manage/submission/{pathid}/{fileid}/{filename}", produces = "text/plain")
+    @ResponseBody
+    public String filePlainGet(
+            @ModelAttribute("submission") ISourceFile file
+    ) {
+        return file.getFileContentsAsString();
     }
 
     @GetMapping("/dashboard/workspaces/manage/submission/{pathid}/{fileid}/delete")

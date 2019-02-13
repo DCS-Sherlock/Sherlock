@@ -35,10 +35,7 @@
 
                             <div id="main" class="collapse show" data-parent="#accordion">
                                 <div class="card-body">
-                                <pre class="line-numbers language-java" style="white-space:pre-wrap;"><code>
-                                <th:block th:each="line : ${submission.getFileContentsAsStringList()}">
-                                <span th:text="${line}" th:remove="tag"></span></th:block>
-                                </code></pre>
+                                    <pre class="line-numbers" th:data-src="@{/dashboard/workspaces/manage/submission/{id}/{file_id}/{file_name}(id=${workspace.getId()},file_id=${submission.getPersistentId()},file_name=${submission.getFileDisplayName()})}" data-download-link th:data-download-link-label="#{link_download}"></pre>
                                 </div>
                             </div>
                         </div>
