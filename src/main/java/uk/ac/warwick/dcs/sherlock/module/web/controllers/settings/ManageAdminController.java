@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import uk.ac.warwick.dcs.sherlock.module.web.configurations.SecurityConfig;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -21,9 +21,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.RoleRepository;
 
 import javax.validation.Valid;
-import java.security.SecureRandom;
 import java.util.Optional;
-import java.util.Random;
 
 @Controller
 public class ManageAdminController {
@@ -38,10 +36,10 @@ public class ManageAdminController {
 
 	@GetMapping("/admin/manage/{pathid}")
 	public String manageGet(
-			@ModelAttribute("subAccount") Account subAccount,
+			@ModelAttribute("subAccount") AccountWrapper subAccount,
 			Model model
 	) {
-		model.addAttribute("accountForm", new AccountForm(subAccount));
+		model.addAttribute("accountForm", new AccountForm(subAccount.getAccount()));
 		return "settings/admin/manage";
 	}
 
@@ -49,39 +47,44 @@ public class ManageAdminController {
 	public String managePost(
 			@Valid @ModelAttribute AccountForm accountForm,
 			BindingResult result,
-			@ModelAttribute("subAccount") Account subAccount,
+			@ModelAttribute("subAccount") AccountWrapper subAccount,
 			@ModelAttribute("account") AccountWrapper account,
 			Model model
 	) {
 		if (!result.hasErrors()) {
-			if (bCryptPasswordEncoder.matches(accountForm.getOldPassword(), account.getPassword())) {
-				subAccount.setEmail(accountForm.getEmail());
-				subAccount.setUsername(accountForm.getName());
-				accountRepository.save(subAccount);
+		    //Check that they are attempting to change the email
+		    if (!accountForm.getEmail().equals(subAccount.getEmail())) {
+		        //if attempting to change, check that the email doesn't already exist
+                if (accountRepository.findByEmail(accountForm.getEmail()) != null) {
+                    result.reject("error_email_exists");
+                    return "settings/admin/manage";
+                }
+            }
 
-				boolean currentlyAdmin = false;
-				Role currentRole = null;
+            subAccount.getAccount().setEmail(accountForm.getEmail());
+            subAccount.getAccount().setUsername(accountForm.getName());
+            accountRepository.save(subAccount.getAccount());
 
-				for (Role role : subAccount.getRoles()) {
-					if (role.getName().equals("ADMIN")) {
-						currentlyAdmin = true;
-						currentRole = role;
-					}
-				}
+            boolean isAdmin = false; //whether or not the user is already an admin
+            Role adminRole = null; //the admin role object for that account
 
-				if (accountForm.isAdmin() && !currentlyAdmin) { //Add admin
-					roleRepository.save(new Role("ADMIN", subAccount));
-				}
+            for (Role role : subAccount.getRoles()) {
+                if (role.getName().equals("ADMIN")) {
+                    isAdmin = true;
+                    adminRole = role;
+                }
+            }
 
-				if (!accountForm.isAdmin() && currentlyAdmin) { //Remove admin
-					roleRepository.delete(currentRole);
-				}
+            if (accountForm.isAdmin() && !isAdmin) { //Add admin role
+                roleRepository.save(new Role("ADMIN", subAccount.getAccount()));
+            }
 
-				model.addAttribute("success_msg", "admin_account_updated_details");
-				return "settings/admin/manage";
-			} else {
-				result.reject("error_old_password_invalid");
-			}
+            if (!accountForm.isAdmin() && isAdmin) { //Remove admin role
+                roleRepository.delete(adminRole);
+            }
+
+            accountForm.setOldPassword("");
+            model.addAttribute("success_msg", "admin_account_updated_details");
 		}
 
 		return "settings/admin/manage";
@@ -97,27 +100,20 @@ public class ManageAdminController {
 	public String passwordPost(
 			@Valid @ModelAttribute PasswordForm passwordForm,
 			BindingResult result,
-			@ModelAttribute("subAccount") Account subAccount,
+			@ModelAttribute("subAccount") AccountWrapper subAccount,
 			@ModelAttribute("account") AccountWrapper account,
 			Model model
 	) {
 		if (!result.hasErrors()) {
-			if (bCryptPasswordEncoder.matches(passwordForm.getConfirmPassword(), account.getPassword())) {
-				//Generate a random password
-				final Random r = new SecureRandom();
-				byte[] b = new byte[12];
-				r.nextBytes(b);
-				String newPassword = Base64.encodeBase64String(b);
+            //Generate a random password
+            String newPassword = SecurityConfig.generateRandomPassword();
 
-				subAccount.setPassword(bCryptPasswordEncoder.encode(newPassword));
-				accountRepository.save(subAccount);
+            subAccount.getAccount().setPassword(bCryptPasswordEncoder.encode(newPassword));
+            accountRepository.save(subAccount.getAccount());
 
-				model.addAttribute("success_msg", "admin_accounts_change_password_confirm");
-				model.addAttribute("newPassword", newPassword);
-				return "settings/admin/passwordSuccess";
-			} else {
-				result.reject("error_old_password_invalid");
-			}
+            model.addAttribute("success_msg", "admin_accounts_change_password_confirm");
+            model.addAttribute("newPassword", newPassword);
+            return "settings/admin/passwordSuccess";
 		}
 
 		return "settings/admin/password";
@@ -133,24 +129,20 @@ public class ManageAdminController {
 	public String deletePost(
 			@Valid @ModelAttribute PasswordForm passwordForm,
 			BindingResult result,
-			@ModelAttribute("subAccount") Account subAccount,
+			@ModelAttribute("subAccount") AccountWrapper subAccount,
 			@ModelAttribute("account") AccountWrapper account,
 			Model model
 	) {
 		if (!result.hasErrors()) {
-			if (bCryptPasswordEncoder.matches(passwordForm.getConfirmPassword(), account.getPassword())) {
-				accountRepository.delete(subAccount);
-				return "redirect:/admin?msg=deleted";
-			} else {
-				result.reject("error_old_password_invalid");
-			}
+            accountRepository.delete(subAccount.getAccount());
+            return "redirect:/admin?msg=deleted";
 		}
 
 		return "settings/admin/delete";
 	}
 
 	@ModelAttribute("subAccount")
-	public Account getAccount(
+	public AccountWrapper getAccount(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
@@ -162,7 +154,7 @@ public class ManageAdminController {
     		throw new AccountNotFound("Account not found");
 		}
 
-    	Account subAccount = optional.get();
+    	AccountWrapper subAccount = new AccountWrapper(optional.get());
 
     	if (subAccount.getId() == account.getId()) {
     		throw new AccountOwner("You are not allowed to modify your own account.");

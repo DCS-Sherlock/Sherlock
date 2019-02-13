@@ -88,29 +88,34 @@ public class AccountController {
 		if (!isAjax) throw new NotAjaxRequest("/account");
 
 		if (!result.hasErrors()) {
-			if (bCryptPasswordEncoder.matches(accountEmailForm.getOldPassword(), account.getPassword())) {
-				String oldEmail = account.getEmail();
-				String newEmail = accountEmailForm.getEmail();
-
-				//TODO: Email old + new addresses
-				//TODO: Perform email verification
-
-				//Update the name and email in the database
-				account.getAccount().setEmail(newEmail);
-				accountRepository.save(account.getAccount());
-
-				//Update the email in the security session information to prevent the user being logged out.
-				Collection<SimpleGrantedAuthority> authorities =
-						(Collection<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-				UsernamePasswordAuthenticationToken authentication =
-						new UsernamePasswordAuthenticationToken(account.getEmail(), account.getPassword(), authorities);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-
-				accountEmailForm.setOldPassword("");
-				model.addAttribute("success_msg", "account_updated_email");
-			} else {
-				result.reject("error_old_password_invalid");
+			//Check that they are attempting to change the email
+			if (!accountEmailForm.getEmail().equals(account.getEmail())) {
+				//if attempting to change, check that the email doesn't already exist
+				if (accountRepository.findByEmail(accountEmailForm.getEmail()) != null) {
+					result.reject("error_email_exists");
+					return "settings/account/fragments/email";
+				}
 			}
+
+			String oldEmail = account.getEmail();
+			String newEmail = accountEmailForm.getEmail();
+
+			//TODO: Email old + new addresses
+			//TODO: Perform email verification
+
+			//Update the email in the database
+			account.getAccount().setEmail(newEmail);
+			accountRepository.save(account.getAccount());
+
+			//Update the email in the security session information to prevent the user being logged out.
+			Collection<SimpleGrantedAuthority> authorities =
+					(Collection<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+			UsernamePasswordAuthenticationToken authentication =
+					new UsernamePasswordAuthenticationToken(account.getEmail(), account.getPassword(), authorities);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			accountEmailForm.setOldPassword("");
+			model.addAttribute("success_msg", "account_updated_email");
 		}
 
 		return "settings/account/fragments/email";
@@ -138,14 +143,11 @@ public class AccountController {
 		if (!isAjax) throw new NotAjaxRequest("/account");
 
 		if (!result.hasErrors()) {
-			if (bCryptPasswordEncoder.matches(accountPasswordForm.getOldPassword(), account.getPassword())) {
-				account.getAccount().setPassword(bCryptPasswordEncoder.encode(accountPasswordForm.getNewPassword()));
-				accountRepository.save(account.getAccount());
-				model.addAttribute("accountPasswordForm", new AccountPasswordForm());
-				model.addAttribute("success_msg", "account_updated_password");
-			} else {
-				result.reject("error_old_password_invalid");
-			}
+			account.getAccount().setPassword(bCryptPasswordEncoder.encode(accountPasswordForm.getNewPassword()));
+			accountRepository.save(account.getAccount());
+
+			model.addAttribute("accountPasswordForm", new AccountPasswordForm());
+			model.addAttribute("success_msg", "account_updated_password");
 		}
 
 		return "settings/account/fragments/password";

@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.PasswordsMatch;
+import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidPassword;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 @PasswordsMatch
 public class AccountPasswordForm {
     @NotNull(message = "{error_old_password_invalid}")
+    @ValidPassword
     public String oldPassword;
 
     @NotNull(message = "{error_password_empty}")

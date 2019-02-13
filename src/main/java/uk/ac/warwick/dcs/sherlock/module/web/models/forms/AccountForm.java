@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidPassword;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public class AccountForm {
     public boolean isAdmin;
 
     @NotNull(message = "{error_old_password_invalid}")
+    @ValidPassword
     public String oldPassword;
 
     public AccountForm() { }

@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.configurations;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,10 @@ import uk.ac.warwick.dcs.sherlock.module.web.properties.SetupProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.RoleRepository;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 @Configuration
@@ -136,9 +139,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.rememberMe()
 				.key(securityProperties.getKey());
 
-		//TODO: Re-enable later
-//		http.csrf().disable();
-
 		//Fixes access to h2 console in dev mode
 		if (Arrays.asList(environment.getActiveProfiles()).contains("dev")){
 			http
@@ -148,6 +148,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 			http.headers().frameOptions().disable();
 		}
+	}
 
+	public static String generateRandomPassword() {
+		final Random r = new SecureRandom();
+		byte[] b = new byte[12];
+		r.nextBytes(b);
+		return Base64.encodeBase64String(b);
 	}
 }
