@@ -19,8 +19,8 @@ public class LocalDashboard extends JFrame {
 	}
 
 	private void initUI() {
-		setPreferredSize(new Dimension(600, 400));
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setPreferredSize(new Dimension(600, 400));
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		Container pane = getContentPane();
 		GroupLayout group = new GroupLayout(pane);
@@ -42,9 +42,7 @@ public class LocalDashboard extends JFrame {
 		});
 
 		JButton quitButton = new JButton("Quit Sherlock");
-		quitButton.addActionListener((ActionEvent event) -> {
-			System.exit(0);
-		});
+		quitButton.addActionListener((ActionEvent event) -> System.exit(0));
 
 		group.setHorizontalGroup(group.createSequentialGroup().addPreferredGap(RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(openButton).addComponent(quitButton));
 
@@ -63,6 +61,15 @@ public class LocalDashboard extends JFrame {
 			this.splash.close();
 		}
 		this.setVisible(true);
+
+		try {
+			if (Desktop.isDesktopSupported()) {
+				Desktop.getDesktop().browse(new URI("http://localhost:2218"));
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void closeSplash() {
