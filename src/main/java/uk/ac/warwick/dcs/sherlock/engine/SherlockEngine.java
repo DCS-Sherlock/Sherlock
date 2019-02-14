@@ -49,7 +49,7 @@ public class SherlockEngine {
 	private boolean valid;
 
 	public SherlockEngine(Side side) {
-		this.valid = false;
+		this.valid = true;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 		SherlockEngine.side = side;
 
@@ -74,7 +74,8 @@ public class SherlockEngine {
 				}
 			}
 			catch (OverlappingFileLockException e) {
-				this.valid = false;
+				System.out.println("wut");
+//				this.valid = false;
 			}
 		}
 		catch (IOException e) {
