@@ -119,13 +119,20 @@ public class PoolExecutorJob implements Runnable {
 					taskRes.addContainingBlock(groupsContainingFile);
 
 					//DO SCORING
-					for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
-						if (!fileComp.equals(file)) {
-							s = t.getValue().getScorer().score(file, fileComp, groupsContainingFile.stream().filter(g -> g.filePresent(fileComp)).collect(Collectors.toList()));
-							taskRes.addFileScore(fileComp, s);
+					try {
+						for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
+							if (!fileComp.equals(file)) {
+								s = t.getValue().getScorer().score(file, fileComp, groupsContainingFile.stream().filter(g -> g.filePresent(fileComp)).collect(Collectors.toList()));
+								taskRes.addFileScore(fileComp, s);
+							}
+						}
+						taskRes.setTaskScore(ExecutorUtils.aggregateScores(taskRes.getFileScores().values()));
+					}
+					catch (Exception e) {
+						synchronized (ExecutorUtils.logger) {
+							ExecutorUtils.logger.error("Scorer error: ", e);
 						}
 					}
-					taskRes.setTaskScore(ExecutorUtils.aggregateScores(taskRes.getFileScores().values()));
 				}
 
 				// DO SCORING
