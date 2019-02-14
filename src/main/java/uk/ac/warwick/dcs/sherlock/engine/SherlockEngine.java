@@ -57,7 +57,14 @@ public class SherlockEngine {
 
 		this.lockFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.lock");
 		try {
-			this.lockChannel = new RandomAccessFile(lockFile, "rw").getChannel();
+			RandomAccessFile f = new RandomAccessFile(lockFile, "rw");
+
+			if (f.length() == 0) {
+				f.writeLong(System.currentTimeMillis());
+			}
+
+			System.out.println(f.length());
+			this.lockChannel = f.getChannel();
 
 			try {
 				this.lock = this.lockChannel.tryLock();
@@ -94,10 +101,6 @@ public class SherlockEngine {
 		}
 	}
 
-	public boolean isValidInstance() {
-		return this.valid;
-	}
-
 	/**
 	 * Test the presence of a module at the passed classpath, should point to a class within the module
 	 *
@@ -112,17 +115,6 @@ public class SherlockEngine {
 		}
 		catch (Exception e) {
 			return false;
-		}
-	}
-
-	private static void setupConfigDir() {
-		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
-
-		if (!SherlockEngine.configDir.exists()) {
-			if (!SherlockEngine.configDir.mkdir()) {
-				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
-				System.exit(1);
-			}
 		}
 	}
 
@@ -147,6 +139,17 @@ public class SherlockEngine {
 
 	public static void setModulesPath(String classpath) {
 		SherlockEngine.modulesPath = classpath;
+	}
+
+	private static void setupConfigDir() {
+		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
+
+		if (!SherlockEngine.configDir.exists()) {
+			if (!SherlockEngine.configDir.mkdir()) {
+				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
+				System.exit(1);
+			}
+		}
 	}
 
 	private static void writeConfiguration(File configFile) {
@@ -202,15 +205,29 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
 	}
 
+	public boolean isValidInstance() {
+		return this.valid;
+	}
+
 	private void shutdown() {
 		logger.info("Stopping SherlockEngine");
 		try {
-			SherlockEngine.storage.close();
-			SherlockEngine.executor.shutdown();
+			if (SherlockEngine.storage != null) {
+				SherlockEngine.storage.close();
+			}
+			if (SherlockEngine.executor != null) {
+				SherlockEngine.executor.shutdown();
+			}
 
-			this.lock.close();
-			this.lockChannel.close();
-			this.lockFile.delete();
+			if (this.lock != null) {
+				this.lock.close();
+			}
+			if (this.lockChannel != null) {
+				this.lockChannel.close();
+			}
+			if (this.lockFile != null) {
+				this.lockFile.delete();
+			}
 		}
 		catch (Exception ignored) {
 		}
