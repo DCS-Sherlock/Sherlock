@@ -11,40 +11,51 @@ import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.web.LocalDashboard;
 
+import javax.swing.*;
+
 @SherlockModule (side = Side.CLIENT)
 public class SherlockClient {
 
 	@Instance
 	public static SherlockClient instance;
 
-	private LocalDashboard dash;
+	private static LocalDashboard dash;
 
 	public static void main(String[] args) {
+		SherlockClient.dash = new LocalDashboard();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 
-		//If "-Dmodules" is in the JVM arguments, set the path to provided
-		String modulesPath = System.getProperty("modules");
-		if (modulesPath != null && !modulesPath.equals("")) {
-			SherlockEngine.setModulesPath(modulesPath);
+		if (!SherlockServer.engine.isValidInstance()) {
+			JOptionPane.showMessageDialog(null, "Sherlock is already running", "Sherlock error", JOptionPane.ERROR_MESSAGE);
+			SherlockClient.dash.closeSplash();
+			System.exit(1);
 		}
+		else {
+			//If "-Dmodules" is in the JVM arguments, set the path to provided
+			String modulesPath = System.getProperty("modules");
+			if (modulesPath != null && !modulesPath.equals("")) {
+				SherlockEngine.setModulesPath(modulesPath);
+			}
 
-		//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
-		String override = System.getProperty("override");
-		if (override != null && override.equals("True")) {
-			new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("server").run(args);
-		} else {
-			new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("client").run(args);
+			//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
+			String override = System.getProperty("override");
+			if (override != null && override.equals("True")) {
+				new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("server").run(args);
+			}
+			else {
+				new SpringApplicationBuilder(SherlockServer.class).headless(false).profiles("client").run(args);
+			}
 		}
 	}
 
 	@EventHandler
 	public void initialisation(EventInitialisation event) {
-		this.dash = new LocalDashboard();
+
 	}
 
 	@EventHandler
 	public void postInitialisation(EventPostInitialisation event) {
-		this.dash.setVisible(true);
+		SherlockClient.dash.setReady();
 	}
 
 	@EventHandler

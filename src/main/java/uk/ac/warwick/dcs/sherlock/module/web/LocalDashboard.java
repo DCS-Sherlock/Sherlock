@@ -9,12 +9,16 @@ import static javax.swing.LayoutStyle.ComponentPlacement.*;
 
 public class LocalDashboard extends JFrame {
 
+	private SplashScreen splash;
+
 	public LocalDashboard() {
+		super("Sherlock");
 		initUI();
+
+		splash = SplashScreen.getSplashScreen();
 	}
 
 	private void initUI() {
-		setTitle("Sherlock");
 		setPreferredSize(new Dimension(600, 400));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -52,5 +56,18 @@ public class LocalDashboard extends JFrame {
 		pack();
 
 		setLocationRelativeTo(null);
+	}
+
+	public void setReady() {
+		if (this.splash != null) {
+			this.splash.close();
+		}
+		this.setVisible(true);
+	}
+
+	public void closeSplash() {
+		if (this.splash != null) {
+			this.splash.close();
+		}
 	}
 }

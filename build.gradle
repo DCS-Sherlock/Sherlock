@@ -184,7 +184,8 @@ bootJar {
     mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
     manifest {
         attributes(
-                'Implementation-Version': version
+                'Implementation-Version': version,
+                'SplashScreen-Image': "BOOT-INF/classes/splash.png"
         )
     }
     delete fileTree("$buildDir/out") {

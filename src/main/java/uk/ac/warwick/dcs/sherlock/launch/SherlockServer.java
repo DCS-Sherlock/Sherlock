@@ -56,8 +56,15 @@ public class SherlockServer extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		engine = new SherlockEngine(Side.SERVER);
-		application.profiles("server");
-		return application.sources(SherlockServer.class);
+		if (!SherlockServer.engine.isValidInstance()) {
+			System.err.println("Sherlock is already running, closing....");
+			System.exit(1);
+			return null;
+		}
+		else {
+			application.profiles("server");
+			return application.sources(SherlockServer.class);
+		}
 	}
 
 	@Bean
