@@ -3,9 +3,9 @@ package uk.ac.warwick.dcs.sherlock.module.client;
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.*;
 
@@ -27,7 +27,6 @@ public class Splash extends JFrame {
 		this.setAlwaysOnTop(true);
 
 		this.gif = new GifPanel("static/splash/Splash" + height + ".gif");
-
 		this.text = new TextPanel(height, width);
 		this.gif.add(this.text);
 
@@ -80,9 +79,9 @@ public class Splash extends JFrame {
 			this.ran.setSeed(System.currentTimeMillis());
 			this.textOptions = new ArrayList<>();
 			try {
-				String filePath = this.getClass().getClassLoader().getResource("static/splash/msgs.txt").getFile();
-				if (filePath != null) {
-					BufferedReader br = new BufferedReader(new FileReader(new File(filePath)));
+				InputStream msgFile = this.getClass().getClassLoader().getResourceAsStream("static/splash/msgs.txt");
+				if (msgFile != null) {
+					BufferedReader br = new BufferedReader(new InputStreamReader(msgFile));
 
 					String cl;
 					while ((cl = br.readLine()) != null) {
@@ -97,7 +96,7 @@ public class Splash extends JFrame {
 					this.textOptions.add("Loading");
 				}
 			}
-			catch (IOException | NullPointerException e) {
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 
@@ -142,7 +141,7 @@ public class Splash extends JFrame {
 
 		private String getRandomMessage() {
 			String s = this.textOptions.get(this.ran.nextInt(this.textOptions.size()));
-			return s.equals(this.oriText) ? this.getRandomMessage() : s;
+			return s.equals(this.oriText) && this.textOptions.size() > 1 ? this.getRandomMessage() : s;
 		}
 	}
 
@@ -152,7 +151,6 @@ public class Splash extends JFrame {
 
 		GifPanel(String resourcePath) {
 			image = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource(resourcePath));
-
 			this.setLayout(null);
 		}
 
@@ -165,5 +163,4 @@ public class Splash extends JFrame {
 		}
 
 	}
-
 }
