@@ -24,7 +24,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
-public class ManageAdminController {
+public class AdminSubaccountController {
     @Autowired
 	private AccountRepository accountRepository;
 	@Autowired
@@ -32,7 +32,7 @@ public class ManageAdminController {
 	@Autowired
 	private RoleRepository roleRepository;
 
-    public ManageAdminController() { }
+    public AdminSubaccountController() { }
 
 	@GetMapping("/admin/manage/{pathid}")
 	public String manageGet(
@@ -142,7 +142,7 @@ public class ManageAdminController {
 	}
 
 	@ModelAttribute("subAccount")
-	public AccountWrapper getAccount(
+	private AccountWrapper getAccount(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)

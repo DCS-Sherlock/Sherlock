@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{workspaces_results_network}"></title>
+</head>
+<body>
+
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{workspaces_results_network}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{workspaces_link_results_return}"></a>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="container" >
+                        <div class="row">
+                            <div class="btn-group">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" th:text="#{link_delete_edge}"></button>
+                                    <button class="btn btn-primary mr-3" th:text="#{link_delete_node}"></button>
+                                    <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link_reset_graph}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            function graphData() {
+                                return JSON.parse('[(${results.getResultsMapJSON()})]');
+                            }
+                        </script>
+                        <div data-js="networkArea">
+                            <div class="row mt-3">
+                                <div class="col-lg-12">
+                                    <div id="network-graph" style="height: 500px"></div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <h5>
+                                        <span th:text="#{workspaces_results_network_nodes_in}"></span>
+                                    </h5>
+                                    <div id="network-included"></div>
+                                    <div id="network-included-template d-none"></div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h5>
+                                        <span th:text="#{workspaces_results_network_nodes_out}"></span>
+                                    </h5>
+                                    <div id="network-excluded"></div>
+                                    <div id="network-excluded-template d-none"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

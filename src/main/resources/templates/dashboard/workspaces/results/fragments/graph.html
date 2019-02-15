@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<div id="chart_div"></div>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    window.onresize = drawChart;
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ["Score", "Number of Submissions"],
+            ["0% - 10%", [(${results.getScoreGroups().get(0)})]],
+            ["10% - 20%", [(${results.getScoreGroups().get(1)})]],
+            ["20% - 30%", [(${results.getScoreGroups().get(2)})]],
+            ["30% - 40%", [(${results.getScoreGroups().get(3)})]],
+            ["40% - 50%", [(${results.getScoreGroups().get(4)})]],
+            ["50% - 60%", [(${results.getScoreGroups().get(5)})]],
+            ["60% - 70%", [(${results.getScoreGroups().get(6)})]],
+            ["70% - 80%", [(${results.getScoreGroups().get(7)})]],
+            ["80% - 90%", [(${results.getScoreGroups().get(8)})]],
+            ["90% - 100%", [(${results.getScoreGroups().get(9)})]]
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            legend: { position: "none" },
+            height: 400,
+            chartArea: {left:100, right:10, bottom: 100, top: 10},
+            backgroundColor: '#4E5D6C',
+            colors: ['#f47b2a'],
+            vAxis: {
+                title: 'Scores',
+                textStyle: {
+                    color: '#fff',
+                },
+                titleTextStyle: {
+                    color: '#fff',
+                },
+                gridlines: {
+                    color: "#4E5D6C"
+                },
+                baselineColor: '#4E5D6C',
+                format: '0'
+            },
+            hAxis: {
+                title: 'Number of Submissions',
+                textStyle: {
+                    color: '#fff',
+                },
+                titleTextStyle: {
+                    color: '#fff',
+                },
+                gridlines: {
+                    color: "#fff"
+                },
+                baselineColor: '#4E5D6C',
+                format: '0'
+            }
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById("chart_div"));
+        chart.draw(view, options);
+    }
+</script>
+
+</body>
+</html>

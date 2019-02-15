@@ -17,20 +17,21 @@
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
                             <div class="btn-group">
-                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/delete(id=${workspace.getId()},job_id=${job.getPersistentId()})}" th:text="#{link_delete}"></a>
+                                <a class="btn btn-primary mr-3" data-js='modal' th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{workspaces_link_results_network}"></a>
+                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/delete(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link_delete}"></a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="container text-center">
-                        <div class="row">
+                    <div class="container">
+                        <div class="row text-center">
                             <div class="col-md-3">
                                 <h5>
                                     <span th:text="#{workspaces_results_status}"></span>
                                 </h5>
                                 <p>
-                                    <span th:text="#{${job.getStatus()}}"></span>
+                                    <span th:text="#{${results.getStatus()}}"></span>
                                 </p>
                             </div>
                             <div class="col-md-3">
@@ -38,7 +39,7 @@
                                     <span th:text="#{workspaces_results_job_id}"></span>
                                 </h5>
                                 <p>
-                                    <span th:text="${job.getPersistentId()}"></span>
+                                    <span th:text="${results.getPersistentId()}"></span>
                                 </p>
                             </div>
                             <div class="col-md-6">
@@ -46,25 +47,25 @@
                                     <span th:text="#{workspaces_results_timestamp}"></span>
                                 </h5>
                                 <p>
-                                    <span th:text="${job.getTimestamp()}"></span>
+                                    <span th:text="${results.getTimestamp()}"></span>
                                 </p>
                             </div>
                         </div>
                         <hr>
-                        <div class="row">
+                        <div class="row text-center">
                             <div class="col-md-3">
                                 <h5>
                                     <span th:text="#{workspaces_results_submissions}"></span>
                                 </h5>
                                 <p>
-                                    <span th:text="${job.getNumSubmissions()}"></span>
+                                    <span th:text="${results.getSubmissionCount()}"></span>
                                 </p>
                             </div>
                             <div class="col-md-9">
                                 <h5>
                                     <span th:text="#{workspaces_results_detectors}"></span>
                                 </h5>
-                                <th:block th:each="task : ${job.getTasks()}">
+                                <th:block th:each="task : ${results.getTasks()}">
                                     <button type="button" class="btn btn-secondary"
                                             th:text="${task.getDisplayName()}"
                                             th:title="#{workspaces_results_parameters}"
@@ -75,6 +76,64 @@
                             </div>
                         </div>
                         <hr>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h5 th:text="#{workspaces_results_graph}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='graph-parent', arealink=@{/dashboard/workspaces/manage/results/{id}/{job_id}/graph(id=${workspace.getId()},job_id=${results.getPersistentId()})})"></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 th:text="#{workspaces_results_submissions}"></h5>
+                                <table class="table table-hover table-borderless">
+                                    <thead>
+
+                                    <tr>
+                                        <th class="text-center"><h5 th:text="#{workspaces_results_name_table}"></h5></th>
+                                        <th class="text-center"><h5 th:text="#{workspaces_results_score_table}"></h5></th>
+                                        <th class="text-center"><h5 th:text="#{workspaces_results_matches_table}"></h5></th>
+                                        <th class="text-center"><h5 th:text="#{workspaces_results_report_table}"></h5></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <th:block th:each="result : ${results.getResultsMap()}">
+                                            <tr>
+                                                <td class="align-middle text-center shrink">
+                                                    <h6 class="mb-0">
+                                                        <strong><span th:text="${result.key.getName()}"></span></strong>
+                                                    </h6>
+                                                </td>
+                                                <td class="align-middle text-center shrink">
+                                                    <span th:classappend="@{score-{group}(group=${result.key.getScoreGroup()})}" th:text="${result.key.getScore()}"></span>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <th:block th:each="match : ${result.value}">
+                                                        <a type="button" class="btn btn-outline-primary btn-sm"
+                                                           th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/compare/{file1}/{file2}(id=${workspace.getId()},job_id=${results.getPersistentId()},file1=${result.key.getId()},file2=${match.getId()})}">
+                                                            <span th:text="${match.getName()}"></span> <br />
+                                                            (<span th:classappend="@{score-{group}(group=${match.getScoreGroup()})}" th:text="${match.getScore()}"></span>)
+                                                        </a>
+                                                    </th:block>
+                                                </td>
+                                                <td class="align-middle text-right">
+                                                    <a type="button" class="btn btn-primary btn-sm"
+                                                       th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/report/{file_id}(id=${workspace.getId()},job_id=${results.getPersistentId()},file_id=${result.key.getId()})}"
+                                                       th:text="#{link_report}"></a>
+                                                </td>
+                                            </tr>
+                                        </th:block>
+                                        <tr th:if="${results.getResultsMap().empty}">
+                                            <th>
+                                                <h5 class="mb-0">
+                                                    <span th:text="#{workspaces_results_none_msg}"></span>
+                                                </h5>
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,1 +1,13 @@
-html,body{height:100%}.container{height:100%;display:-ms-flexbox;display:flex;-ms-flex-align:center;justify-content:center;align-items:center}
+html,
+body {
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  justify-content: center;
+  align-items: center;
+}

@@ -11,11 +11,11 @@ import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
 @Controller
-public class ManageSubmissionController {
+public class WorkspaceSubmissionController {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
-    public ManageSubmissionController() { }
+    public WorkspaceSubmissionController() { }
 
     @GetMapping("/dashboard/workspaces/manage/submission/{pathid}/{fileid}")
     public String fileGet() {
@@ -45,7 +45,7 @@ public class ManageSubmissionController {
     }
 
     @ModelAttribute("workspace")
-    public WorkspaceWrapper getWorkspaceWrapper(
+    private WorkspaceWrapper getWorkspaceWrapper(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)
@@ -57,7 +57,7 @@ public class ManageSubmissionController {
     }
 
     @ModelAttribute("submission")
-    public ISourceFile getSourceFile(
+    private ISourceFile getSourceFile(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @PathVariable(value="fileid") long fileid,
             Model model) throws SourceFileNotFound {

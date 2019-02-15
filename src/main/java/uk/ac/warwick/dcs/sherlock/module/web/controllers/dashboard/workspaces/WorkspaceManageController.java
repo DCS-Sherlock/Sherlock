@@ -20,13 +20,13 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-public class ManageWorkspaceController {
+public class WorkspaceManageController {
     @Autowired
     private WorkspaceRepository workspaceRepository;
     @Autowired
     private TemplateRepository templateRepository;
 
-    public ManageWorkspaceController() { }
+    public WorkspaceManageController() { }
 
 	@GetMapping("/dashboard/workspaces/manage/{pathid}")
 	public String manageGet() {
@@ -176,7 +176,7 @@ public class ManageWorkspaceController {
     }
 
 	@ModelAttribute("workspace")
-	public WorkspaceWrapper getWorkspaceWrapper(
+	private WorkspaceWrapper getWorkspaceWrapper(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)

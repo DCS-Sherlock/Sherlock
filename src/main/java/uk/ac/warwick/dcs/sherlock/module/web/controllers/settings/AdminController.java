@@ -21,7 +21,6 @@ import javax.validation.Valid;
 
 @Controller
 public class AdminController {
-
 	@Autowired
 	public AccountRepository accountRepository;
 	@Autowired

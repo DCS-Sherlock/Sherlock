@@ -17,13 +17,13 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
 import javax.validation.Valid;
 
 @Controller
-public class ManageTemplateController {
+public class TemplateManageController {
     @Autowired
     private TemplateRepository templateRepository;
     @Autowired
     private TDetectorRepository tDetectorRepository;
 
-    public ManageTemplateController() { }
+    public TemplateManageController() { }
 
 	@GetMapping("/dashboard/templates/manage/{pathid}")
 	public String manageGet() {
@@ -90,7 +90,7 @@ public class ManageTemplateController {
     }
 
 	@ModelAttribute("template")
-	public TemplateWrapper getTemplateWrapper(
+	private TemplateWrapper getTemplateWrapper(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)

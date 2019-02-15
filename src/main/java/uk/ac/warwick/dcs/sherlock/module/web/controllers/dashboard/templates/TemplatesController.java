@@ -77,7 +77,7 @@ public class TemplatesController {
 	}
 
 	@GetMapping ("/dashboard/templates/detectors/{language}")
-	public String addGetFragment(
+	public String detectorsGetFragment(
 			Model model,
 			@ModelAttribute("isAjax") boolean isAjax,
 			@PathVariable("language") String language
