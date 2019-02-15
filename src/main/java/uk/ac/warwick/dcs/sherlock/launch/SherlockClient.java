@@ -27,10 +27,9 @@ public class SherlockClient {
 		System.setProperty("spring.devtools.restart.enabled", "false");
 
 		SherlockClient.splash = new Splash();
-		SherlockClient.dash = new LocalDashboard();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 
-		if (!SherlockServer.engine.isValidInstance()) {
+		if (/*!SherlockServer.engine.isValidInstance()*/ true) {
 			JFrame jf=new JFrame();
 			jf.setAlwaysOnTop(true);
 			JOptionPane.showMessageDialog(jf, "Sherlock is already running", "Sherlock error", JOptionPane.ERROR_MESSAGE);
@@ -38,6 +37,8 @@ public class SherlockClient {
 			System.exit(1);
 		}
 		else {
+			SherlockClient.dash = new LocalDashboard();
+
 			//If "-Dmodules" is in the JVM arguments, set the path to provided
 			String modulesPath = System.getProperty("modules");
 			if (modulesPath != null && !modulesPath.equals("")) {
