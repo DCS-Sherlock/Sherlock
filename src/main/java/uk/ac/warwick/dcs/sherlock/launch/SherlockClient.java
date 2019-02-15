@@ -22,6 +22,8 @@ public class SherlockClient {
 	private static LocalDashboard dash;
 
 	public static void main(String[] args) {
+		System.setProperty("spring.devtools.restart.enabled", "false");
+
 		SherlockClient.dash = new LocalDashboard();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 

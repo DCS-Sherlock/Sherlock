@@ -58,12 +58,6 @@ public class SherlockEngine {
 		this.lockFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.lock");
 		try {
 			RandomAccessFile f = new RandomAccessFile(lockFile, "rw");
-
-			if (f.length() == 0) {
-				f.writeLong(System.currentTimeMillis());
-			}
-
-			System.out.println(f.length());
 			this.lockChannel = f.getChannel();
 
 			try {
@@ -75,7 +69,7 @@ public class SherlockEngine {
 			}
 			catch (OverlappingFileLockException e) {
 				System.out.println("wut");
-//				this.valid = false;
+				this.valid = false;
 			}
 		}
 		catch (IOException e) {
