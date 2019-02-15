@@ -56,7 +56,8 @@ dependencies {
             'org.springframework.boot:spring-boot-devtools',
             'javax.xml.bind:jaxb-api',
             'com.h2database:h2',
-            'mysql:mysql-connector-java'
+            'mysql:mysql-connector-java',
+            'org.json:json:20180813'
     )
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {

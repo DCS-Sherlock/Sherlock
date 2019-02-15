@@ -18,13 +18,13 @@ import uk.ac.warwick.dcs.sherlock.module.web.repositories.TParameterRepository;
 import javax.validation.Valid;
 
 @Controller
-public class ManageDetectorController {
+public class TemplateDetectorController {
     @Autowired
     private TDetectorRepository tDetectorRepository;
     @Autowired
 	private TParameterRepository tParameterRepository;
 
-    public ManageDetectorController() { }
+    public TemplateDetectorController() { }
 
 	@GetMapping("/dashboard/templates/manage/detectors/parameters/{pathid}")
 	public String parmetersGet(
@@ -55,7 +55,7 @@ public class ManageDetectorController {
 	}
 
 	@ModelAttribute("detector")
-	public DetectorWrapper getDetectorWrapper(
+	private DetectorWrapper getDetectorWrapper(
             @ModelAttribute("account") AccountWrapper account,
             @PathVariable(value="pathid") long pathid,
             Model model)

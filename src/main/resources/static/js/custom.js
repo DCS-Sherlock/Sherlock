@@ -110,6 +110,86 @@ function formSubmitButton() {
     });
 }
 
+function networkGraph() {
+    if ($("[data-js='networkArea']").length) {
+        var area = $(this);
+
+        var jsonData = graphData();
+        var container = document.getElementById('network-graph')
+        var included = area.find("#network-included");
+        var excluded = area.find("#network-excluded");
+        var includedTemplate = area.find("#network-included-template");
+        var excludedTemplate = area.find("#network-excluded-template");
+
+        var groupDict = {
+            0: "#00FF00",
+            1: "#8DFF00",
+            2: "#8DFF00",
+            3: "#E5FF00",
+            4: "#FFF600",
+            5: "#FFE400",
+            6: "#FFAF00",
+            7: "#FF9E00",
+            8: "#FF7B00",
+            9: "#FF5700"
+        };
+
+        nodes = new vis.DataSet();
+        edges = new vis.DataSet();
+
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        var options = {};
+
+        function addNode(id, name, colour) {
+            try {
+                nodes.add({
+                    id: id,
+                    label: name,
+                    color: colour
+                });
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        function addEdge(id, from, to, colour) {
+            try {
+                edges.add({
+                    id: id,
+                    from: from,
+                    to: to,
+                    color: colour
+                });
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        for(var i = 0; i < jsonData.length; i++) {
+            var node = jsonData[i];
+            addNode(node.id, node.name, groupDict[node.scoreGroup]);
+        }
+
+        for(var i = 0; i < jsonData.length; i++) {
+            var node = jsonData[i];
+
+            for(var j = 0; j < node.matches.length; j++) {
+                var node2 = node.matches[j];
+                addEdge(i+j+node.id+node2.id, node.id, node2.id, groupDict[node2.scoreGroup]);
+            }
+        }
+
+        network = new vis.Network(container, data, options);
+
+    }
+}
+
 function formSubmit(){
     $("[data-js='form']").unbind();
     $("[data-js='form']").submit(function () {
@@ -166,7 +246,7 @@ function submitAjax(url, data, success, type) {
         timeout: 30000,
         data: data,
         success: function (result, status, xhr) {
-            if (xhr.getResponseHeader("sherlock-url") != url || result.includes("</script>")) {
+            if (xhr.getResponseHeader("sherlock-url") != url || result.includes("<link ")) {
                 window.location = xhr.getResponseHeader("sherlock-url");
             } else {
                 success(result, status, xhr);
@@ -207,6 +287,7 @@ function bindPage() {
     triggerAreas();
     triggerAreaLink();
     triggerNameChange();
+    networkGraph();
 }
 
 $(function () {

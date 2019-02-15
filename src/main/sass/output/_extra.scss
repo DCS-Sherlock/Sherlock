@@ -41,6 +41,10 @@ nav {
 a:hover {
     color: #f47b2a;
 }
+button, html [type="button"], [type="reset"], [type="submit"] {
+  -webkit-appearance: none;
+}
+
 /* Tabs */
 .tab-content > .active {
     background: none;
@@ -62,4 +66,42 @@ footer {
 }
 footer p:last-child {
     margin-bottom: 0;
+}
+
+/* Tables */
+table .shrink {
+    white-space: nowrap;
+    width: 1%;
+}
+
+/* Scores */
+.score-0 {
+    color: #00FF00;
+}
+.score-1 {
+    color: #8DFF00;
+}
+.score-2 {
+    color: #C2FF00;
+}
+.score-3 {
+    color: #E5FF00;
+}
+.score-4 {
+    color: #FFF600;
+}
+.score-5 {
+    color: #FFE400;
+}
+.score-6 {
+    color: #FFAF00;
+}
+.score-7 {
+    color: #FF9E00;
+}
+.score-8 {
+    color: #FF7B00;
+}
+.score-9 {
+    color: #FF5700;
 }

@@ -34,7 +34,7 @@ public class AccountController {
 	}
 
 	@GetMapping ("/account/name")
-	public String nameFragmentGet(
+	public String nameGetFragment(
 			Model model,
 			@ModelAttribute("isAjax") boolean isAjax,
 			@ModelAttribute("account") AccountWrapper account
@@ -46,7 +46,7 @@ public class AccountController {
 	}
 
 	@PostMapping ("/account/name")
-	public String nameFragmentPost(
+	public String namePostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,
 			@ModelAttribute("account") AccountWrapper account,
 			@Valid @ModelAttribute AccountNameForm accountNameForm,
@@ -66,7 +66,7 @@ public class AccountController {
 	}
 
 	@GetMapping ("/account/email")
-	public String emailFragmentGet(
+	public String emailGetFragment(
 			Model model,
 			@ModelAttribute("isAjax") boolean isAjax,
 			@ModelAttribute("account") AccountWrapper account
@@ -78,7 +78,7 @@ public class AccountController {
 	}
 
 	@PostMapping ("/account/email")
-	public String emailFragmentPost(
+	public String emailPostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,
 			@ModelAttribute("account") AccountWrapper account,
 			@Valid @ModelAttribute AccountEmailForm accountEmailForm,
@@ -122,7 +122,7 @@ public class AccountController {
 	}
 
 	@GetMapping ("/account/password")
-	public String passwordFragmentGet(
+	public String passwordGetFragment(
 			Model model,
 			@ModelAttribute("isAjax") boolean isAjax
 	) throws NotAjaxRequest {
@@ -133,7 +133,7 @@ public class AccountController {
 	}
 
 	@PostMapping ("/account/password")
-	public String passwordFragmentPost(
+	public String passwordPostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,
 			@ModelAttribute("account") AccountWrapper account,
 			@Valid @ModelAttribute AccountPasswordForm accountPasswordForm,
