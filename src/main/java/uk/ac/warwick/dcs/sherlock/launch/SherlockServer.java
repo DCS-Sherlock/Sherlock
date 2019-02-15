@@ -13,17 +13,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
-import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
-import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
 import javax.sql.DataSource;
 
-@SherlockModule(side = Side.SERVER)
 @SpringBootApplication
 @ComponentScan("uk.ac.warwick.dcs.sherlock.module.web")
 @ServletComponentScan("uk.ac.warwick.dcs.sherlock.module.web")
@@ -41,23 +35,18 @@ public class SherlockServer extends SpringBootServletInitializer {
 		engine.initialise();
 	}
 
-	@EventHandler
-	public void initialisation(EventInitialisation event) {
-	}
-
-	@EventHandler
-	public void postInitialisation(EventPostInitialisation event) {
-	}
-
-	@EventHandler
-	public void preInitialisation(EventPreInitialisation event) {
-	}
-
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		engine = new SherlockEngine(Side.SERVER);
-		application.profiles("server");
-		return application.sources(SherlockServer.class);
+		if (!SherlockServer.engine.isValidInstance()) {
+			System.err.println("Sherlock is already running, closing....");
+			System.exit(1);
+			return null;
+		}
+		else {
+			application.profiles("server");
+			return application.sources(SherlockServer.class);
+		}
 	}
 
 	@Bean

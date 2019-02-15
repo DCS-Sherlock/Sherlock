@@ -22,6 +22,9 @@ import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorage;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 
 public class SherlockEngine {
 
@@ -40,26 +43,55 @@ public class SherlockEngine {
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	private static File configDir;
 
+	private File lockFile;
+	private FileChannel lockChannel;
+	private FileLock lock;
+	private boolean valid;
+
 	public SherlockEngine(Side side) {
+		this.valid = false;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 		SherlockEngine.side = side;
 
-		try {
-			SherlockEngine.eventBus = new EventBus();
-			Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.eventBus);
+		SherlockEngine.setupConfigDir();
 
-			SherlockEngine.registry = new Registry();
-			field = SherlockRegistry.class.getDeclaredField("registry");
-			field.setAccessible(true);
-			field.set(null, SherlockEngine.registry);
+		this.lockFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.lock");
+		try {
+			RandomAccessFile f = new RandomAccessFile(lockFile, "rw");
+			this.lockChannel = f.getChannel();
+			try {
+				this.lock = this.lockChannel.tryLock();
+
+				if (this.lock != null) {
+					this.valid = true;
+				}
+			}
+			catch (OverlappingFileLockException e) {
+				this.valid = false;
+			}
 		}
-		catch (IllegalAccessException | NoSuchFieldException e) {
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		SherlockEngine.loadConfiguration();
+		if (this.valid) {
+			SherlockEngine.loadConfiguration();
+
+			try {
+				SherlockEngine.eventBus = new EventBus();
+				Field field = uk.ac.warwick.dcs.sherlock.api.event.EventBus.class.getDeclaredField("bus");
+				field.setAccessible(true);
+				field.set(null, SherlockEngine.eventBus);
+
+				SherlockEngine.registry = new Registry();
+				field = SherlockRegistry.class.getDeclaredField("registry");
+				field.setAccessible(true);
+				field.set(null, SherlockEngine.registry);
+			}
+			catch (IllegalAccessException | NoSuchFieldException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -80,19 +112,10 @@ public class SherlockEngine {
 	}
 
 	private static void loadConfiguration() {
-		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
-
-		if (!SherlockEngine.configDir.exists()) {
-			if (!SherlockEngine.configDir.mkdir()) {
-				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
-				return;
-			}
-		}
-
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		if (!configFile.exists()) {
 			SherlockEngine.configuration = new Configuration();
-			SherlockEngine.writeConfiguration();
+			SherlockEngine.writeConfiguration(configFile);
 		}
 		else {
 			try {
@@ -111,8 +134,18 @@ public class SherlockEngine {
 		SherlockEngine.modulesPath = classpath;
 	}
 
-	private static void writeConfiguration() {
-		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
+	private static void setupConfigDir() {
+		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
+
+		if (!SherlockEngine.configDir.exists()) {
+			if (!SherlockEngine.configDir.mkdir()) {
+				logger.error("Could not create dir: {}", SherlockEngine.configDir.getAbsolutePath());
+				System.exit(1);
+			}
+		}
+	}
+
+	private static void writeConfiguration(File configFile) {
 		try {
 			Representer representer = new Representer();
 			representer.addClassTag(Configuration.class, new Tag("!Sherlock"));
@@ -128,6 +161,11 @@ public class SherlockEngine {
 	}
 
 	public void initialise() {
+		if (!this.valid) {
+			logger.error("Cannot initialise SherlockEngine, is not valid. Likely an instance of Sherlock is already running");
+			System.exit(1);
+		}
+
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
@@ -160,11 +198,29 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
 	}
 
+	public boolean isValidInstance() {
+		return this.valid;
+	}
+
 	private void shutdown() {
 		logger.info("Stopping SherlockEngine");
 		try {
-			SherlockEngine.storage.close();
-			SherlockEngine.executor.shutdown();
+			if (SherlockEngine.storage != null) {
+				SherlockEngine.storage.close();
+			}
+			if (SherlockEngine.executor != null) {
+				SherlockEngine.executor.shutdown();
+			}
+
+			if (this.lock != null) {
+				this.lock.close();
+			}
+			if (this.lockChannel != null) {
+				this.lockChannel.close();
+			}
+			if (this.lockFile != null) {
+				this.lockFile.delete();
+			}
 		}
 		catch (Exception ignored) {
 		}

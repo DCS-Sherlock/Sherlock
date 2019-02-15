@@ -52,25 +52,33 @@ public class NGramScorer implements IScoreFunction {
 	 */
 	@Override
 	public float score(ISourceFile mainFile, ISourceFile referenceFile, List<ICodeBlockGroup> mutualGroups) {
-//		return 0;
-		// add a 3rd list which contains all match cases where the file is first in a pair
-		// search this list for both files, and where the pair is the 2 files add the score to an accumulator
-		int index = match_list.lastIndexOf(mainFile);
+		// counter for total score
 		float accumulator = 0.0f;
-		// for every file matched with the main file, find where the file was the reference file
-		for (NgramMatch match : file_matches.get(index).matches) {
-			if (match.file2.equals(referenceFile)) {
-				// where the match is between the 2 files passed increment the accumulator
-				accumulator += match.similarity;
+		// check if first file is in list
+		int index = match_list.lastIndexOf(mainFile);
+		// if not in list then is paired with something in the list so check second file
+		if (index == -1) {
+			index = match_list.lastIndexOf(referenceFile);
+			// if not in the list print debug message
+			// TODO: turn this into exception handling
+			if (index == -1) {
+				System.out.println("File pair: (" + mainFile.getFileDisplayName() + ", " + referenceFile.getFileDisplayName() + ") cannot be found in list of files:");
+				for (ISourceFile file : match_list ) {
+					System.out.println(file.getFileDisplayName());
+				}
 			}
-		}
-		// perform above for opposite match direction
-		// NOTE: (In theory this should never run, and is here for the sake of completeness)
-		index = match_list.lastIndexOf(referenceFile);
-		for (NgramMatch match : file_matches.get(index).matches) {
-			if (match.file1.equals(mainFile)) {
-				// where the match is between the 2 files passed increment the accumulator
-				accumulator += match.similarity;
+			// where the match is between the 2 files passed increment the accumulator
+			for (NgramMatch match : file_matches.get(index).matches) {
+				if (match.file1.equals(mainFile)) {
+					accumulator += match.similarity;
+				}
+			}
+		} else {
+			// where the match is between the 2 files passed increment the accumulator
+			for (NgramMatch match : file_matches.get(index).matches) {
+				if (match.file2.equals(referenceFile)) {
+					accumulator += match.similarity;
+				}
 			}
 		}
 		// return cumulative score
