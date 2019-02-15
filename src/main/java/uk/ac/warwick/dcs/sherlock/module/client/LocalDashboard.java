@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web;
+package uk.ac.warwick.dcs.sherlock.module.client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,13 +9,9 @@ import static javax.swing.LayoutStyle.ComponentPlacement.*;
 
 public class LocalDashboard extends JFrame {
 
-	private SplashScreen splash;
-
 	public LocalDashboard() {
 		super("Sherlock");
 		initUI();
-
-		splash = SplashScreen.getSplashScreen();
 	}
 
 	private void initUI() {
@@ -57,24 +53,15 @@ public class LocalDashboard extends JFrame {
 	}
 
 	public void setReady() {
-		if (this.splash != null) {
-			this.splash.close();
-		}
 		this.setVisible(true);
 
-		try {
+		/*try {
 			if (Desktop.isDesktopSupported()) {
 				Desktop.getDesktop().browse(new URI("http://localhost:2218"));
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public void closeSplash() {
-		if (this.splash != null) {
-			this.splash.close();
-		}
+		}*/
 	}
 }
