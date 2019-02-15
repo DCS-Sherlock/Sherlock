@@ -29,7 +29,7 @@ public class SherlockClient {
 		SherlockClient.splash = new Splash();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
 
-		if (/*!SherlockServer.engine.isValidInstance()*/ true) {
+		if (!SherlockServer.engine.isValidInstance()) {
 			JFrame jf=new JFrame();
 			jf.setAlwaysOnTop(true);
 			JOptionPane.showMessageDialog(jf, "Sherlock is already running", "Sherlock error", JOptionPane.ERROR_MESSAGE);
