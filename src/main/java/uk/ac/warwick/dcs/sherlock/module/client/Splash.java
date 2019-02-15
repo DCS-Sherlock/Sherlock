@@ -77,6 +77,7 @@ public class Splash extends JFrame {
 			this.setForeground(new Color(162, 161, 161));
 
 			this.ran = new Random();
+			this.ran.setSeed(System.currentTimeMillis());
 			this.textOptions = new ArrayList<>();
 			try {
 				String filePath = this.getClass().getClassLoader().getResource("static/splash/msgs.txt").getFile();
@@ -113,7 +114,7 @@ public class Splash extends JFrame {
 			int count = 0;
 			while (this.running) {
 
-				if (count == 12) {
+				if (count == 9) {
 					count = 0;
 					this.oriText = this.getRandomMessage();
 
@@ -127,7 +128,7 @@ public class Splash extends JFrame {
 				this.setText(this.getText() + ".");
 
 				try {
-					Thread.sleep(430);
+					Thread.sleep(400);
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
