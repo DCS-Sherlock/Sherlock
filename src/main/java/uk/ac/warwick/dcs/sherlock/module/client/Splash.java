@@ -8,7 +8,7 @@ public class Splash extends JFrame {
 	public Splash() {
 		int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
-		int height = ((int) (Math.round(screenHeight * (screenHeight > 720 ? 0.35 : 0.45)) / 100) * 100);
+		int height = ((int) (Math.round(screenHeight * (screenHeight > 720 ? 0.35 : 0.4)) + 49 / 100) * 100);
 		height = Math.max(200, Math.min(height, 500));
 		int width = (height/9)*16;
 
