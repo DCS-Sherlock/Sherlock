@@ -49,7 +49,7 @@ public class SherlockEngine {
 	private boolean valid;
 
 	public SherlockEngine(Side side) {
-		this.valid = true;
+		this.valid = false;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 		SherlockEngine.side = side;
 
@@ -59,7 +59,6 @@ public class SherlockEngine {
 		try {
 			RandomAccessFile f = new RandomAccessFile(lockFile, "rw");
 			this.lockChannel = f.getChannel();
-
 			try {
 				this.lock = this.lockChannel.tryLock();
 
@@ -68,7 +67,6 @@ public class SherlockEngine {
 				}
 			}
 			catch (OverlappingFileLockException e) {
-				System.out.println("wut");
 				this.valid = false;
 			}
 		}
