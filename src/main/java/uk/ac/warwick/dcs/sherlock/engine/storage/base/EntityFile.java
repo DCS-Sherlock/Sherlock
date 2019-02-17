@@ -166,6 +166,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		if (archive.getParent() != null) {
 			this.getFileDisplayNameRecurse(build, archive.getParent(), sep);
 		}
-		build.append(archive.getFilename()).append(sep);
+		build.append(archive.getName()).append(sep);
 	}
 }

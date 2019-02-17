@@ -140,7 +140,7 @@ public class BaseStorage implements IStorageWrapper {
 					String[] dirs = FilenameUtils.separatorsToUnix(zipEntry.getName()).split("/");
 					curArchive = submission;
 					for (String dir : dirs) {
-						EntityArchive nextArchive = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getFilename().equals(dir)).findAny().orElse(null);
+						EntityArchive nextArchive = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getName().equals(dir)).findAny().orElse(null);
 
 						if (nextArchive == null) {
 							nextArchive = new EntityArchive(dir, curArchive);

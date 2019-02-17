@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import javax.persistence.*;
@@ -47,6 +48,11 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	public List<ISourceFile> getFiles() {
 		BaseStorage.instance.database.refreshObject(this);
 		return new LinkedList<>(this.files);
+	}
+
+	@Override
+	public List<ISubmission> getSubmissions() {
+		return null;
 	}
 
 	@Override
