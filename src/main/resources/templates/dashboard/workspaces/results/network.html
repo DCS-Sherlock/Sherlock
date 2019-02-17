@@ -18,13 +18,13 @@
                 <div class="card-body">
                     <div class="container" >
                         <div class="row">
+                            <button data-js="nodeMatches" class="btn btn-primary mr-3" th:text="#{link_add_matches}"></button>
                             <div class="btn-group">
-                                <div class="btn-group">
-                                    <button class="btn btn-primary" th:text="#{link_delete_edge}"></button>
-                                    <button class="btn btn-primary mr-3" th:text="#{link_delete_node}"></button>
-                                    <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link_reset_graph}"></a>
-                                </div>
+                                <button data-js="edgeDelete" class="btn btn-primary" th:text="#{link_remove_edge}"></button>
+                                <button data-js="nodeDelete" class="btn btn-primary mr-3" th:text="#{link_remove_node}"></button>
                             </div>
+                            <a data-js="graphDownload" href='#' download="graph.png" class="btn btn-primary mr-3" th:text="#{link_download_graph}"></a>
+                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link_reset_graph}"></a>
                         </div>
                         <script>
                             function graphData() {
@@ -34,7 +34,7 @@
                         <div data-js="networkArea">
                             <div class="row mt-3">
                                 <div class="col-lg-12">
-                                    <div id="network-graph" style="height: 500px"></div>
+                                    <div id="network-graph" class="border border-primary" style="height: 600px"></div>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -42,15 +42,69 @@
                                     <h5>
                                         <span th:text="#{workspaces_results_network_nodes_in}"></span>
                                     </h5>
-                                    <div id="network-included"></div>
-                                    <div id="network-included-template d-none"></div>
+                                    <table class="table table-hover table-borderless">
+                                        <tbody id="network-included">
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-included-template">
+                                            <tr>
+                                                <th class="align-middle">
+                                                    <h5 class="mb-0 js-name"></h5>
+                                                </th>
+                                                <td class="align-middle text-right">
+                                                    <div class="btn-group">
+                                                        <button data-js="submissionMatches" class="btn btn-primary btn-sm js-id" th:text="#{link_add_matches}"></button>
+                                                        <button data-js="submissionDelete" class="btn btn-primary btn-sm js-id" th:text="#{link_remove}"></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-included-template-empty">
+                                            <tr>
+                                                <th>
+                                                    <h5 class="mb-0">
+                                                        <span th:text="#{workspaces_results_network_none_visible}"></span>
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div class="col-lg-6">
                                     <h5>
                                         <span th:text="#{workspaces_results_network_nodes_out}"></span>
                                     </h5>
-                                    <div id="network-excluded"></div>
-                                    <div id="network-excluded-template d-none"></div>
+                                    <table class="table table-hover table-borderless">
+                                        <tbody id="network-excluded">
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-excluded-template">
+                                            <tr>
+                                                <th class="align-middle">
+                                                    <h5 class="mb-0 js-name">
+                                                    </h5>
+                                                </th>
+                                                <td class="align-middle text-right">
+                                                    <button data-js="submissionAdd" class="btn btn-primary btn-sm js-id" th:text="#{link_add_node}"></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-excluded-template-empty">
+                                            <tr>
+                                                <th>
+                                                    <h5 class="mb-0">
+                                                        <span th:text="#{workspaces_results_network_none_hidden}"></span>
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
