@@ -156,7 +156,6 @@ public class BaseStorageFilesystem {
 
 	private String computeFileIdentifier(EntityFile file) {
 		String str = this.getArchiveName(file.getArchive()) + file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
-		System.out.println(str);
 		str = StringUtils.rightPad(str, 1024, str);
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
 	}
@@ -172,7 +171,7 @@ public class BaseStorageFilesystem {
 	}
 
 	private String getArchiveName(EntityArchive archive) {
-		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
+		return archive != null ? archive.getName() + this.getArchiveName(archive.getParent()) : "";
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {
