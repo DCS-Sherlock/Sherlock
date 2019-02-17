@@ -129,7 +129,6 @@ public class BaseStorage implements IStorageWrapper {
 	private void storeArchive(EntityWorkspace workspace, String filename, byte[] fileContent) {
 		try {
 			EntityArchive submission = this.newSubmission(FilenameUtils.removeExtension(filename));
-			this.database.storeObject(submission);
 
 			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
 			ZipEntry zipEntry = zis.getNextEntry();
@@ -163,7 +162,9 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	private EntityArchive newSubmission(String name) {
-		return new EntityArchive(name);
+		EntityArchive submission = new EntityArchive(name);
+		this.database.storeObject(submission);
+		return submission;
 	}
 
 	private void storeIndividualFile(EntityWorkspace workspace, String filename, byte[] fileContent, EntityArchive archive) {
