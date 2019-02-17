@@ -19,6 +19,11 @@ public interface IWorkspace {
 	List<ISourceFile> getFiles();
 
 	/**
+	 * @return the list of submissions to the workspace
+	 */
+	List<ISubmission> getSubmissions();
+
+	/**
 	 * @return list of job history
 	 */
 	List<IJob> getJobs();

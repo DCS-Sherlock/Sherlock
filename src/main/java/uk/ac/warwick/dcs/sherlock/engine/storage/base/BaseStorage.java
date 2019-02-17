@@ -121,31 +121,32 @@ public class BaseStorage implements IStorageWrapper {
 			this.storeArchive(w, filename, fileContent);
 		}
 		else {
-			this.storeIndividualFile(w, filename, fileContent, null);
+			EntityArchive submission = this.newSubmission(FilenameUtils.removeExtension(filename));
+			this.storeIndividualFile(w, filename, fileContent, submission);
 		}
 	}
 
 	private void storeArchive(EntityWorkspace workspace, String filename, byte[] fileContent) {
 		try {
-			EntityArchive topArchive = new EntityArchive(filename);
-			this.database.storeObject(topArchive);
+			EntityArchive submission = this.newSubmission(FilenameUtils.removeExtension(filename));
+			this.database.storeObject(submission);
 
 			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
 			ZipEntry zipEntry = zis.getNextEntry();
-			EntityArchive curArchive = topArchive;
+			EntityArchive curArchive = submission;
 
 			while (zipEntry != null) {
 				if (zipEntry.isDirectory()) {
 					String[] dirs = FilenameUtils.separatorsToUnix(zipEntry.getName()).split("/");
-					curArchive = topArchive;
+					curArchive = submission;
 					for (String dir : dirs) {
-						EntityArchive nextArch = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getFilename().equals(dir)).findAny().orElse(null);
-						if (nextArch == null) {
-							nextArch = new EntityArchive(dir, curArchive);
-							curArchive.addChild(nextArch);
-							this.database.storeObject(nextArch);
+						EntityArchive nextArchive = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getFilename().equals(dir)).findAny().orElse(null);
+
+						if (nextArchive == null) {
+							nextArchive = new EntityArchive(dir, curArchive);
+							this.database.storeObject(nextArchive);
 						}
-						curArchive = nextArch;
+						curArchive = nextArchive;
 					}
 				}
 				else {
@@ -159,6 +160,10 @@ public class BaseStorage implements IStorageWrapper {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private EntityArchive newSubmission(String name) {
+		return new EntityArchive(name);
 	}
 
 	private void storeIndividualFile(EntityWorkspace workspace, String filename, byte[] fileContent, EntityArchive archive) {

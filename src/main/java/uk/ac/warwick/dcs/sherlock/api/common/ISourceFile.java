@@ -6,6 +6,15 @@ import java.util.*;
 public interface ISourceFile {
 
 	/**
+	 * File equality check
+	 *
+	 * @param file file to compare
+	 *
+	 * @return equals
+	 */
+	boolean equals(ISourceFile file);
+
+	/**
 	 * @return the content of the file
 	 */
 	InputStream getFileContents();
@@ -21,9 +30,19 @@ public interface ISourceFile {
 	List<String> getFileContentsAsStringList();
 
 	/**
-	 * @return string containing the name of the file to display, this should be a path including any parent archives
+	 * @return a web path safe file identifier
+	 */
+	String getFileIdentifier();
+
+	/**
+	 * @return string containing display formatted file name
 	 */
 	String getFileDisplayName();
+
+	/**
+	 * @return string containing display formatted file path
+	 */
+	String getFileDisplayPath();
 
 	/**
 	 * @return fetches a unique, persistent id for the file. No other file should EVER be able to take this ID, even if this file is deleted.
@@ -31,9 +50,7 @@ public interface ISourceFile {
 	long getPersistentId();
 
 	/**
-	 * File equality check
-	 * @param file file to compare
-	 * @return equals
+	 * @return
 	 */
-	boolean equals(ISourceFile file);
+	long getSubmissionId();
 }

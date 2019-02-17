@@ -1,11 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 @Entity (name = "Archive")
-public class EntityArchive implements Serializable {
+public class EntityArchive implements ISubmission, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,7 +16,7 @@ public class EntityArchive implements Serializable {
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String filename;
+	private String name;
 
 	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityArchive parent;
@@ -28,19 +31,14 @@ public class EntityArchive implements Serializable {
 		super();
 	}
 
-	public EntityArchive(String filename) {
-		this(filename, null);
+	public EntityArchive(String name) {
+		this(name, null);
 	}
 
-	public EntityArchive(String filename, EntityArchive archive) {
+	public EntityArchive(String name, EntityArchive archive) {
 		super();
-		this.filename = filename;
+		this.name = name;
 		this.parent = archive;
-		this.children = new LinkedList<>();
-	}
-
-	public void addChild(EntityArchive archive) {
-		this.children.add(archive);
 	}
 
 	public List<EntityArchive> getChildren() {
@@ -48,8 +46,18 @@ public class EntityArchive implements Serializable {
 		return this.children;
 	}
 
-	public String getFilename() {
-		return filename;
+	@Override
+	public List<ISubmission> getContainedDirectories() {
+		return new LinkedList<>(this.getChildren());
+	}
+
+	@Override
+	public List<ISourceFile> getContainedFiles() {
+		return new LinkedList<>(this.getFiles());
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public List<EntityFile> getFiles() {
@@ -57,11 +65,17 @@ public class EntityArchive implements Serializable {
 		return this.files;
 	}
 
+	@Override
 	public long getId() {
-		return this.id;
+		return this.parent == null ? this.id : this.parent.getId();
 	}
 
 	public EntityArchive getParent() {
 		return this.parent;
+	}
+
+	@Override
+	public int getTotalFileCount() {
+		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getTotalFileCount).sum() : 0);
 	}
 }

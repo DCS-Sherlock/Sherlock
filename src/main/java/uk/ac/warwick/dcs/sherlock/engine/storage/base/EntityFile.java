@@ -84,16 +84,33 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
-	public String getFileDisplayName() {
+	public String getFileIdentifier() {
 		StringBuilder build = new StringBuilder();
 		if (this.archive != null) {
-			this.getFileDisplayNameRecurse(build, this.archive);
+			this.getFileDisplayNameRecurse(build, this.archive, "-");
 		}
 		build.append(this.filename).append(".").append(this.extension);
 		return build.toString();
 	}
 
-	public String getFilename() {
+	@Override
+	public String getFileDisplayName() {
+		StringBuilder build = new StringBuilder();
+		build.append(this.filename).append(".").append(this.extension);
+		return build.toString();
+	}
+
+	@Override
+	public String getFileDisplayPath() {
+		StringBuilder build = new StringBuilder();
+		if (this.archive != null) {
+			this.getFileDisplayNameRecurse(build, this.archive, "/");
+		}
+		build.append(this.filename).append(".").append(this.extension);
+		return build.toString();
+	}
+
+	String getFilename() {
 		return this.filename;
 	}
 
@@ -105,10 +122,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public void setHash(String hash) {
 		this.hash = hash;
-	}
-
-	public long getId() {
-		return this.id;
 	}
 
 	@Override
@@ -124,6 +137,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public void setSecureParam(byte[] secure) {
 		this.secure = secure;
+	}
+
+	@Override
+	public long getSubmissionId() {
+		return this.archive.getId();
 	}
 
 	@Override
@@ -144,10 +162,10 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		return this.getFileDisplayName();
 	}
 
-	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive) {
+	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive, String sep) {
 		if (archive.getParent() != null) {
-			this.getFileDisplayNameRecurse(build, archive.getParent());
+			this.getFileDisplayNameRecurse(build, archive.getParent(), sep);
 		}
-		build.append(archive.getFilename()).append("/");
+		build.append(archive.getFilename()).append(sep);
 	}
 }
