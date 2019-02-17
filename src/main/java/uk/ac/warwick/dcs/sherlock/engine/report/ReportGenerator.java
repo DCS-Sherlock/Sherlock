@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
@@ -13,8 +14,8 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public FileReport GenerateReport(long persistentId, List<? extends ICodeBlockGroup> codeBlockGroups, List<String> variableNames) {
-		FileReport fileReport = new FileReport(persistentId);
+	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups, List<String> variableNames) {
+		FileReport fileReport = new FileReport(sourceFile.getPersistentId());
 
 		StringJoiner stringJoiner = new StringJoiner("", "", ".");
 
@@ -61,7 +62,11 @@ public class ReportGenerator implements IReportGenerator {
 
 			//Get the joined string and add it to the report.
 			String joinedString = stringJoiner.toString();
-			fileReport.AddReportString(joinedString);
+
+			//Assemble the information into a FileReportItem and add it to the report.
+			float score = codeBlockGroup.getCodeBlock(sourceFile).getBlockScore();
+			FileReportItem reportItem = new FileReportItem(detectionType, score, lineNumbers, joinedString);
+			fileReport.AddReportItem(reportItem);
 		}
 
 		return fileReport;

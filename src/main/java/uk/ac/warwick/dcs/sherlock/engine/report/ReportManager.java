@@ -2,7 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 
+import javax.validation.constraints.Null;
 import java.util.*;
 
 /**
@@ -10,25 +12,7 @@ import java.util.*;
  * <p>
  * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending the relevant information to the actual report generator in use.
  */
-
-/**
- * Notes on generating a report:
- * <p>
- * FileReport basically gets a list of strings Have some collection of codeblockgroups to make a report, take all codeblockgroups from that collection that have stuff from the file in question give
- * those codeblockgroups to a report generator, which goes through each codeblockgroup and generates a string(s) for it, and puts it in the FileReport Reorder the list in FileReport if
- * necessary/desired add anything else to the FileReport if needed done
- */
-
 public class ReportManager {
-	//Info to be stored one way or another. Not sure about format yet.
-	//
-	//files
-	//line numbers (either a range or list)
-	//column/where in line numbers (where necessary)
-	//detection type
-	//percentage/score/whatever
-	//Variable names
-	//Method names
 
 	/**
 	 * A list of every files' respective persistentIds. Mainly used for iteration purposes.
@@ -107,11 +91,11 @@ public class ReportManager {
 	/**
 	 * Generates a report for a single specified file, stores it, and returns it.
 	 *
-	 * @param fileId The persistent ID of the file to generate a report for.
+	 * @param sourceFile The file to generate a report for.
 	 *
 	 * @return The FileReport object that is generated.
 	 */
-	public FileReport GenerateReport(long fileId) {
+	public FileReport GenerateReport(ISourceFile sourceFile) {
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
 		//Get all the codeblockgroups which contain the desired file.
@@ -121,7 +105,7 @@ public class ReportManager {
 
 			boolean fileInGroup = false;
 			for (ICodeBlock codeBlock : codeBlocks) {
-				if (codeBlock.getFile().getPersistentId() == fileId) {
+				if (codeBlock.getFile().getPersistentId() == sourceFile.getPersistentId()) {
 					fileInGroup = true;
 					break;
 				}
@@ -130,10 +114,26 @@ public class ReportManager {
 			relevantGroups.add(codeBlockGroup);
 		}
 
-		FileReport fileReport = reportGenerator.GenerateReport(fileId, relevantGroups, variableNames.get(fileId));
+		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups, variableNames.get(sourceFile.getPersistentId()));
 
-		reports.put(fileId, fileReport);
+		reports.put(sourceFile.getPersistentId(), fileReport);
 		return fileReport;
+	}
+
+	/**
+	 * Retrieve a report which has already been generated.
+	 * TODO: print something to error if exception? idk
+	 *
+	 * @param sourceFile The file to retrieve the report for
+	 * @return a FileReport object that is the report in question
+	 * @throws NullPointerException if there is no report for this file
+	 */
+	public FileReport GetReport(ISourceFile sourceFile) throws NullPointerException {
+		try {
+			return reports.get(sourceFile.getPersistentId());
+		} catch(NullPointerException e) {
+			throw e;
+		}
 	}
 
 }
