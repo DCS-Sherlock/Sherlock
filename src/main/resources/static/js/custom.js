@@ -1,51 +1,77 @@
-//Sherlock JS
-function loadAreas(){
-    $("[data-js='area']").each(function () {
-        var input = $(this);
-        loadAreaFn(input);
-    });
-}
-function triggerAreas(){
-    $("[data-js='triggerArea']").each(function () {
-        var input = $(this);
-        var target = input.attr("data-js-target");
-        input.remove();
-        $(target).html("...");
-        loadAreaFn($(target), true);
-    });
-}
+//Sherlock Javascript
+loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">';
 
-function triggerAreaLink(){
-    $("[data-js='triggerAreaLink']").unbind();
-    $("[data-js='triggerAreaLink']").click(function () {
-        var input = $(this);
-        var target = input.attr("data-js-target");
-        $(target).html("...");
-        loadAreaFn($(target), true);
-        $("#modal").modal('hide');
-    });
-}
-function triggerNameChange(){
-    $("[data-js='triggerNameChange']").each(function () {
-        var input = $(this);
-        var name = $('#username').val();
-        $('#account-username').text(name)
-        input.remove();
-    });
-}
-
-function loadAreaFn(input){
-    var url = input.attr("data-js-href");
-
+function loadAreaAjax(input){
     getAjax(
-        url,
+        input.attr("data-js-href"),
         function(result, status, xhr) {
             input.html(result);
         }
     );
 }
 
-function modalLinks(){
+function loadArea() {
+    $("[data-js='area']").each(function () {
+        var input = $(this);
+        loadAreaAjax(input);
+    });
+}
+
+function loadAreaTrigger() {
+    $("[data-js='triggerArea']").each(function () {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+
+        input.remove();
+        $(target).html(loadingHTML);
+        loadAreaAjax($(target));
+    });
+}
+
+function loadAreaLink() {
+    $("[data-js='triggerAreaLink']").unbind();
+    $("[data-js='triggerAreaLink']").click(function () {
+        var input = $(this);
+        var target = input.attr("data-js-target");
+
+        $(target).html(loadingHTML);
+        loadAreaAjax($(target));
+        $("#modal").modal('hide');
+    });
+}
+
+function loadAreaInputTrigger(){
+    $("select[data-js='select']").unbind();
+    $("select[data-js='select']").on('change', function () {
+        var input = $(this);
+        var value =  input.val();
+        var target = input.attr("data-js-target");
+        var url = input.attr("data-js-href");
+
+        $(target).html(loadingHTML);
+
+        getAjax(
+            url + value,
+            function(result, status, xhr) {
+                $(target).html(result);
+            }
+        );
+
+        return false;
+    });
+}
+
+function usernameChange(){
+    $("[data-js='triggerNameChange']").each(function () {
+        var input = $(this);
+
+        input.remove();
+        var name = $('#username').val();
+        $('#account-username').text(name);
+    });
+}
+
+function modalLink(){
     $("[data-js='modal']").unbind();
     $("[data-js='modal']").click(function () {
         var input = $(this);
@@ -59,8 +85,7 @@ function modalLinks(){
             function(result, status, xhr) {
                 $("#modal").html(result);
                 $("#modal").modal('show');
-                selectAreas();
-                // $("select[data-js='select']").trigger('change');
+                loadAreaInputTrigger();
             }
         );
 
@@ -71,46 +96,7 @@ function modalLinks(){
     });
 }
 
-function selectAreas(){
-    $("select[data-js='select']").unbind();
-    $("select[data-js='select']").on('change', function () {
-        var input = $(this);
-        var value =  input.val();
-        var target = input.attr("data-js-target");
-        var url = input.attr("data-js-href");
-
-        $(target).html("...");
-
-        getAjax(
-            url + value,
-            function(result, status, xhr) {
-                $(target).html(result);
-            }
-        );
-
-        return false;
-    });
-}
-
-function formSubmitButton() {
-    $("[data-js='formSubmit']").unbind();
-    $("[data-js='formSubmit']").each(function() {
-        var input = $(this);
-        var target = input.attr("data-js-target");
-        if($(target).length == 0) {
-            $(this).addClass('d-none');
-        } else {
-            $(this).removeClass('d-none');
-        }
-    });
-    $("button[data-js='formSubmit']").click(function() {
-        var input = $(this);
-        var target = input.attr("data-js-target");
-        $(target).submit();
-    });
-}
-
-function networkGraph() {
+function loadNetworkGraph() {
     if ($("[data-js='networkArea']").length) {
         var includedArea = $("#network-included");
         var includedTemplate = $("#network-included-template");
@@ -309,8 +295,6 @@ function networkGraph() {
 
         network.on("afterDrawing", function (ctx) {
             dataURL = ctx.canvas.toDataURL();
-            // document.getElementById('image').src = dataURL;
-            // $("a[data-js='downloadGraph']").attr("href", "test");
         });
 
 
@@ -352,14 +336,10 @@ function networkGraph() {
         });
 
         update();
-
-        //todo: add download link -> save the canvas as image
-        //https://stackoverflow.com/questions/42663203/export-visjs-network-to-jpeg-png-image
-        //todo: instructions -> click to drag + scroll wheel
     }
 }
 
-function formSubmit(){
+function submitForm(){
     $("[data-js='form']").unbind();
     $("[data-js='form']").submit(function () {
         var input = $(this);
@@ -385,7 +365,7 @@ function formSubmit(){
     });
 }
 
-function hideCloseButtons() {
+function displayModalLinks() {
     $( ".js-cancel" ).each(function() {
         if ($(this).closest("#modal-container").length == 1) {
             if ($(this).is("button")) {
@@ -418,7 +398,7 @@ function submitAjax(url, data, success, type) {
             } else {
                 success(result, status, xhr);
             }
-            bindPage();
+            rebindEvents();
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(thrownError);
@@ -439,27 +419,26 @@ function submitAjax(url, data, success, type) {
     $.ajax(input);
 }
 
-function tooltips() {
+function displayTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover()
 }
 
-function bindPage() {
-    tooltips();
-    selectAreas();
-    modalLinks();
-    formSubmit();
-    hideCloseButtons();
-    formSubmitButton();
-    triggerAreas();
-    triggerAreaLink();
-    triggerNameChange();
-    networkGraph();
+function rebindEvents() {
+    displayTooltips();
+    loadAreaInputTrigger();
+    modalLink();
+    submitForm();
+    displayModalLinks();
+    // formSubmitButton();
+    loadAreaTrigger();
+    loadAreaLink();
+    usernameChange();
+    loadNetworkGraph();
 }
 
 $(function () {
-    loadAreas();
-    bindPage();
+    loadArea();
+    rebindEvents();
     $('form[data-js="autoSubmit"]').submit();
-    // $("select[data-js='select']").trigger('change');
 });
