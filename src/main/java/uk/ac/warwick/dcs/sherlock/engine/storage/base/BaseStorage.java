@@ -194,7 +194,6 @@ public class BaseStorage implements IStorageWrapper {
 			return;
 		}
 
-		file.setWorkspace(archive.getWorkspace());
 		this.database.storeObject(file);
 	}
 }

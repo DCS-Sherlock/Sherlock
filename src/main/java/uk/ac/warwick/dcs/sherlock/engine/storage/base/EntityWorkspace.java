@@ -8,6 +8,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.*;
 
 @Entity (name = "Workspace")
 public class EntityWorkspace implements IWorkspace, Serializable {
@@ -23,9 +24,6 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityArchive> submissions = new ArrayList<>();
-
-	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityFile> files = new ArrayList<>();
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityJob> jobs = new ArrayList<>();
@@ -50,7 +48,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public List<ISourceFile> getFiles() {
 		BaseStorage.instance.database.refreshObject(this);
-		return new LinkedList<>(this.files);
+		return this.submissions.stream().map(EntityArchive::getAllFiles).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
 	@Override

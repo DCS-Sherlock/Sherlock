@@ -18,9 +18,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne (fetch = FetchType.LAZY, optional = false)
-	private EntityWorkspace workspace;
-
 	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityArchive archive;
 
@@ -46,7 +43,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		this.timestamp = timestamp;
 		this.hash = null;
 		this.secure = null;
-		this.workspace = null;
 		this.archive = archive;
 	}
 
@@ -147,14 +143,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public Timestamp getTimestamp() {
 		return this.timestamp;
-	}
-
-	public EntityWorkspace getWorkspace() {
-		return this.workspace;
-	}
-
-	public void setWorkspace(EntityWorkspace workspace) {
-		this.workspace = workspace;
 	}
 
 	@Override

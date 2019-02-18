@@ -51,12 +51,34 @@ public class EntityArchive implements ISubmission, Serializable {
 	}
 
 	@Override
+	public List<ISourceFile> getAllFiles() {
+		return this.parent == null ? this.getAllFilesRecursive(new LinkedList<>()) : this.parent.getAllFiles();
+	}
+
+	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> files) {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.children != null) {
+			for (EntityArchive child : this.children) {
+				child.getAllFilesRecursive(files);
+			}
+		}
+
+		if (this.files != null) {
+			files.addAll(this.files);
+		}
+
+		return files;
+	}
+
+	@Override
 	public List<ISubmission> getContainedDirectories() {
+		BaseStorage.instance.database.refreshObject(this);
 		return new LinkedList<>(this.getChildren());
 	}
 
 	@Override
 	public List<ISourceFile> getContainedFiles() {
+		BaseStorage.instance.database.refreshObject(this);
 		return new LinkedList<>(this.getFiles());
 	}
 
@@ -79,9 +101,18 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent;
 	}
 
+	/**
+	 * Calculates the file count of this directory and all subdirectories
+	 * @return
+	 */
+	private int getFileCount() {
+		BaseStorage.instance.database.refreshObject(this);
+		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getFileCount).sum() : 0);
+	}
+
 	@Override
 	public int getTotalFileCount() {
-		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getTotalFileCount).sum() : 0);
+		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();
 	}
 
 	public EntityWorkspace getWorkspace() {
