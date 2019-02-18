@@ -19,6 +19,9 @@ public class EntityArchive implements ISubmission, Serializable {
 	private String name;
 
 	@ManyToOne (fetch = FetchType.LAZY)
+	private EntityWorkspace workspace;
+
+	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityArchive parent;
 
 	@OneToMany (mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -39,6 +42,7 @@ public class EntityArchive implements ISubmission, Serializable {
 		super();
 		this.name = name;
 		this.parent = archive;
+		this.workspace = null;
 	}
 
 	public List<EntityArchive> getChildren() {
@@ -56,10 +60,6 @@ public class EntityArchive implements ISubmission, Serializable {
 		return new LinkedList<>(this.getFiles());
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public List<EntityFile> getFiles() {
 		BaseStorage.instance.database.refreshObject(this);
 		return this.files;
@@ -70,6 +70,11 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent == null ? this.id : this.parent.getId();
 	}
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
 	public EntityArchive getParent() {
 		return this.parent;
 	}
@@ -77,5 +82,14 @@ public class EntityArchive implements ISubmission, Serializable {
 	@Override
 	public int getTotalFileCount() {
 		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getTotalFileCount).sum() : 0);
+	}
+
+	public EntityWorkspace getWorkspace() {
+		return this.parent != null ? this.parent.getWorkspace() : this.workspace;
+	}
+
+	public void setSubmissionArchive(EntityWorkspace workspace) {
+		this.workspace = workspace;
+		this.parent = null;
 	}
 }

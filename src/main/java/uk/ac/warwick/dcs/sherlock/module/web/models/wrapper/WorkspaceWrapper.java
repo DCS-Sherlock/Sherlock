@@ -1,15 +1,17 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -115,11 +117,17 @@ public class WorkspaceWrapper {
     public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) throws NoFilesUploaded, FileUploadFailed {
         int count = 0;
 
-        for(MultipartFile file : submissionsForm.getFiles()) {
+	    for(MultipartFile file : submissionsForm.getFiles()) {
             if (file.getSize() > 0) {
                 try {
-                    SherlockEngine.storage.storeFile(workspaceWrapper.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
-                } catch (IOException | WorkspaceUnsupportedException e) {
+                	// Each file or archive uploaded creates a new submission. This can be named separately from the file.
+	                // Not yet implemented but will support notifying of conflicting submission names, allow to rename or to merge with existing
+	                // Each submission can have many files, is populated with the content of archives currently but UI could be extended to allow for individual file uploads to the same submission
+	                // 2nd argument is the submission name, should be something unique to easily identify the file or files
+	                ISubmission submission = SherlockEngine.storage.createSubmission(workspaceWrapper.getiWorkspace(), FilenameUtils.removeExtension(file.getOriginalFilename()));
+
+                    SherlockEngine.storage.storeFile(submission, file.getOriginalFilename(), file.getBytes());
+                } catch (IOException | SubmissionUnsupportedException | WorkspaceUnsupportedException e) {
                     throw new FileUploadFailed(e.getMessage());
                 }
                 count++;
