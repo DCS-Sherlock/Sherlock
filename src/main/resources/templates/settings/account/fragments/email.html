@@ -16,21 +16,21 @@
 
     <div class="form-row">
         <div class="form-group col-md-12">
-            <label for="email" th:text="#{variable_email}"></label>
-            <input type="email" id="email" name="email" class="form-control" th:placeholder="#{variable_email}" th:value="*{email}">
+            <label for="email" th:text="#{variable.email}"></label>
+            <input type="email" id="email" name="email" class="form-control" th:placeholder="#{variable.email}" th:value="*{email}">
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-12">
-            <label th:text="#{variable_old_password}"></label>
-            <input type="password" class="form-control" name="oldPassword" th:placeholder="#{variable_old_password}" th:value="*{oldPassword}" />
+            <label th:text="#{variable.current_password}"></label>
+            <input type="password" class="form-control" name="oldPassword" th:placeholder="#{variable.current_password}" th:value="*{oldPassword}" />
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-12">
-            <button type="submit" class="btn btn-primary float-right" th:text="#{link_update}"></button>
+            <button type="submit" class="btn btn-primary float-right" th:text="#{link.update}"></button>
         </div>
     </div>
 

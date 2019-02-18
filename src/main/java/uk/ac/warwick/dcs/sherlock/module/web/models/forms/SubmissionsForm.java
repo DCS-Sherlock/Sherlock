@@ -6,7 +6,7 @@ import javax.validation.constraints.NotEmpty;
 
 public class SubmissionsForm {
 
-    @NotEmpty(message = "{error_file_empty}")
+    @NotEmpty(message = "{error.file.empty}")
     public MultipartFile[] files;
 
     public SubmissionsForm() { }

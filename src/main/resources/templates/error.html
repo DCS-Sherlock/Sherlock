@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/blank}">
 <head>
-    <title th:text="#{error_title}"></title>
+    <title th:text="#{error.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -11,7 +11,7 @@
                 <img th:src="@{/img/logo-100.png}">
             </a>
         </div>
-        <h1 class="h4 mb-4 text-muted" th:text="#{error_title}"></h1>
+        <h1 class="h4 mb-4 text-muted" th:text="#{error.title}"></h1>
 
         <th:block th:if="${msg}">
             <div class="alert alert-danger"><span th:text="#{''+${msg}}"></span></div>

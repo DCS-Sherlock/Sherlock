@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidPasswordValidator.class)
 public @interface ValidPassword {
-    String message() default "{error_old_password_invalid}";
+    String message() default "{error.current_password.invalid}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

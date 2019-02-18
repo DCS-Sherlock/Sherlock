@@ -7,14 +7,14 @@ import javax.validation.constraints.Size;
 
 public class AccountNameForm {
 
-    @NotNull(message = "{error_name_empty}")
+    @NotNull(message = "{error.name.empty}")
     @Size.List({
             @Size(
                     min = 1,
-                    message = "{error_name_empty}"),
+                    message = "{error.name.empty}"),
             @Size(
                     max = 64,
-                    message = "{error_name_length_max}")
+                    message = "{error.name.max_length}")
     })
     public String username;
 

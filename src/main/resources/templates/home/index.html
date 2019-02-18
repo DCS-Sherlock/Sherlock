@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='home'">
 <head>
-    <title th:text="#{home_title}"></title>
+    <title th:text="#{home.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -9,14 +9,14 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h4 class="float-left mt-1" th:text="#{home_title}"></h4>
+                    <h4 class="float-left mt-1" th:text="#{home.title}"></h4>
                 </div>
                 <div class="card-body">
                     <p>
-                        <span th:text="#{home_intro_start}"></span><a href="https://warwick.ac.uk/fac/sci/dcs/" target="_blank" th:text="#{home_intro_warwick_link}"></a><span th:text="#{home_intro_middle}"></span><a href="https://github.com/DCS-Sherlock" target="_blank" th:text="#{home_intro_github_link}"></a><span th:text="#{home_intro_end}"></span>
+                        <span th:text="#{home.intro.start}"></span><a href="https://warwick.ac.uk/fac/sci/dcs/" target="_blank" th:text="#{home.intro.warwick_link}"></a><span th:text="#{home.intro.middle}"></span><a href="https://github.com/DCS-Sherlock" target="_blank" th:text="#{home.intro.github_link}"></a><span th:text="#{home.intro.end}"></span>
                     </p>
                     <p>
-                        <span th:text="#{home_msg_start}"></span><span th:text="${institution}"></span><span th:text="#{home_msg_middle}"></span><a th:href="@{${link}}" th:text="${contact}" target="_blank"></a><span th:text="#{home_msg_end}"></span>
+                        <span th:text="#{home.msg.start}"></span><span th:text="${institution}"></span><span th:text="#{home.msg.middle}"></span><a th:href="@{${link}}" th:text="${contact}" target="_blank"></a><span th:text="#{home.msg.end}"></span>
                     </p>
                 </div>
             </div>

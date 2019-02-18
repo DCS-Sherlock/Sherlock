@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='help'">
 <head>
-    <title th:text="#{terms_title}"></title>
+    <title th:text="#{terms.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -10,8 +10,8 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h4 class="float-left mt-1">
-                        <span th:text="#{terms_title}"></span>
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/help}" th:text="#{help_link_return}"></a>
+                        <span th:text="#{terms.title}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/help}" th:text="#{help.return}"></a>
                     </h4>
                 </div>
                 <div class="card-body">

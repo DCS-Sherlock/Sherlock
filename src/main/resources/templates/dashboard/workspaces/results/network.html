@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
 <head>
-    <title th:text="#{workspaces_results_network}"></title>
+    <title th:text="#{results.network.title}"></title>
 </head>
 <body>
 
@@ -11,20 +11,20 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h4 class="float-left mt-1">
-                        <span th:text="#{workspaces_results_network}"></span>
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{workspaces_link_results_return}"></a>
+                        <span th:text="#{results.network.title}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.return}"></a>
                     </h4>
                 </div>
                 <div class="card-body">
                     <div class="container" >
                         <div class="row">
-                            <button data-js="nodeMatches" class="btn btn-primary mr-3" th:text="#{link_add_matches}"></button>
+                            <button data-js="nodeMatches" class="btn btn-primary mr-3" th:text="#{link.add_matches}"></button>
                             <div class="btn-group">
-                                <button data-js="edgeDelete" class="btn btn-primary" th:text="#{link_remove_edge}"></button>
-                                <button data-js="nodeDelete" class="btn btn-primary mr-3" th:text="#{link_remove_node}"></button>
+                                <button data-js="edgeDelete" class="btn btn-primary" th:text="#{link.remove_edge}"></button>
+                                <button data-js="nodeDelete" class="btn btn-primary mr-3" th:text="#{link.remove_node}"></button>
                             </div>
-                            <a data-js="graphDownload" href='#' download="graph.png" class="btn btn-primary mr-3" th:text="#{link_download_graph}"></a>
-                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link_reset_graph}"></a>
+                            <a data-js="graphDownload" href='#' download="graph.png" class="btn btn-primary mr-3" th:text="#{link.download_graph}"></a>
+                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.reset_graph}"></a>
                         </div>
                         <script>
                             function graphData() {
@@ -40,7 +40,7 @@
                             <div class="row mt-3">
                                 <div class="col-lg-6">
                                     <h5>
-                                        <span th:text="#{workspaces_results_network_nodes_in}"></span>
+                                        <span th:text="#{results.network.visible}"></span>
                                     </h5>
                                     <table class="table table-hover table-borderless">
                                         <tbody id="network-included">
@@ -54,8 +54,8 @@
                                                 </th>
                                                 <td class="align-middle text-right">
                                                     <div class="btn-group">
-                                                        <button data-js="submissionMatches" class="btn btn-primary btn-sm js-id" th:text="#{link_add_matches}"></button>
-                                                        <button data-js="submissionDelete" class="btn btn-primary btn-sm js-id" th:text="#{link_remove}"></button>
+                                                        <button data-js="submissionMatches" class="btn btn-primary btn-sm js-id" th:text="#{link.add_matches}"></button>
+                                                        <button data-js="submissionDelete" class="btn btn-primary btn-sm js-id" th:text="#{link.remove}"></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -66,7 +66,7 @@
                                             <tr>
                                                 <th>
                                                     <h5 class="mb-0">
-                                                        <span th:text="#{workspaces_results_network_none_visible}"></span>
+                                                        <span th:text="#{results.network.none_visible}"></span>
                                                     </h5>
                                                 </th>
                                             </tr>
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <h5>
-                                        <span th:text="#{workspaces_results_network_nodes_out}"></span>
+                                        <span th:text="#{results.network.hidden}"></span>
                                     </h5>
                                     <table class="table table-hover table-borderless">
                                         <tbody id="network-excluded">
@@ -89,7 +89,7 @@
                                                     </h5>
                                                 </th>
                                                 <td class="align-middle text-right">
-                                                    <button data-js="submissionAdd" class="btn btn-primary btn-sm js-id" th:text="#{link_add_node}"></button>
+                                                    <button data-js="submissionAdd" class="btn btn-primary btn-sm js-id" th:text="#{link.add}"></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -99,7 +99,7 @@
                                             <tr>
                                                 <th>
                                                     <h5 class="mb-0">
-                                                        <span th:text="#{workspaces_results_network_none_hidden}"></span>
+                                                        <span th:text="#{results.network.none_hidden}"></span>
                                                     </h5>
                                                 </th>
                                             </tr>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{submissions.view.title}"></title>
+</head>
+<body>
+
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{submissions.view.title}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{workspaces.manage.return}"></a>
+                    </h4>
+                    <div class="btn-toolbar float-right">
+                        <div class="btn-group">
+                            <div class="btn-group">
+                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/submission/{file_id}/delete(id=${workspace.getId()},file_id=${submission.getId()})}" th:text="#{link.delete}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 th:text="${submission.getName()}"></h4>
+                    <div class="accordion" id="accordion">
+                        <th:block th:each="file : ${submission.getContainedFiles()}">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#main">
+                                            <span th:text="${file.getFileDisplayName()}"></span>
+                                        </button>
+                                    </h2>
+                                </div>
+
+                                <div id="main" class="collapse show" data-parent="#accordion">
+                                    <div class="card-body">
+                                        <pre class="line-numbers"
+                                        th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}" data-download-link th:data-download-link-label="#{link.download}"></pre>
+                                </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

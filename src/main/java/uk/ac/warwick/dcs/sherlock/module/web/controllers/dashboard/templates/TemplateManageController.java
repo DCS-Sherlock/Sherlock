@@ -30,7 +30,7 @@ public class TemplateManageController {
 		return "dashboard/templates/manage";
 	}
 
-    @GetMapping("/dashboard/templates/manage/details/{pathid}")
+    @GetMapping("/dashboard/templates/manage/{pathid}/details")
     public String detailsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("template") TemplateWrapper templateWrapper,
@@ -45,7 +45,7 @@ public class TemplateManageController {
         return "dashboard/templates/fragments/details";
     }
 
-    @PostMapping("/dashboard/templates/manage/details/{pathid}")
+    @PostMapping("/dashboard/templates/manage/{pathid}/details")
     public String detailsPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("template") TemplateWrapper templateWrapper,
@@ -58,7 +58,7 @@ public class TemplateManageController {
 
         if (!result.hasErrors()) {
             templateWrapper.update(templateForm, templateRepository, tDetectorRepository);
-            model.addAttribute("success_msg", "templates_basic_updated_msg");
+            model.addAttribute("success_msg", "templates.details.updated");
         }
 
         model.addAttribute("templateForm", templateForm);
@@ -67,7 +67,7 @@ public class TemplateManageController {
         return "dashboard/templates/fragments/details";
     }
 
-    @GetMapping("/dashboard/templates/manage/detectors/{pathid}")
+    @GetMapping("/dashboard/templates/manage/{pathid}/detectors")
     public String detectorsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("template") TemplateWrapper templateWrapper,
@@ -78,12 +78,12 @@ public class TemplateManageController {
         return "dashboard/templates/fragments/detectors";
     }
 
-    @GetMapping("/dashboard/templates/delete/{pathid}")
+    @GetMapping("/dashboard/templates/{pathid}/delete")
     public String deleteGet() {
         return "dashboard/templates/delete";
     }
 
-    @PostMapping("/dashboard/templates/delete/{pathid}")
+    @PostMapping("/dashboard/templates/{pathid}/delete")
     public String deletePost(@ModelAttribute("template") TemplateWrapper templateWrapper) throws NotTemplateOwner {
         templateWrapper.delete(templateRepository);
         return "redirect:/dashboard/templates?msg=deleted";

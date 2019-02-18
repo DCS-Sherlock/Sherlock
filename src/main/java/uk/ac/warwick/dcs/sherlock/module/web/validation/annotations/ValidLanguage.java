@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidLanguageValidator.class)
 public @interface ValidLanguage {
-    String message() default "{error_language_not_found}";
+    String message() default "{error.language.not_found}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

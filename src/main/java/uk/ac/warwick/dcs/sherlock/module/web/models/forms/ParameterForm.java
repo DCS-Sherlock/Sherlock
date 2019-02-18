@@ -54,17 +54,17 @@ public class ParameterForm {
             }
 
             if (entry.getValue() < map.get(entry.getKey()).getMinimumBound()) {
-                result.reject("templates_parameter_min");
+                result.reject("templates.parameters.min_warning");
             }
 
             if (entry.getValue() > map.get(entry.getKey()).getMaximumBound()) {
-                result.reject("templates_parameter_max");
+                result.reject("templates.parameters.max_warning");
             }
 
             float step = entry.getValue() % map.get(entry.getKey()).getStep();
             float threshold = 0.001f;
             if (step > threshold) {
-                result.reject("templates_parameter_step");
+                result.reject("templates.parameters.step_warning");
             }
         }
 

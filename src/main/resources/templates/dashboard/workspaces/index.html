@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
 <head>
-    <title th:text="#{workspaces_title}"></title>
+    <title th:text="#{workspaces.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -9,10 +9,10 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h4 class="float-left mt-1" th:text="#{workspaces_title}"></h4>
+                    <h4 class="float-left mt-1" th:text="#{workspaces.title}"></h4>
                     <div class="btn-toolbar float-right">
                         <div class="btn-group mr-3remove">
-                            <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/add}" th:text="#{link_add}"></a>
+                            <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/add}" th:text="#{link.add_new}"></a>
                         </div>
                         <!--<div class="btn-group mr-3">-->
                             <!--<button role="button" class="btn btn-primary">All</button>-->

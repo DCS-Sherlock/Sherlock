@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='templates'">
 <head>
-    <title th:text="#{templates_parameters_title}"></title>
+    <title th:text="#{templates.parameters.title}"></title>
 </head>
 <body>
 
@@ -9,9 +9,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{templates_parameters_title}"></h5>
+                <h5 class="modal-title" th:text="#{templates.parameters.title}"></h5>
             </div>
-            <form th:action="@{/dashboard/templates/manage/detectors/parameters/{id}(id=${detector.getId()})}" data-js='form' data-js-target="#parameters-parent" th:object="${parameterForm}" method="post">
+            <form th:action="@{/dashboard/templates/manage/detectors/{id}/parameters(id=${detector.getId()})}" data-js='form' data-js-target="#parameters-parent" th:object="${parameterForm}" method="post">
                 <div class="modal-body">
                     <div th:if="${#fields.hasAnyErrors()}">
                         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
@@ -28,7 +28,7 @@
                                     <span th:text="${parametersMap.get(parameter.key).getDisplayName()}"></span>
                                     <span
                                             th:if="${parametersMap.get(parameter.key).getDescription().length() > 0}"
-                                            th:text="#{message_description}"
+                                            th:text="#{tooltip}"
                                             data-toggle="tooltip" data-placement="top"
                                             th:title="${parametersMap.get(parameter.key).getDescription()}"
                                     ></span>
@@ -45,13 +45,13 @@
                         </div>
                     </th:block>
                     <tr th:if="${parametersMap.empty}">
-                       <span th:text="#{templates_parameters_none_msg}"></span>
+                       <span th:text="#{templates.parameters.none}"></span>
                     </tr>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
-                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link_cancel}"></a>
-                    <button type="submit" class="btn btn-primary" th:text="#{link_save}"></button>
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link.cancel}"></a>
+                    <button type="submit" class="btn btn-primary" th:text="#{link.save}"></button>
                 </div>
             </form>
         </div>

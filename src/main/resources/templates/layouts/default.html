@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="icon" type="img/ico" th:href="@{/img/icon.ico}" href="/img/icon.ico">
 
-    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE" th:text="#{nav_title}"></title>
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE" th:text="#{nav.title}"></title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css"  />
@@ -22,7 +22,7 @@
 <div class="container d-none" id="javascript-error">
     <div class="row mb-2">
         <div class="col-12">
-            <div class="alert alert-warning"><span th:text="#{error_javascript}"></span> <span id="javascript-error-message"></span></div>
+            <div class="alert alert-warning"><span th:text="#{error.javascript}"></span> <span id="javascript-error-message"></span></div>
         </div>
     </div>
 </div>

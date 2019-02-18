@@ -10,25 +10,25 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 public class AccountForm {
-    @NotNull(message = "{error_name_empty}")
+    @NotNull(message = "{error.name.empty}")
     @Size.List({
             @Size(
                     min = 1,
-                    message = "{error_name_empty}"),
+                    message = "{error.name.empty}"),
             @Size(
                     max = 64,
-                    message = "{error_name_length_max}")
+                    message = "{error.name.max_length}")
     })
     public String name;
 
-    @Size(min = 1, message = "{error_email_empty}")
-    @Email(message = "{error_email_invalid}")
+    @Size(min = 1, message = "{error.email.empty}")
+    @Email(message = "{error.email.invalid}")
     public String email;
 
-    @NotNull(message = "{error_admin_empty}")
+    @NotNull(message = "{error.admin.empty}")
     public boolean isAdmin;
 
-    @NotNull(message = "{error_old_password_invalid}")
+    @NotNull(message = "{error.current_password.invalid}")
     @ValidPassword
     public String oldPassword;
 

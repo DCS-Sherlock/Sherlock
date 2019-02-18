@@ -14,18 +14,15 @@
                     <span th:text="${workspace.getName()}"></span>
                 </h5>
             </th>
-            <td class="align-middle">
-                <!--Year-->
-            </td>
             <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link_manage}"></a>
+                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.manage}"></a>
             </td>
         </tr>
     </th:block>
     <tr th:if="${workspaces.empty}">
         <th>
             <h5 class="mb-0">
-                <span th:text="#{workspaces_none_msg}"></span>
+                <span th:text="#{workspaces.none}"></span>
             </h5>
         </th>
     </tr>

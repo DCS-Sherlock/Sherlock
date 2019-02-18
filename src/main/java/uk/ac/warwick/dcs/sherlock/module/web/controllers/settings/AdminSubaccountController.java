@@ -56,7 +56,7 @@ public class AdminSubaccountController {
 		    if (!accountForm.getEmail().equals(subAccount.getEmail())) {
 		        //if attempting to change, check that the email doesn't already exist
                 if (accountRepository.findByEmail(accountForm.getEmail()) != null) {
-                    result.reject("error_email_exists");
+                    result.reject("error.email.exists");
                     return "settings/admin/manage";
                 }
             }
@@ -84,7 +84,7 @@ public class AdminSubaccountController {
             }
 
             accountForm.setOldPassword("");
-            model.addAttribute("success_msg", "admin_account_updated_details");
+            model.addAttribute("success_msg", "admin.accounts.manage.updated");
 		}
 
 		return "settings/admin/manage";
@@ -111,7 +111,7 @@ public class AdminSubaccountController {
             subAccount.getAccount().setPassword(bCryptPasswordEncoder.encode(newPassword));
             accountRepository.save(subAccount.getAccount());
 
-            model.addAttribute("success_msg", "admin_accounts_change_password_confirm");
+            model.addAttribute("success_msg", "admin.accounts.change_password.updated");
             model.addAttribute("newPassword", newPassword);
             return "settings/admin/passwordSuccess";
 		}

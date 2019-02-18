@@ -39,7 +39,7 @@ public class ExceptionControllerAdvice {
             IWorkspaceNotFound.class,
             WorkspaceNotFound.class,
             TemplateNotFound.class,
-            SourceFileNotFound.class,
+            SubmissionNotFound.class,
             DetectorNotFound.class,
             ResultsNotFound.class
     })

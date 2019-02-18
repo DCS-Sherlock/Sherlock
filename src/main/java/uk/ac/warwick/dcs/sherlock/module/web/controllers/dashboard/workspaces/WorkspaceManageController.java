@@ -33,7 +33,7 @@ public class WorkspaceManageController {
 		return "dashboard/workspaces/manage";
 	}
 
-    @GetMapping("/dashboard/workspaces/manage/details/{pathid}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/details")
     public String detailsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -47,7 +47,7 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/details";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/details/{pathid}")
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/details")
     public String detailsPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -60,14 +60,14 @@ public class WorkspaceManageController {
 
 		if (!result.hasErrors()) {
 		    workspaceWrapper.set(workspaceForm);
-            model.addAttribute("success_msg", "workspaces_basic_updated_msg");
+            model.addAttribute("success_msg", "workspaces.details.updated");
 		}
 
         model.addAttribute("languageList", SherlockRegistry.getLanguages());
         return "dashboard/workspaces/fragments/details";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/submissions/{pathid}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions")
     public String submissionsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -80,7 +80,7 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/submissions";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/submissions/{pathid}")
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/submissions")
     public String submissionsPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -94,19 +94,19 @@ public class WorkspaceManageController {
         if (!result.hasErrors()) {
             try {
                 workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
-                model.addAttribute("success_msg", "workspaces_submissions_uploaded_msg");
+                model.addAttribute("success_msg", "workspaces.submissions.uploaded");
             } catch (NoFilesUploaded e) {
-                result.reject("error_file_empty");
+                result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
-                result.reject("error_file_failed");
+                result.reject("error.file.failed");
             }
         }
 
         return "dashboard/workspaces/fragments/submissions";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/jobs/{pathid}")
-    public String jobsGetFragment(
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/run")
+    public String runGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("account") AccountWrapper account,
@@ -116,11 +116,11 @@ public class WorkspaceManageController {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
         model.addAttribute("templates", TemplateWrapper.findByAccountAndPublicAndLanguage(account.getAccount(), templateRepository, workspaceWrapper.getLanguage()));
-        return "dashboard/workspaces/fragments/jobs";
+        return "dashboard/workspaces/fragments/run";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/jobs/{pathid}")
-    public String jobsPostFragment(
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/run")
+    public String runPostFragment(
             @PathVariable("pathid") long pathid,
             @RequestParam(value="template_id", required=true) long template_id,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -134,22 +134,22 @@ public class WorkspaceManageController {
 
         try {
             workspaceWrapper.runTemplate(templateWrapper);
-            model.addAttribute("success_msg", "workspaces_analysis_started");
+            model.addAttribute("success_msg", "workspaces.analysis.started");
         } catch (TemplateContainsNoDetectors e) {
-            model.addAttribute("warning_msg", "workspaces_analysis_no_detectors");
+            model.addAttribute("warning_msg", "workspaces.analysis.no_detectors");
         } catch (ClassNotFoundException | DetectorNotFound e) {
-            model.addAttribute("warning_msg", "workspaces_analysis_detector_missing");
+            model.addAttribute("warning_msg", "workspaces.analysis.detector_missing");
         } catch (ParameterNotFound e) {
-            model.addAttribute("warning_msg", "workspaces_analysis_parameter_missing");
+            model.addAttribute("warning_msg", "workspaces.analysis.parameter_missing");
         } catch (NoFilesUploaded e) {
-            model.addAttribute("warning_msg", "workspaces_analysis_no_files");
+            model.addAttribute("warning_msg", "workspaces.analysis.no_files");
         }
 
         model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
-        return "dashboard/workspaces/fragments/jobs";
+        return "dashboard/workspaces/fragments/run";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results")
     public String resultsGetFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -164,12 +164,12 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/results";
     }
 
-    @GetMapping("/dashboard/workspaces/delete/{pathid}")
+    @GetMapping("/dashboard/workspaces/{pathid}/delete")
     public String deleteGet() {
         return "dashboard/workspaces/delete";
     }
 
-    @PostMapping("/dashboard/workspaces/delete/{pathid}")
+    @PostMapping("/dashboard/workspaces/{pathid}/delete")
     public String deletePost(@ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper) {
         workspaceWrapper.delete(workspaceRepository);
 		return "redirect:/dashboard/workspaces?msg=deleted";

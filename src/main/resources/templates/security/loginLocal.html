@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/blank}">
 <head>
-    <title th:text="#{login_title}"></title>
+    <title th:text="#{login.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -11,13 +11,13 @@
                 <img th:src="@{/img/logo-100.png}">
             </a>
         </div>
-        <h1 class="h4 mb-4 text-muted" th:text="#{login_title}"></h1>
+        <h1 class="h4 mb-4 text-muted" th:text="#{login.title}"></h1>
 
         <div th:if="${param.error}">
-            <div class="alert alert-danger"><span th:text="#{error_invalid_login}"></span></div>
+            <div class="alert alert-danger"><span th:text="#{error.invalid_login}"></span></div>
         </div>
         <div th:if="${param.logout}">
-            <div class="alert alert-info"><span th:text="#{error_logged_out}"></span></div>
+            <div class="alert alert-info"><span th:text="#{error.logged_out}"></span></div>
         </div>
 
         <input type="hidden" id="username" name="username" class="form-control" th:value="${local_username}">
@@ -25,7 +25,7 @@
         <input type="checkbox" id="remember-me" name="remember-me" class="d-none" checked="checked">
 
         <div style="width: 400px">
-            <span th:text="#{login_local_start}"></span><button class="btn btn-link" type="submit" th:text="#{login_local_link}"></button><span th:text="#{login_local_end}"></span>
+            <span th:text="#{login.local.start}"></span><button class="btn btn-link" type="submit" th:text="#{login.local.link}"></button><span th:text="#{login.local.end}"></span>
         </div>
     </form>
 </main>

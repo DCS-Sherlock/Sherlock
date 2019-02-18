@@ -18,12 +18,12 @@ public class WorkspaceResultsController {
 
     public WorkspaceResultsController() { }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}")
     public String viewGet() {
         return "dashboard/workspaces/results/view";
     }
 
-    @RequestMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/graph")
+    @RequestMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/graph")
     public String graphGetFragment(
             @ModelAttribute("isAjax") boolean isAjax,
             @PathVariable(value="pathid") long pathid,
@@ -33,30 +33,30 @@ public class WorkspaceResultsController {
         return "dashboard/workspaces/results/fragments/graph";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/network")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/network")
     public String networkGet( ) {
         return "dashboard/workspaces/results/network";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/report/{file1}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{file1}")
     public String reportGet() {
         return "dashboard/workspaces/results/report";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/compare/{file1}/{file2}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/compare/{file1}/{file2}")
     public String comparisonGet() {
         return "dashboard/workspaces/results/compare";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/delete")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/delete")
     public String deleteGet() {
         return "dashboard/workspaces/results/delete";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/delete")
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/delete")
     public String deletePost(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("results") ResultsWrapper jobWrapper
+            @ModelAttribute("results") ResultsWrapper resultsWrapper
     ) {
         //TODO: actually delete the job
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_job";
@@ -93,4 +93,6 @@ public class WorkspaceResultsController {
         model.addAttribute("results", wrapper);
         return wrapper;
     }
+
+//    private
 }

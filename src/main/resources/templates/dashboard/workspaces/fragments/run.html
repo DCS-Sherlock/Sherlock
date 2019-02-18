@@ -5,10 +5,10 @@
 </head>
 <body>
 
-<form th:action="@{/dashboard/workspaces/manage/jobs/{id}(id=${workspace.getId()})}" data-js='form' data-js-target="#jobs-parent" method="post">
+<form th:action="@{/dashboard/workspaces/manage/{id}/run(id=${workspace.getId()})}" data-js='form' data-js-target="#run-parent" method="post">
     <div th:if="${templates.empty}">
         <h6 class="mb-0">
-            <span th:text="#{workspaces_analysis_templates_none_msg}"></span>
+            <span th:text="#{workspaces.analysis.no_templates}"></span>
         </h6>
     </div>
 
@@ -24,7 +24,7 @@
     <div th:unless="${templates.empty}">
         <div class="form-row">
             <div class="form-group col-md-12">
-                <label for="template_id" th:text="#{variable_template}"></label>
+                <label for="template_id" th:text="#{variable.template}"></label>
                 <select class="form-control" id="template_id" name="template_id">
                     <option th:if="${template.isOwner()}"
                             th:each="template : ${templates}"
@@ -42,7 +42,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-primary float-right" th:text="#{link_run}"></button>
+                <button type="submit" class="btn btn-primary float-right" th:text="#{link.run}"></button>
             </div>
         </div>
     </div>

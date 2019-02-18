@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layouts/blank}">
 <head>
-    <title th:text="#{login_title}"></title>
+    <title th:text="#{login.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -11,33 +11,33 @@
                 <img th:src="@{/img/logo-100.png}">
             </a>
         </div>
-        <h1 class="h4 mb-4 text-muted" th:text="#{login_title}"></h1>
+        <h1 class="h4 mb-4 text-muted" th:text="#{login.title}"></h1>
 
         <div th:if="${param.error}">
-            <div class="alert alert-danger"><span th:text="#{error_invalid_login}"></span></div>
+            <div class="alert alert-danger"><span th:text="#{error.invalid_login}"></span></div>
         </div>
         <div th:if="${param.logout}">
-            <div class="alert alert-info"><span th:text="#{error_logged_out}"></span></div>
+            <div class="alert alert-info"><span th:text="#{error.logged_out}"></span></div>
         </div>
 
         <div class="mb-2">
-            <label for="username" class="sr-only" th:text="#{variable_email}"></label>
-            <input type="text" id="username" name="username" class="form-control" th:placeholder="#{variable_email}" required autofocus>
+            <label for="username" class="sr-only" th:text="#{variable.email}"></label>
+            <input type="text" id="username" name="username" class="form-control" th:placeholder="#{variable.email}" required autofocus>
         </div>
 
         <div class="mb-2">
-            <label for="password" class="sr-only" th:text="#{variable_password}"></label>
-            <input type="password" id="password" name="password" class="form-control" th:placeholder="#{variable_password}" required>
+            <label for="password" class="sr-only" th:text="#{variable.password}"></label>
+            <input type="password" id="password" name="password" class="form-control" th:placeholder="#{variable.password}" required>
         </div>
 
         <div class="mb-2">
             <label for="remember-me">
                 <input type="checkbox" id="remember-me" name="remember-me">
-                <span th:text="#{variable_remember_me}"></span>
+                <span th:text="#{variable.remember_me}"></span>
             </label>
         </div>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{link_login}"></button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{link.login}"></button>
     </form>
 </main>
 </body>

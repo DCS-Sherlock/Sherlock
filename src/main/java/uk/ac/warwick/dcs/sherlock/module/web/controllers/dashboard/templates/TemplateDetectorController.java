@@ -26,7 +26,7 @@ public class TemplateDetectorController {
 
     public TemplateDetectorController() { }
 
-	@GetMapping("/dashboard/templates/manage/detectors/parameters/{pathid}")
+	@GetMapping("/dashboard/templates/manage/detectors/{pathid}/parameters")
 	public String parmetersGet(
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
@@ -36,7 +36,7 @@ public class TemplateDetectorController {
 		return "dashboard/templates/parameters";
 	}
 
-	@PostMapping("/dashboard/templates/manage/detectors/parameters/{pathid}")
+	@PostMapping("/dashboard/templates/manage/detectors/{pathid}/parameters")
 	public String parametersPost(
 			@Valid @ModelAttribute ParameterForm parameterForm,
 			BindingResult result,
@@ -47,7 +47,7 @@ public class TemplateDetectorController {
 
 		if (!result.hasErrors()) {
 			detectorWrapper.updateParameters(parameterForm, tParameterRepository);
-			model.addAttribute("success_msg", "templates_parameters_updated_msg");
+			model.addAttribute("success_msg", "templates.parameters.updated");
 		}
 
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());

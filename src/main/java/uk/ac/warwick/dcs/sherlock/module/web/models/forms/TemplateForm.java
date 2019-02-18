@@ -10,22 +10,22 @@ import java.util.List;
 
 public class TemplateForm {
 
-    @NotNull(message = "{error_name_empty}")
+    @NotNull(message = "{error.name.empty}")
     @Size.List({
             @Size(
                     min = 1,
-                    message = "{error_name_empty}"),
+                    message = "{error.name.empty}"),
             @Size(
                     max = 64,
-                    message = "{error_name_length_max}")
+                    message = "{error.name.max_length}")
     })
     public String name;
 
-    @NotNull(message = "{error_language_empty}")
+    @NotNull(message = "{error.language.empty}")
     @ValidLanguage
     public String language;
 
-    @NotNull(message = "{error_public_empty}")
+    @NotNull(message = "{error.public.empty}")
     public boolean isPublic;
 
     public List<String> detectors = new ArrayList<>();

@@ -78,11 +78,11 @@ public class AdminController {
                     roleRepository.save(new Role("ADMIN", newAccount));
                 }
 
-                model.addAttribute("success_msg", "admin_account_new_start");
+                model.addAttribute("success_msg", "admin.accounts.password.start");
                 model.addAttribute("newPassword", newPassword);
                 return "settings/admin/passwordSuccess";
 			} else {
-				result.reject("error_email_exists");
+				result.reject("error.email.exists");
 			}
 		}
 

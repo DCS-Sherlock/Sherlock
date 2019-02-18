@@ -59,7 +59,7 @@ public class AccountController {
 			account.getAccount().setUsername(accountNameForm.getUsername());
 			accountRepository.save(account.getAccount());
 
-			model.addAttribute("success_msg", "account_updated_name");
+			model.addAttribute("success_msg", "account.name.updated");
 		}
 
 		return "settings/account/fragments/name";
@@ -92,7 +92,7 @@ public class AccountController {
 			if (!accountEmailForm.getEmail().equals(account.getEmail())) {
 				//if attempting to change, check that the email doesn't already exist
 				if (accountRepository.findByEmail(accountEmailForm.getEmail()) != null) {
-					result.reject("error_email_exists");
+					result.reject("error.email.exists");
 					return "settings/account/fragments/email";
 				}
 			}
@@ -115,7 +115,7 @@ public class AccountController {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			accountEmailForm.setOldPassword("");
-			model.addAttribute("success_msg", "account_updated_email");
+			model.addAttribute("success_msg", "account.email.updated");
 		}
 
 		return "settings/account/fragments/email";
@@ -147,7 +147,7 @@ public class AccountController {
 			accountRepository.save(account.getAccount());
 
 			model.addAttribute("accountPasswordForm", new AccountPasswordForm());
-			model.addAttribute("success_msg", "account_updated_password");
+			model.addAttribute("success_msg", "account.password.updated");
 		}
 
 		return "settings/account/fragments/password";

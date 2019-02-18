@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='templates'">
 <head>
-    <title th:text="#{templates_manage_title}"></title>
+    <title th:text="#{templates.manage.title}"></title>
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
@@ -10,13 +10,13 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h4 class="float-left mt-1">
-                        <span th:text="#{templates_manage_title}"></span>
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/templates}" th:text="#{templates_link_return}"></a>
+                        <span th:text="#{templates.manage.title}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/templates}" th:text="#{templates.return}"></a>
                     </h4>
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
                             <div class="btn-group">
-                                <a class="btn btn-primary" th:if="${template.isOwner()}" data-js='modal' th:href="@{/dashboard/templates/delete/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_delete}"></a>
+                                <a class="btn btn-primary" th:if="${template.isOwner()}" data-js='modal' th:href="@{/dashboard/templates/{id}/delete(id=${template.getTemplate().getId()})}" th:text="#{link.delete}"></a>
                             </div>
                         </div>
                     </div>
@@ -25,12 +25,12 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6">
-                                <h5 th:text="#{templates_basic_subtitle}"></h5>
-                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/dashboard/templates/manage/details/{id}(id=${template.getTemplate().getId()})})"></div>
+                                <h5 th:text="#{templates.details.title}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='details-parent', arealink=@{/dashboard/templates/manage/{id}/details(id=${template.getTemplate().getId()})})"></div>
                             </div>
                             <div class="col-md-6">
-                                <h5 th:text="#{templates_detectors_subtitle}"></h5>
-                                <div th:replace="fragments/js-area :: js-area(areaid='detectors-parent', arealink=@{/dashboard/templates/manage/detectors/{id}(id=${template.getTemplate().getId()})})"></div>
+                                <h5 th:text="#{templates.detectors.title}"></h5>
+                                <div th:replace="fragments/js-area :: js-area(areaid='detectors-parent', arealink=@{/dashboard/templates/manage/{id}/detectors(id=${template.getTemplate().getId()})})"></div>
                             </div>
                         </div>
                     </div>

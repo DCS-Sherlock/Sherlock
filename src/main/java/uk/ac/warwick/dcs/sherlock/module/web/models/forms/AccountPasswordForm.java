@@ -8,18 +8,18 @@ import javax.validation.constraints.Size;
 
 @PasswordsMatch
 public class AccountPasswordForm {
-    @NotNull(message = "{error_old_password_invalid}")
+    @NotNull(message = "{error.current_password.invalid}")
     @ValidPassword
     public String oldPassword;
 
-    @NotNull(message = "{error_password_empty}")
+    @NotNull(message = "{error.password.empty}")
     @Size.List({
             @Size(
                     min = 8,
-                    message = "{error_password_empty}"),
+                    message = "{error.password.empty}"),
             @Size(
                     max = 64,
-                    message = "{error_password_length_max}")
+                    message = "{error.password.max_length}")
     })
     public String newPassword;
 

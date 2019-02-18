@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='admin'">
 <head>
-    <title th:text="#{admin_accounts_manage_title}"></title>
+    <title th:text="#{admin.accounts.manage.title}"></title>
 </head>
 <body>
 <div id="modify-parent" class="container" layout:fragment="content">
@@ -9,7 +9,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{admin_accounts_manage_title}"></h5>
+                <h5 class="modal-title" th:text="#{admin.accounts.manage.title}"></h5>
             </div>
             <div class="modal-body">
                 <form th:action="@{/admin/manage/{id}(id=${subAccount.getId()})}" data-js='form' data-js-target="#modify-parent" id="add-form" th:object="${accountForm}" method="post">
@@ -23,21 +23,21 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="name" th:text="#{variable_name}"></label>
-                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+                            <label for="name" th:text="#{variable.name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable.name}" th:value="*{name}" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="email" th:text="#{variable_email}"></label>
-                            <input type="email" id="email" name="email" class="form-control" th:placeholder="#{variable_email}" th:value="*{email}">
+                            <label for="email" th:text="#{variable.email}"></label>
+                            <input type="email" id="email" name="email" class="form-control" th:placeholder="#{variable.email}" th:value="*{email}">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12 mb-0">
-                            <label th:text="#{variable_admin}"></label>
+                            <label th:text="#{variable.admin}"></label>
                         </div>
                     </div>
 
@@ -45,23 +45,23 @@
                         <div class="form-group col-md-12">
                             <label for="isAdmin">
                                 <input type="checkbox" name="isAdmin" id="isAdmin" th:checked="*{isAdmin}" />
-                                <span th:text="#{variable_admin_msg}"></span>
+                                <span th:text="#{variable.admin_msg}"></span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="oldPassword" th:text="#{variable_old_password}"></label>
-                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" th:placeholder="#{variable_old_password}" th:value="*{oldPassword}" />
+                            <label for="oldPassword" th:text="#{variable.current_password}"></label>
+                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" th:placeholder="#{variable.current_password}" th:value="*{oldPassword}" />
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary d-none js-cancel" th:text="#{link_close}" data-js="triggerAreaLink" data-js-target="#list-parent"></button>
-                <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link_cancel}"></a>
-                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link_update}"></button>
+                <button type="button" class="btn btn-secondary d-none js-cancel" th:text="#{link.close}" data-js="triggerAreaLink" data-js-target="#list-parent"></button>
+                <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link.cancel}"></a>
+                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link.update}"></button>
             </div>
         </div>
     </div>

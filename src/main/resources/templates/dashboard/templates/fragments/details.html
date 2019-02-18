@@ -6,7 +6,7 @@
 <body>
 
 <div th:fragment="form-fragment">
-    <form th:action="@{/dashboard/templates/manage/details/{id}(id=${template.getTemplate().getId()})}" data-js='form' data-js-target="#details-parent" id="add-form" th:object="${templateForm}" method="post">
+    <form th:action="@{/dashboard/templates/manage/{id}/details(id=${template.getTemplate().getId()})}" data-js='form' data-js-target="#details-parent" id="add-form" th:object="${templateForm}" method="post">
         <div th:if="${#fields.hasAnyErrors()}">
             <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
         </div>
@@ -18,14 +18,14 @@
 
         <div class="form-row">
             <div class="form-group col-md-12">
-                <label for="name" th:text="#{variable_name}"></label>
-                <input type="text" class="form-control" th:disabled="${!template.isOwner() ? true : false}" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+                <label for="name" th:text="#{variable.name}"></label>
+                <input type="text" class="form-control" th:disabled="${!template.isOwner() ? true : false}" id="name" name="name" th:placeholder="#{variable.name}" th:value="*{name}" />
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-12">
-                <label  th:for="*{language}" th:text="#{variable_language}"></label>
+                <label  th:for="*{language}" th:text="#{variable.language}"></label>
                 <select class="form-control" th:disabled="${!template.isOwner() ? true : false}" th:field="*{language}" data-js="select" data-js-target="#detector-list" th:data-js-href="@{/dashboard/templates/detectors/}">
                     <option th:each="language : ${languageList}"
                             th:value="${language}"
@@ -37,7 +37,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-12 mb-0">
-                <label th:text="#{variable_detectors}"></label>
+                <label th:text="#{variable.detectors}"></label>
             </div>
         </div>
 
@@ -50,13 +50,13 @@
                             <span th:text="${detector.getDisplayName()}"></span>
                             <span
                                     th:if="${detector.getDescription().length() > 0}"
-                                    th:text="#{message_description}"
+                                    th:text="#{tooltip}"
                                     data-toggle="tooltip" data-placement="top"
                                     th:title="${detector.getDescription()}"
                             ></span>
                         </label> <br />
                     </th:block>
-                    <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
+                    <span th:if="${detectorList.empty}" th:text="#{templates.no_detectors}"></span>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
         <div sec:authorize="isAuthenticated() && !hasAuthority('LOCAL_USER')">
             <div class="form-row">
                 <div class="form-group col-md-12 mb-0">
-                    <label th:text="#{variable_public}"></label>
+                    <label th:text="#{variable.public}"></label>
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
                 <div class="form-group col-md-12">
                     <label for="isPublic">
                         <input type="checkbox" name="isPublic" id="isPublic" th:checked="*{isPublic}" />
-                        <span th:text="#{variable_public_msg}"></span>
+                        <span th:text="#{variable.public_msg}"></span>
                     </label>
                 </div>
             </div>
@@ -84,7 +84,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-12">
-                <button th:if="${template.isOwner()}" type="submit" class="btn btn-primary float-right" th:text="#{link_update}"></button>
+                <button th:if="${template.isOwner()}" type="submit" class="btn btn-primary float-right" th:text="#{link.update}"></button>
             </div>
         </div>
     </form>

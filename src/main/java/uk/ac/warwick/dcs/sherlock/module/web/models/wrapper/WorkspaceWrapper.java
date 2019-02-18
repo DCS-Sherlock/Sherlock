@@ -93,6 +93,10 @@ public class WorkspaceWrapper {
         return this.iWorkspace.getFiles();
     }
 
+    public List<ISubmission> getSubmissions() {
+        return this.iWorkspace.getSubmissions();
+    }
+
     public List<IJob> getJobs() {
         return this.iWorkspace.getJobs();
     }

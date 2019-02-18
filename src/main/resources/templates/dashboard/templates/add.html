@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='templates'">
 <head>
-    <title th:text="#{templates_add_title}"></title>
+    <title th:text="#{templates.add.title}"></title>
 </head>
 <body>
 <div id="add-parent" class="container" layout:fragment="content">
@@ -9,24 +9,24 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{templates_add_title}"></h5>
+                <h5 class="modal-title" th:text="#{templates.add.title}"></h5>
             </div>
-            <div class="modal-body">
-                <form th:action="@{/dashboard/templates/add}" data-js='form' data-js-target="#add-parent" id="add-form" th:object="${templateForm}" method="post">
+            <form th:action="@{/dashboard/templates/add}" data-js='form' data-js-target="#add-parent" id="add-form" th:object="${templateForm}" method="post">
+                <div class="modal-body">
                     <div th:if="${#fields.hasAnyErrors()}">
                         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="name" th:text="#{variable_name}"></label>
-                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+                            <label for="name" th:text="#{variable.name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable.name}" th:value="*{name}" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label  th:for="*{language}" th:text="#{variable_language}"></label>
+                            <label  th:for="*{language}" th:text="#{variable.language}"></label>
                             <select class="form-control" th:field="*{language}" data-js="select" data-js-target="#detector-list" th:data-js-href="@{/dashboard/templates/detectors/}">
                                 <option th:each="language : ${languageList}"
                                         th:value="${language}"
@@ -38,7 +38,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12 mb-0">
-                            <label th:text="#{variable_detectors}"></label>
+                            <label th:text="#{variable.detectors}"></label>
                         </div>
                     </div>
 
@@ -51,13 +51,13 @@
                                         <span th:text="${detector.getDisplayName()}"></span>
                                         <span
                                                 th:if="${detector.getDescription().length() > 0}"
-                                                th:text="#{message_description}"
+                                                th:text="#{tooltip}"
                                                 data-toggle="tooltip" data-placement="top"
                                                 th:title="${detector.getDescription()}"
                                         ></span>
                                     </label> <br />
                                 </th:block>
-                                <span th:if="${detectorList.empty}" th:text="#{templates_basic_detectors_none_msg}"></span>
+                                <span th:if="${detectorList.empty}" th:text="#{templates.no_detectors}"></span>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     <div sec:authorize="isAuthenticated() && !hasAuthority('LOCAL_USER')">
                         <div class="form-row">
                             <div class="form-group col-md-12 mb-0">
-                                <label th:text="#{variable_public}"></label>
+                                <label th:text="#{variable.public}"></label>
                             </div>
                         </div>
 
@@ -73,7 +73,7 @@
                             <div class="form-group col-md-12">
                                 <label for="isPublic">
                                     <input type="checkbox" name="isPublic" id="isPublic" th:checked="*{isPublic}" />
-                                    <span th:text="#{variable_public_msg}"></span>
+                                    <span th:text="#{variable.public_msg}"></span>
                                 </label>
                             </div>
                         </div>
@@ -82,14 +82,13 @@
                     <div sec:authorize="isAuthenticated() && hasAuthority('LOCAL_USER')">
                         <input type="checkbox" class="invisible" name="isPublic" id="isPublic" th:checked="*{isPublic}" />
                     </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
-                <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/templates}" th:text="#{link_cancel}"></a>
-                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link_save}"></button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/templates}" th:text="#{link.cancel}"></a>
+                    <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link.save}"></button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

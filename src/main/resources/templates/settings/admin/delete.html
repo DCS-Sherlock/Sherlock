@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='admin'">
 <head>
-    <title th:text="#{admin_accounts_delete_title}"></title>
+    <title th:text="#{admin.accounts.delete.title}"></title>
 </head>
 <body>
 
@@ -9,11 +9,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{admin_accounts_delete_title}"></h5>
+                <h5 class="modal-title" th:text="#{admin.accounts.delete.title}"></h5>
             </div>
             <form th:action="@{/admin/delete/{id}(id=${subAccount.getId()})}" data-js='form' data-js-target="#delete-parent" id="delete-form" th:object="${passwordForm}" method="post">
                 <div class="modal-body">
-                    <div class="alert alert-danger" role="alert" th:text="#{admin_accounts_delete_msg}"></div>
+                    <div class="alert alert-danger" role="alert" th:text="#{admin.accounts.delete.warning}"></div>
 
                     <div th:if="${#fields.hasAnyErrors()}">
                         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
@@ -21,15 +21,15 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="confirmPassword" th:text="#{variable_old_password}"></label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" th:placeholder="#{variable_old_password}" th:value="*{confirmPassword}" />
+                            <label for="confirmPassword" th:text="#{variable.current_password}"></label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" th:placeholder="#{variable.current_password}" th:value="*{confirmPassword}" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
-                    <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link_cancel}"></a>
-                    <button type="submit" class="btn btn-primary" th:text="#{link_delete}"></button>
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link.cancel}"></a>
+                    <button type="submit" class="btn btn-primary" th:text="#{link.delete}"></button>
                 </div>
             </form>
         </div>

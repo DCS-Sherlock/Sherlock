@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class AccountEmailForm {
-    @Size(min = 1, message = "{error_email_empty}")
-    @Email(message = "{error_email_invalid}")
+    @Size(min = 1, message = "{error.email.empty}")
+    @Email(message = "{error.email.invalid}")
     public String email;
 
-    @NotNull(message = "{error_old_password_invalid}")
+    @NotNull(message = "{error.current_password.invalid}")
     @ValidPassword
     public String oldPassword;
 
