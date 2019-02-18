@@ -27,25 +27,25 @@
                     <div class="container">
                         <div class="row text-center">
                             <div class="col-md-3">
-                                <h5>
+                                <h4>
                                     <span th:text="#{workspaces_results_status}"></span>
-                                </h5>
+                                </h4>
                                 <p>
                                     <span th:text="#{${results.getStatus()}}"></span>
                                 </p>
                             </div>
                             <div class="col-md-3">
-                                <h5>
+                                <h4>
                                     <span th:text="#{workspaces_results_job_id}"></span>
-                                </h5>
+                                </h4>
                                 <p>
                                     <span th:text="${results.getPersistentId()}"></span>
                                 </p>
                             </div>
                             <div class="col-md-6">
-                                <h5>
+                                <h4>
                                     <span th:text="#{workspaces_results_timestamp}"></span>
-                                </h5>
+                                </h4>
                                 <p>
                                     <span th:text="${results.getTimestamp()}"></span>
                                 </p>
@@ -54,17 +54,17 @@
                         <hr>
                         <div class="row text-center">
                             <div class="col-md-3">
-                                <h5>
+                                <h4>
                                     <span th:text="#{workspaces_results_submissions}"></span>
-                                </h5>
+                                </h4>
                                 <p>
                                     <span th:text="${results.getSubmissionCount()}"></span>
                                 </p>
                             </div>
                             <div class="col-md-9">
-                                <h5>
+                                <h4>
                                     <span th:text="#{workspaces_results_detectors}"></span>
-                                </h5>
+                                </h4>
                                 <th:block th:each="task : ${results.getTasks()}">
                                     <button type="button" class="btn btn-secondary"
                                             th:text="${task.getDisplayName()}"
@@ -78,20 +78,20 @@
                         <hr>
                         <div class="row">
                             <div class="col-lg-12">
-                                <h5 th:text="#{workspaces_results_graph}"></h5>
+                                <h4 th:text="#{workspaces_results_graph}"></h4>
                                 <div th:replace="fragments/js-area :: js-area(areaid='graph-parent', arealink=@{/dashboard/workspaces/manage/results/{id}/{job_id}/graph(id=${workspace.getId()},job_id=${results.getPersistentId()})})"></div>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 th:text="#{workspaces_results_submissions}"></h5>
-                                <table class="table table-hover table-borderless">
+                                <h4 th:text="#{workspaces_results_submissions}"></h4>
+                                <table class="table table-hover table-borderless table-responsive">
                                     <thead>
 
                                     <tr>
                                         <th class="text-center"><h5 th:text="#{workspaces_results_name_table}"></h5></th>
-                                        <th class="text-center"><h5 th:text="#{workspaces_results_score_table}"></h5></th>
+                                        <th class="text-center d-none d-xl-table-cell"><h5 th:text="#{workspaces_results_score_table}"></h5></th>
                                         <th class="text-center"><h5 th:text="#{workspaces_results_matches_table}"></h5></th>
                                         <th class="text-center"><h5 th:text="#{workspaces_results_report_table}"></h5></th>
                                     </tr>
@@ -103,13 +103,16 @@
                                                     <h6 class="mb-0">
                                                         <strong><span th:text="${result.key.getName()}"></span></strong>
                                                     </h6>
+                                                    <div class="d-xl-none">
+                                                        (<span th:classappend="@{score-{group}(group=${result.key.getScoreGroup()})}" th:text="${result.key.getScore()}"></span>)
+                                                    </div>
                                                 </td>
-                                                <td class="align-middle text-center shrink">
+                                                <td class="align-middle text-center shrink d-none d-xl-table-cell">
                                                     <span th:classappend="@{score-{group}(group=${result.key.getScoreGroup()})}" th:text="${result.key.getScore()}"></span>
                                                 </td>
-                                                <td class="align-middle">
+                                                <td class="align-middle min">
                                                     <th:block th:each="match : ${result.value}">
-                                                        <a type="button" class="btn btn-outline-primary btn-sm"
+                                                        <a type="button" class="btn btn-outline-primary btn-sm mt-1 mb-1 mr-1 btn-min-width"
                                                            th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/compare/{file1}/{file2}(id=${workspace.getId()},job_id=${results.getPersistentId()},file1=${result.key.getId()},file2=${match.getId()})}">
                                                             <span th:text="${match.getName()}"></span> <br />
                                                             (<span th:classappend="@{score-{group}(group=${match.getScoreGroup()})}" th:text="${match.getScore()}"></span>)
@@ -118,8 +121,9 @@
                                                 </td>
                                                 <td class="align-middle text-right">
                                                     <a type="button" class="btn btn-primary btn-sm"
-                                                       th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/report/{file_id}(id=${workspace.getId()},job_id=${results.getPersistentId()},file_id=${result.key.getId()})}"
-                                                       th:text="#{link_report}"></a>
+                                                       th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/report/{file_id}(id=${workspace.getId()},job_id=${results.getPersistentId()},file_id=${result.key.getId()})}">
+                                                        <span class="d-none d-lg-inline" th:text="#{link_report}"></span><span class="d-lg-none" th:text="#{link_view}"></span>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </th:block>

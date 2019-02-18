@@ -8758,6 +8758,10 @@ nav {
   min-width: 100px;
 }
 
+.navbar-dark .navbar-toggler {
+  border: none;
+}
+
 .active {
   background-color: #2B3E50;
 }
@@ -8798,10 +8802,18 @@ footer p:last-child {
   margin-bottom: 0;
 }
 
-/* Tables */
+/* Results Table */
 table .shrink {
   white-space: nowrap;
   width: 1%;
+}
+
+table .min {
+  min-width: 290px;
+}
+
+.btn-min-width {
+  min-width: 118px;
 }
 
 /* Scores */
