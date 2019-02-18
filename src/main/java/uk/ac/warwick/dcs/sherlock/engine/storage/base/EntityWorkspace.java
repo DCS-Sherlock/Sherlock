@@ -22,6 +22,9 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	private String lang;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<EntityArchive> submissions = new ArrayList<>();
+
+	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityFile> files = new ArrayList<>();
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -52,7 +55,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	@Override
 	public List<ISubmission> getSubmissions() {
-		return null;
+		return new LinkedList<>(this.submissions);
 	}
 
 	@Override

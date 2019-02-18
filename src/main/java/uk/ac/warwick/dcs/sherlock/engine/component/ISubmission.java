@@ -14,4 +14,6 @@ public interface ISubmission {
 
 	List<ISubmission> getContainedDirectories();
 
+	String getName();
+
 }

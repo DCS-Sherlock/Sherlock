@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
@@ -57,6 +59,25 @@ public class BaseStorage implements IStorageWrapper {
 	@Override
 	public void close() {
 		this.database.close();
+	}
+
+	@Override
+	public ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
+		if (!(workspace instanceof EntityWorkspace)) {
+			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityWorkspace w = (EntityWorkspace) workspace;
+
+		if (w.getSubmissions().stream().anyMatch(x -> x.getName().equals(submissionName))) {
+			logger.warn("Duplicate submission name: [Will be sorted so this can be handled in the UI and either an alternate name submitted or submission can be merged]" + submissionName);
+			return null;
+		}
+
+		EntityArchive submission = new EntityArchive(submissionName);
+		submission.setSubmissionArchive(w);
+		this.database.storeObject(submission);
+
+		return submission;
 	}
 
 	@Override
@@ -111,25 +132,31 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException {
-		if (!(workspace instanceof EntityWorkspace)) {
-			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
-		}
-		EntityWorkspace w = (EntityWorkspace) workspace;
-
-		if (FilenameUtils.getExtension(filename).equals("zip")) {
-			this.storeArchive(w, filename, fileContent);
-		}
-		else {
-			EntityArchive submission = this.newSubmission(FilenameUtils.removeExtension(filename));
-			this.storeIndividualFile(w, filename, fileContent, submission);
+	@Deprecated
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException {
+		EntityArchive sub = (EntityArchive) this.createSubmission(workspace, FilenameUtils.removeExtension(filename));
+		if (sub != null) {
+			this.storeFile(sub, filename, fileContent);
 		}
 	}
 
-	private void storeArchive(EntityWorkspace workspace, String filename, byte[] fileContent) {
-		try {
-			EntityArchive submission = this.newSubmission(FilenameUtils.removeExtension(filename));
+	@Override
+	public void storeFile(ISubmission submission, String filename, byte[] fileContent) throws SubmissionUnsupportedException {
+		if (!(submission instanceof EntityArchive)) {
+			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityArchive s = (EntityArchive) submission;
 
+		if (FilenameUtils.getExtension(filename).equals("zip")) {
+			this.storeArchive(s, fileContent);
+		}
+		else {
+			this.storeIndividualFile(s, filename, fileContent);
+		}
+	}
+
+	private void storeArchive(EntityArchive submission, byte[] fileContent) {
+		try {
 			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
 			ZipEntry zipEntry = zis.getNextEntry();
 			EntityArchive curArchive = submission;
@@ -149,7 +176,7 @@ public class BaseStorage implements IStorageWrapper {
 					}
 				}
 				else {
-					this.storeIndividualFile(workspace, zipEntry.getName(), IOUtils.toByteArray(zis), curArchive);
+					this.storeIndividualFile(curArchive, zipEntry.getName(), IOUtils.toByteArray(zis));
 				}
 				zipEntry = zis.getNextEntry();
 			}
@@ -161,19 +188,13 @@ public class BaseStorage implements IStorageWrapper {
 		}
 	}
 
-	private EntityArchive newSubmission(String name) {
-		EntityArchive submission = new EntityArchive(name);
-		this.database.storeObject(submission);
-		return submission;
-	}
-
-	private void storeIndividualFile(EntityWorkspace workspace, String filename, byte[] fileContent, EntityArchive archive) {
+	private void storeIndividualFile(EntityArchive archive, String filename, byte[] fileContent) {
 		EntityFile file = new EntityFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}
 
-		file.setWorkspace(workspace);
+		file.setWorkspace(archive.getWorkspace());
 		this.database.storeObject(file);
 	}
 }
