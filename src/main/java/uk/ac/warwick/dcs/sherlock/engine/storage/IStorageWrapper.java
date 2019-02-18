@@ -17,6 +17,16 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	void close();
 
 	/**
+	 * Create a new submission, if one does not exist for the name in the workspace
+	 *
+	 * @param workspace      workspace to create submission in
+	 * @param submissionName submission name to show to the user, should identify the file or files
+	 *
+	 * @return the new submission instance, or null if one of the same name already exists for the workspace
+	 */
+	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
+
+	/**
 	 * Create a new IWorkspace instance
 	 *
 	 * @param name name to create workspace under
@@ -32,6 +42,16 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @return class for ICodeBlockGroup
 	 */
 	Class<? extends ICodeBlockGroup> getCodeBlockGroupClass();
+
+	/**
+	 * Fetches a submission for the passed name if one exists, else returns null
+	 *
+	 * @param workspace      workspace to search for submission
+	 * @param submissionName submission name
+	 *
+	 * @return submission if exists, else null
+	 */
+	ISubmission getSubmissionFromName(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
 
 	/**
 	 * @param ids workspace ids to fetch
@@ -67,17 +87,9 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException;
 
 	/**
-	 * Create a new submission
-	 *
-	 * @param workspace   workspace to create submission in
-	 * @param submissionName   submission name to show to the user, should identify the file or files
-	 */
-	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
-
-	/**
 	 * Store file to a submission
 	 *
-	 * @param submission   submission to add file to
+	 * @param submission  submission to add file to
 	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
 	 * @param fileContent raw content of the submission file
 	 */

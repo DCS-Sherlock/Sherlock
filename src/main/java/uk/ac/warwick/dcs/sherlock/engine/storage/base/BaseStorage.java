@@ -69,7 +69,7 @@ public class BaseStorage implements IStorageWrapper {
 		EntityWorkspace w = (EntityWorkspace) workspace;
 
 		if (w.getSubmissions().stream().anyMatch(x -> x.getName().equals(submissionName))) {
-			logger.warn("Duplicate submission name: [Will be sorted so this can be handled in the UI and either an alternate name submitted or submission can be merged]" + submissionName);
+			logger.info("Duplicate submission name: " + submissionName);
 			return null;
 		}
 
@@ -90,6 +90,16 @@ public class BaseStorage implements IStorageWrapper {
 	@Override
 	public Class<? extends ICodeBlockGroup> getCodeBlockGroupClass() {
 		return EntityCodeBlockGroup.class;
+	}
+
+	@Override
+	public ISubmission getSubmissionFromName(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
+		if (!(workspace instanceof EntityWorkspace)) {
+			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityWorkspace w = (EntityWorkspace) workspace;
+
+		return w.getSubmissions().stream().filter(x -> x.getName().equals(submissionName)).findAny().orElse(null);
 	}
 
 	@Override

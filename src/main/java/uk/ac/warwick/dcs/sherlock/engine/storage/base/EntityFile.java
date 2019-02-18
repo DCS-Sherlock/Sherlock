@@ -28,15 +28,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	private String hash;
 	private byte[] secure;
 
-	public EntityFile() {
+	 EntityFile() {
 		super();
 	}
 
-	public EntityFile(String filename, String extension, Timestamp timestamp) {
-		this(filename, extension, timestamp, null);
-	}
-
-	public EntityFile(String filename, String extension, Timestamp timestamp, EntityArchive archive) {
+	EntityFile(String filename, String extension, Timestamp timestamp, EntityArchive archive) {
 		super();
 		this.filename = filename;
 		this.extension = extension;
@@ -49,14 +45,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public boolean equals(ISourceFile file) {
 		return file.getPersistentId() == this.getPersistentId();
-	}
-
-	public EntityArchive getArchive() {
-		return archive;
-	}
-
-	public String getExtension() {
-		return this.extension;
 	}
 
 	@Override
@@ -80,16 +68,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
-	public String getFileIdentifier() {
-		StringBuilder build = new StringBuilder();
-		if (this.archive != null) {
-			this.getFileDisplayNameRecurse(build, this.archive, "-");
-		}
-		build.append(this.filename).append(".").append(this.extension);
-		return build.toString();
-	}
-
-	@Override
 	public String getFileDisplayName() {
 		StringBuilder build = new StringBuilder();
 		build.append(this.filename).append(".").append(this.extension);
@@ -106,8 +84,14 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		return build.toString();
 	}
 
-	String getFilename() {
-		return this.filename;
+	@Override
+	public String getFileIdentifier() {
+		StringBuilder build = new StringBuilder();
+		if (this.archive != null) {
+			this.getFileDisplayNameRecurse(build, this.archive, "-");
+		}
+		build.append(this.filename).append(".").append(this.extension);
+		return build.toString();
 	}
 
 	@Override
@@ -148,6 +132,18 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public String toString() {
 		return this.getFileDisplayName();
+	}
+
+	EntityArchive getArchive() {
+		return archive;
+	}
+
+	String getExtension() {
+		return this.extension;
+	}
+
+	String getFilename() {
+		return this.filename;
 	}
 
 	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive, String sep) {

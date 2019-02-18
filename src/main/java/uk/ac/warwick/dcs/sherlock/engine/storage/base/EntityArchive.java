@@ -30,29 +30,84 @@ public class EntityArchive implements ISubmission, Serializable {
 	@OneToMany (mappedBy = "archive", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityFile> files;
 
-	public EntityArchive() {
+	EntityArchive() {
 		super();
 	}
 
-	public EntityArchive(String name) {
+	EntityArchive(String name) {
 		this(name, null);
 	}
 
-	public EntityArchive(String name, EntityArchive archive) {
+	EntityArchive(String name, EntityArchive archive) {
 		super();
 		this.name = name;
 		this.parent = archive;
 		this.workspace = null;
 	}
 
-	public List<EntityArchive> getChildren() {
-		BaseStorage.instance.database.refreshObject(this);
-		return this.children;
+	@Override
+	public int compareTo(ISubmission o) {
+		return this.name.compareTo(o.getName());
+	}
+
+	@Override
+	public boolean equals(ISubmission o) {
+		return o.getId() == this.id;
 	}
 
 	@Override
 	public List<ISourceFile> getAllFiles() {
 		return this.parent == null ? this.getAllFilesRecursive(new LinkedList<>()) : this.parent.getAllFiles();
+	}
+
+	@Override
+	public List<ISubmission> getContainedDirectories() {
+		BaseStorage.instance.database.refreshObject(this);
+		return new LinkedList<>(this.getChildren());
+	}
+
+	@Override
+	public List<ISourceFile> getContainedFiles() {
+		BaseStorage.instance.database.refreshObject(this);
+		return new LinkedList<>(this.getFiles());
+	}
+
+	@Override
+	public long getId() {
+		return this.parent == null ? this.id : this.parent.getId();
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public EntityArchive getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public int getTotalFileCount() {
+		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();
+	}
+
+	List<EntityArchive> getChildren() {
+		BaseStorage.instance.database.refreshObject(this);
+		return this.children;
+	}
+
+	List<EntityFile> getFiles() {
+		BaseStorage.instance.database.refreshObject(this);
+		return this.files;
+	}
+
+	EntityWorkspace getWorkspace() {
+		return this.parent != null ? this.parent.getWorkspace() : this.workspace;
+	}
+
+	void setSubmissionArchive(EntityWorkspace workspace) {
+		this.workspace = workspace;
+		this.parent = null;
 	}
 
 	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> files) {
@@ -70,57 +125,13 @@ public class EntityArchive implements ISubmission, Serializable {
 		return files;
 	}
 
-	@Override
-	public List<ISubmission> getContainedDirectories() {
-		BaseStorage.instance.database.refreshObject(this);
-		return new LinkedList<>(this.getChildren());
-	}
-
-	@Override
-	public List<ISourceFile> getContainedFiles() {
-		BaseStorage.instance.database.refreshObject(this);
-		return new LinkedList<>(this.getFiles());
-	}
-
-	public List<EntityFile> getFiles() {
-		BaseStorage.instance.database.refreshObject(this);
-		return this.files;
-	}
-
-	@Override
-	public long getId() {
-		return this.parent == null ? this.id : this.parent.getId();
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	public EntityArchive getParent() {
-		return this.parent;
-	}
-
 	/**
 	 * Calculates the file count of this directory and all subdirectories
-	 * @return
+	 *
+	 * @return count
 	 */
 	private int getFileCount() {
 		BaseStorage.instance.database.refreshObject(this);
 		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getFileCount).sum() : 0);
-	}
-
-	@Override
-	public int getTotalFileCount() {
-		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();
-	}
-
-	public EntityWorkspace getWorkspace() {
-		return this.parent != null ? this.parent.getWorkspace() : this.workspace;
-	}
-
-	public void setSubmissionArchive(EntityWorkspace workspace) {
-		this.workspace = workspace;
-		this.parent = null;
 	}
 }

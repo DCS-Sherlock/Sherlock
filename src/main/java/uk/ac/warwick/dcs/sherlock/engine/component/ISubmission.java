@@ -4,7 +4,14 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 
 import java.util.*;
 
-public interface ISubmission {
+public interface ISubmission extends Comparable<ISubmission> {
+
+	/**
+	 * submission equality check
+	 * @param o submission to check against
+	 * @return is submission equal
+	 */
+	boolean equals(ISubmission o);
 
 	/**
 	 * Returns a list of all files, across all levels of this submission
