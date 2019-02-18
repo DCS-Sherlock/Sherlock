@@ -41,7 +41,7 @@ public class ExceptionControllerAdvice {
             TemplateNotFound.class,
             SourceFileNotFound.class,
             DetectorNotFound.class,
-            JobNotFound.class
+            ResultsNotFound.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFoundError(Model model, Exception e) {

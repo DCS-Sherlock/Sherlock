@@ -28,7 +28,7 @@
                         </div>
                         <script>
                             function graphData() {
-                                return JSON.parse('[(${results.getResultsMapJSON()})]');
+                                return JSON.parse('[(${results.getJSONMap()})]');
                             }
                         </script>
                         <div data-js="networkArea">
@@ -50,7 +50,7 @@
                                         <tbody id="network-included-template">
                                             <tr>
                                                 <th class="align-middle">
-                                                    <h5 class="mb-0 js-name"></h5>
+                                                    <h5 class="mb-0 js-label"></h5>
                                                 </th>
                                                 <td class="align-middle text-right">
                                                     <div class="btn-group">
@@ -85,7 +85,7 @@
                                         <tbody id="network-excluded-template">
                                             <tr>
                                                 <th class="align-middle">
-                                                    <h5 class="mb-0 js-name">
+                                                    <h5 class="mb-0 js-label">
                                                     </h5>
                                                 </th>
                                                 <td class="align-middle text-right">

@@ -134,42 +134,110 @@ function loadNetworkGraph() {
         var network = new vis.Network(container, data, options);
 
         var json = graphData();
+        json.nodes.sort(sortByLabel);
+
         var dataURL = "";
 
-        function addNode(id, name, colour) {
-            try {
-                nodes.add({
-                    id: id,
-                    label: name,
-                    color: colour
-                });
-            }
-            catch (err) { }
+        function sortByLabel(a, b){
+            var aName = a.label.toLowerCase();
+            var bName = b.label.toLowerCase();
+            return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
         }
 
-        function addEdge(from, to, colour) {
-            var id = Math.min(from, to) + "_" + Math.max(from, to);
+        function addNode(id) {
+            var result = $.grep(json.nodes, function( n, i ) {
+                return n.id == id;
+            });
+
+            if (result.length == 1) {
+                var node = result[0];
+
+                try {
+                    nodes.add({
+                        id: node.id,
+                        label: node.label,
+                        color: colours[node.group]
+                    });
+                }
+                catch (err) { }
+            }
+        }
+
+        function addEdge(id1, id2) {
+            var edge1 = $.grep(json.matches, function( n, i ) {
+                return n.to == id1 && n.from == id2;
+            });
+
+            var edge2 = $.grep(json.matches, function( n, i ) {
+                return n.to == id2 && n.from == id1;
+            });
+
+            var array = $.merge(edge1, edge2);
+
+            var edge = array[0];
+
+            if (array.length > 1 && edge.score < array[1].score) {
+                var node = array[1];
+            }
+
+            var id = Math.min(edge.to, edge.from) + "_" + Math.max(edge.to, edge.from);
 
             try {
                 edges.add({
                     id: id,
-                    from: Math.min(from, to),
-                    to: Math.max(from, to),
-                    color: colour
+                    from: edge.from,
+                    to: edge.to,
+                    color: colours[edge.group]
                 });
             }
             catch (err) { }
         }
 
-        function addMatches(node) {
-            for(var j = 0; j < node.matches.length; j++) {
-                var match = node.matches[j];
-                addEdge(node.id, match.id, colours[match.scoreGroup]);
+        function addMatches(id) {
+            var to = $.grep(json.matches, function( n, i ) {
+                return n.to == id;
+            });
+
+            var from = $.grep(json.matches, function( n, i ) {
+                return n.from == id;
+            });
+
+            var array = $.merge(to, from);
+
+            for (var i = 0; i < array.length; i++) {
+                var match = array[i];
+                addEdge(match.to, match.from);
             }
+        }
+
+        function addMatchesIncNodes(id) {
+            var to = $.grep(json.matches, function( n, i ) {
+                return n.to == id;
+            });
+
+            for (var i = 0; i < to.length; i++) {
+                var match = to[i];
+                addEdge(match.to, match.from);
+            }
+
+            var from = $.grep(json.matches, function( n, i ) {
+                return n.from == id;
+            });
+
+            for (var i = 0; i < from.length; i++) {
+                var match = from[i];
+                addNode(match.to);
+                addEdge(match.to, match.from);
+            }
+
+            update();
         }
 
         function clickEvent() {
             var edgeDelete = $("[data-js='edgeDelete']");
+            var nodeDelete = $("[data-js='nodeDelete']");
+            var nodeMatches = $("[data-js='nodeMatches']");
+
             if (network.getSelectedEdges().length == 0) {
                 edgeDelete.prop("disabled", true);
                 edgeDelete.addClass("disabled");
@@ -178,43 +246,21 @@ function loadNetworkGraph() {
                 edgeDelete.removeClass("disabled");
             }
 
-            var nodeMatches = $("[data-js='nodeMatches']");
-            var nodeDelete = $("[data-js='nodeDelete']");
             if (network.getSelectedNodes().length == 0) {
-                nodeMatches.prop("disabled", true);
-                nodeMatches.addClass("disabled");
                 nodeDelete.prop("disabled", true);
                 nodeDelete.addClass("disabled");
+
+                nodeMatches.prop("disabled", true);
+                nodeMatches.addClass("disabled");
             } else {
-                nodeMatches.prop("disabled", false);
-                nodeMatches.removeClass("disabled");
                 nodeDelete.prop("disabled", false);
                 nodeDelete.removeClass("disabled");
+
+                nodeMatches.prop("disabled", false);
+                nodeMatches.removeClass("disabled");
             }
         }
 
-        function submissionMatchesEvent(target) {
-            var result = $.grep(json, function( n, i ) {
-                return n.id == target;
-            });
-
-            if (result.length == 1) {
-                var node = result[0];
-                for(var j = 0; j < node.matches.length; j++) {
-                    var match = node.matches[j];
-                    var matchNode = $.grep(json, function( n, i ) {
-                        return n.id == match.id;
-                    });
-                    if (matchNode.length == 1) {
-                        var node2 = matchNode[0];
-                        addNode(node2.id, node2.name, colours[node2.scoreGroup]);
-                        addMatches(node2);
-                    }
-                }
-            }
-
-            update();
-        }
 
         function bindEvents() {
             $("[data-js='submissionAdd']").unbind();
@@ -222,16 +268,8 @@ function loadNetworkGraph() {
                 var input = $(this);
                 var target = input.attr("data-js-target");
 
-                var result = $.grep(json, function( n, i ) {
-                    return n.id == target;
-                });
-
-                if (result.length == 1) {
-                    var node = result[0];
-                    addNode(node.id, node.name, colours[node.scoreGroup]);
-                    addMatches(node);
-                }
-
+                addNode(target);
+                addMatches(target);
                 update();
             });
 
@@ -239,12 +277,16 @@ function loadNetworkGraph() {
             $("[data-js='submissionMatches']").click(function () {
                 var input = $(this);
                 var target = input.attr("data-js-target");
-                submissionMatchesEvent(target);
+
+                addMatchesIncNodes(target);
             });
 
             $("[data-js='submissionDelete']").unbind();
             $("[data-js='submissionDelete']").click(function () {
-                nodes.remove({id: $(this).attr("data-js-target")});
+                var input = $(this);
+                var target = input.attr("data-js-target");
+
+                nodes.remove({id: target});
                 update();
             });
         }
@@ -256,20 +298,20 @@ function loadNetworkGraph() {
             var visible = 0;
             var invisible = 0;
 
-            for(var i = 0; i < json.length; i++) {
-                var submission = json[i];
+            for(var i = 0; i < json.nodes.length; i++) {
+                var submission = json.nodes[i];
                 var node = nodes.get(submission.id);
 
                 if (node == null) { //Not visible on graph
                     var copy = excludedTemplate.clone();
-                    copy.find(".js-name").text(submission.name);
+                    copy.find(".js-label").text(submission.label);
                     copy.find(".js-id").attr("data-js-target", submission.id);
                     excludedArea.append(copy.html());
 
                     invisible++;
                 } else { //Visible in graph
                     var copy = includedTemplate.clone();
-                    copy.find(".js-name").text(submission.name);
+                    copy.find(".js-label").text(submission.label);
                     copy.find(".js-id").attr("data-js-target", submission.id);
                     includedArea.append(copy.html());
 
@@ -325,7 +367,7 @@ function loadNetworkGraph() {
 
             var selectedNodes = network.getSelectedNodes();
             for (var i in selectedNodes) {
-                submissionMatchesEvent(selectedNodes[i]);
+                addMatchesIncNodes(selectedNodes[i]);
             }
         });
 

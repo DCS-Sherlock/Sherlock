@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 
@@ -13,7 +12,7 @@ public class ResultsWrapper {
     private List<TaskWrapper> tasks;
 
     private Map<ResultsIdWrapper, List<ResultsIdWrapper>> resultsMap;
-    private Map<Integer, Integer> scoreGroups;
+    private Map<Integer, Integer> groupCounts;
 
     public ResultsWrapper(IJob job) {
         this.job = job;
@@ -21,7 +20,7 @@ public class ResultsWrapper {
         this.job.getTasks().forEach(t -> this.tasks.add(new TaskWrapper(t)));
 
         this.resultsMap = this.generateResultsMap();
-        this.scoreGroups = this.generateScoreGroups();
+        this.groupCounts = this.generateGroupCounts();
     }
 
     public long getPersistentId() {
@@ -50,14 +49,14 @@ public class ResultsWrapper {
         Map<ResultsIdWrapper, List<ResultsIdWrapper>> map = new HashMap<>();
 
         for (int id = 0; id < 50; id++){
-            ResultsIdWrapper wrapper = new ResultsIdWrapper(id, "Submission " + id, this.getRandomScore());
+            ResultsIdWrapper wrapper = new ResultsIdWrapper(id, "Submission " + id, this.tempRandomScore());
             List<ResultsIdWrapper> list = new ArrayList<>();
 
-            int max = this.getRandomNumberInRange(0, 10);
+            int max = this.tempRandomNumberInRange(0, 10);
             for (int count = 0; count <= max; count++) {
-                int subId = this.getRandomNumberInRange(1, 10);
+                int subId = this.tempRandomNumberInRange(1, 10);
                 if (subId != id) {
-                    list.add(new ResultsIdWrapper(subId, "Submission " + subId, this.getRandomScore()));
+                    list.add(new ResultsIdWrapper(subId, "Submission " + subId, this.tempRandomScore()));
                 }
             }
             map.put(wrapper, list);
@@ -70,7 +69,7 @@ public class ResultsWrapper {
         return resultsMap;
     }
 
-    private Map<Integer, Integer> generateScoreGroups() {
+    private Map<Integer, Integer> generateGroupCounts() {
         Map<Integer, Integer> map = new HashMap<>();
 
         for (int i = 0; i <= 9; i++) {
@@ -86,58 +85,43 @@ public class ResultsWrapper {
         return map;
     }
 
-    public Map<Integer, Integer> getScoreGroups() {
-        return scoreGroups;
+    public Map<Integer, Integer> getGroupCounts() {
+        return groupCounts;
     }
 
-    public String getResultsMapJSON(){
-        try {
-            return this.getResultsMapJSONPrivate();
-        } catch (JSONException e) {
-            return "";
-        }
-    }
-
-    private String getResultsMapJSONPrivate() throws JSONException {
-        JSONArray array = new JSONArray();
+    public String getJSONMap(){
+        JSONArray nodes = new JSONArray();
+        JSONArray matches = new JSONArray();
 
         for (Map.Entry<ResultsIdWrapper, List<ResultsIdWrapper>> entry : this.resultsMap.entrySet()) {
-            JSONArray matches = new JSONArray();
             for (ResultsIdWrapper item : entry.getValue()) {
                 JSONObject match = new JSONObject();
-                match.put("id", item.getId());
-                match.put("name", item.getName());
+                match.put("from", entry.getKey().getId());
+                match.put("to", item.getId());
                 match.put("score", item.getScore());
-                match.put("scoreGroup", item.getScoreGroup());
-
+                match.put("group", item.getScoreGroup());
                 matches.put(match);
             }
 
             JSONObject node = new JSONObject();
             node.put("id", entry.getKey().getId());
-            node.put("name", entry.getKey().getName());
+            node.put("label", entry.getKey().getName());
             node.put("score", entry.getKey().getScore());
-            node.put("scoreGroup", entry.getKey().getScoreGroup());
-            node.put("matches", matches);
-
-            array.put(node);
+            node.put("group", entry.getKey().getScoreGroup());
+            nodes.put(node);
         }
 
-        return array.toString();
+        JSONObject result = new JSONObject();
+        result.put("nodes", nodes);
+        result.put("matches", matches);
+        return result.toString();
     }
 
-//    public List<IResultJob> getResults() {
-//        return this.job.getResults();
-//    }
-
-    //TEMP CODE
-    private float getRandomScore() {
-        return this.getRandomNumberInRange(1, 100);
+    private float tempRandomScore() {
+        return this.tempRandomNumberInRange(1, 100);
     }
 
-    //TEMP CODE
-    private int getRandomNumberInRange(int min, int max) {
-
+    private int tempRandomNumberInRange(int min, int max) {
         if (min >= max) {
             return max;
         }

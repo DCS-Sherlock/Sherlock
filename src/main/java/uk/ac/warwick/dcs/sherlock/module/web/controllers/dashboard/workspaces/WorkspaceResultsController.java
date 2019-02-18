@@ -26,10 +26,10 @@ public class WorkspaceResultsController {
     @RequestMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/graph")
     public String graphGetFragment(
             @ModelAttribute("isAjax") boolean isAjax,
-            Model model
+            @PathVariable(value="pathid") long pathid,
+            @PathVariable(value="jobid") long jobid
     ) throws NotAjaxRequest {
-        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces");
-
+        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/results/" + pathid + "/" + jobid);
         return "dashboard/workspaces/results/fragments/graph";
     }
 
@@ -56,7 +56,7 @@ public class WorkspaceResultsController {
     @PostMapping("/dashboard/workspaces/manage/results/{pathid}/{jobid}/delete")
     public String deletePost(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("job") ResultsWrapper jobWrapper
+            @ModelAttribute("results") ResultsWrapper jobWrapper
     ) {
         //TODO: actually delete the job
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_job";
@@ -79,7 +79,7 @@ public class WorkspaceResultsController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @PathVariable(value="jobid") long jobid,
             Model model
-    ) throws JobNotFound {
+    ) throws ResultsNotFound {
         IJob iJob = null;
 
         for (IJob job : workspaceWrapper.getJobs())
@@ -87,22 +87,10 @@ public class WorkspaceResultsController {
                 iJob = job;
 
 
-        if (iJob == null) throw new JobNotFound("Job not found");
+        if (iJob == null) throw new ResultsNotFound("Result not found");
 
         ResultsWrapper wrapper = new ResultsWrapper(iJob);
         model.addAttribute("results", wrapper);
         return wrapper;
     }
-
-//    private IResultJob getResult(@ModelAttribute("job") ResultsWrapper jobWrapper, int id) throws SourceFileNotFound {
-//        IResultJob resultJob = jobWrapper.getResults().get(id);
-//
-//        if (resultJob == null) {
-//            throw new SourceFileNotFound("File not found");
-//        }
-//
-////        resultJob.getFileResults().get(0).getFile()
-//
-//        return resultJob;
-//    }
 }

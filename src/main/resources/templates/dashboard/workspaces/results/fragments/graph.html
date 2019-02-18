@@ -27,16 +27,16 @@
 
         var data = google.visualization.arrayToDataTable([
             [scoreText, submissionText],
-            [score_0_10, [(${results.getScoreGroups().get(0)})]],
-            [score_10_20, [(${results.getScoreGroups().get(1)})]],
-            [score_20_30, [(${results.getScoreGroups().get(2)})]],
-            [score_30_40, [(${results.getScoreGroups().get(3)})]],
-            [score_40_50, [(${results.getScoreGroups().get(4)})]],
-            [score_50_60, [(${results.getScoreGroups().get(5)})]],
-            [score_60_70, [(${results.getScoreGroups().get(6)})]],
-            [score_70_80, [(${results.getScoreGroups().get(7)})]],
-            [score_80_90, [(${results.getScoreGroups().get(8)})]],
-            [score_90_100, [(${results.getScoreGroups().get(9)})]]
+            [score_0_10, [(${results.getGroupCounts().get(0)})]],
+            [score_10_20, [(${results.getGroupCounts().get(1)})]],
+            [score_20_30, [(${results.getGroupCounts().get(2)})]],
+            [score_30_40, [(${results.getGroupCounts().get(3)})]],
+            [score_40_50, [(${results.getGroupCounts().get(4)})]],
+            [score_50_60, [(${results.getGroupCounts().get(5)})]],
+            [score_60_70, [(${results.getGroupCounts().get(6)})]],
+            [score_70_80, [(${results.getGroupCounts().get(7)})]],
+            [score_80_90, [(${results.getGroupCounts().get(8)})]],
+            [score_90_100, [(${results.getGroupCounts().get(9)})]]
         ]);
 
         var view = new google.visualization.DataView(data);
