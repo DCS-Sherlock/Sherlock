@@ -24,7 +24,7 @@ public class TestDetector extends AbstractPairwiseDetector<TestDetectorWorker> {
 
 	@Override
 	public String getDisplayName() {
-		return "Test Detector";
+		return "Test Detector Base";
 	}
 
 	@Override

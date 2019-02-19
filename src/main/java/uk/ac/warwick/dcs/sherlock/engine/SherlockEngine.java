@@ -49,6 +49,8 @@ public class SherlockEngine {
 	private boolean valid;
 
 	public SherlockEngine(Side side) {
+		AnnotationLoader.replaceSystemClassLoader();
+
 		this.valid = false;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 		SherlockEngine.side = side;
@@ -103,7 +105,7 @@ public class SherlockEngine {
 	 */
 	public static boolean isModulePresent(String classpath) {
 		try {
-			Class.forName(classpath);
+			Class.forName(classpath, true, ClassLoader.getSystemClassLoader());
 			return true;
 		}
 		catch (Exception e) {

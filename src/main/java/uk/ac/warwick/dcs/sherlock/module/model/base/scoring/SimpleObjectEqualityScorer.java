@@ -21,7 +21,7 @@ public class SimpleObjectEqualityScorer implements IScoreFunction {
 
 	@Override
 	public float score(ISourceFile mainFile, ISourceFile referenceFile, List<ICodeBlockGroup> mutualGroups) {
-		System.out.println(mutualGroups.size());
+		//System.out.println(mutualGroups.size());
 		return ran.nextFloat();
 	}
 }

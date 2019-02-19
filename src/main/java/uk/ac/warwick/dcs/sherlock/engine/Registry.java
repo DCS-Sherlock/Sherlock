@@ -56,7 +56,7 @@ public class Registry implements IRegistry {
 	public static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
 		ParameterizedType type = getHighestParamType(genericSuperclass);
 		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
-		return Class.forName(typeName);
+		return Class.forName(typeName, true, ClassLoader.getSystemClassLoader());
 	}
 
 	private static ParameterizedType getHighestParamType(Type type) {
@@ -331,6 +331,7 @@ public class Registry implements IRegistry {
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
 			logger.error("IDetector '{}' not registered. It has no AbstractDetectorWorker type (its generic parameter), this is not allowed. A generic type MUST be given", detector.getName());
+			e.printStackTrace();
 			return false;
 		}
 

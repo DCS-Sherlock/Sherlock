@@ -73,7 +73,7 @@ public class DetectorWrapper {
     public Class<? extends IDetector> getEngineDetector() throws DetectorNotFound {
         Class<? extends IDetector> detector = null;
         try {
-            detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName());
+            detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName(), true, ClassLoader.getSystemClassLoader());
         } catch (ClassNotFoundException e) {
             throw new DetectorNotFound("Detector no longer exists");
         }

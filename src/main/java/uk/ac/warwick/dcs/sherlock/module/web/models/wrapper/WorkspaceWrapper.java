@@ -154,7 +154,7 @@ public class WorkspaceWrapper {
 		IJob job = this.iWorkspace.createJob();
 
 		for (TDetector td : templateWrapper.getTemplate().getDetectors()) {
-            Class<? extends IDetector> detector = (Class<? extends IDetector>) Class.forName(td.getName());
+            Class<? extends IDetector> detector = (Class<? extends IDetector>) Class.forName(td.getName(), true, ClassLoader.getSystemClassLoader());
             job.addDetector(detector);
 		}
 
