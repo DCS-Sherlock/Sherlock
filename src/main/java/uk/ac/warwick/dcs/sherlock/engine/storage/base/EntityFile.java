@@ -154,7 +154,13 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		build.append(archive.getName()).append(sep);
 	}
 
+	@Override
 	public void remove() {
+		this.remove_();
+		this.archive.clean();
+	}
+
+	void remove_() {
 	 	try {
 		    BaseStorage.instance.filesystem.removeFile(this);
 		    BaseStorage.instance.database.removeObject(this);

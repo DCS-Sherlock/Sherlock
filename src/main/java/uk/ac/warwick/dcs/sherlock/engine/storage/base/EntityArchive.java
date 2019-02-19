@@ -101,7 +101,7 @@ public class EntityArchive implements ISubmission, Serializable {
 		}
 
 		if (this.files != null) {
-			files.forEach(EntityFile::remove);
+			files.forEach(EntityFile::remove_);
 		}
 
 		BaseStorage.instance.database.removeObject(this);
@@ -141,13 +141,31 @@ public class EntityArchive implements ISubmission, Serializable {
 		return files;
 	}
 
-	/**
-	 * Calculates the file count of this directory and all subdirectories
-	 *
-	 * @return count
-	 */
-	private int getFileCount() {
+	@Override
+	public int getFileCount() {
 		BaseStorage.instance.database.refreshObject(this);
 		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getFileCount).sum() : 0);
+	}
+
+	void clean() {
+		if (this.parent != null) {
+			this.parent.clean();
+		}
+		else {
+			this.cleanRecursive();
+		}
+	}
+
+	private void cleanRecursive() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.children != null) {
+			for (EntityArchive child : this.children) {
+				child.cleanRecursive();
+			}
+		}
+
+		if (this.getFileCount() == 0) {
+			this.remove();
+		}
 	}
 }

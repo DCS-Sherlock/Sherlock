@@ -53,4 +53,9 @@ public interface ISourceFile {
 	 * @return
 	 */
 	long getSubmissionId();
+
+	/**
+	 * Remove the file
+	 */
+	void remove();
 }

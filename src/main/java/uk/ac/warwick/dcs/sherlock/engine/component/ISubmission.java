@@ -56,6 +56,13 @@ public interface ISubmission extends Comparable<ISubmission> {
 	int getTotalFileCount();
 
 	/**
+	 * Calculates the file count of this directory and all subdirectories
+	 *
+	 * @return count
+	 */
+	int getFileCount();
+
+	/**
 	 * Remove the submission from the database, cannot be recovered.
 	 */
 	void remove();
