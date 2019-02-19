@@ -55,6 +55,7 @@ public class WorkspaceSubmissionController {
             @ModelAttribute("submission") ISubmission submission
     ) {
         //TODO: actually delete the submission
+	    submission.remove();
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_submission";
     }
 

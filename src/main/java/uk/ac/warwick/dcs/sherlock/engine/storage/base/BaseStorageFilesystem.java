@@ -80,6 +80,18 @@ public class BaseStorageFilesystem {
 		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
 	}
 
+	void removeFile(EntityFile file) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
+			return;
+		}
+
+		String tmp = this.computeLocator(this.computeFileIdentifier(file));
+		if (filesInStore.contains(tmp)) {
+			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
+		}
+	}
+
 	/**
 	 * Stores a tasks raw results on the filesystem
 	 *
@@ -111,13 +123,8 @@ public class BaseStorageFilesystem {
 	 * @return Objects to be removed from the database (files and tasks)
 	 */
 	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
-		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
-
-		List<String> filesInStore;
-		try {
-			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
-		}
-		catch (Exception e) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
 			return null;
 		}
 
@@ -282,6 +289,19 @@ public class BaseStorageFilesystem {
 		}
 
 		return true;
+	}
+
+	private List<String> getAllFiles() {
+		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
+		List<String> filesInStore;
+		try {
+			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
+		}
+		catch (Exception e) {
+			return null;
+		}
+
+		return filesInStore;
 	}
 
 	/**

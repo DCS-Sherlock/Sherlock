@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -151,5 +152,13 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 			this.getFileDisplayNameRecurse(build, archive.getParent(), sep);
 		}
 		build.append(archive.getName()).append(sep);
+	}
+
+	public void remove() {
+	 	try {
+		    BaseStorage.instance.filesystem.removeFile(this);
+		    BaseStorage.instance.database.removeObject(this);
+	    }
+	 	catch(Exception ignored){}
 	}
 }

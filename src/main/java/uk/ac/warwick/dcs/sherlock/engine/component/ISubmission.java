@@ -55,4 +55,9 @@ public interface ISubmission extends Comparable<ISubmission> {
 	 */
 	int getTotalFileCount();
 
+	/**
+	 * Remove the submission from the database, cannot be recovered.
+	 */
+	void remove();
+
 }

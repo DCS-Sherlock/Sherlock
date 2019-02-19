@@ -91,6 +91,22 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();
 	}
 
+	@Override
+	public void remove() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.children != null) {
+			for (EntityArchive child : this.children) {
+				child.remove();
+			}
+		}
+
+		if (this.files != null) {
+			files.forEach(EntityFile::remove);
+		}
+
+		BaseStorage.instance.database.removeObject(this);
+	}
+
 	List<EntityArchive> getChildren() {
 		BaseStorage.instance.database.refreshObject(this);
 		return this.children;
