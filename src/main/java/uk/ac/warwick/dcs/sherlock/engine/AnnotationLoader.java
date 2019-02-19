@@ -73,7 +73,7 @@ public class AnnotationLoader {
 				method.setAccessible(true);
 
 				for (URL url : classpathURLs) {
-					method.invoke(ClassLoader.getSystemClassLoader(), url);
+					method.invoke(SherlockEngine.classloader, url);
 				}
 			}
 			catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -86,7 +86,7 @@ public class AnnotationLoader {
 		moduleURLS.addAll(ClasspathHelper.forPackage("uk.ac.warwick.dcs.sherlock.launch"));
 
 		ConfigurationBuilder config = new ConfigurationBuilder();
-		config.addClassLoader(ClassLoader.getSystemClassLoader());
+		config.addClassLoader(SherlockEngine.classloader);
 		config.setUrls(moduleURLS);
 		config.setScanners(new SubTypesScanner(), new TypeAnnotationsScanner(), new MethodAnnotationsScanner());
 		config.filterInputsBy(new FilterBuilder().include(".*class"));

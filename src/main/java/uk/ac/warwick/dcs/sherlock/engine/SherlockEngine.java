@@ -22,6 +22,8 @@ import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorage;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -35,6 +37,7 @@ public class SherlockEngine {
 	public static Configuration configuration = null;
 	public static IStorageWrapper storage = null;
 	public static IExecutor executor = null;
+	public static URLClassLoader classloader;
 
 	static EventBus eventBus = null;
 	static Registry registry = null;
@@ -49,7 +52,8 @@ public class SherlockEngine {
 	private boolean valid;
 
 	public SherlockEngine(Side side) {
-		AnnotationLoader.replaceSystemClassLoader();
+		SherlockEngine.classloader = new URLClassLoader(new URL[0], this.getClass().getClassLoader());
+		//AnnotationLoader.replaceSystemClassLoader();
 
 		this.valid = false;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
@@ -105,7 +109,7 @@ public class SherlockEngine {
 	 */
 	public static boolean isModulePresent(String classpath) {
 		try {
-			Class.forName(classpath, true, ClassLoader.getSystemClassLoader());
+			Class.forName(classpath, true, SherlockEngine.classloader);
 			return true;
 		}
 		catch (Exception e) {

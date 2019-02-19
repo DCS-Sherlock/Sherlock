@@ -56,7 +56,7 @@ public class Registry implements IRegistry {
 	public static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
 		ParameterizedType type = getHighestParamType(genericSuperclass);
 		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
-		return Class.forName(typeName, true, ClassLoader.getSystemClassLoader());
+		return Class.forName(typeName, true, SherlockEngine.classloader);
 	}
 
 	private static ParameterizedType getHighestParamType(Type type) {

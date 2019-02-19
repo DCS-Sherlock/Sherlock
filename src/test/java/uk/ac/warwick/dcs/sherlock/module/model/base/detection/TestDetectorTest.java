@@ -18,7 +18,7 @@ class TestDetectorTest {
 	@Test
 	void getDisplayName() {
 		TestDetector t = new TestDetector();
-		assertEquals("Test Detector", t.getDisplayName());
+		assertEquals("Test Detector Base", t.getDisplayName());
 	}
 
 	@Test

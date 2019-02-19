@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.models.wrapper;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
@@ -73,7 +74,7 @@ public class DetectorWrapper {
     public Class<? extends IDetector> getEngineDetector() throws DetectorNotFound {
         Class<? extends IDetector> detector = null;
         try {
-            detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName(), true, ClassLoader.getSystemClassLoader());
+            detector = (Class<? extends IDetector>) Class.forName(this.tDetector.getName(), true, SherlockEngine.classloader);
         } catch (ClassNotFoundException e) {
             throw new DetectorNotFound("Detector no longer exists");
         }
