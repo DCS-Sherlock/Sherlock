@@ -51,7 +51,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 		if (this.submissions == null) {
 			return null;
 		}
-		
+
 		return this.submissions.stream().map(EntityArchive::getAllFiles).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 

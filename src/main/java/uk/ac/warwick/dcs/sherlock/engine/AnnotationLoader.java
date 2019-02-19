@@ -67,7 +67,7 @@ public class AnnotationLoader {
 				}
 			});
 
-			URLClassLoader urlLoader = new URLClassLoader(classpathURLs.toArray(new URL[0]), this.getClass().getClassLoader());
+			URLClassLoader urlLoader = new URLClassLoader(classpathURLs.toArray(new URL[0]), ClassLoader.getSystemClassLoader());
 			try {
 				Class.forName(this.getClass().getTypeName(), false, urlLoader);
 			}
