@@ -76,6 +76,7 @@ public class BaseStorage implements IStorageWrapper {
 		EntityArchive submission = new EntityArchive(submissionName);
 		submission.setSubmissionArchive(w);
 		this.database.storeObject(submission);
+		this.database.refreshObject(w);
 
 		return submission;
 	}
@@ -163,6 +164,8 @@ public class BaseStorage implements IStorageWrapper {
 		else {
 			this.storeIndividualFile(s, filename, fileContent);
 		}
+
+		this.database.refreshObject(s);
 	}
 
 	private void storeArchive(EntityArchive submission, byte[] fileContent) {

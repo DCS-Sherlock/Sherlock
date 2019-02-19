@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -29,7 +28,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	private String hash;
 	private byte[] secure;
 
-	 EntityFile() {
+	EntityFile() {
 		super();
 	}
 
@@ -131,6 +130,12 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
+	public void remove() {
+		this.remove_();
+		this.archive.clean();
+	}
+
+	@Override
 	public String toString() {
 		return this.getFileDisplayName();
 	}
@@ -147,24 +152,19 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		return this.filename;
 	}
 
+	void remove_() {
+		try {
+			BaseStorage.instance.filesystem.removeFile(this);
+			BaseStorage.instance.database.removeObject(this);
+		}
+		catch (Exception ignored) {
+		}
+	}
+
 	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive, String sep) {
 		if (archive.getParent() != null) {
 			this.getFileDisplayNameRecurse(build, archive.getParent(), sep);
 		}
 		build.append(archive.getName()).append(sep);
-	}
-
-	@Override
-	public void remove() {
-		this.remove_();
-		this.archive.clean();
-	}
-
-	void remove_() {
-	 	try {
-		    BaseStorage.instance.filesystem.removeFile(this);
-		    BaseStorage.instance.database.removeObject(this);
-	    }
-	 	catch(Exception ignored){}
 	}
 }

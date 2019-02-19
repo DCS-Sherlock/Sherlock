@@ -73,6 +73,12 @@ public class EntityArchive implements ISubmission, Serializable {
 	}
 
 	@Override
+	public int getFileCount() {
+		BaseStorage.instance.database.refreshObject(this);
+		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getFileCount).sum() : 0);
+	}
+
+	@Override
 	public long getId() {
 		return this.parent == null ? this.id : this.parent.getId();
 	}
@@ -104,7 +110,18 @@ public class EntityArchive implements ISubmission, Serializable {
 			files.forEach(EntityFile::remove_);
 		}
 
+		BaseStorage.instance.database.refreshObject(this);
 		BaseStorage.instance.database.removeObject(this);
+		BaseStorage.instance.database.refreshObject(this.workspace);
+	}
+
+	void clean() {
+		if (this.parent != null) {
+			this.parent.clean();
+		}
+		else {
+			this.cleanRecursive();
+		}
 	}
 
 	List<EntityArchive> getChildren() {
@@ -126,6 +143,19 @@ public class EntityArchive implements ISubmission, Serializable {
 		this.parent = null;
 	}
 
+	private void cleanRecursive() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.children != null) {
+			for (EntityArchive child : this.children) {
+				child.cleanRecursive();
+			}
+		}
+
+		if (this.getFileCount() == 0) {
+			this.remove();
+		}
+	}
+
 	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> files) {
 		BaseStorage.instance.database.refreshObject(this);
 		if (this.children != null) {
@@ -139,33 +169,5 @@ public class EntityArchive implements ISubmission, Serializable {
 		}
 
 		return files;
-	}
-
-	@Override
-	public int getFileCount() {
-		BaseStorage.instance.database.refreshObject(this);
-		return (this.files != null ? this.files.size() : 0) + (this.children != null ? this.children.stream().mapToInt(EntityArchive::getFileCount).sum() : 0);
-	}
-
-	void clean() {
-		if (this.parent != null) {
-			this.parent.clean();
-		}
-		else {
-			this.cleanRecursive();
-		}
-	}
-
-	private void cleanRecursive() {
-		BaseStorage.instance.database.refreshObject(this);
-		if (this.children != null) {
-			for (EntityArchive child : this.children) {
-				child.cleanRecursive();
-			}
-		}
-
-		if (this.getFileCount() == 0) {
-			this.remove();
-		}
 	}
 }
