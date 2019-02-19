@@ -1,6 +1,17 @@
 //Sherlock Javascript
 loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">';
 
+//NB: "pointer-events: none" must be removed from .line-highlight in the prism.css if PrismJS is updated!
+function compareFiles() {
+    Prism.hooks.add('complete', function() {
+        $(".line-highlight").click(function(e) {
+            var input = $(this);
+            var lines = input.attr("data-range");
+            console.log("Clicked: ", lines);
+        });
+    });
+}
+
 function loadAreaAjax(input){
     getAjax(
         input.attr("data-js-href"),
@@ -483,4 +494,5 @@ $(function () {
     loadArea();
     rebindEvents();
     $('form[data-js="autoSubmit"]').submit();
+    compareFiles();
 });

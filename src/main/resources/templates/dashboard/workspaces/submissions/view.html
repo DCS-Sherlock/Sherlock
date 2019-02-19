@@ -23,23 +23,28 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <h4 th:text="${submission.getName()}"></h4>
                     <div class="accordion" id="accordion">
-                        <th:block th:each="file : ${submission.getContainedFiles()}">
+                        <th:block th:each="file : ${submission.getAllFiles()}">
                             <div class="card">
                                 <div class="card-header">
                                     <h2 class="mb-0">
                                         <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id' + ${file.getPersistentId()}">
-                                            <span th:text="${file.getFileDisplayName()}"></span>
+                                            <span th:text="${file.getFileDisplayPath()}"></span>
                                         </button>
                                     </h2>
                                 </div>
 
-
-                                <div th:id="'id' + ${file.getPersistentId()}" class="collapse show" data-parent="#accordion">
+                                <div th:id="'id' + ${file.getPersistentId()}" class="collapse show">
                                     <div class="card-body">
+                                        <a class="btn btn-primary mb-1"
+                                           th:text="#{link.download}" th:download="${file.getFileDisplayName()}"
+                                           th:href="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></a>
+                                        <a class="btn btn-primary mb-1"
+                                        th:text="#{link.delete}" data-js='modal'
+                                        th:href="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}/delete(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></a>
+
                                         <pre class="line-numbers"
-                                        th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}" data-download-link th:data-download-link-label="#{link.download}"></pre>
+                                        th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
                                 </div>
                                 </div>
                             </div>

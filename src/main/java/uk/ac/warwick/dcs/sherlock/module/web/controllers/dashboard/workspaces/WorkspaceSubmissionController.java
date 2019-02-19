@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
@@ -28,19 +29,8 @@ public class WorkspaceSubmissionController {
     public String fileGet(
             @ModelAttribute("submission") ISubmission submission,
             @PathVariable(value="fileid") long fileid
-    ) {
-        ISourceFile sourceFile = null;
-
-        for (ISourceFile temp : submission.getContainedFiles()) {
-            if (temp.getPersistentId() == fileid) {
-                sourceFile = temp;
-            }
-        }
-
-        if (sourceFile == null) {
-            return "404: FILE NOT FOUND";
-        }
-
+    ) throws SourceFileNotFound {
+        ISourceFile sourceFile = this.getFile(submission, fileid);
         return sourceFile.getFileContentsAsString();
     }
 
@@ -54,9 +44,30 @@ public class WorkspaceSubmissionController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("submission") ISubmission submission
     ) {
-        //TODO: actually delete the submission
 	    submission.remove();
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_submission";
+    }
+
+    @GetMapping(value = "/dashboard/workspaces/manage/{pathid}/submission/{submissionid}/file/{fileid}/{filename}/delete")
+    public String deleteFileGet(
+            @ModelAttribute("submission") ISubmission submission,
+            @PathVariable(value="fileid") long fileid,
+            Model model
+    ) throws SourceFileNotFound {
+        ISourceFile sourceFile = this.getFile(submission, fileid);
+        model.addAttribute("file", sourceFile);
+        return "dashboard/workspaces/submissions/deleteFile";
+    }
+
+    @PostMapping(value = "/dashboard/workspaces/manage/{pathid}/submission/{submissionid}/file/{fileid}/{filename}/delete")
+    public String deleteFilePost(
+            @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
+            @ModelAttribute("submission") ISubmission submission,
+            @PathVariable(value="fileid") long fileid
+    ) throws SourceFileNotFound {
+        ISourceFile sourceFile = this.getFile(submission, fileid);
+        sourceFile.remove();
+        return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"/submission/"+submission.getId()+"?msg=deleted_file";
     }
 
     @ModelAttribute("workspace")
@@ -90,5 +101,21 @@ public class WorkspaceSubmissionController {
 
         model.addAttribute("submission", submission);
         return submission;
+    }
+
+    private ISourceFile getFile(ISubmission submission, long fileid) throws SourceFileNotFound {
+        ISourceFile sourceFile = null;
+
+        for (ISourceFile temp : submission.getAllFiles()) {
+            if (temp.getPersistentId() == fileid) {
+                sourceFile = temp;
+            }
+        }
+
+        if (sourceFile == null) {
+            throw new SourceFileNotFound("File not found");
+        }
+
+        return sourceFile;
     }
 }
