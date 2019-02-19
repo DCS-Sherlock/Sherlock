@@ -23,10 +23,10 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	private String lang;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityArchive> submissions = new ArrayList<>();
+	private List<EntityArchive> submissions;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityJob> jobs = new ArrayList<>();
+	private List<EntityJob> jobs;
 
 	public EntityWorkspace() {
 		super();
@@ -48,17 +48,29 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public List<ISourceFile> getFiles() {
 		BaseStorage.instance.database.refreshObject(this);
+		if (this.submissions == null) {
+			return null;
+		}
+		
 		return this.submissions.stream().map(EntityArchive::getAllFiles).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<ISubmission> getSubmissions() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.submissions == null) {
+			return null;
+		}
+
 		return new LinkedList<>(this.submissions);
 	}
 
 	@Override
 	public List<IJob> getJobs() {
 		BaseStorage.instance.database.refreshObject(this);
+		if (this.jobs == null) {
+			return null;
+		}
 		return new LinkedList<>(this.jobs);
 	}
 
