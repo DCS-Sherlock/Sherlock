@@ -284,8 +284,11 @@ public class BaseStorageFilesystem {
 				FileUtils.writeByteArrayToFile(fileToStore, content);
 			}
 		}
-		catch (IOException | IllegalBlockSizeException | InvalidParameterSpecException | BadPaddingException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException e) {
+		catch (IOException | IllegalBlockSizeException | InvalidParameterSpecException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
+		}
+		catch (InvalidKeyException e) {
+			logger.error("Error generating encryption key, file encryption can be disabled in the config file", e);
 		}
 
 		return true;
