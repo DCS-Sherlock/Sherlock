@@ -87,6 +87,13 @@ public class EntityResultFile implements IResultFile, Serializable {
 		return new LinkedList<>(this.taskResults);
 	}
 
+	void remove() {
+		for (EntityResultTask t : this.taskResults) {
+			t.remove();
+		}
+		BaseStorage.instance.database.removeObject(this);
+	}
+
 	List<Object> store() {
 		List<Object> list = new LinkedList<>(this.taskResults);
 		list.add(this);

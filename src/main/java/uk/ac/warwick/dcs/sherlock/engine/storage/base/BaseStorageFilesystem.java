@@ -80,6 +80,10 @@ public class BaseStorageFilesystem {
 		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
 	}
 
+	/**
+	 * Removes a file from the filesystem
+	 * @param file file to remove
+	 */
 	void removeFile(EntityFile file) {
 		List<String> filesInStore = this.getAllFiles();
 		if (filesInStore == null) {
@@ -87,6 +91,22 @@ public class BaseStorageFilesystem {
 		}
 
 		String tmp = this.computeLocator(this.computeFileIdentifier(file));
+		if (filesInStore.contains(tmp)) {
+			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
+		}
+	}
+
+	/**
+	 * Removes a tasks raw results object from the filesystem
+	 * @param task task to remove
+	 */
+	void removeTaskRawResults(EntityTask task) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
+			return;
+		}
+
+		String tmp = this.computeLocator(this.computeTaskIdentifier(task));
 		if (filesInStore.contains(tmp)) {
 			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
 		}

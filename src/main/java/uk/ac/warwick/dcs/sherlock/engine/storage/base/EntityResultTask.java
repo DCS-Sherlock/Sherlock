@@ -88,4 +88,11 @@ public class EntityResultTask implements IResultTask, Serializable {
 	public void setTaskScore(float score) {
 		this.taskScore = score;
 	}
+
+	void remove() {
+		for (EntityCodeBlockGroup g : this.containingBlocks) {
+			g.remove();
+		}
+		BaseStorage.instance.database.removeObject(this);
+	}
 }

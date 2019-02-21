@@ -99,4 +99,11 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	public boolean isPopulated() {
 		return this.blockMap.size() > 1;
 	}
+
+	void remove() {
+		for (EntityCodeBlock b : this.blockMap.values()) {
+			b.remove();
+		}
+		BaseStorage.instance.database.removeObject(this);
+	}
 }

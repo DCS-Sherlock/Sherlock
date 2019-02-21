@@ -99,6 +99,19 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 		return id;
 	}
 
+	@Override
+	public void remove() {
+		for (EntityArchive a : this.submissions) {
+			a.remove();
+		}
+
+		for (EntityJob j : this.jobs) {
+			j.remove();
+		}
+
+		BaseStorage.instance.database.removeObject(this);
+	}
+
 	private void storeName(String name) {
 		if (name.length() > 64) {
 			BaseStorage.logger.warn("Workspace name too long [{}]", name);

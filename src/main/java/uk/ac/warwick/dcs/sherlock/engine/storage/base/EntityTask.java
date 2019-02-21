@@ -206,6 +206,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		return true;
 	}
 
+	void remove() {
+		BaseStorage.instance.filesystem.removeTaskRawResults(this);
+		BaseStorage.instance.database.removeObject(this);
+	}
+
 	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {
 		this.rawResults = rawResults;
 	}

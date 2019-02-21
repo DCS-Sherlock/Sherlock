@@ -115,6 +115,7 @@ public class WorkspaceWrapper {
     }
 
     public void delete(WorkspaceRepository workspaceRepository) {
+    	this.iWorkspace.remove();
         workspaceRepository.delete(this.workspace);
     }
 

@@ -39,6 +39,14 @@ public class EntityResultJob implements IResultJob, Serializable {
 	}
 
 	@Override
+	public void remove() {
+		for (EntityResultFile f : this.fileResults) {
+			f.remove();
+		}
+		BaseStorage.instance.database.removeObject(this);
+	}
+
+	@Override
 	public void store() {
 		List<Object> list = new LinkedList<>();
 		this.fileResults.forEach(f -> list.addAll(f.store()));

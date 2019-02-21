@@ -70,6 +70,10 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		lines.forEach(this::addLineToList);
 	}
 
+	void remove() {
+		BaseStorage.instance.database.removeObject(this);
+	}
+
 	private void addLineToList(ITuple<Integer, Integer> line) {
 		if (line == null || line.getKey() == null || line.getValue() == null) {
 			BaseStorage.logger.warn("Null line tuple added to code block");

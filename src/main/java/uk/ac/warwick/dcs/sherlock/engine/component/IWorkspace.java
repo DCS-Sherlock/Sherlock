@@ -53,4 +53,9 @@ public interface IWorkspace {
 	 */
 	long getPersistentId();
 
+	/**
+	 * Remove the workspace, and all of the files and results associated, cannot be undone
+	 */
+	void remove();
+
 }
