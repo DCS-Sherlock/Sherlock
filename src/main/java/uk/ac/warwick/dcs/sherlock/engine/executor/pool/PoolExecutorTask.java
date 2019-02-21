@@ -98,39 +98,46 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 			return;
 		}
 
-		ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
+		try {
+			ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
-		List<AbstractDetectorWorker> workers = instance.buildWorkers(this.dataItems);
-		int threshold = Math.min(Math.max(workers.size() / Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
+			List<AbstractDetectorWorker> workers = instance.buildWorkers(this.dataItems);
+			int threshold = Math.min(Math.max(workers.size() / Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
 
-		WorkDetect detect = new WorkDetect(workers, threshold);
-		this.scheduler.invokeWork(detect, Priority.DEFAULT);
-		List<AbstractModelTaskRawResult> rawResults = detect.getResults();
+			WorkDetect detect = new WorkDetect(workers, threshold);
+			this.scheduler.invokeWork(detect, Priority.DEFAULT);
+			List<AbstractModelTaskRawResult> rawResults = detect.getResults();
 
-		if (workers.size() != rawResults.size()) {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Error running workers, got {} results from {} workers", rawResults.size(), workers.size());
-				return;
-			}
-		}
-
-		rawResults = rawResults.stream().filter(Objects::nonNull).filter(x -> !x.isEmpty()).collect(Collectors.toList());
-		if (rawResults.size() > 0) {
-
-			// validate the raw result types, are they all the same?
-			AbstractModelTaskRawResult base = rawResults.get(0);
-			if (!rawResults.stream().allMatch(x -> x.testType(base))) {
+			if (workers.size() != rawResults.size()) {
 				synchronized (ExecutorUtils.logger) {
-					ExecutorUtils.logger.error("Work result types are not consistent, this is not allowed. A detector must return a single result type");
+					ExecutorUtils.logger.error("Error running workers, got {} results from {} workers", rawResults.size(), workers.size());
 					return;
 				}
 			}
 
-			//Save the raw results
-			this.task.setRawResults(rawResults);
-		}
+			rawResults = rawResults.stream().filter(Objects::nonNull).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+			if (rawResults.size() > 0) {
 
-		this.task.setComplete();
+				// validate the raw result types, are they all the same?
+				AbstractModelTaskRawResult base = rawResults.get(0);
+				if (!rawResults.stream().allMatch(x -> x.testType(base))) {
+					synchronized (ExecutorUtils.logger) {
+						ExecutorUtils.logger.error("Work result types are not consistent, this is not allowed. A detector must return a single result type");
+						return;
+					}
+				}
+
+				//Save the raw results
+				this.task.setRawResults(rawResults);
+			}
+
+			this.task.setComplete();
+		}
+		catch (Exception e) {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.error("Error running task", e);
+			}
+		}
 	}
 
 	private ModelTaskProcessedResults runPostProcessing() {
