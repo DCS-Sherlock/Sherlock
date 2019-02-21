@@ -121,6 +121,7 @@ public class ResultsWrapper {
         return this.tempRandomNumberInRange(1, 100);
     }
 
+    @SuppressWarnings("Duplicates")
     private int tempRandomNumberInRange(int min, int max) {
         if (min >= max) {
             return max;

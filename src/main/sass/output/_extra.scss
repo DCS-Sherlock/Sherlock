@@ -48,6 +48,18 @@ button, html [type="button"], [type="reset"], [type="submit"] {
   -webkit-appearance: none;
 }
 
+/* Compare */
+.sticky-matches {
+    overflow: auto;
+    max-height: 250px;
+}
+
+.match-colour {
+    display: inline-block;
+    width:40px;
+    height:10px;
+}
+
 /* Tabs */
 .tab-content > .active {
     background: none;

@@ -3,13 +3,187 @@ loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">'
 
 //NB: "pointer-events: none" must be removed from .line-highlight in the prism.css if PrismJS is updated!
 function compareFiles() {
-    Prism.hooks.add('complete', function() {
-        $(".line-highlight").click(function(e) {
-            var input = $(this);
-            var lines = input.attr("data-range");
-            console.log("Clicked: ", lines);
+    if ($("#compare-data").length) {
+        var matches = getMatchesJSON();
+        var lineToMatchId = getLineToMatchIdJSON();
+
+
+        function rgba(colour) {
+            return 'rgba(' + parseInt(colour.slice(-6,-4),16)
+                + ',' + parseInt(colour.slice(-4,-2),16)
+                + ',' + parseInt(colour.slice(-2),16)
+                +',0.3)';
+        }
+
+        function highlight(fileId, fileLines) {
+            var first = true;
+            var colour = rgba("#f47b2a");
+
+            for (var i = 0; i < fileLines.length; i++) {
+                var id = fileLines[i];
+
+                if (first) {
+                    $("#id-"+fileId).find(".card-body").scrollTop(
+                        $("pre[data-file-id='"+fileId+"']").find("[data-range='"+id+"']").position().top
+                    );
+                }
+
+                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+id+"']").css('background-color', colour);
+                first = false;
+            }
+        }
+
+        function clickOn(matchIds) {
+            console.log(matchIds);
+
+            var match = matches[matchIds[0]];
+
+            if (match == null) {
+                clickOff();
+                return;
+            }
+
+            var infoBlock = $("#match-info-block");
+            var infoExtra = $("#match-info-extra");
+
+            infoExtra.html("");
+
+            var first = true;
+            for(var i = 0; i < matchIds.length; i += 1) {
+                var id = matchIds[i];
+                var m = matches[id];
+
+                if (m != null) {
+                    if (first) {
+                        infoBlock.find("#match-reason").text(m.reason);
+                        infoBlock.find("#match-score").text(m.score);
+                    } else {
+                        var copy = infoBlock.clone();
+                        copy.find("#match-reason").text(m.reason);
+                        copy.find("#match-score").text(m.score);
+                        infoExtra.append(copy.html());
+                    }
+                    first = false;
+                }
+            }
+
+            //Show the
+            $("#match-info").slideDown();
+
+            //Collapse all files except for the two incolved
+            $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
+            $("#id-"+match.file1Id).collapse('show');
+            $("#id-"+match.file2Id).collapse('show');
+
+            //Remove all the line highlights
+            $(".line-highlight").each(function() {
+                $(this).css('background-color', "");
+            });
+
+            //Highlight the file 1 lines
+            highlight(match.file1Id, match.file1Lines);
+            highlight(match.file2Id, match.file2Lines);
+
+            //Calculate the hight to scroll the window to
+            var height = $("[data-js='comparison']").offset().top;
+            if ($("#matches-container").hasClass("sticky-top")) {
+                height -= $("#matches-container").height();
+            }
+
+            //Scroll the window
+            $("html, body").scrollTop(
+                height
+            );
+        }
+
+        function clickOff() {
+            $("#match-info").slideUp();
+
+            $(".line-highlight").each(function() {
+                var input = $(this);
+                var line = input.attr("data-range");
+                var file = input.closest("pre").attr("data-file-id");
+                var matchID = lineToMatchId[file][line][0];
+
+                if (matchID != null) {
+                    var match = matches[matchID];
+                    if (match != null) {
+                        input.css('background-color', rgba(match.colour));
+                    }
+                }
+            });
+        }
+
+        function update() {
+            $("#match-info").hide();
+
+            var area = $("#matches-contents");
+            var template = $("#matches-template");
+            var emptyTemplate = $("#matches-template-empty");
+
+            var number = 0;
+            for(var i = 0; i < Object.keys(matches).length; i++) {
+                var match = matches[i];
+;
+                var copy = template.clone();
+                copy.find(".match-reason").text(match.reason);
+                copy.find(".match-score").text(match.score);
+                copy.find(".match-colour").css("background-color", match.colour);
+                copy.find(".match-id").attr("data-js-target", i);
+                area.append(copy.html());
+
+                number++;
+            }
+
+            if (number == 0) {
+                area.html(emptyTemplate.html());
+            }
+
+            $(".match-id").unbind();
+            $(".match-id").click(function(e) {
+                var input = $(this);
+                clickOn([input.attr("data-js-target")]);
+            });
+
+            $("[data-js='matchesToggle']").unbind();
+            $("[data-js='matchesToggle']").click(function(e) {
+                $("#matches-container").toggleClass("sticky-top");
+                $("#matches-table-container").toggleClass("sticky-matches");
+            });
+        }
+
+        Prism.hooks.add('complete', function() {
+            $("[data-js='comparison']").unbind();
+            $("[data-js='comparison']").click(function(e) {
+                clickOff();
+            });
+
+            $("[data-js='comparisonHide']").unbind();
+            $("[data-js='comparisonHide']").click(function(e) {
+                clickOff();
+            });
+
+            $(".line-highlight").unbind();
+            $(".line-highlight").click(function(e) {
+                var input = $(this);
+
+                var line = input.attr("data-range");
+                var file = input.closest("pre").attr("data-file-id");
+
+                var matchID = lineToMatchId[file][line];
+
+                if (matchID != null) {
+                    clickOn(matchID);
+                }
+
+                e.stopPropagation();
+            });
+
+            clickOff();
         });
-    });
+
+        update();
+    }
 }
 
 function loadAreaAjax(input){

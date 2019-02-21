@@ -8,6 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
+import uk.ac.warwick.dcs.sherlock.module.web.helpers.ResultsHelper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
@@ -87,18 +88,7 @@ public class WorkspaceSubmissionController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @PathVariable(value="submissionid") long submissionid,
             Model model) throws SubmissionNotFound {
-        ISubmission submission = null;
-
-        for (ISubmission temp : workspaceWrapper.getSubmissions()) {
-            if (temp.getId() == submissionid) {
-                submission = temp;
-            }
-        }
-
-        if (submission == null) {
-            throw new SubmissionNotFound("Submission not found");
-        }
-
+        ISubmission submission = ResultsHelper.getSubmission(workspaceWrapper, submissionid);
         model.addAttribute("submission", submission);
         return submission;
     }

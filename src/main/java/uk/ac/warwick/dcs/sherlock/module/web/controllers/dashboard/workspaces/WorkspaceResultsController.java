@@ -5,8 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
+import uk.ac.warwick.dcs.sherlock.module.web.helpers.ResultsHelper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.ComparisonWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.ResultsWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
@@ -38,13 +41,26 @@ public class WorkspaceResultsController {
         return "dashboard/workspaces/results/network";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{file1}")
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{submission}")
     public String reportGet() {
         return "dashboard/workspaces/results/report";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/compare/{file1}/{file2}")
-    public String comparisonGet() {
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/compare/{submission1}/{submission2}")
+    public String comparisonGet(
+            @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
+            @PathVariable(value="submission1") long id1,
+            @PathVariable(value="submission2") long id2,
+            Model model
+    ) throws SubmissionNotFound {
+        ISubmission submission1 = ResultsHelper.getSubmission(workspaceWrapper, id1);
+        ISubmission submission2 = ResultsHelper.getSubmission(workspaceWrapper, id2);
+
+        ComparisonWrapper wrapper = new ComparisonWrapper(submission1, submission2);
+
+        model.addAttribute("submission1", submission1);
+        model.addAttribute("submission2", submission2);
+        model.addAttribute("wrapper", wrapper);
         return "dashboard/workspaces/results/compare";
     }
 
