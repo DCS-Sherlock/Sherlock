@@ -58,4 +58,30 @@ public interface ISourceFile {
 	 * Remove the file
 	 */
 	void remove();
+
+	/**
+	 * Count of the number of lines in the file containing characters, non empty
+	 * @return count of non empty lines
+	 */
+	int getNonEmptyLineCount();
+
+	/**
+	 * Count of the total number of lines in the file
+	 * @return count of all lines
+	 */
+	int getTotalLineCount();
+
+	/**
+	 * Fetches the file size in bytes
+	 * @return file size in bytes
+	 */
+	long getFileSize();
+
+	/**
+	 * Fetches the file size in String form with the correct extension
+	 * @param si use SI (1000) or binary (1024) for calculations
+	 * @return string for the file size
+	 */
+	String getDisplayFileSize(boolean si);
+
 }

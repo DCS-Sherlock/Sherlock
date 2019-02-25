@@ -13,8 +13,10 @@ import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedExceptio
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.*;
@@ -94,6 +96,15 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public ISourceFile getSourceFile(long persistentId) {
+		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
+		if (f.size() != 1) {
+			logger.warn("File of id {} does not exist", persistentId);
+		}
+		return f.get(0);
+	}
+
+	@Override
 	public ISubmission getSubmissionFromName(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
 		if (!(workspace instanceof EntityWorkspace)) {
 			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
@@ -101,15 +112,6 @@ public class BaseStorage implements IStorageWrapper {
 		EntityWorkspace w = (EntityWorkspace) workspace;
 
 		return w.getSubmissions().stream().filter(x -> x.getName().equals(submissionName)).findAny().orElse(null);
-	}
-
-	@Override
-	public ISourceFile getSourceFile(long persistentId) {
-		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
-		if (f.size() != 1) {
-			logger.warn("File of id {} does not exist", persistentId);
-		}
-		return f.get(0);
 	}
 
 	@Override
@@ -202,10 +204,28 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	private void storeIndividualFile(EntityArchive archive, String filename, byte[] fileContent) {
-		EntityFile file = new EntityFile(FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), archive);
+		int line = 0;
+		int contentLine = 0;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileContent)));
+
+		try {
+			while (reader.ready()) {
+				line++;
+				if (!reader.readLine().equals("")) {
+					contentLine++;
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		EntityFile file = new EntityFile(archive, FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), fileContent.length, line, contentLine);
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}
+
+		logger.error(file.getDisplayFileSize(true));
 
 		this.database.storeObject(file);
 	}

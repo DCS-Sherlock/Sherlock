@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
+import org.apache.commons.io.FileUtils;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
@@ -28,18 +29,25 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	private String hash;
 	private byte[] secure;
 
+	private long filesize;
+	private int lineCount;
+	private int nonEmptyLineCount;
+
 	EntityFile() {
 		super();
 	}
 
-	EntityFile(String filename, String extension, Timestamp timestamp, EntityArchive archive) {
+	EntityFile( EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
 		super();
+		this.archive = archive;
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
 		this.hash = null;
 		this.secure = null;
-		this.archive = archive;
+		this.filesize = size;
+		this.lineCount = line;
+		this.nonEmptyLineCount = contentLine;
 	}
 
 	@Override
@@ -105,6 +113,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
+	public int getNonEmptyLineCount() {
+		return this.nonEmptyLineCount;
+	}
+
+	@Override
 	public long getPersistentId() {
 		return this.id;
 	}
@@ -127,6 +140,24 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public Timestamp getTimestamp() {
 		return this.timestamp;
+	}
+
+	@Override
+	public int getTotalLineCount() {
+		return this.lineCount;
+	}
+
+	@Override
+	public long getFileSize() {
+		return this.filesize;
+	}
+
+	public String getDisplayFileSize(boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (this.filesize < unit) return this.filesize + " B";
+		int exp = (int) (Math.log(this.filesize) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+		return String.format("%.1f %sB", this.filesize / Math.pow(unit, exp), pre);
 	}
 
 	@Override
