@@ -225,8 +225,6 @@ public class BaseStorage implements IStorageWrapper {
 			return;
 		}
 
-		logger.error(file.getDisplayFileSize(true));
-
 		this.database.storeObject(file);
 	}
 }
