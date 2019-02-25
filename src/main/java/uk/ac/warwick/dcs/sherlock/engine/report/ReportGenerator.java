@@ -65,7 +65,7 @@ public class ReportGenerator implements IReportGenerator {
 
 			//Assemble the information into a FileReportItem and add it to the report.
 			float score = codeBlockGroup.getCodeBlock(sourceFile).getBlockScore();
-			FileReportItem reportItem = new FileReportItem(detectionType, score, lineNumbers, joinedString);
+			FileReportItem reportItem = new FileReportItem(detectionType, score, codeBlockGroup.getCodeBlocks(), lineNumbers, joinedString);
 			fileReport.AddReportItem(reportItem);
 		}
 
