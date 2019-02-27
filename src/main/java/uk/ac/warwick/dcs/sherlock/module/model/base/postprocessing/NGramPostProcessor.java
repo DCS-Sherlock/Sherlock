@@ -32,17 +32,24 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 * @return A boolean showing if the 2 matches are on the same code block or not.
 	 */
 	private boolean isLinked(NgramMatch first, NgramMatch second) {
-		// TODO resolve to also accept similar line combos, as wells as identical ones
+		// TODO resolve to also accept similar line combos, as wells as identical ones (possible future feature)
 		// TODO find a better way to do this
+		// precompute key and value matches. This is slightly more inefficient than doing it post file match check, but improves readability for negligible loss
+		// if the start lines of 2 blocks match up
+		boolean r_key = first.reference_lines.getKey() == second.reference_lines.getKey();
+		boolean c_key = first.check_lines.getKey() == second.check_lines.getKey();
+		// if the end lines of the 2 blocks line up
+		boolean r_val = first.reference_lines.getValue() == second.reference_lines.getValue();
+		boolean c_val = first.check_lines.getValue() == second.check_lines.getValue();
 		// for each possible pair check if they are the same file and the line numbers match up
 		if (first.file1.equals(second.file1)) {
-			return first.reference_lines.getKey() == second.reference_lines.getKey() && first.reference_lines.getValue() == second.reference_lines.getValue();
+			return r_key && r_val;
 		} else if (first.file1.equals(second.file2)) {
-			return first.reference_lines.getKey() == second.reference_lines.getKey() && first.check_lines.getValue() == second.check_lines.getValue();
+			return r_key && c_val;
 		} else if (first.file2.equals(second.file1)) {
-			return first.check_lines.getKey() == second.check_lines.getKey() && first.reference_lines.getValue() == second.reference_lines.getValue();
+			return c_key && r_val;
 		} else if (first.file2.equals(second.file2)) {
-			return first.check_lines.getKey() == second.check_lines.getKey() && first.check_lines.getValue() == second.check_lines.getValue();
+			return c_key && c_val;
 		}
 		// if no match is found
 		return false;
@@ -96,7 +103,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 //						}
 //					}
 				}
-				// if nothing in matches add to match, else check isLinked and if true add to relvent list, if false add to new list
+				// if nothing in matches add to match, else check isLinked and if true add to relevant list, if false add to new list
 			}
 		}
 		// now all data is in the structure we can filter it
@@ -134,29 +141,6 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 			results.removeGroup(out_group);
 		}
 
-
-
-
-		// for each item in raw results check for common code blocks, where the code block is not common in over threshold files add the code block to the
-		// results list.
-
-		// build a list of result lists, for each result check if any list exists that has common lines, check the 2 files connected by common file using N-Gram method
-		// if it is above N-Grams threshold then add to said list (check for first or all in list? could make a setting. Also probably try to build a hierarchy based on similarity
-		// to see if the source can be found(highest common match) then move highest to the front of the list)
-		// once full list of lists is constructed the size of each list can be checked against the threshold. Anything below the threshold can be passed to the next stage
-
-		// match each block in a list to the highest similarity (first in list) acquire score based on attributes (e.g. size, similarity, rate of plagiarism occurrence, etc)
-		// once each block is processed add it to results
-
-		// TODO IDEAS:
-		// -The smaller the portion of files with a common block the higher the score, send the proportion to score along with other data
-
-		// see docs, use:
-		// x = results.addGroup();
-		// x.addCodeBlock(..........); cont..
-
 		return results;
 	}
 }
-
-// TODO: remove empty groups that are being added

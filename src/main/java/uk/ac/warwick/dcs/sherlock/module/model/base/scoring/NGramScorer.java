@@ -50,10 +50,13 @@ public class NGramScorer implements IScoreFunction {
 	 *
 	 * @return Total similarity score for all relevant file match pairs
 	 */
+	// TODO: alter to give out whole file similarity accounting for non-match lines
 	@Override
 	public float score(ISourceFile mainFile, ISourceFile referenceFile, List<ICodeBlockGroup> mutualGroups) {
 		// counter for total score
 		float accumulator = 0.0f;
+		// instance multiplier for each match based on it's line size
+		int line_multiplier = 1;
 		// check if first file is in list
 		int index = match_list.lastIndexOf(mainFile);
 		// if not in list then is paired with something in the list so check second file
@@ -70,19 +73,24 @@ public class NGramScorer implements IScoreFunction {
 			// where the match is between the 2 files passed increment the accumulator
 			for (NgramMatch match : file_matches.get(index).matches) {
 				if (match.file1.equals(mainFile)) {
-					accumulator += match.similarity;
+					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+					accumulator += match.similarity * line_multiplier;
 				}
 			}
 		} else {
 			// where the match is between the 2 files passed increment the accumulator
 			for (NgramMatch match : file_matches.get(index).matches) {
 				if (match.file2.equals(referenceFile)) {
-					accumulator += match.similarity;
+					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+					accumulator += match.similarity * line_multiplier;
 				}
 			}
 		}
-		// return cumulative score
-		return accumulator;
+		// TODO: resolve issues with overlapping blocks counting as duplicate lines fro the sake of the line count
+		// normalise the score by the size of each file
+		accumulator = (accumulator / mainFile.getTotalLineCount()) + (accumulator / referenceFile.getTotalLineCount());
+		// return cumulative score normalised and averaged over the 2 files
+		return accumulator / 2;
 	}
 
 	/**

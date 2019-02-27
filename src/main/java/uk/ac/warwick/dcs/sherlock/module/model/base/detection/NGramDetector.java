@@ -281,7 +281,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			ArrayList<IndexedString> linesF2 = new ArrayList<IndexedString>(this.file2.getPreProcessedLines("no_whitespace"));
 
 			// make
-			// TODO check this is valid init form (not sure of the ints are needed)
 			res = new NGramRawResult<>(this.file1.getFile(), this.file2.getFile());
 
 			// generate the N-grams for file 1 and load them into a hash map
