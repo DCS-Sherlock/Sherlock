@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
@@ -38,13 +40,17 @@ public class SherlockRegistry {
 	}
 
 	/**
-	 * @param det detector class
+	 * Fetches the DetectionType object for an identifier if it is present
 	 *
-	 * @return description of the detector
+	 * @param identifier String identifier for the detection type
+	 *
+	 * @return the detection type object
+	 *
+	 * @throws UnknownDetectionTypeException if the identifier is not registered
 	 */
-	public static String getDetecorDescription(Class<? extends IDetector> det) {
+	public static DetectionType getDetectionType(String identifier) throws UnknownDetectionTypeException {
 		if (registry != null) {
-			return registry.getDetecorDescription(det);
+			return registry.getDetectionType(identifier);
 		}
 		return null;
 	}
@@ -57,6 +63,18 @@ public class SherlockRegistry {
 	public static List<AdjustableParameterObj> getDetectorAdjustableParameters(Class<? extends IDetector> det) {
 		if (registry != null) {
 			return registry.getDetectorAdjustableParameters(det);
+		}
+		return null;
+	}
+
+	/**
+	 * @param det detector class
+	 *
+	 * @return description of the detector
+	 */
+	public static String getDetectorDescription(Class<? extends IDetector> det) {
+		if (registry != null) {
+			return registry.getDetectorDescription(det);
 		}
 		return null;
 	}
@@ -215,6 +233,20 @@ public class SherlockRegistry {
 	public static boolean registerAdvancedPreProcessorImplementation(String groupClassPath, Class<? extends IAdvancedPreProcessor> preProcessor) {
 		if (registry != null) {
 			return registry.registerAdvancedPreProcessorImplementation(groupClassPath, preProcessor);
+		}
+		return false;
+	}
+
+	/**
+	 * Registers a detection type
+	 *
+	 * @param detectionType object for the new detection type
+	 *
+	 * @return was successful?
+	 */
+	public static boolean registerDetectionType(DetectionType detectionType) {
+		if (registry != null) {
+			return registry.registerDetectionType(detectionType);
 		}
 		return false;
 	}

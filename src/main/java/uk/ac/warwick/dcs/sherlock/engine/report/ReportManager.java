@@ -20,7 +20,7 @@ public class ReportManager {
 	private List<Long> fileIds;
 
 	/**
-	 * Contains most necessary information to generate reports for every file, including DetectionType, score, line numbers, etc.
+	 * Contains most necessary information to generate reports for every file, including LegecyDetectionType, score, line numbers, etc.
 	 */
 	private List<ICodeBlockGroup> codeBlockGroups;
 

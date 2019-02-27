@@ -3,10 +3,14 @@ package uk.ac.warwick.dcs.sherlock.engine;
 import org.antlr.v4.runtime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
@@ -15,6 +19,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,6 +32,8 @@ public class Registry implements IRegistry {
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);
 
 	private Map<String, LanguageData> languageRegistry;
+	private Map<String, DetectionType> detectionTypeRegistry;
+
 	private Map<Class<? extends IGeneralPreProcessor>, PreProcessorData> preProcessorRegistry;
 	private Map<String, AdvPreProcessorGroupData> advPreProcessorRegistry;
 	private Map<Class<? extends IDetector>, DetectorData> detectorRegistry;
@@ -36,6 +43,8 @@ public class Registry implements IRegistry {
 
 	Registry() {
 		this.languageRegistry = new ConcurrentHashMap<>();
+		this.detectionTypeRegistry = new ConcurrentHashMap<>();
+
 		this.preProcessorRegistry = new ConcurrentHashMap<>();
 		this.advPreProcessorRegistry = new ConcurrentHashMap<>();
 		this.detectorRegistry = new ConcurrentHashMap<>();
@@ -53,7 +62,7 @@ public class Registry implements IRegistry {
 	 *
 	 * @throws ClassNotFoundException if could not find a superclass with a static generic type
 	 */
-	public static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
+	private static Class<?> getGenericClass(Type genericSuperclass) throws ClassNotFoundException {
 		ParameterizedType type = getHighestParamType(genericSuperclass);
 		String typeName = type.getActualTypeArguments()[0].getTypeName().split("<")[0];
 		return Class.forName(typeName, true, SherlockEngine.classloader);
@@ -89,12 +98,22 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public String getDetecorDescription(Class<? extends IDetector> det) {
+	public String getDetectorDescription(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
 			return this.detectorRegistry.get(det).desc;
 		}
 
 		return null;
+	}
+
+	@Override
+	public DetectionType getDetectionType(String identifier) throws UnknownDetectionTypeException {
+		if (this.detectionTypeRegistry.containsKey(identifier)) {
+			return this.detectionTypeRegistry.get(identifier);
+		}
+		else {
+			throw new UnknownDetectionTypeException("Detection Type '%s' is not recognised, verify that all required modules are present and active");
+		}
 	}
 
 	@Override
@@ -454,6 +473,23 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
+	public boolean registerDetectionType(DetectionType detectionType) {
+		if (detectionType == null) {
+			return false;
+		}
+
+		if (this.detectionTypeRegistry.containsKey(detectionType.getIdentifier())) {
+			logger.error("DetectionType object with identifier '{}' already registered", detectionType.getIdentifier());
+			return false;
+		}
+
+		this.detectionTypeRegistry.put(detectionType.getIdentifier(), detectionType);
+		return true;
+	}
+
+
+
+	@Override
 	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultType) {
 
 		if (postProcessor == null || handledResultType == null) {
@@ -538,6 +574,7 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
+	//TODO: check the detection type used????????
 	void analyseDetectors() {
 		this.detectorRegistry.forEach((k, v) -> {
 			Set<String> supportedLanguages = new HashSet<>();
@@ -555,6 +592,54 @@ public class Registry implements IRegistry {
 			v.languages = supportedLanguages;
 			supportedLanguages.forEach(l -> this.languageRegistry.get(l).detectors.add(k));
 		});
+	}
+
+	void loadDetectionTypeWeights() {
+		if (this.detectionTypeRegistry.size() == 0) {
+			return;
+		}
+
+		Map<String, Float> map = null;
+		int mapSize = 0;
+		File weightFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Weightings.yaml");
+		if (!weightFile.exists()) {
+			map = new LinkedHashMap();
+			mapSize = 0;
+		}
+		else {
+			try {
+				Yaml yaml = new Yaml();
+				map = yaml.load(new FileInputStream(weightFile));
+				mapSize = map.size();
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (map != null) {
+			for (DetectionType type : this.detectionTypeRegistry.values()) {
+				if (map.containsKey(type.getIdentifier())) {
+					type.setWeighting(map.get(type.getIdentifier()));
+				}
+				else {
+					map.put(type.getIdentifier(), type.getWeighting());
+				}
+			}
+
+			if (map.size() != mapSize) {
+				try {
+					DumperOptions options = new DumperOptions();
+					options.setPrettyFlow(true);
+					Yaml yaml = new Yaml(options);
+					FileWriter writer = new FileWriter(weightFile);
+					yaml.dump(map, writer);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**

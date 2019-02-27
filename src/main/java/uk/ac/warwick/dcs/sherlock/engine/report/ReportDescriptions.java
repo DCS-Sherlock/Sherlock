@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.LegecyDetectionType;
 
 /**
  * A small class to supply the base descriptions for different kinds of plagiarism to the Report Generator.
@@ -15,7 +15,7 @@ public class ReportDescriptions {
 	 *
 	 * @return A string with a basic description of the provided type of plagiarism, with placeholders for line numbers and so on.
 	 */
-	public static String getDescription(DetectionType type) {
+	public static String getDescription(LegecyDetectionType type) {
 
 		switch (type) {
 			case COMMENT:
@@ -50,18 +50,18 @@ public class ReportDescriptions {
 	/**
 	 * Method to create the part of the description containing the file names and relevant line numbers.
 	 *
-	 * @param detectionType The type of plagiarism for this description. This is needed because some types need blocks of code while others need specific, individual lines.
+	 * @param legecyDetectionType The type of plagiarism for this description. This is needed because some types need blocks of code while others need specific, individual lines.
 	 * @param isContinued   If true, a semicolon and space is placed at the start of the string so the result can be appended to a previous location description.
 	 *
 	 * @return A string containing placeholders for the file names and line numbers, to be filled in by a ReportGenerator.
 	 */
-	public static String getLocationDescription(DetectionType detectionType, boolean isContinued) {
+	public static String getLocationDescription(LegecyDetectionType legecyDetectionType, boolean isContinued) {
 		String output = "";
 		if (isContinued) {
 			output = "; ";
 		}
 
-		if (detectionType == DetectionType.IDENTIFIER) {
+		if (legecyDetectionType == LegecyDetectionType.IDENTIFIER) {
 			output += "File %1$s: first appearance at line %2$d";
 		}
 		else {

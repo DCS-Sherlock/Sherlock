@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.api;
 
 import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
@@ -33,7 +35,18 @@ public interface IRegistry {
 	 *
 	 * @return description of the detector
 	 */
-	String getDetecorDescription(Class<? extends IDetector> det);
+	String getDetectorDescription(Class<? extends IDetector> det);
+
+	/**
+	 * Fetches the DetectionType object for an identifier if it is present
+	 *
+	 * @param identifier String identifier for the detection type
+	 *
+	 * @return the detection type object
+	 *
+	 * @throws UnknownDetectionTypeException if the identifier is not registered
+	 */
+	DetectionType getDetectionType(String identifier) throws UnknownDetectionTypeException;
 
 	/**
 	 * Get the adjustable parameters for a detector
@@ -149,6 +162,15 @@ public interface IRegistry {
 	 * @return was successful?
 	 */
 	boolean registerAdvancedPreProcessorImplementation(String groupClassPath, Class<? extends IAdvancedPreProcessor> preProcessor);
+
+	/**
+	 * Registers a detection type
+	 *
+	 * @param detectionType object for the new detection type
+	 *
+	 * @return was successful?
+	 */
+	boolean registerDetectionType(DetectionType detectionType);
 
 	/**
 	 * Registers an {@link IDetector} implementation to Sherlock. The presence of any dependencies should ideally tested before calling this method, one way to do this is to use the {@link

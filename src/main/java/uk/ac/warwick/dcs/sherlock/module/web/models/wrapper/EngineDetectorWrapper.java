@@ -19,7 +19,7 @@ public class EngineDetectorWrapper {
         this.className = detector.getName();
         this.displayName = SherlockRegistry.getDetectorDisplayName(detector);
         this.languages = SherlockRegistry.getDetectorLanguages(detector);
-        this.description = SherlockRegistry.getDetecorDescription(detector);
+        this.description = SherlockRegistry.getDetectorDescription(detector);
     }
 
     public String getDisplayName() {

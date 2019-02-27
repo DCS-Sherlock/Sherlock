@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
@@ -153,11 +154,20 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 						}
 					}
 					ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
-					if (processedResults.cleanGroups()) {
+					try {
+						if (processedResults.cleanGroups()) {
+							synchronized (ExecutorUtils.logger) {
+								ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set", this.getTask().getJob().getPersistentId(),
+										this.getTask().getPersistentId());
+							}
+						}
+					}
+					catch (UnknownDetectionTypeException e) {
 						synchronized (ExecutorUtils.logger) {
-							ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set", this.getTask().getJob().getPersistentId(),
+							ExecutorUtils.logger.warn("At least one result group for job {} [task {}] has an unknown detection type set", this.getTask().getJob().getPersistentId(),
 									this.getTask().getPersistentId());
 						}
+						e.printStackTrace();
 					}
 
 					List<ICodeBlockGroup> gs = processedResults.getGroups();

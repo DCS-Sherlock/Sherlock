@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.scoring.IScoreFunction;
 
 import java.util.*;
@@ -92,8 +93,14 @@ public class ModelTaskProcessedResults {
 	/**
 	 * Remove any empty groups from the list
 	 */
-	public boolean cleanGroups() {
+	public boolean cleanGroups() throws UnknownDetectionTypeException {
 		this.groups = this.groups.stream().filter(ICodeBlockGroup::isPopulated).collect(Collectors.toList());
-		return this.groups.stream().anyMatch(x -> x.getDetectionType() == null);
+
+		for (ICodeBlockGroup g :  this.groups) {
+			if (g.getDetectionType() == null) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

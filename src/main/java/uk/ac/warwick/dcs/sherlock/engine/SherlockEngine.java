@@ -14,6 +14,7 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.executor.PoolExecutor;
@@ -44,7 +45,7 @@ public class SherlockEngine {
 	static String modulesPath = "";
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
-	private static File configDir;
+	static File configDir;
 
 	private File lockFile;
 	private FileChannel lockChannel;
@@ -193,8 +194,10 @@ public class SherlockEngine {
 		AnnotationLoader modules = new AnnotationLoader();
 		modules.registerModules();
 
+		DetectionType.addDefaultDetectionTypes();
 		SherlockEngine.eventBus.publishEvent(new EventPreInitialisation());
 		SherlockEngine.eventBus.publishEvent(new EventInitialisation());
+		SherlockEngine.registry.loadDetectionTypeWeights();
 		SherlockEngine.registry.analyseDetectors();
 		SherlockEngine.eventBus.publishEvent(new EventPostInitialisation());
 

@@ -1,10 +1,12 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 
 import javax.persistence.Entity;
 import java.io.Serializable;
@@ -18,7 +20,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	Map<Long, EntityCodeBlock> blockMap;
 
-	private DetectionType type;
+	private String type;
 	private String comment;
 
 	public EntityCodeBlockGroup() {
@@ -86,12 +88,12 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	@Override
-	public DetectionType getDetectionType() {
-		return this.type;
+	public DetectionType getDetectionType() throws UnknownDetectionTypeException {
+		return SherlockRegistry.getDetectionType(this.type);
 	}
 
 	@Override
-	public void setDetectionType(DetectionType type) {
+	public void setDetectionType(String detectionTypeIdentifier) throws UnknownDetectionTypeException {
 		this.type = type;
 	}
 
