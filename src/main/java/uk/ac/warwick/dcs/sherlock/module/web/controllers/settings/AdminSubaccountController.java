@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import uk.ac.warwick.dcs.sherlock.module.web.configurations.SecurityConfig;
+import uk.ac.warwick.dcs.sherlock.module.web.configuration.SecurityConfig;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;

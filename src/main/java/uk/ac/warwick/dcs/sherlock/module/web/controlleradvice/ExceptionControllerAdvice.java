@@ -11,30 +11,62 @@ import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 
 import java.util.Arrays;
 
+/**
+ * Handles exceptions thrown by all of the controllers
+ */
 @ControllerAdvice
 public class ExceptionControllerAdvice {
+    //All @Autowired variables are automatically loaded by Spring
     @Autowired
     private Environment environment;
 
+    /**
+     * Handles requests which are only allowed to be ajax requests. Redirects
+     * the user to the url supplied in the error message, typically this is
+     * the page that contained the form/page element
+     *
+     * @param e the exception object
+     *
+     * @return the page to redirect to
+     */
     @ExceptionHandler({NotAjaxRequest.class})
     public String notAjaxRequest(NotAjaxRequest e) {
         return "redirect:" + e.getMessage() + "?msg=ajax";
     }
 
+    /**
+     * Handles all generic/unknown errors
+     *
+     * @param model holder for model attributes (auto-filled by Spring)
+     *
+     * @param e the exception object
+     *
+     * @return the path to the error page
+     */
     @ExceptionHandler({
             Throwable.class,
             LoadingHelpFailed.class
     })
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String runtimeError(Model model, Exception e) {
+        //If running in dev mode, print the error
         if (Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
             e.printStackTrace();
         }
 
-        model.addAttribute("msg", e.getClass().getName());
+//        model.addAttribute("msg", e.getClass().getName());
         return "error";
     }
 
+    /**
+     * Handles all "not found" errors
+     *
+     * @param model holder for model attributes (auto-filled by Spring)
+     *
+     * @param e the exception object
+     *
+     * @return the path to the error page
+     */
     @ExceptionHandler({
             IWorkspaceNotFound.class,
             WorkspaceNotFound.class,
@@ -50,8 +82,18 @@ public class ExceptionControllerAdvice {
         return "error";
     }
 
+    /**
+     * Handles all requests which are not authorised
+     *
+     * @param model holder for model attributes (auto-filled by Spring)
+     *
+     * @param e the exception object
+     *
+     * @return the path to the error page
+     */
     @ExceptionHandler({
-            NotTemplateOwner.class
+            NotTemplateOwner.class,
+            AccountOwner.class
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String notAuthorisedError(Model model, Exception e) {

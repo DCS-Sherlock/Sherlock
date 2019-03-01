@@ -7,7 +7,21 @@ import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
 import java.awt.*;
 import java.util.Random;
 
+/**
+ * Functions used by multiple classes involved with displaying the
+ * analysis results to the user
+ */
 public class ResultsHelper {
+    /**
+     * Tries to find the submission in the workspace supplied.
+     *
+     * @param workspaceWrapper the wrapper class of the workspace to search
+     * @param submissionid the id of the submission to find
+     *
+     * @return the ISubmission object of the submission
+     *
+     * @throws SubmissionNotFound if the submission was not found in the workspace supplied
+     */
     public static ISubmission getSubmission(
             WorkspaceWrapper workspaceWrapper,
             long submissionid) throws SubmissionNotFound {
@@ -26,6 +40,11 @@ public class ResultsHelper {
         return submission;
     }
 
+    /**
+     * Generates a random HEX colour code (e.g. "ffffff")
+     *
+     * @return the colour code without the "#" before
+     */
     public static String randomColour() {
         Random random = new Random();
 

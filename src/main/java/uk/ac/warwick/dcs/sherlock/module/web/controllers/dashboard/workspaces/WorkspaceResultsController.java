@@ -8,10 +8,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.helpers.ResultsHelper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.ComparisonWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.ResultsWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.WorkspaceWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.*;
 import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
 
 @Controller
@@ -42,7 +39,17 @@ public class WorkspaceResultsController {
     }
 
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{submission}")
-    public String reportGet() {
+    public String reportGet(
+            @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
+            @PathVariable(value="submission1") long id,
+            Model model
+    ) throws SubmissionNotFound {
+        ISubmission submission = ResultsHelper.getSubmission(workspaceWrapper, id);
+
+        ReportWrapper wrapper = new ReportWrapper(submission);
+
+        model.addAttribute("submission", submission);
+        model.addAttribute("wrapper", wrapper);
         return "dashboard/workspaces/results/report";
     }
 
