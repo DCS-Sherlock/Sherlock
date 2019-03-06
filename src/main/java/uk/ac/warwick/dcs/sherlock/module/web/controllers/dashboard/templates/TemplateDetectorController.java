@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.ParameterForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.DetectorWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TParameterRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.ParameterForm;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.DetectorWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TDetectorRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterRepository;
 
 import javax.validation.Valid;
 

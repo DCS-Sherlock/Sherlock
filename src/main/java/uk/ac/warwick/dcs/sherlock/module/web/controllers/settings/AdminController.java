@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uk.ac.warwick.dcs.sherlock.module.web.configuration.SecurityConfig;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.AccountForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.RoleRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.AccountForm;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.RoleRepository;
 
 import javax.validation.Valid;
 

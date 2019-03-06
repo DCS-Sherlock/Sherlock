@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
 
 import java.util.HashSet;
 import java.util.Set;

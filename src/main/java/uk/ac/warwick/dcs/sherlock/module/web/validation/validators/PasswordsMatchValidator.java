@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.validation.validators;
 
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.AccountPasswordForm;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.AccountPasswordForm;
 import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.PasswordsMatch;
 
 import javax.validation.ConstraintValidator;

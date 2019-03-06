@@ -51,13 +51,19 @@ button, html [type="button"], [type="reset"], [type="submit"] {
 /* Compare */
 .sticky-matches {
     overflow: auto;
-    max-height: 250px;
+    resize: vertical;
+    max-height: 400px;
+    min-height: 55px;
 }
 
 .match-colour {
     display: inline-block;
     width:40px;
     height:10px;
+}
+
+.bg-orange {
+    background-color: #9f4508 !important;
 }
 
 /* Tabs */

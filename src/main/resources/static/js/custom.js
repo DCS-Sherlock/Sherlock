@@ -1,13 +1,41 @@
-//Sherlock Javascript
+/*
+    SHERLOCK JS
+ */
+
+/**
+ * The HTML content to replace a div with when reloading the content
+ * @type {string}
+ */
 loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">';
 
-//NB: "pointer-events: none" must be removed from .line-highlight in the prism.css if PrismJS is updated!
-function compareFiles() {
-    if ($("#compare-data").length) {
+/**
+ * Performs multiple functions on the compare submissions page:
+ * - Changes the colour of the highlighted lines according to the match colour
+ * - If you click on a highlighted line, it'll display the details for that match
+ * - If you click "view" on a match, it'll display the details for that match
+ * - Toggles the sticky property on the matches table
+ *
+ * Please Note: "pointer-events: none" must be removed from the .line-highlight
+ * class in prism.css if PrismJS is updated!
+ */
+function submissionResultsPage() {
+    //Only run on the compare submissions page
+    if ($("#compare-data").length || $("#report-data").length) {
+        //Fetch the match details
         var matches = getMatchesJSON();
-        var lineToMatchId = getLineToMatchIdJSON();
 
+        //Fetch the line to match ID map
+        var lineMap = getMapJSON();
 
+        //Which match is active
+        var active = -1;
+
+        /**
+         * Converts a HEX colour code to a RGBA colour code with transparency
+         *
+         * @param colour the hex colour code to convert
+         * @returns {string} the rgba colour code equivalent
+         */
         function rgba(colour) {
             return 'rgba(' + parseInt(colour.slice(-6,-4),16)
                 + ',' + parseInt(colour.slice(-4,-2),16)
@@ -15,79 +43,124 @@ function compareFiles() {
                 +',0.3)';
         }
 
-        function highlight(fileId, fileLines) {
+        /**
+         * Highlights the specified lines the default colour
+         *
+         * @param fileId the id of the file
+         * @param lines the lines to highlight
+         */
+        function highlight(fileId, lines, colour) {
+            var left = rgba(colour);
+            var right = rgba("#2d2d2d");
+
             var first = true;
-            var colour = rgba("#f47b2a");
+            for (var i = 0; i < lines.length; i++) {
+                var lineNum = lines[i];
 
-            for (var i = 0; i < fileLines.length; i++) {
-                var id = fileLines[i];
-
+                //Scroll the div to the top of the first line
                 if (first) {
-                    $("#id-"+fileId).find(".card-body").scrollTop(
-                        $("pre[data-file-id='"+fileId+"']").find("[data-range='"+id+"']").position().top
-                    );
+                    var line = $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']");
+
+                    var position = line.position();
+                    if (position != null) {
+                        $("#id-" + fileId).find(".card-body").scrollTop(
+                            position.top
+                        );
+                    }
+
+                    var offset = line.offset();
+                    if (offset != null) {
+                        $("#report-match-info").css("margin-top", offset.top - $('[data-js="comparison"]').offset().top);
+                    }
                 }
 
-                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+id+"']").css('background-color', colour);
+                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css({
+                    'background': left,
+                    'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                    'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                    'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
+                });
+
+                // $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css('background-color', colour);
+
                 first = false;
             }
         }
 
-        function clickOn(matchIds) {
-            console.log(matchIds);
+        /**
+         * Shows the details of a match: highlights all the lines and
+         * displays the details of the match at the bottom of the screen
+         *
+         * @param matchId
+         */
+        function showMatch(matchId) {
+            if (active >= 0) {
+                var row = $("#row-"+active);
+                row.find("[data-js='match-show']").toggleClass("d-none");
+                row.find("[data-js='match-hide']").toggleClass("d-none");
+            }
 
-            var match = matches[matchIds[0]];
+            active = matchId;
 
+            var match = matches[matchId];
+
+            //Double check that the match exists
             if (match == null) {
-                clickOff();
+                hideMatch();
                 return;
             }
 
-            var infoBlock = $("#match-info-block");
-            var infoExtra = $("#match-info-extra");
-
-            infoExtra.html("");
-
-            var first = true;
-            for(var i = 0; i < matchIds.length; i += 1) {
-                var id = matchIds[i];
-                var m = matches[id];
-
-                if (m != null) {
-                    if (first) {
-                        infoBlock.find("#match-reason").text(m.reason);
-                        infoBlock.find("#match-score").text(m.score);
-                    } else {
-                        var copy = infoBlock.clone();
-                        copy.find("#match-reason").text(m.reason);
-                        copy.find("#match-score").text(m.score);
-                        infoExtra.append(copy.html());
-                    }
-                    first = false;
-                }
+            //Display the details of the match at the bottom of the screen
+            var infoArea = $("#match-info");
+            var stickyArea = true;
+            if (!infoArea.length) {
+                infoArea = $("#report-match-info");
+                stickyArea = false;
+            }
+            infoArea.find("#match-reason").text(match.reason);
+            infoArea.find("#match-score").text(match.score);
+            infoArea.find(".match-colour").css("background-color", match.colour);
+            if (stickyArea) {
+                infoArea.slideDown();
+            } else {
+                infoArea.show();
             }
 
-            //Show the
-            $("#match-info").slideDown();
+            //Toggle the table info
+            var row = $("#row-"+matchId);
+            row.toggleClass("active");
+            row.find("[data-js='match-show']").toggleClass("d-none");
+            row.find("[data-js='match-hide']").toggleClass("d-none");
 
-            //Collapse all files except for the two incolved
+            $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
+
+            //Collapse all files except for the two involved
             $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
             $("#id-"+match.file1Id).collapse('show');
             $("#id-"+match.file2Id).collapse('show');
 
             //Remove all the line highlights
             $(".line-highlight").each(function() {
-                $(this).css('background-color', "");
+                $(this).css('background', "");
             });
 
-            //Highlight the file 1 lines
-            highlight(match.file1Id, match.file1Lines);
-            highlight(match.file2Id, match.file2Lines);
+            //Highlight the lines involved with this match
+            highlight(match.file1Id, match.file1Lines, match.colour);
+            highlight(match.file2Id, match.file2Lines, match.colour);
 
-            //Calculate the hight to scroll the window to
-            var height = $("[data-js='comparison']").offset().top;
-            if ($("#matches-container").hasClass("sticky-top")) {
-                height -= $("#matches-container").height();
+            var height;
+            if (stickyArea) {
+                //Calculate the height to scroll the window to
+                height = $("[data-js='comparison']").offset().top;
+                if ($("#matches-container").hasClass("sticky-top")) {
+                    height -= $("#matches-container").height();
+                }
+            } else {
+                //Calculate the height to scroll the window to
+                height = $("#report-match-info").offset().top - 10;
+                if ($("#matches-container").hasClass("sticky-top")) {
+                    height -= $("#matches-container").height();
+                }
             }
 
             //Scroll the window
@@ -96,96 +169,200 @@ function compareFiles() {
             );
         }
 
-        function clickOff() {
-            $("#match-info").slideUp();
+        /**
+         * Sets the colour of each highlighted line to the colour for the
+         * relevant line and hides the details of the match at the bottom
+         * of the screen.
+         */
+        function hideMatch() {
+            if (active >= 0) {
+                var row = $("#row-"+active);
+                row.toggleClass("active");
+                row.find("[data-js='match-show']").toggleClass("d-none");
+                row.find("[data-js='match-hide']").toggleClass("d-none");
+            }
 
+            //Hide the match info area
+            $("#match-info").slideUp();
+            $("#report-match-info").slideUp();
+
+            //Set the colour of each highlighted line
             $(".line-highlight").each(function() {
                 var input = $(this);
-                var line = input.attr("data-range");
-                var file = input.closest("pre").attr("data-file-id");
-                var matchID = lineToMatchId[file][line][0];
 
-                if (matchID != null) {
-                    var match = matches[matchID];
+                var lineNum = input.attr("data-range");
+                var fileId = input.closest("pre").attr("data-file-id");
+                if (fileId == null) {
+                    return;
+                }
+
+                var matchId = lineMap[fileId]['visible'][lineNum];
+
+                if (matchId != null) {
+                    var match = matches[matchId];
                     if (match != null) {
-                        input.css('background-color', rgba(match.colour));
+                        var left = rgba(match.colour);
+                        var right = rgba("#2d2d2d");
+
+                        input.css({
+                            'background': left,
+                            'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                            'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                            'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
+                        });
                     }
                 }
             });
+
+            active = -1;
         }
 
-        function update() {
+        /**
+         *
+         */
+        function bindTable() {
+            //Hide the info area
             $("#match-info").hide();
 
-            var area = $("#matches-contents");
-            var template = $("#matches-template");
-            var emptyTemplate = $("#matches-template-empty");
-
-            var number = 0;
-            for(var i = 0; i < Object.keys(matches).length; i++) {
-                var match = matches[i];
-;
-                var copy = template.clone();
-                copy.find(".match-reason").text(match.reason);
-                copy.find(".match-score").text(match.score);
-                copy.find(".match-colour").css("background-color", match.colour);
-                copy.find(".match-id").attr("data-js-target", i);
-                area.append(copy.html());
-
-                number++;
-            }
-
-            if (number == 0) {
-                area.html(emptyTemplate.html());
-            }
-
-            $(".match-id").unbind();
-            $(".match-id").click(function(e) {
+            //Listener for click events on the "show" button next to each match
+            $("[data-js='match-show']").unbind();
+            $("[data-js='match-show']").click(function(e) {
                 var input = $(this);
-                clickOn([input.attr("data-js-target")]);
+                showMatch(input.attr("data-js-target"));
             });
 
+            //Listener for click events on the "hide" button next to each match
+            $("[data-js='match-hide']").unbind();
+            $("[data-js='match-hide']").click(function(e) {
+                hideMatch();
+            });
+
+            //List for click events on the "toggle sticky table" button
             $("[data-js='matchesToggle']").unbind();
             $("[data-js='matchesToggle']").click(function(e) {
                 $("#matches-container").toggleClass("sticky-top");
+                $("#matches-container").find(".card").toggleClass("border-bottom-0");
+                $("#matches-container").find(".card").toggleClass("border-bottom");
+
                 $("#matches-table-container").toggleClass("sticky-matches");
+                if (!$("#matches-table-container").hasClass("sticky-matches")) {
+                    $("#matches-table-container").css('height', '');
+                }
             });
+
+            $('.accordion').on('hide.bs.collapse', function () {
+                hideMatch();
+            })
         }
 
+        //Runs when the file contents finish loading in
         Prism.hooks.add('complete', function() {
-            $("[data-js='comparison']").unbind();
-            $("[data-js='comparison']").click(function(e) {
-                clickOff();
+            //Listens for click events anywhere in the code area
+            $(".code-toolbar").unbind();
+            $(".code-toolbar").click(function(e) {
+                if ($("#match-info").length) {
+                    hideMatch();
+                }
             });
 
+            //Listens for click events on the "hide" button in the match details area at the bottom
             $("[data-js='comparisonHide']").unbind();
             $("[data-js='comparisonHide']").click(function(e) {
-                clickOff();
+                hideMatch();
             });
 
+            //Listens for click events on highlighted lines
             $(".line-highlight").unbind();
             $(".line-highlight").click(function(e) {
-                var input = $(this);
+                if (active < 0) {
+                    var input = $(this);
 
-                var line = input.attr("data-range");
-                var file = input.closest("pre").attr("data-file-id");
+                    var lineNum = input.attr("data-range");
+                    var fileId = input.closest("pre").attr("data-file-id");
+                    var matchId = lineMap[fileId]['visible'][lineNum];
 
-                var matchID = lineToMatchId[file][line];
+                    if (matchId != null) {
+                        showMatch(matchId);
+                    }
 
-                if (matchID != null) {
-                    clickOn(matchID);
+                    //Stops the [data-js='comparison'] event being called which
+                    //would undo the effects of this event by hiding the match
+                    //details
+                    e.stopPropagation();
                 }
-
-                e.stopPropagation();
             });
 
-            clickOff();
+            hideMatch();
         });
 
-        update();
+        bindTable();
     }
 }
 
+/**
+ * Performs multiple functions on the report page
+ *
+ * Please Note: "pointer-events: none" must be removed from the .line-highlight
+ * class in prism.css if PrismJS is updated!
+ */
+// function submissionReportPage() {
+//     //Only run on the compare submissions page
+//     if ($("#report-data").length) {
+//         //Fetch the match details
+//         matches = getMatchesJSON();
+//
+//         //Fetch the line to match ID map
+//         lineMap = getMapJSON();
+//
+//         //Which match is active
+//         active = -1;
+//
+//         //Runs when the file contents finish loading in
+//         Prism.hooks.add('complete', function() {
+//             //Listens for click events anywhere in the comparison area
+//             $("[data-js='comparison']").unbind();
+//             $("[data-js='comparison']").click(function(e) {
+//                 hideMatch();
+//             });
+//
+//             //Listens for click events on the "hide" button in the match details area at the bottom
+//             $("[data-js='comparisonHide']").unbind();
+//             $("[data-js='comparisonHide']").click(function(e) {
+//                 hideMatch();
+//             });
+//
+//             //Listens for click events on highlighted lines
+//             $(".line-highlight").unbind();
+//             $(".line-highlight").click(function(e) {
+//                 if (active < 0) {
+//                     var input = $(this);
+//
+//                     var lineNum = input.attr("data-range");
+//                     var fileId = input.closest("pre").attr("data-file-id");
+//                     var matchId = lineMap[fileId]['visible'][lineNum];
+//
+//                     if (matchId != null) {
+//                         showMatch(matchId);
+//                     }
+//
+//                     //Stops the [data-js='comparison'] event being called which
+//                     //would undo the effects of this event by hiding the match
+//                     //details
+//                     e.stopPropagation();
+//                 }
+//             });
+//
+//             hideMatch();
+//         });
+//
+//         bindTable();
+//     }
+// }
+
+/**
+ *
+ * @param input
+ */
 function loadAreaAjax(input){
     getAjax(
         input.attr("data-js-href"),
@@ -195,6 +372,9 @@ function loadAreaAjax(input){
     );
 }
 
+/**
+ *
+ */
 function loadArea() {
     $("[data-js='area']").each(function () {
         var input = $(this);
@@ -202,6 +382,9 @@ function loadArea() {
     });
 }
 
+/**
+ *
+ */
 function loadAreaTrigger() {
     $("[data-js='triggerArea']").each(function () {
         var input = $(this);
@@ -213,6 +396,9 @@ function loadAreaTrigger() {
     });
 }
 
+/**
+ *
+ */
 function loadAreaLink() {
     $("[data-js='triggerAreaLink']").unbind();
     $("[data-js='triggerAreaLink']").click(function () {
@@ -225,6 +411,9 @@ function loadAreaLink() {
     });
 }
 
+/**
+ *
+ */
 function loadAreaInputTrigger(){
     $("select[data-js='select']").unbind();
     $("select[data-js='select']").on('change', function () {
@@ -246,6 +435,9 @@ function loadAreaInputTrigger(){
     });
 }
 
+/**
+ *
+ */
 function usernameChange(){
     $("[data-js='triggerNameChange']").each(function () {
         var input = $(this);
@@ -256,6 +448,9 @@ function usernameChange(){
     });
 }
 
+/**
+ *
+ */
 function modalLink(){
     $("[data-js='modal']").unbind();
     $("[data-js='modal']").click(function () {
@@ -281,6 +476,9 @@ function modalLink(){
     });
 }
 
+/**
+ *
+ */
 function loadNetworkGraph() {
     if ($("[data-js='networkArea']").length) {
         var includedArea = $("#network-included");
@@ -566,6 +764,9 @@ function loadNetworkGraph() {
     }
 }
 
+/**
+ *
+ */
 function submitForm(){
     $("[data-js='form']").unbind();
     $("[data-js='form']").submit(function () {
@@ -592,6 +793,9 @@ function submitForm(){
     });
 }
 
+/**
+ *
+ */
 function displayModalLinks() {
     $( ".js-cancel" ).each(function() {
         if ($(this).closest("#modal-container").length == 1) {
@@ -604,6 +808,11 @@ function displayModalLinks() {
     });
 }
 
+/**
+ *
+ * @param url
+ * @param success
+ */
 function getAjax(url, success) {
     var data = {
         ajax: "true"
@@ -611,6 +820,13 @@ function getAjax(url, success) {
     submitAjax(url, data, success, "GET");
 }
 
+/**
+ *
+ * @param url
+ * @param data
+ * @param success
+ * @param type
+ */
 function submitAjax(url, data, success, type) {
     var input = {
         type: type,
@@ -646,27 +862,36 @@ function submitAjax(url, data, success, type) {
     $.ajax(input);
 }
 
+/**
+ *
+ */
 function displayTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover()
 }
 
+/**
+ *
+ */
 function rebindEvents() {
     displayTooltips();
     loadAreaInputTrigger();
     modalLink();
     submitForm();
     displayModalLinks();
-    // formSubmitButton();
     loadAreaTrigger();
     loadAreaLink();
     usernameChange();
     loadNetworkGraph();
 }
 
+/**
+ *
+ */
 $(function () {
     loadArea();
     rebindEvents();
     $('form[data-js="autoSubmit"]').submit();
-    compareFiles();
+    submissionResultsPage();
+    // submissionReportPage();
 });

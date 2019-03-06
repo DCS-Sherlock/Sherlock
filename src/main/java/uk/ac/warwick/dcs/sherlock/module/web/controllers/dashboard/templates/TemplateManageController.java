@@ -7,12 +7,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
-import uk.ac.warwick.dcs.sherlock.module.web.models.forms.TemplateForm;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.AccountWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.EngineDetectorWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.TemplateWrapper;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TDetectorRepository;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.TemplateRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.TemplateForm;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.EngineDetectorWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.TemplateWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TDetectorRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TemplateRepository;
 
 import javax.validation.Valid;
 

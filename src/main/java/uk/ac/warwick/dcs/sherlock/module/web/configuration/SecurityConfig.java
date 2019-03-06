@@ -10,12 +10,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Role;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Role;
 import uk.ac.warwick.dcs.sherlock.module.web.configuration.properties.SecurityProperties;
 import uk.ac.warwick.dcs.sherlock.module.web.configuration.properties.SetupProperties;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.RoleRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.RoleRepository;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

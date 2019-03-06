@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import uk.ac.warwick.dcs.sherlock.module.web.models.db.Account;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidPassword;
 
 import javax.validation.ConstraintValidator;

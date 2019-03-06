@@ -6,10 +6,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.SubmissionResultsData;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.JobResultsData;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
-import uk.ac.warwick.dcs.sherlock.module.web.helpers.ResultsHelper;
-import uk.ac.warwick.dcs.sherlock.module.web.models.wrapper.*;
-import uk.ac.warwick.dcs.sherlock.module.web.repositories.WorkspaceRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.*;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceRepository;
 
 @Controller
 public class WorkspaceResultsController {
@@ -41,12 +43,12 @@ public class WorkspaceResultsController {
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{submission}")
     public String reportGet(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @PathVariable(value="submission1") long id,
+            @PathVariable(value="submission") long id,
             Model model
-    ) throws SubmissionNotFound {
+    ) throws SubmissionNotFound, MapperException {
         ISubmission submission = ResultsHelper.getSubmission(workspaceWrapper, id);
 
-        ReportWrapper wrapper = new ReportWrapper(submission);
+        SubmissionResultsData wrapper = new SubmissionResultsData(submission);
 
         model.addAttribute("submission", submission);
         model.addAttribute("wrapper", wrapper);
@@ -59,11 +61,11 @@ public class WorkspaceResultsController {
             @PathVariable(value="submission1") long id1,
             @PathVariable(value="submission2") long id2,
             Model model
-    ) throws SubmissionNotFound {
+    ) throws SubmissionNotFound, MapperException {
         ISubmission submission1 = ResultsHelper.getSubmission(workspaceWrapper, id1);
         ISubmission submission2 = ResultsHelper.getSubmission(workspaceWrapper, id2);
 
-        ComparisonWrapper wrapper = new ComparisonWrapper(submission1, submission2);
+        SubmissionResultsData wrapper = new SubmissionResultsData(submission1, submission2);
 
         model.addAttribute("submission1", submission1);
         model.addAttribute("submission2", submission2);
@@ -79,7 +81,7 @@ public class WorkspaceResultsController {
     @PostMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/delete")
     public String deletePost(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("results") ResultsWrapper resultsWrapper
+            @ModelAttribute("results") JobResultsData resultsWrapper
     ) {
         //TODO: actually delete the job
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_job";
@@ -98,7 +100,7 @@ public class WorkspaceResultsController {
     }
 
     @ModelAttribute("results")
-    private ResultsWrapper getResults(
+    private JobResultsData getResults(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @PathVariable(value="jobid") long jobid,
             Model model
@@ -112,7 +114,7 @@ public class WorkspaceResultsController {
 
         if (iJob == null) throw new ResultsNotFound("Result not found");
 
-        ResultsWrapper wrapper = new ResultsWrapper(iJob);
+        JobResultsData wrapper = new JobResultsData(iJob);
         model.addAttribute("results", wrapper);
         return wrapper;
     }
