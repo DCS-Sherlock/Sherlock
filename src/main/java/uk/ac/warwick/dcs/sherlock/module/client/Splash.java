@@ -24,7 +24,7 @@ public class Splash extends JFrame {
 
 		this.setPreferredSize(new Dimension(width, height));
 		this.setUndecorated(true);
-		this.setAlwaysOnTop(true);
+		this.setAlwaysOnTop(false);
 
 		this.gif = new GifPanel("static/splash/Splash" + height + ".gif");
 		this.text = new TextPanel(height, width);

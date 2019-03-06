@@ -40,3 +40,6 @@ docs
 *.log
 *.swp
 *.bak
+
+#Minified JS
+src/main/resources/static/js

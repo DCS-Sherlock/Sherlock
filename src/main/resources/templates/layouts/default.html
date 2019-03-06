@@ -9,10 +9,7 @@
 
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE" th:text="#{nav.title}"></title>
 
-    <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css"  />
-    <link th:href="@{/css/prism.css}" rel="stylesheet" type="text/css"  />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -50,19 +47,6 @@
     </div>
 </div>
 
-<!-- Bootstrap Core JavaScript -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
-<script type="text/javascript" th:src="@{/js/prism.js}"></script>
-<script type="text/javascript" th:src="@{/js/custom.js}"></script>
+<script type="text/javascript" th:src="@{'/js/' + ${javascript}}"></script>
 </body>
 </html>

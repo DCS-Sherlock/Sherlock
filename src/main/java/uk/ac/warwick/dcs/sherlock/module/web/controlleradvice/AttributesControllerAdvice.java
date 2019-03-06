@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controlleradvice;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,6 +10,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 /**
  * Declares ModelAttributes for all controllers
@@ -18,6 +20,8 @@ public class AttributesControllerAdvice {
     //All @Autowired variables are automatically loaded by Spring
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private Environment environment;
 
     /**
      * Gets the account of the currently logged in user using the authentication
@@ -61,5 +65,20 @@ public class AttributesControllerAdvice {
     @ModelAttribute("isAjax")
     public boolean isAjax(HttpServletRequest request) {
         return request.getParameterMap().containsKey("ajax");
+    }
+
+    /**
+     * Sets the javascript url to the standard version when running the
+     * webdev profile and the minified in all other cases
+     *
+     * @param model holder for model attributes (auto-filled by Spring)
+     */
+    @ModelAttribute
+    public void addJsUrl(Model model) {
+        if (Arrays.asList(environment.getActiveProfiles()).contains("webdev")) {
+            model.addAttribute("javascript", "default.js");
+        } else {
+            model.addAttribute("javascript", "default.min.js");
+        }
     }
 }
