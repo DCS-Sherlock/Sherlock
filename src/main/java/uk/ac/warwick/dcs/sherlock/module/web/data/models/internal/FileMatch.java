@@ -71,7 +71,7 @@ public class FileMatch {
         this.score = score;
 
         //Generate a random colour
-        this.colour = "#"+ResultsHelper.randomColour();
+        this.colour = ResultsHelper.randomColour();
     }
 
     /**
@@ -147,12 +147,13 @@ public class FileMatch {
     }
 
     /**
-     * Set the id for this match
+     * Set the id for this match, also updates the colour
      *
      * @param id the new id
      */
     public void setId(int id) {
         this.id = id;
+        this.colour = ResultsHelper.getColour(id);
     }
 
     /**

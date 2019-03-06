@@ -44,6 +44,23 @@ function submissionResultsPage() {
         }
 
         /**
+         * Converts the RGBA colour code to CSS linear gradient settings
+         *
+         * @param left the colour to convert
+         *
+         * @returns {{background: string}} the CSS settings
+         */
+        function gradient(left) {
+            var right = rgba("#2d2d2d");
+            return {
+                'background': left,
+                'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
+                'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
+            }
+        }
+
+        /**
          * Highlights the specified lines the default colour
          *
          * @param fileId the id of the file
@@ -51,7 +68,6 @@ function submissionResultsPage() {
          */
         function highlight(fileId, lines, colour) {
             var left = rgba(colour);
-            var right = rgba("#2d2d2d");
 
             var first = true;
             for (var i = 0; i < lines.length; i++) {
@@ -74,14 +90,7 @@ function submissionResultsPage() {
                     }
                 }
 
-                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css({
-                    'background': left,
-                    'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                    'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                    'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
-                });
-
-                // $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css('background-color', colour);
+                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css(gradient(left));
 
                 first = false;
             }
@@ -95,9 +104,10 @@ function submissionResultsPage() {
          */
         function showMatch(matchId) {
             if (active >= 0) {
-                var row = $("#row-"+active);
-                row.find("[data-js='match-show']").toggleClass("d-none");
-                row.find("[data-js='match-hide']").toggleClass("d-none");
+                var row = $("#row-" + active);
+                row.removeClass("active");
+                row.find("[data-js='match-show']").removeClass("d-none");
+                row.find("[data-js='match-hide']").addClass("d-none");
             }
 
             active = matchId;
@@ -113,26 +123,27 @@ function submissionResultsPage() {
             //Display the details of the match at the bottom of the screen
             var infoArea = $("#match-info");
             var stickyArea = true;
+
             if (!infoArea.length) {
                 infoArea = $("#report-match-info");
                 stickyArea = false;
             }
+
             infoArea.find("#match-reason").text(match.reason);
             infoArea.find("#match-score").text(match.score);
             infoArea.find(".match-colour").css("background-color", match.colour);
+
             if (stickyArea) {
                 infoArea.slideDown();
             } else {
                 infoArea.show();
             }
 
-            //Toggle the table info
-            var row = $("#row-"+matchId);
-            row.toggleClass("active");
-            row.find("[data-js='match-show']").toggleClass("d-none");
-            row.find("[data-js='match-hide']").toggleClass("d-none");
-
-            $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
+            //Toggle the table button
+            var row = $("#row-" + matchId);
+            row.addClass("active");
+            row.find("[data-js='match-show']").addClass("d-none");
+            row.find("[data-js='match-hide']").removeClass("d-none");
 
             //Collapse all files except for the two involved
             $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
@@ -149,14 +160,15 @@ function submissionResultsPage() {
             highlight(match.file2Id, match.file2Lines, match.colour);
 
             var height;
+            //Calculate the height to scroll the window to
             if (stickyArea) {
-                //Calculate the height to scroll the window to
+                //Top of the collapse area if on the compare page
                 height = $("[data-js='comparison']").offset().top;
                 if ($("#matches-container").hasClass("sticky-top")) {
                     height -= $("#matches-container").height();
                 }
             } else {
-                //Calculate the height to scroll the window to
+                //The top of the first highlighted line
                 height = $("#report-match-info").offset().top - 10;
                 if ($("#matches-container").hasClass("sticky-top")) {
                     height -= $("#matches-container").height();
@@ -177,9 +189,9 @@ function submissionResultsPage() {
         function hideMatch() {
             if (active >= 0) {
                 var row = $("#row-"+active);
-                row.toggleClass("active");
-                row.find("[data-js='match-show']").toggleClass("d-none");
-                row.find("[data-js='match-hide']").toggleClass("d-none");
+                row.removeClass("active");
+                row.find("[data-js='match-show']").removeClass("d-none");
+                row.find("[data-js='match-hide']").addClass("d-none");
             }
 
             //Hide the match info area
@@ -202,14 +214,8 @@ function submissionResultsPage() {
                     var match = matches[matchId];
                     if (match != null) {
                         var left = rgba(match.colour);
-                        var right = rgba("#2d2d2d");
 
-                        input.css({
-                            'background': left,
-                            'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                            'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                            'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
-                        });
+                        input.css(gradient(left));
                     }
                 }
             });
@@ -222,7 +228,7 @@ function submissionResultsPage() {
          */
         function bindTable() {
             //Hide the info area
-            $("#match-info").hide();
+            $("#match-info").hide()
 
             //Listener for click events on the "show" button next to each match
             $("[data-js='match-show']").unbind();

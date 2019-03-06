@@ -54,11 +54,11 @@ public class SubmissionResultsData {
 //            long file2Id = submission.getAllFiles().get(0).getPersistentId();
             long file2Id = 200;
 
-            for (int i = 1; i < 5; i++) {
+            for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
-                list1.add(new CodeBlock(this.tempRandomNumberInRange(1, 20), this.tempRandomNumberInRange(21, 40)));
+                list1.add(new CodeBlock(this.tempRandomNumberInRange((i*2)*2, (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
                 List<CodeBlock> list2 = new ArrayList<>();
-                list2.add(new CodeBlock(this.tempRandomNumberInRange(1, 20), this.tempRandomNumberInRange(21, 40)));
+                list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
                 matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {
@@ -98,11 +98,11 @@ public class SubmissionResultsData {
             long file1Id = submission1.getAllFiles().get(0).getPersistentId();
             long file2Id = submission2.getAllFiles().get(0).getPersistentId();
 
-            for (int i = 1; i < 5; i++) {
+            for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
-                list1.add(new CodeBlock(this.tempRandomNumberInRange(1, 20), this.tempRandomNumberInRange(21, 40)));
+                list1.add(new CodeBlock(this.tempRandomNumberInRange((i*2)*2, (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
                 List<CodeBlock> list2 = new ArrayList<>();
-                list2.add(new CodeBlock(this.tempRandomNumberInRange(1, 20), this.tempRandomNumberInRange(21, 40)));
+                list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
                 matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {

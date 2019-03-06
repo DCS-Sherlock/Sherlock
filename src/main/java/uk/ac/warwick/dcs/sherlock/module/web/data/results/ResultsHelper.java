@@ -5,6 +5,8 @@ import uk.ac.warwick.dcs.sherlock.module.web.exceptions.SubmissionNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.WorkspaceWrapper;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -12,6 +14,57 @@ import java.util.Random;
  * analysis results to the user
  */
 public class ResultsHelper {
+    /**
+     * Array of colours for the get colour method
+     */
+    public static List<String> colours = Arrays.asList(
+        "#ff4c4c",
+        "#ff9932",
+        "#ffff66",
+        "#a6ff4c",
+        "#4cff4c",
+        "#66ffd8",
+        "#99e5ff",
+        "#a64cff",
+        "#ff66ff",
+        "#ff99cc",
+        "#ffcce5",
+        "#ff0000",
+        "#ff8000",
+        "#ffff00",
+        "#80ff00",
+        "#00ff00",
+        "#00ffbf",
+        "#00bfff",
+        "#0040ff",
+        "#8000ff",
+        "#ff00ff",
+        "#ff0080",
+        "#b20000",
+        "#cc6600",
+        "#cccc00",
+        "#66cc00",
+        "#00b200",
+        "#00cc98",
+        "#0098cc",
+        "#005f7f",
+        "#002cb2",
+        "#5900b2",
+        "#b200b2",
+        "#b20059",
+        "#7f0000",
+        "#994c00",
+        "#999900",
+        "#4c9900",
+        "#007f00",
+        "#009972",
+        "#0085b2",
+        "#001966",
+        "#26004c",
+        "#660066",
+        "#4c0026"
+    );
+
     /**
      * Tries to find the submission in the workspace supplied.
      *
@@ -41,9 +94,25 @@ public class ResultsHelper {
     }
 
     /**
-     * Generates a random HEX colour code (e.g. "ffffff")
+     * Fetches a colour code for a match from the colour list above,
+     * or randomly generates one if the index is out of bounds
      *
-     * @return the colour code without the "#" before
+     * @param id the id/index of the match
+     *
+     * @return the hex colour code
+     */
+    public static String getColour(int id) {
+        if (id < colours.size()) {
+            return colours.get(id);
+        }
+
+        return randomColour();
+    }
+
+    /**
+     * Generates a random HEX colour code (e.g. "#ffffff")
+     *
+     * @return the colour code
      */
     public static String randomColour() {
         Random random = new Random();
@@ -52,6 +121,6 @@ public class ResultsHelper {
         float g = random.nextFloat();
         float b = random.nextFloat();
 
-        return Integer.toHexString(new Color(r, g, b).getRGB()).substring(2);
+        return "#" + Integer.toHexString(new Color(r, g, b).getRGB()).substring(2);
     }
 }
