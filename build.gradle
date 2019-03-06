@@ -217,7 +217,7 @@ war.dependsOn bootWar
 assemble.dependsOn jar
 
 bootRun {
-    dependsOn minifyJS
+    dependsOn minifyJs
     main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
 }
 
