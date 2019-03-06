@@ -41,5 +41,6 @@ docs
 *.swp
 *.bak
 
-#Minified JS
+#Minified CSS/JS
+src/main/resources/static/css
 src/main/resources/static/js

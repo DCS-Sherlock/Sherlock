@@ -10,6 +10,7 @@ plugins {
     id "org.ajoberstar.grgit" version "3.0.0"
     id "idea"
     id "com.eriwen.gradle.js" version "2.14.1"
+    id "com.github.salomonbrys.gradle.sass" version "1.2.0"
 }
 
 apply plugin: 'project-report'
@@ -182,6 +183,7 @@ jar {
 
 bootJar {
     dependsOn minifyJs
+    dependsOn sassCompile
     destinationDir = file("$buildDir/out")
     mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
     manifest {
@@ -200,6 +202,7 @@ jar.dependsOn bootJar
 
 bootWar {
     dependsOn minifyJs
+    dependsOn sassCompile
     destinationDir = file("$buildDir/out")
     mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockServer'
     manifest {
@@ -218,6 +221,7 @@ assemble.dependsOn jar
 
 bootRun {
     dependsOn minifyJs
+    dependsOn sassCompile
     main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
 }
 
@@ -261,9 +265,9 @@ minifyJs {
     }
 }
 
-clean.doFirst {
-    delete "${projectDir}/src/main/resources/static/js/default.js"
-    delete "${projectDir}/src/main/resources/static/js/default.min.js"
+sassCompile {
+    style = compressed
+    outputDir = file("src/main/resources/static/css")
 }
 
 class TagSupport {
