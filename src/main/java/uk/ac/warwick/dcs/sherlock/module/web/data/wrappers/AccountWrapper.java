@@ -7,7 +7,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Workspace;
 
 import java.util.Set;
 
-/**
+/*
     Somehow if you use form binding to set a variable with the same name as a variable in the
     Account object, the variable in the @ModelAttribute("account") instance of the Account
     object is overwritten.
