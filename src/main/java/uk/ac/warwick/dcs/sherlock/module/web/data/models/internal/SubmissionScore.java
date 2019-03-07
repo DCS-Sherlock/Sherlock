@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
+
 /**
  * Stores the submission name, id and score to display on the
  * results section of the website
@@ -97,26 +99,6 @@ public class SubmissionScore {
      * @return the score group
      */
     public int getScoreGroup() {
-        if (score > 90) {
-            return 9;
-        } else if (score > 80) {
-            return 8;
-        } else if (score > 70) {
-            return 7;
-        } else if (score > 60) {
-            return 6;
-        } else if (score > 50) {
-            return 5;
-        } else if (score > 40) {
-            return 4;
-        } else if (score > 30) {
-            return 3;
-        } else if (score > 20) {
-            return 2;
-        } else if (score > 10) {
-            return 1;
-        }
-
-        return 0;
+        return ResultsHelper.getScoreGroup(this.score);
     }
 }

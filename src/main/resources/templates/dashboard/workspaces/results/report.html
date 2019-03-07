@@ -103,8 +103,31 @@
             <div class="card border-top-0 shadow-sm">
                 <div class="card-body">
                     <div class="ml-3 mr-3">
-                        <div class="row">
-
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <h4>
+                                    <span th:text="#{results.report.score}"></span>
+                                </h4>
+                                <p>
+                                    <span th:classappend="@{score-{group}(group=${wrapper.getScoreGroup()})}" th:text="${wrapper.getScore()}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <h4>
+                                    <span th:text="#{results.report.matches}"></span>
+                                </h4>
+                                <p>
+                                    <th:block th:each="sub : ${wrapper.getSubmissions()}">
+                                        <a type="button" class="btn btn-outline-primary btn-sm mt-1 mb-1 mr-1 btn-min-width"
+                                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/compare/{file1}/{file2}(id=${workspace.getId()},job_id=${results.getPersistentId()},file1=${submission.getId()},file2=${sub.getId()})}">
+                                            <span th:text="${sub.getName()}"></span> <br />
+                                            (<span th:classappend="@{score-{group}(group=${sub.getScoreGroup()})}" th:text="${sub.getScore()}"></span>)
+                                        </a>
+                                    </th:block>
+                                </p>
+                            </div>
                         </div>
                         <div class="row" data-js="comparison">
                             <div class="col-lg-6">

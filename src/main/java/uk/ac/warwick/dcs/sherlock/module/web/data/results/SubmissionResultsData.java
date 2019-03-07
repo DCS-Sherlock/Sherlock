@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
 
 import java.util.ArrayList;
@@ -25,14 +26,24 @@ public class SubmissionResultsData {
     private ISubmission submission2;
 
     /**
-     * The list of matches between the two submissions
+     * The list of matches between the submissions
      */
     private List<FileMatch> matches;
+
+    /**
+     * The list of submissions matched to this one
+     */
+    private List<SubmissionScore> submissions;
 
     /**
      * The file mapper linking the lines in each file to a match
      */
     private FileMapper fileMapper;
+
+    /**
+     * The score for the first submission
+     */
+    private float score;
 
     /**
      * Initialise the report data object
@@ -45,6 +56,7 @@ public class SubmissionResultsData {
         this.submission1 = submission;
 
         this.matches = new ArrayList<>();
+        this.submissions = new ArrayList<>();
 
         //TODO: fetch real data from report generator
 
@@ -67,6 +79,15 @@ public class SubmissionResultsData {
                     matches.add(new FileMatch(file1Id, file1Name, submission.getId(), list1, file2Id, file2Name, 2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
                 }
             }
+
+            int max = this.tempRandomNumberInRange(0, 10);
+            for (int count = 0; count <= max; count++) {
+                int subId = this.tempRandomNumberInRange(1, 10);
+                if (subId != submission.getId()) {
+                    submissions.add(new SubmissionScore(subId, "Submission " + subId, this.tempRandomScore()));
+                }
+            }
+            this.score = tempRandomScore();
         }
 
         //Loop through the matches, setting the ids
@@ -92,6 +113,8 @@ public class SubmissionResultsData {
         this.submission2 = submission2;
 
         this.matches = new ArrayList<>();
+        this.submissions = new ArrayList<>();
+        this.score = 0;
 
         //TODO: fetch real data from report generator
 
@@ -144,12 +167,41 @@ public class SubmissionResultsData {
     }
 
     /**
+     * Gets the list of submissions linked to this one
+     *
+     * @return the list
+     */
+    public List<SubmissionScore> getSubmissions() {
+        return submissions;
+    }
+
+    /**
      * Get the second submission
      *
      * @return the submission
      */
     public ISubmission getSubmission2() {
         return submission2;
+    }
+
+    /**
+     * Get the first submission's score
+     *
+     * @return the score
+     */
+    public float getScore() {
+        return score;
+    }
+
+    /**
+     * All scores are grouped into 10 groups:
+     * 0-10, 10-20, 20-30, 30-40, 40-50, 50-60, 60-70, 70-80, 80-90 or 90-100
+     * Get the group this score belongs to.
+     *
+     * @return the score group
+     */
+    public int getScoreGroup() {
+        return ResultsHelper.getScoreGroup(this.score);
     }
 
     /**
@@ -188,6 +240,12 @@ public class SubmissionResultsData {
      */
     public String getHighlightedLines(long fileId) {
         return fileMapper.getHighlightedLines(fileId);
+    }
+
+
+    //TODO: Remove when loading real data
+    private float tempRandomScore() {
+        return this.tempRandomNumberInRange(1, 100);
     }
 
     //TODO: Remove when loading real data

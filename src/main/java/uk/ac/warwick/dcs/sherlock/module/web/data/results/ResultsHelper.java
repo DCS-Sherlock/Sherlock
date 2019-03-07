@@ -123,4 +123,37 @@ public class ResultsHelper {
 
         return "#" + Integer.toHexString(new Color(r, g, b).getRGB()).substring(2);
     }
+
+    /**
+     * All scores are grouped into 10 groups:
+     * 0-10, 10-20, 20-30, 30-40, 40-50, 50-60, 60-70, 70-80, 80-90 or 90-100
+     * Get the group this score belongs to.
+     *
+     * @param score the score to find the group of
+     *
+     * @return the score group
+     */
+    public static int getScoreGroup(float score) {
+        if (score > 90) {
+            return 9;
+        } else if (score > 80) {
+            return 8;
+        } else if (score > 70) {
+            return 7;
+        } else if (score > 60) {
+            return 6;
+        } else if (score > 50) {
+            return 5;
+        } else if (score > 40) {
+            return 4;
+        } else if (score > 30) {
+            return 3;
+        } else if (score > 20) {
+            return 2;
+        } else if (score > 10) {
+            return 1;
+        }
+
+        return 0;
+    }
 }
