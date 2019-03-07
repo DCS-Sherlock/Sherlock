@@ -9,11 +9,11 @@
 loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">';
 
 /**
- * Performs multiple functions on the compare submissions page:
+ * Performs multiple functions on the compare and report pages:
  * - Changes the colour of the highlighted lines according to the match colour
  * - If you click on a highlighted line, it'll display the details for that match
  * - If you click "view" on a match, it'll display the details for that match
- * - Toggles the sticky property on the matches table
+ * - Toggles the visibility of the matches table
  *
  * Please Note: "pointer-events: none" must be removed from the .line-highlight
  * class in prism.css if PrismJS is updated!
@@ -23,12 +23,18 @@ function submissionResultsPage() {
     if ($("#compare-data").length || $("#report-data").length) {
         //Fetch the match details
         var matches = getMatchesJSON();
-
-        //Fetch the line to match ID map
         var lineMap = getMapJSON();
 
-        //Which match is active
-        var active = -1;
+        //Get the workspace id and submission id on the report page
+        var workspaceId = 0;
+        var submissionId = 0;
+        if ($("#report-data").length) {
+            workspaceId = getWorkspaceId();
+            submissionId = getSubmissionId();
+        }
+
+        var active = -1; //Which match is active
+        var loadingReport = false; //Whether the page is loading, or a match on the report page
 
         /**
          * Converts a HEX colour code to a RGBA colour code with transparency
@@ -40,23 +46,24 @@ function submissionResultsPage() {
             return 'rgba(' + parseInt(colour.slice(-6,-4),16)
                 + ',' + parseInt(colour.slice(-4,-2),16)
                 + ',' + parseInt(colour.slice(-2),16)
-                +',0.3)';
+                +',0.4)';
         }
 
         /**
          * Converts the RGBA colour code to CSS linear gradient settings
          *
-         * @param left the colour to convert
+         * @param colour the colour to convert
          *
          * @returns {{background: string}} the CSS settings
          */
-        function gradient(left) {
+        function gradient(colour) {
             var right = rgba("#2d2d2d");
+
             return {
-                'background': left,
-                'background': "-moz-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                'background': "-webkit-linear-gradient(90deg, " + left + " 0%, " + right + " 100%)",
-                'background': "linear-gradient(90deg, " + left + " 0%, " + right + " 100%)"
+                'background': colour,
+                'background': "-moz-linear-gradient(90deg, " + colour + " 0%, " + right + " 100%)",
+                'background': "-webkit-linear-gradient(90deg, " + colour + " 0%, " + right + " 100%)",
+                'background': "linear-gradient(90deg, " + colour + " 0%, " + right + " 100%)"
             }
         }
 
@@ -67,32 +74,32 @@ function submissionResultsPage() {
          * @param lines the lines to highlight
          */
         function highlight(fileId, lines, colour) {
-            var left = rgba(colour);
-
             var first = true;
-            for (var i = 0; i < lines.length; i++) {
-                var lineNum = lines[i];
+            for (var i = 0; i < lines.length; i++) { //loop through all the lines in the file
+                var lineNum = lines[i]; //fetch the match linked to this line
 
-                //Scroll the div to the top of the first line
                 if (first) {
                     var line = $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']");
+                    var position = parseInt(line.css("top"), 10);
 
-                    var position = line.position();
-                    if (position != null) {
-                        $("#id-" + fileId).find(".card-body").scrollTop(
-                            position.top
-                        );
-                    }
+                    //Scroll the file div to the top of the line
+                    // if (position != null) {
+                    $("#id-" + fileId).find(".line-numbers").scrollTop(
+                        position
+                    );
+                    // }
 
+                    //Ensure that the report match box is at the same position as the first line
                     var offset = line.offset();
                     if (offset != null) {
                         $("#report-match-info").css("margin-top", offset.top - $('[data-js="comparison"]').offset().top);
                     }
+
+                    first = false;
                 }
 
-                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css(gradient(left));
-
-                first = false;
+                //change the colour of each line
+                $("pre[data-file-id='"+fileId+"']").find("[data-range='"+lineNum+"']").css(gradient(rgba(colour)));
             }
         }
 
@@ -103,44 +110,72 @@ function submissionResultsPage() {
          * @param matchId
          */
         function showMatch(matchId) {
+            //Check if there is an active match
+            var row;
             if (active >= 0) {
-                var row = $("#row-" + active);
+                //Find the row in the table
+                row = $("#row-" + active);
+                //Remove the active class and display the show button
                 row.removeClass("active");
                 row.find("[data-js='match-show']").removeClass("d-none");
                 row.find("[data-js='match-hide']").addClass("d-none");
             }
 
-            active = matchId;
-
-            var match = matches[matchId];
+            active = matchId; //set the active match id
+            var match = matches[active]; //fetch the details of the match
 
             //Double check that the match exists
             if (match == null) {
-                hideMatch();
+                hideAll();
                 return;
             }
 
-            //Display the details of the match at the bottom of the screen
-            var infoArea = $("#match-info");
-            var stickyArea = true;
+            //Update the details on the match info area
+            var area = $("#match-info");
+            var compareArea = true;
 
-            if (!infoArea.length) {
-                infoArea = $("#report-match-info");
-                stickyArea = false;
+            //Check if on the report page
+            if (!area.length) {
+                area = $("#report-match-info");
+                compareArea = false;
             }
 
-            infoArea.find("#match-reason").text(match.reason);
-            infoArea.find("#match-score").text(match.score);
-            infoArea.find(".match-colour").css("background-color", match.colour);
+            //Update the text
+            area.find("#match-reason").text(match.reason);
+            area.find("#match-score").text(match.score);
+            area.find(".match-colour").css("background-color", match.colour);
 
-            if (stickyArea) {
-                infoArea.slideDown();
-            } else {
-                infoArea.show();
+            //Show the file code on the report page
+            if (!compareArea) {
+                //Load the details of the first match
+                var submission = match.file1Submission; //the submission id of the match
+                var lines = match.file1Lines.join(); //the lines to highlight
+                var file =  match.file1Id; //the id of the file
+                var name = match.file1Name; //the name of the file
+
+                //Check if we're loading the wrong match
+                if (submissionId == submission) {
+                    //Therefore, load the details of the second match
+                    submission = match.file2Submission;
+                    lines = match.file2Lines.join();
+                    file =  match.file2Id;
+                    name = match.file2Name;
+                }
+
+                //Refresh the code area
+                area.find("#match-code").html('<pre class="line-numbers" style="height: 500px; resize: vertical"\n' +
+                    'data-line="'+lines+'"\n' +
+                    'data-src="/dashboard/workspaces/manage/'+workspaceId+'/submission/'+submission+'/file/'+file+'/'+name+'"></pre>');
+                Prism.fileHighlight();
+
+                loadingReport = true;
             }
 
-            //Toggle the table button
-            var row = $("#row-" + matchId);
+            area.show(); //show the info area
+
+            //Find the row in the table
+            row = $("#row-" + active);
+            //Add the active class and display the hide button
             row.addClass("active");
             row.find("[data-js='match-show']").addClass("d-none");
             row.find("[data-js='match-hide']").removeClass("d-none");
@@ -161,7 +196,7 @@ function submissionResultsPage() {
 
             var height;
             //Calculate the height to scroll the window to
-            if (stickyArea) {
+            if (compareArea) {
                 //Top of the collapse area if on the compare page
                 height = $("[data-js='comparison']").offset().top;
                 if ($("#matches-container").hasClass("sticky-top")) {
@@ -186,9 +221,12 @@ function submissionResultsPage() {
          * relevant line and hides the details of the match at the bottom
          * of the screen.
          */
-        function hideMatch() {
+        function hideAll() {
+            //Check if there is an active match
             if (active >= 0) {
-                var row = $("#row-"+active);
+                //Find the row in the table
+                var row = $("#row-" + active);
+                //Remove the active class and display the show button
                 row.removeClass("active");
                 row.find("[data-js='match-show']").removeClass("d-none");
                 row.find("[data-js='match-hide']").addClass("d-none");
@@ -201,21 +239,18 @@ function submissionResultsPage() {
             //Set the colour of each highlighted line
             $(".line-highlight").each(function() {
                 var input = $(this);
-
-                var lineNum = input.attr("data-range");
-                var fileId = input.closest("pre").attr("data-file-id");
+                var lineNum = input.attr("data-range"); //fetch the line element
+                var fileId = input.closest("pre").attr("data-file-id"); //get the file id of the line
                 if (fileId == null) {
                     return;
                 }
 
-                var matchId = lineMap[fileId]['visible'][lineNum];
+                var matchId = lineMap[fileId]['visible'][lineNum]; //get the match of the line
 
                 if (matchId != null) {
-                    var match = matches[matchId];
+                    var match = matches[matchId]; //find the match
                     if (match != null) {
-                        var left = rgba(match.colour);
-
-                        input.css(gradient(left));
+                        input.css(gradient(rgba(match.colour))); //set the colour of the line
                     }
                 }
             });
@@ -224,11 +259,36 @@ function submissionResultsPage() {
         }
 
         /**
-         *
+         * Binds all the click events for the compare/report pages
          */
-        function bindTable() {
-            //Hide the info area
-            $("#match-info").hide()
+        function bind() {
+            //Hide the info area(s)
+            $("#match-info").hide();
+            $("#report-match-info").hide();
+
+            //Listener for click events on the "previous" button in the match details div
+            $("[data-js='match-previous']").unbind();
+            $("[data-js='match-previous']").click(function(e) {
+                var previous = parseInt(active, 10) - 1;
+
+                if (previous < 0) {
+                    previous = Object.keys(matches).length-1;
+                }
+
+                showMatch(previous);
+            });
+
+            //Listener for click events on the "next" button in the match details div
+            $("[data-js='match-next']").unbind();
+            $("[data-js='match-next']").click(function(e) {
+                var next = parseInt(active, 10) + 1;
+
+                if (next >= Object.keys(matches).length) {
+                    next = 0;
+                }
+
+                showMatch(next);
+            });
 
             //Listener for click events on the "show" button next to each match
             $("[data-js='match-show']").unbind();
@@ -240,130 +300,87 @@ function submissionResultsPage() {
             //Listener for click events on the "hide" button next to each match
             $("[data-js='match-hide']").unbind();
             $("[data-js='match-hide']").click(function(e) {
-                hideMatch();
+                hideAll();
             });
 
-            //List for click events on the "toggle sticky table" button
-            $("[data-js='matchesToggle']").unbind();
-            $("[data-js='matchesToggle']").click(function(e) {
-                $("#matches-container").toggleClass("sticky-top");
-                $("#matches-container").find(".card").toggleClass("border-bottom-0");
-                $("#matches-container").find(".card").toggleClass("border-bottom");
-
-                $("#matches-table-container").toggleClass("sticky-matches");
-                if (!$("#matches-table-container").hasClass("sticky-matches")) {
-                    $("#matches-table-container").css('height', '');
-                }
+            //List for click events on the "toggle table" button
+            $("[data-js='matches-list']").unbind();
+            $("[data-js='matches-list']").click(function(e) {
+                $("[data-js='matches-list']").each(function(e) {
+                   $(this).toggleClass("d-none");
+                });
+                $("#matches-table-container").toggleClass("d-none");
             });
 
+            //Hides the match when a file is collapsed
             $('.accordion').on('hide.bs.collapse', function () {
-                hideMatch();
+                hideAll();
             })
         }
 
         //Runs when the file contents finish loading in
         Prism.hooks.add('complete', function() {
-            //Listens for click events anywhere in the code area
-            $(".code-toolbar").unbind();
-            $(".code-toolbar").click(function(e) {
+            if (loadingReport) {
+                var area = $("#report-match-info");
+
+                if (area.length) {
+                    var first = true;
+
+                    area.find(".line-highlight").each(function(e){
+                        var input = $(this);
+                        input.css(gradient(rgba("#f47b2a")));
+
+                        if (first) {
+                            //Scroll the file div to the top of the line
+                            var position = input.position();
+                            if (position != null) {
+                                area.find(".line-numbers").scrollTop(
+                                    position.top
+                                );
+                            }
+
+                            first = false;
+                        }
+                    });
+                }
+            } else {
+                //Listens for click events anywhere in the code area, only if on the compare page
                 if ($("#match-info").length) {
-                    hideMatch();
+                    $(".code-toolbar").unbind();
+                    $(".code-toolbar").click(function(e) {
+                        hideAll();
+                    });
                 }
-            });
 
-            //Listens for click events on the "hide" button in the match details area at the bottom
-            $("[data-js='comparisonHide']").unbind();
-            $("[data-js='comparisonHide']").click(function(e) {
-                hideMatch();
-            });
+                //Listens for click events on highlighted lines
+                $(".line-highlight").unbind();
+                $(".line-highlight").click(function(e) {
+                    //Only run if there is no active match
+                    if (active < 0) {
+                        var input = $(this);
 
-            //Listens for click events on highlighted lines
-            $(".line-highlight").unbind();
-            $(".line-highlight").click(function(e) {
-                if (active < 0) {
-                    var input = $(this);
+                        var lineNum = input.attr("data-range"); //fetch the line element
+                        var fileId = input.closest("pre").attr("data-file-id"); //get the file id of the line
+                        var matchId = lineMap[fileId]['visible'][lineNum];  //get the match of the line
 
-                    var lineNum = input.attr("data-range");
-                    var fileId = input.closest("pre").attr("data-file-id");
-                    var matchId = lineMap[fileId]['visible'][lineNum];
+                        if (matchId != null) {
+                            showMatch(matchId);
+                        }
 
-                    if (matchId != null) {
-                        showMatch(matchId);
+                        //Stops the [data-js='comparison'] event being called which
+                        //would undo the effects of this event by hiding the match
+                        //details
+                        e.stopPropagation();
                     }
+                });
 
-                    //Stops the [data-js='comparison'] event being called which
-                    //would undo the effects of this event by hiding the match
-                    //details
-                    e.stopPropagation();
-                }
-            });
-
-            hideMatch();
+                hideAll();
+            }
         });
 
-        bindTable();
+        bind();
     }
 }
-
-/**
- * Performs multiple functions on the report page
- *
- * Please Note: "pointer-events: none" must be removed from the .line-highlight
- * class in prism.css if PrismJS is updated!
- */
-// function submissionReportPage() {
-//     //Only run on the compare submissions page
-//     if ($("#report-data").length) {
-//         //Fetch the match details
-//         matches = getMatchesJSON();
-//
-//         //Fetch the line to match ID map
-//         lineMap = getMapJSON();
-//
-//         //Which match is active
-//         active = -1;
-//
-//         //Runs when the file contents finish loading in
-//         Prism.hooks.add('complete', function() {
-//             //Listens for click events anywhere in the comparison area
-//             $("[data-js='comparison']").unbind();
-//             $("[data-js='comparison']").click(function(e) {
-//                 hideMatch();
-//             });
-//
-//             //Listens for click events on the "hide" button in the match details area at the bottom
-//             $("[data-js='comparisonHide']").unbind();
-//             $("[data-js='comparisonHide']").click(function(e) {
-//                 hideMatch();
-//             });
-//
-//             //Listens for click events on highlighted lines
-//             $(".line-highlight").unbind();
-//             $(".line-highlight").click(function(e) {
-//                 if (active < 0) {
-//                     var input = $(this);
-//
-//                     var lineNum = input.attr("data-range");
-//                     var fileId = input.closest("pre").attr("data-file-id");
-//                     var matchId = lineMap[fileId]['visible'][lineNum];
-//
-//                     if (matchId != null) {
-//                         showMatch(matchId);
-//                     }
-//
-//                     //Stops the [data-js='comparison'] event being called which
-//                     //would undo the effects of this event by hiding the match
-//                     //details
-//                     e.stopPropagation();
-//                 }
-//             });
-//
-//             hideMatch();
-//         });
-//
-//         bindTable();
-//     }
-// }
 
 /**
  *
@@ -767,6 +784,12 @@ function loadNetworkGraph() {
         });
 
         update();
+
+        var start = getParameter("start");
+        if (start.length > 0) {
+            addNode(start);
+            addMatchesIncNodes(start);
+        }
     }
 }
 
@@ -876,6 +899,26 @@ function displayTooltips() {
     $('[data-toggle="popover"]').popover()
 }
 
+/**
+ * Fetches a GET parameter:
+ * FROM: http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
+ *
+ * @param name the name of the parameter
+ *
+ * @returns {string} the value of the parameter
+ */
+function getParameter(name) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == name) {
+            return sParameterName[1];
+        }
+    }
+
+    return "";
+}
 /**
  *
  */

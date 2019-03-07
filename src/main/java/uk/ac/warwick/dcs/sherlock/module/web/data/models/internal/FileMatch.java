@@ -21,6 +21,16 @@ public class FileMatch {
     private long file1Id;
 
     /**
+     * The name of the first file
+     */
+    private String file1Name;
+
+    /**
+     * The submission id of the first file
+     */
+    private long file1Submission;
+
+    /**
      * The list of code blocks in the first file, plagiarised from the second
      */
     private List<CodeBlock> file1CodeBlocks;
@@ -29,6 +39,16 @@ public class FileMatch {
      * The ID of the second file
      */
     private long file2Id;
+
+    /**
+     * The name of the second file
+     */
+    private String file2Name;
+
+    /**
+     * The submission id of the second file
+     */
+    private long file2Submission;
 
     /**
      * The list of code blocks in the second file, plagiarised from the first
@@ -54,17 +74,23 @@ public class FileMatch {
      * Initialise this match
      *
      * @param file1Id the first file id
+     * @param file1Name the first file name
      * @param file1CodeBlocks the matches from the first file
      * @param file2Id the second file id
+     * @param file2Name the second file name
      * @param file2CodeBlocks the matches from the second file
      * @param reason the reason text
      * @param score the score associated with this match
      */
-    public FileMatch(long file1Id, List<CodeBlock> file1CodeBlocks, long file2Id, List<CodeBlock> file2CodeBlocks, String reason, float score) {
+    public FileMatch(long file1Id, String file1Name, long file1Submission, List<CodeBlock> file1CodeBlocks, long file2Id, String file2Name, long file2Submission, List<CodeBlock> file2CodeBlocks, String reason, float score) {
         this.file1Id = file1Id;
+        this.file1Name = file1Name;
+        this.file1Submission = file1Submission;
         this.file1CodeBlocks = file1CodeBlocks;
 
         this.file2Id = file2Id;
+        this.file2Name = file2Name;
+        this.file2Submission = file2Submission;
         this.file2CodeBlocks = file2CodeBlocks;
 
         this.reason = reason;
@@ -84,6 +110,15 @@ public class FileMatch {
     }
 
     /**
+     * Get the name of the first file
+     *
+     * @return the file name
+     */
+    public String getFile1Name() {
+        return file1Name;
+    }
+
+    /**
      * Get the list of code blocks from the first file
      *
      * @return the list of code blocks
@@ -99,6 +134,15 @@ public class FileMatch {
      */
     public long getFile2Id() {
         return file2Id;
+    }
+
+    /**
+     * Get the name of the second file
+     *
+     * @return the file name
+     */
+    public String getFile2Name() {
+        return file2Name;
     }
 
     /**
@@ -166,6 +210,10 @@ public class FileMatch {
 
         result.put("file1Id", file1Id);
         result.put("file2Id", file2Id);
+        result.put("file1Name", file1Name);
+        result.put("file2Name", file2Name);
+        result.put("file1Submission", file1Submission);
+        result.put("file2Submission", file2Submission);
         result.put("reason", reason);
         result.put("score", score);
         result.put("colour", colour);

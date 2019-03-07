@@ -66,6 +66,10 @@ button, html [type="button"], [type="reset"], [type="submit"] {
     background-color: #9f4508 !important;
 }
 
+.line-numbers {
+    overflow: auto;
+}
+
 /* Tabs */
 .tab-content > .active {
     background: none;

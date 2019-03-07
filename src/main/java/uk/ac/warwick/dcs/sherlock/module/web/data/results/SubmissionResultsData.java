@@ -52,7 +52,9 @@ public class SubmissionResultsData {
         {
             long file1Id = submission.getAllFiles().get(0).getPersistentId();
 //            long file2Id = submission.getAllFiles().get(0).getPersistentId();
-            long file2Id = 200;
+            long file2Id = 2;
+            String file1Name = submission1.getAllFiles().get(0).getFileDisplayName();
+            String file2Name = "SherlockHelper.java";
 
             for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
@@ -60,9 +62,9 @@ public class SubmissionResultsData {
                 List<CodeBlock> list2 = new ArrayList<>();
                 list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
-                matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
+                matches.add(new FileMatch(file1Id, file1Name, submission.getId(), list1, file2Id, file2Name, 2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {
-                    matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
+                    matches.add(new FileMatch(file1Id, file1Name, submission.getId(), list1, file2Id, file2Name, 2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
                 }
             }
         }
@@ -97,6 +99,8 @@ public class SubmissionResultsData {
         {
             long file1Id = submission1.getAllFiles().get(0).getPersistentId();
             long file2Id = submission2.getAllFiles().get(0).getPersistentId();
+            String file1Name = submission1.getAllFiles().get(0).getFileDisplayName();
+            String file2Name = submission2.getAllFiles().get(0).getFileDisplayName();
 
             for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
@@ -104,9 +108,9 @@ public class SubmissionResultsData {
                 List<CodeBlock> list2 = new ArrayList<>();
                 list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
-                matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
+                matches.add(new FileMatch(file1Id, file1Name, submission1.getId(), list1, file2Id, file2Name, submission2.getId(), list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {
-                    matches.add(new FileMatch(file1Id, list1, file2Id, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
+                    matches.add(new FileMatch(file1Id, file1Name, submission1.getId(), list1, file2Id, file2Name, submission2.getId(), list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
                 }
             }
         }

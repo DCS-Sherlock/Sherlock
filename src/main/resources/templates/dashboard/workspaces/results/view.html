@@ -17,7 +17,7 @@
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
                             <div class="btn-group">
-                                <a class="btn btn-primary mr-3" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.network.link}"></a>
+                                <a class="btn btn-primary mr-3" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.network.link}"></a>
                                 <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/delete(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.delete}"></a>
                             </div>
                         </div>
