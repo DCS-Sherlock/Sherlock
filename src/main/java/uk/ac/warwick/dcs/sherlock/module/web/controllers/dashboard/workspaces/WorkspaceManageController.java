@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces;
 
+import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,8 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.SubmissionsForm;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.WorkspaceForm;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.TemplateWrapper;
@@ -67,21 +68,13 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/details";
     }
 
-    @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions")
-    public String submissionsGetFragment(
-            @PathVariable("pathid") long pathid,
-            @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
-            @ModelAttribute("isAjax") boolean isAjax,
-            Model model
-    ) throws NotAjaxRequest {
-        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
-
-        model.addAttribute("submissionsForm", new SubmissionsForm());
-        return "dashboard/workspaces/fragments/submissions";
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions/upload")
+    public String uploadGetFragment() {
+        return "dashboard/workspaces/submissions/upload";
     }
 
-    @PostMapping("/dashboard/workspaces/manage/{pathid}/submissions")
-    public String submissionsPostFragment(
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/submissions/upload")
+    public String uploadPostFragment(
             @PathVariable("pathid") long pathid,
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("isAjax") boolean isAjax,
@@ -99,8 +92,20 @@ public class WorkspaceManageController {
                 result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
                 result.reject("error.file.failed");
+            } catch (ExecutionControl.NotImplementedException e) {
+                result.reject("error.not_implemented");
             }
         }
+
+        return "dashboard/workspaces/submissions/uploadConfirm";
+    }
+
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions")
+    public String submissionsGetFragment(
+            @PathVariable("pathid") long pathid,
+            @ModelAttribute("isAjax") boolean isAjax
+    ) throws NotAjaxRequest {
+        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid);
 
         return "dashboard/workspaces/fragments/submissions";
     }

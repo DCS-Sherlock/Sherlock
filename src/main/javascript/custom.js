@@ -461,6 +461,30 @@ function loadAreaInputTrigger(){
 /**
  *
  */
+function radioChange(){
+    $("[data-js='radio-div']").unbind();
+    $("[data-js='radio-div']").each(function() {
+        var input = $(this);
+        var name = input.attr("name");
+
+        $("."+name).hide();
+        $("."+name).removeClass("d-none");
+    });
+    $("[data-js='radio-div']").on('change', function () {
+        var input = $(this);
+        var value = input.val();
+        var name = input.attr("name");
+
+        $("."+name+":not(#"+value+")").slideUp();
+        $("#"+value).slideDown();
+
+        return false;
+    });
+}
+
+/**
+ *
+ */
 function usernameChange(){
     $("[data-js='triggerNameChange']").each(function () {
         var input = $(this);
@@ -932,6 +956,7 @@ function rebindEvents() {
     loadAreaLink();
     usernameChange();
     loadNetworkGraph();
+    radioChange();
 }
 
 /**

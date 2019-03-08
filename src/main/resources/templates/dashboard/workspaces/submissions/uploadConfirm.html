@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{workspaces.submissions.upload}"></title>
+</head>
+<body>
+
+<div id="upload-parent" class="container" layout:fragment="content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{workspaces.submissions.upload}"></h5>
+            </div>
+            <form data-js='form' data-js-target="#upload-parent" th:object="${submissionsForm}" method="post">
+                <div class="modal-body">
+                    <div th:if="${#fields.hasAnyErrors()}">
+                        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
+                        <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" th:text="#{link.return}"></a>
+                    </div>
+
+                    <div th:if="${success_msg}">
+                        <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
+                        <div data-js="triggerArea" data-js-target="#submissions-parent"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.close}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.close}"></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

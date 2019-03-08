@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
+import jdk.jshell.spi.ExecutionControl;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,8 +120,12 @@ public class WorkspaceWrapper {
         workspaceRepository.delete(this.workspace);
     }
 
-    public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) throws NoFilesUploaded, FileUploadFailed {
+    public void addSubmissions(SubmissionsForm submissionsForm, WorkspaceWrapper workspaceWrapper) throws NoFilesUploaded, FileUploadFailed, ExecutionControl.NotImplementedException {
         int count = 0;
+
+        if(submissionsForm.getFiles().length == 1 && !submissionsForm.getSingle()) {
+            throw new ExecutionControl.NotImplementedException("");
+        }
 
 	    for(MultipartFile file : submissionsForm.getFiles()) {
             if (file.getSize() > 0) {
