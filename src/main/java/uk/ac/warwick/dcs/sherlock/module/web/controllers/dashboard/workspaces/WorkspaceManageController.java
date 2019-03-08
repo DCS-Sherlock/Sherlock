@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces;
 
-import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,7 +91,7 @@ public class WorkspaceManageController {
                 result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
                 result.reject("error.file.failed");
-            } catch (ExecutionControl.NotImplementedException e) {
+            } catch (NotImplementedException e) {
                 result.reject("error.not_implemented");
             }
         }
