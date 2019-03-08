@@ -6,7 +6,7 @@
  * The HTML content to replace a div with when reloading the content
  * @type {string}
  */
-loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="250px">';
+loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="75px">';
 
 /**
  * Performs multiple functions on the compare and report pages:
@@ -401,6 +401,7 @@ function loadAreaAjax(input){
 function loadArea() {
     $("[data-js='area']").each(function () {
         var input = $(this);
+        input.attr("data-js", "area-loaded");
         loadAreaAjax(input);
     });
 }
@@ -947,6 +948,7 @@ function getParameter(name) {
  *
  */
 function rebindEvents() {
+    loadArea();
     displayTooltips();
     loadAreaInputTrigger();
     modalLink();
@@ -963,7 +965,6 @@ function rebindEvents() {
  *
  */
 $(function () {
-    loadArea();
     rebindEvents();
     $('form[data-js="autoSubmit"]').submit();
     submissionResultsPage();

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
@@ -159,6 +160,11 @@ public class BaseStorage implements IStorageWrapper {
 			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
 		}
 		EntityArchive s = (EntityArchive) submission;
+
+		//Set all the jobs as outdated
+		for (IJob job : ((EntityArchive) submission).getWorkspace().getJobs()) {
+			job.setStatus(WorkStatus.OUTDATED);
+		}
 
 		if (FilenameUtils.getExtension(filename).equals("zip")) {
 			this.storeArchive(s, fileContent);

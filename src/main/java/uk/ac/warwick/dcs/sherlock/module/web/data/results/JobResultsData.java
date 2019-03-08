@@ -97,6 +97,15 @@ public class JobResultsData {
     }
 
     /**
+     * Get the job showing the results for
+     *
+     * @return the job
+     */
+    public IJob getJob() {
+        return job;
+    }
+
+    /**
      * Fills the results map using the data from the report generator
      */
     private void fillResultsMap() {

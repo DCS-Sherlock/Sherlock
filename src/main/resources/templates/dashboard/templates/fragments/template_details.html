@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<table class="table table-borderless">
+    <tbody>
+    <th:block th:each="detector : ${template.getDetectors()}">
+        <tr>
+            <th class="align-middle">
+                <h6 class="mb-0">
+                    <span th:text="${detector.getWrapper().getDisplayName()}"></span>
+                </h6>
+            </th>
+        </tr>
+        <th:block th:each="parameter : ${detector.getParametersList()}">
+            <tr>
+                <th class="align-middle">
+                    <h6 class="mb-0 ml-3">
+                        <span th:text="${parameter.getParameter().getName()}"></span>
+                        =
+                        <span th:text="${parameter.getParameter().getValue()}"></span>
+                    </h6>
+                </th>
+            </tr>
+        </th:block>
+        <tr th:if="${detector.getParametersList().empty}">
+            <th>
+                <h6 class="mb-0 ml-3">
+                    <span th:text="#{templates.detectors.default}"></span>
+                </h6>
+            </th>
+        </tr>
+    </th:block>
+    <tr th:if="${template.getDetectors().empty}">
+        <th>
+            <h6 class="mb-0">
+                <span th:text="#{templates.detectors.none}"></span>
+            </h6>
+        </th>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

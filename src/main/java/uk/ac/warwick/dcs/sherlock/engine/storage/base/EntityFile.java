@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import org.apache.commons.io.FileUtils;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
 import javax.persistence.*;
@@ -162,6 +164,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	@Override
 	public void remove() {
+		//Set all the jobs as having missing files
+		for (IJob job : this.getArchive().getWorkspace().getJobs()) {
+			job.setStatus(WorkStatus.MISSING_FILES);
+		}
+
 		this.remove_();
 		this.archive.clean();
 	}

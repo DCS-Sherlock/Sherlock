@@ -88,7 +88,7 @@
                                 <div id="archive_no_div" class="archive ml-4 d-none">
                                     <span th:text="#{workspaces.submissions.upload.instructions.zip_submission}"></span><a href="https://www.wikihow.com/Make-a-Zip-File" target="_blank" th:text="#{workspaces.submissions.upload.instructions.zip_link}"></a>
 
-                                    <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                                    <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
                                         <div class="form-row">
                                             <div class="form-group col-md-12">
                                                 <input type="file" name="files" accept=".zip">
@@ -124,7 +124,7 @@
                         <div id="sub_org_file_div" class="sub_org ml-4 d-none">
                             <span th:text="#{workspaces.submissions.upload.instructions.multiple_files}"></span>
 
-                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <input type="file" name="files" multiple>
@@ -145,8 +145,7 @@
                         <div id="sub_org_folder_div" class="sub_org ml-4 d-none">
                             <span th:text="#{workspaces.submissions.upload.instructions.zip_submissions}"></span><a href="https://www.wikihow.com/Make-a-Zip-File" target="_blank" th:text="#{workspaces.submissions.upload.instructions.zip_link}"></a>
 
-
-                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <input type="file" name="files" accept=".zip">
@@ -167,7 +166,7 @@
                         <div id="sub_org_archive_div" class="sub_org ml-4 d-none">
                             <span th:text="#{workspaces.submissions.upload.instructions.multiple_files}"></span>
 
-                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <input type="file" name="files" accept=".zip" multiple>

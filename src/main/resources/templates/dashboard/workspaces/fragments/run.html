@@ -24,8 +24,8 @@
     <div th:unless="${templates.empty}">
         <div class="form-row">
             <div class="form-group col-md-12">
-                <label for="template_id" th:text="#{variable.template}"></label>
-                <select class="form-control" id="template_id" name="template_id">
+                <!--<label for="template_id" th:text="#{variable.template}"></label>-->
+                <select class="form-control" id="template_id" name="template_id" data-js="select" data-js-target="#detector-list" th:data-js-href="@{/dashboard/templates/details/}">
                     <option th:if="${template.isOwner()}"
                             th:each="template : ${templates}"
                             th:value="${template.getTemplate().getId()}"
@@ -38,6 +38,12 @@
                     </option>
                 </select>
             </div>
+        </div>
+
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detector-collapse" th:text="#{workspaces.analysis.show_details}"></button>
+
+        <div class="collapse" id="detector-collapse">
+            <div th:replace="fragments/js-area :: js-area(areaid='detector-list', arealink=@{/dashboard/templates/details/{id}(id=${templates.get(0).getTemplate().getId()})})"></div>
         </div>
 
         <div class="form-row">

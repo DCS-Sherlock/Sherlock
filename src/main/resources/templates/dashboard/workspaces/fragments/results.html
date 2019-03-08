@@ -12,6 +12,7 @@
             <th class="align-middle">
                 <h6 class="mb-0">
                     <span th:text="${job.getPersistentId()}"></span>
+                    <span class="badge" th:classappend="#{${job.getStatus()+'.badge'}}" th:text="#{${job.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${job.getStatus()+'.tooltip'}}"></span>
                 </h6>
             </th>
             <td>

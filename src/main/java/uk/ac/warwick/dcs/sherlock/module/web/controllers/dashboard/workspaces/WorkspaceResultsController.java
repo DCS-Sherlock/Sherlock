@@ -83,7 +83,7 @@ public class WorkspaceResultsController {
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
             @ModelAttribute("results") JobResultsData resultsWrapper
     ) {
-        //TODO: actually delete the job
+        resultsWrapper.getJob().remove();
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_job";
     }
 

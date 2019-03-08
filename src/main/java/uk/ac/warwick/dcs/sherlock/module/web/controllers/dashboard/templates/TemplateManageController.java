@@ -89,6 +89,12 @@ public class TemplateManageController {
         return "redirect:/dashboard/templates?msg=deleted";
     }
 
+    @GetMapping("/dashboard/templates/details/{pathid}")
+    public String templateDetailsGet(@ModelAttribute("isAjax") boolean isAjax) throws NotAjaxRequest {
+        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces");
+        return "dashboard/templates/fragments/template_details";
+    }
+
 	@ModelAttribute("template")
 	private TemplateWrapper getTemplateWrapper(
             @ModelAttribute("account") AccountWrapper account,

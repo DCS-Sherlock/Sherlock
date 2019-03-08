@@ -31,7 +31,7 @@
                                     <span th:text="#{results.status}"></span>
                                 </h4>
                                 <p>
-                                    <span th:text="#{${results.getStatus()}}"></span>
+                                    <span class="badge" th:classappend="#{${results.getStatus()+'.badge'}}" th:text="#{${results.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${results.getStatus()+'.tooltip'}}"></span>
                                 </p>
                             </div>
                             <div class="col-md-3">

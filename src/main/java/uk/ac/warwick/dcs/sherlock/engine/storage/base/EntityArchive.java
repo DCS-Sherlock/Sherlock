@@ -1,7 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -99,6 +101,11 @@ public class EntityArchive implements ISubmission, Serializable {
 
 	@Override
 	public void remove() {
+		//Set all the jobs as having missing files
+		for (IJob job : this.getWorkspace().getJobs()) {
+			job.setStatus(WorkStatus.MISSING_FILES);
+		}
+
 		BaseStorage.instance.database.refreshObject(this);
 		if (this.children != null) {
 			for (EntityArchive child : this.children) {
