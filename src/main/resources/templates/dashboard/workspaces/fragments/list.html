@@ -5,15 +5,21 @@
 </head>
 <body>
 
-<table class="table table-hover table-borderless">
+<table class="table table-hover table-borderless" data-js="table">
+    <thead class="d-none">
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
     <tbody>
     <th:block th:each="workspace : ${workspaces}">
         <tr>
-            <th class="align-middle">
+            <td class="align-middle">
                 <h5 class="mb-0">
                     <span th:text="${workspace.getName()}"></span>
                 </h5>
-            </th>
+            </td>
             <td class="align-middle text-right">
                 <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.manage}"></a>
             </td>
@@ -28,6 +34,5 @@
     </tr>
     </tbody>
 </table>
-
 </body>
 </html>

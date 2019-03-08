@@ -86,12 +86,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h4 th:text="#{results.submissions}"></h4>
-                                <table class="table table-hover table-borderless table-responsive">
+                                <table class="table table-hover table-borderless table-responsive" data-js="table-matches">
                                     <thead>
 
                                     <tr>
                                         <th class="text-center"><h5 th:text="#{results.table.name}"></h5></th>
                                         <th class="text-center d-none d-xl-table-cell"><h5 th:text="#{results.table.score}"></h5></th>
+                                        <th class="d-none"></th>
                                         <th class="text-center"><h5 th:text="#{results.table.matches}"></h5></th>
                                         <th class="text-center"><h5 th:text="#{results.table.report}"></h5></th>
                                     </tr>
@@ -109,6 +110,9 @@
                                                 </td>
                                                 <td class="align-middle text-center shrink d-none d-xl-table-cell">
                                                     <span th:classappend="@{score-{group}(group=${result.key.getScoreGroup()})}" th:text="${result.key.getScore()}"></span>
+                                                </td>
+                                                <td class="d-none">
+                                                    <span th:text="${result.value.size()}"></span>
                                                 </td>
                                                 <td class="align-middle min">
                                                     <th:block th:each="match : ${result.value}">

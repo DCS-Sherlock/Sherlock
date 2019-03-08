@@ -5,7 +5,15 @@
 </head>
 <body>
 
-<table class="table table-hover table-borderless">
+<table class="table table-hover table-borderless" data-js="table">
+    <thead class="d-none">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
     <tbody>
     <th:block th:each="acc : ${accounts}">
         <tr>

@@ -925,6 +925,43 @@ function displayTooltips() {
 }
 
 /**
+ *
+ */
+function table() {
+    $('[data-js="table"]').dataTable( {
+        "paging": false,
+        "bInfo": false,
+        "searching": true,
+        "language": {
+            "search": ""
+        }
+    } );
+
+    $("[data-js='table']").each(function () {
+        var input = $(this);
+        input.attr("data-js", "table-loaded");
+    });
+
+    $('[data-js="table-matches"]').dataTable( {
+        "paging": false,
+        "bInfo": false,
+        "searching": true,
+        "language": {
+            "search": ""
+        },
+        "columnDefs": [
+            { "orderData": [ 2 ],    "targets": 3 },
+            { orderable: false, targets: [4] }
+        ]
+    } );
+
+    $("[data-js='table-matches']").each(function () {
+        var input = $(this);
+        input.attr("data-js", "table-loaded");
+    });
+}
+
+/**
  * Fetches a GET parameter:
  * FROM: http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
  *
@@ -959,6 +996,7 @@ function rebindEvents() {
     usernameChange();
     loadNetworkGraph();
     radioChange();
+    table();
 }
 
 /**

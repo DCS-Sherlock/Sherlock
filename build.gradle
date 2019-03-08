@@ -246,6 +246,7 @@ combineJs {
             "${projectDir}/src/main/javascript/jquery.min.js",
             "${projectDir}/src/main/javascript/popper.min.js",
             "${projectDir}/src/main/javascript/bootstrap.min.js",
+            "${projectDir}/src/main/javascript/datatables.min.js",
             "${projectDir}/src/main/javascript/loader.js",
             "${projectDir}/src/main/javascript/vis.min.js",
             "${projectDir}/src/main/javascript/prism.js",
