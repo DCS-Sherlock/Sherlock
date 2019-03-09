@@ -80,6 +80,17 @@ button, html [type="button"], [type="reset"], [type="submit"] {
     background-color: #abb6c2;
 }
 
+.input-group {
+    background-color: #2b3e50;
+    padding: 2px;
+}
+.input-group-prepend {
+    margin-right: -10px;
+}
+.input-group-text {
+    background: none;
+}
+
 /* Footer */
 footer {
     padding: 2.5rem 0;

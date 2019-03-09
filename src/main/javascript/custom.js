@@ -928,12 +928,16 @@ function displayTooltips() {
  *
  */
 function table() {
+    $.fn.dataTable.ext.errMode = 'throw';
+
     $('[data-js="table"]').dataTable( {
-        "paging": false,
+        "paging": true,
+        "pagingType": "simple_numbers",
+        "bLengthChange": false,
         "bInfo": false,
         "searching": true,
         "language": {
-            "search": ""
+            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>',
         }
     } );
 
@@ -947,7 +951,7 @@ function table() {
         "bInfo": false,
         "searching": true,
         "language": {
-            "search": ""
+            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>',
         },
         "columnDefs": [
             { "orderData": [ 2 ],    "targets": 3 },
