@@ -937,7 +937,7 @@ function table() {
         "bInfo": false,
         "searching": true,
         "language": {
-            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>',
+            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>'
         }
     } );
 
@@ -951,7 +951,7 @@ function table() {
         "bInfo": false,
         "searching": true,
         "language": {
-            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>',
+            search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>'
         },
         "columnDefs": [
             { "orderData": [ 2 ],    "targets": 3 },
