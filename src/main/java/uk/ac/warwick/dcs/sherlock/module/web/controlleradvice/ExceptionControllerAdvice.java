@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 
 import java.util.Arrays;
@@ -97,6 +98,15 @@ public class ExceptionControllerAdvice {
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String notAuthorisedError(Model model, Exception e) {
+        model.addAttribute("msg", e.getClass().getName());
+        return "error";
+    }
+
+    @ExceptionHandler({
+            MaxUploadSizeExceededException.class
+    })
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    public String uploadSizeExceededError(Model model, Exception e) {
         model.addAttribute("msg", e.getClass().getName());
         return "error";
     }
