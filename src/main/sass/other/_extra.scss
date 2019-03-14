@@ -167,9 +167,7 @@ table .min {
     button span {
         font-size: 30px;
     }
-    @media print {
-        @page { margin: 1.6cm 0 1.6cm 0; }
-    }
+    @page { margin: 1.6cm 0 1.6cm 0; }
     .card, .card-header, .card-body {
         border: none !important;
     }

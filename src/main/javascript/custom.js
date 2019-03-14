@@ -327,7 +327,6 @@ function submissionResultsPage() {
         }
 
         function printEvent() {
-            console.log(window.location.href);
             if (isPrinting()) {
                 if (loaded == $("pre").length) {
                     window.print();
