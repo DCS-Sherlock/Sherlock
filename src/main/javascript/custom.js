@@ -34,6 +34,7 @@ function submissionResultsPage() {
         }
 
         var active = -1; //Which match is active
+        var loaded = 0;
         var showing = false;
         var loadingReport = false; //Whether the page is loading, or a match on the report page
 
@@ -325,6 +326,15 @@ function submissionResultsPage() {
             })
         }
 
+        function printEvent() {
+            console.log(window.location.href);
+            if (isPrinting()) {
+                if (loaded == $("pre").length) {
+                    window.print();
+                }
+            }
+        }
+
         //Runs when the file contents finish loading in
         Prism.hooks.add('complete', function() {
             if (loadingReport) {
@@ -382,6 +392,8 @@ function submissionResultsPage() {
                 });
 
                 hideAll();
+                loaded++;
+                printEvent();
             }
         });
 

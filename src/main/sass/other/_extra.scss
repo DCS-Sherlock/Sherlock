@@ -149,3 +149,37 @@ table .min {
 .score-9 {
     color: #FF5700;
 }
+
+/* Printing */
+@media print {
+    .line-numbers {
+        height: auto !important;
+    }
+    .line-highlight {
+        background: none !important;
+    }
+    button, h5, span, a {
+        color: #000 !important;
+    }
+    h5, h4 {
+        font-size: 35px;
+    }
+    button span {
+        font-size: 30px;
+    }
+    @media print {
+        @page { margin: 1.6cm 0 1.6cm 0; }
+    }
+    .card, .card-header, .card-body {
+        border: none !important;
+    }
+    .shadow-sm {
+        box-shadow: none !important;
+    }
+}
+.page-break {
+    page-break-before: always;
+}
+.page-break-after {
+    page-break-after: always;
+}

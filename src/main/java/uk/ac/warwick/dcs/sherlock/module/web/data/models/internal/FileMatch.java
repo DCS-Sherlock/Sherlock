@@ -201,6 +201,48 @@ public class FileMatch {
     }
 
     /**
+     * Get a string listing all the line numbers involved from the first file
+     *
+     * @return the comma separated list
+     */
+    public String getFile1Lines() {
+        return getLines(file1CodeBlocks);
+    }
+
+    /**
+     * Get a string listing all the line numbers involved from the second file
+     *
+     * @return the comma separated list
+     */
+    public String getFile2Lines() {
+        return getLines(file2CodeBlocks);
+    }
+
+    /**
+     * Given a list of code blocks, generates a comma separated string
+     * of the line numbers involved in this match
+     *
+     * e.g. 2,5-10,19-20
+     *
+     * @param list the list of code blocks to use
+     *
+     * @return the comma separated list
+     */
+    private String getLines(List<CodeBlock> list) {
+        List<String> lines = new ArrayList<>();
+
+        for (CodeBlock cb : file1CodeBlocks) {
+            if (cb.getStartLine() == cb.getEndLine()) {
+                lines.add(cb.getStartLine()+"");
+            } else {
+                lines.add(cb.getStartLine() + "-" + cb.getEndLine());
+            }
+        }
+
+        return String.join(", ", lines);
+    }
+
+    /**
      * Convert this object to a JSON object, used by the JavaScript in the UI
      *
      * @return the JSON equivalent of this object

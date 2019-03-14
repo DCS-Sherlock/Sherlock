@@ -19,9 +19,12 @@
         function getSubmissionId() {
             return JSON.parse('[(${submission.getId()})]');
         }
+        function isPrinting() {
+            return [(${printing})];
+        }
     </script>
 
-    <div class="row">
+    <div class="row d-print-none">
         <div class="col-12">
             <div class="card border-bottom-0 shadow-sm">
                 <div class="card-header">
@@ -35,6 +38,7 @@
                                 <div class="btn-toolbar float-right">
                                     <div class="btn-group">
                                         <div class="btn-group">
+                                            <a class="btn btn-primary mr-2" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/report/{s1}?print(id=${workspace.getId()},job_id=${results.getPersistentId()},s1=${submission.getId()})}" th:text="#{link.print}"></a>
                                             <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network?start={sub_id}(id=${workspace.getId()},job_id=${results.getPersistentId()},sub_id=${submission.getId()})}" th:text="#{results.network.start}"></a>
                                         </div>
                                     </div>
@@ -43,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body d-block d-lg-none d-xl-none" >
+                <div class="card-body d-print-none d-block d-lg-none d-xl-none" >
                     <div class="alert alert-danger mb-0">
                         <span th:text="#{results.too_small}"></span>
                     </div>
@@ -103,12 +107,18 @@
         </div>
     </div>
 
-    <div class="row d-none d-lg-block">
+    <div class="row d-print-block d-none d-lg-block">
         <div class="col-12">
             <div class="card border-top-0 shadow-sm">
                 <div class="card-body">
                     <div class="ml-3 mr-3">
                         <div class="row text-center">
+                            <div class="col-md-12 d-none d-print-block">
+                                <h1>
+                                    <span th:text="${submission.getName()}"></span>
+                                    <span th:text="#{results.report.subtitle}"></span>
+                                </h1>
+                            </div>
                             <div class="col-md-12">
                                 <h4>
                                     <span th:text="#{results.report.score}"></span>
@@ -132,16 +142,53 @@
                                         </a>
                                     </th:block>
                                 </p>
+
+                                <div class="d-none d-print-block">
+                                    <h5 th:text="#{results.table.matches}"></h5>
+
+                                    <table class="table">
+                                        <tbody>
+                                        <th:block th:each="match : ${wrapper.getMatches()}">
+                                            <tr>
+                                                <td>
+                                                    <span th:text="${match.getReason()}"></span>
+                                                </td>
+                                                <td>
+                                                    <span th:text="#{results.compare.score}"></span><span th:text="${match.getScore()}"></span>
+                                                </td>
+                                                <td>
+                                                    <span th:text="#{results.match.file}"></span>
+                                                    <span th:text="${match.getFile1Id()}"></span>
+                                                    <span th:text="#{results.match.lines}"></span>
+                                                    <span th:text="${match.getFile1Lines()}"></span>
+                                                    <span th:text="#{results.match.matches}"></span>
+                                                    <span th:text="${match.getFile2Id()}"></span>
+                                                    <span th:text="#{results.match.lines}"></span>
+                                                    <span th:text="${match.getFile2Lines()}"></span>
+                                                </td>
+                                            </tr>
+                                        </th:block>
+                                        <tr th:if="${wrapper.getMatches().empty}">
+                                            <th>
+                                                <h5 class="mb-0">
+                                                    <span th:text="#{results.compare.no_matches}"></span>
+                                                </h5>
+                                            </th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="row" data-js="comparison">
+                        <div class="row page-break" data-js="comparison">
                             <div class="col-lg-6">
                                 <div class="accordion">
                                     <th:block th:each="file : ${submission.getAllFiles()}">
-                                        <div class="card">
+                                        <div class="card page-break-after">
                                             <div class="card-header">
                                                 <h2 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">
+                                                        <span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>
                                                         <span th:text="${file.getFileDisplayPath()}"></span>
                                                     </button>
                                                 </h2>
@@ -159,7 +206,7 @@
                                     </th:block>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 d-print-none">
                                 <div class="card" id="report-match-info">
                                     <div class="card-header">
                                         <h2 class="mb-0">
@@ -186,6 +233,35 @@
                                 </div>
                             </div>
                         </div>
+                        <th:block th:if="${printing}">
+                            <div class="row page-break">
+                                <div class="col-lg-12">
+                                    <div class="accordion">
+                                        <!--<th:block th:each="file : ${submission.getAllFiles()}">-->
+                                            <!--<div class="card page-break-after">-->
+                                                <!--<div class="card-header">-->
+                                                    <!--<h2 class="mb-0">-->
+                                                        <!--<button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">-->
+                                                            <!--<span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>-->
+                                                            <!--<span th:text="${file.getFileDisplayPath()}"></span>-->
+                                                        <!--</button>-->
+                                                    <!--</h2>-->
+                                                <!--</div>-->
+
+                                                <!--<div th:id="'id-' + ${file.getPersistentId()}" class="collapse show">-->
+                                                    <!--<div class="card-body">-->
+                                        <!--<pre class="line-numbers"-->
+                                             <!--th:data-file-id="${file.getPersistentId()}"-->
+                                             <!--th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"-->
+                                             <!--th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</th:block>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
             </div>

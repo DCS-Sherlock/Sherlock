@@ -56,6 +56,18 @@ public class AttributesControllerAdvice {
     }
 
     /**
+     * Adds an "is printing" boolean to the attribute of all requests
+     *
+     * @param model holder for model attributes (auto-filled by Spring)
+     * @param request the http request information (auto-filled by Spring)
+     */
+    @ModelAttribute
+    public void addIsPrinting(Model model, HttpServletRequest request) {
+        model.addAttribute("printing", request.getParameterMap().containsKey("print"));
+    }
+
+
+    /**
      * Checks whether the current request is ajax or not
      *
      * @param request the http request information (auto-filled by Spring)
