@@ -34,6 +34,7 @@ function submissionResultsPage() {
         }
 
         var active = -1; //Which match is active
+        var showing = false;
         var loadingReport = false; //Whether the page is loading, or a match on the report page
 
         /**
@@ -110,6 +111,8 @@ function submissionResultsPage() {
          * @param matchId
          */
         function showMatch(matchId) {
+            showing = true;
+
             //Check if there is an active match
             var row;
             if (active >= 0) {
@@ -214,6 +217,8 @@ function submissionResultsPage() {
             $("html, body").scrollTop(
                 height
             );
+
+            showing = false;
         }
 
         /**
@@ -314,7 +319,9 @@ function submissionResultsPage() {
 
             //Hides the match when a file is collapsed
             $('.accordion').on('hide.bs.collapse', function () {
-                hideAll();
+                if (showing == false) {
+                    hideAll();
+                }
             })
         }
 
