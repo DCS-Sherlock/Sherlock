@@ -39,6 +39,15 @@ public interface ICodeBlockGroup {
 	boolean filePresent(ISourceFile file);
 
 	/**
+	 * Tests whether any files in the group belong to the specified submission
+	 *
+	 * @param submissionId the ID of the submission to test
+	 *
+	 * @return true if there is such a file, false otherwise
+	 */
+	boolean submissionIdPresent(long submissionId);
+
+	/**
 	 * return the block of code for a specific file
 	 *
 	 * @param file file to search

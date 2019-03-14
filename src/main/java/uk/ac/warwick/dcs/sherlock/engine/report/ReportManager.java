@@ -3,8 +3,10 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
 
-import javax.validation.constraints.Null;
 import java.util.*;
 
 /**
@@ -20,17 +22,19 @@ public class ReportManager {
 	private List<Long> fileIds;
 
 	/**
-	 * Contains most necessary information to generate reports for every file, including LegecyDetectionType, score, line numbers, etc.
+	 * A map of all the individual files according to their persitent ids.
+	 */
+	private Map<Long, ISourceFile> fileMap;
+
+	/**
+	 * Contains most necessary information to generate reports for every file, including DetectionType, score, line numbers, etc.
 	 */
 	private List<ICodeBlockGroup> codeBlockGroups;
 
 	/**
-	 * These two contain, for every file being examined (based on their unique persistentId), a list of their variable and method names respectively.
-	 * <p>
-	 * TODO: may be a better way of combining this with codeBlockGroups?
+	 * Maps submission ids to a list of file ids contained by that submission.
 	 */
-	private Map<Long, List<String>> variableNames;
-	private Map<Long, List<String>> methodNames;
+	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
 	 * All generated reports are stored as FileReports. The key is each file's unique id.
@@ -45,11 +49,10 @@ public class ReportManager {
 	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
+		submissionFileMap = new HashMap<>();
 		reports = new HashMap<>();
 		fileIds = new ArrayList<>();
 		codeBlockGroups = new ArrayList<>();
-		variableNames = new HashMap<>();
-		methodNames = new HashMap<>();
 	}
 
 	/**
@@ -62,30 +65,25 @@ public class ReportManager {
 	}
 
 	/**
-	 * To be called by the Post-Processor.
+	 * To be called by the Post-Processor. Adds files info to fileIds, fileMap, and submissionFileMap.
 	 *
-	 * @param fileIds A list of very file's unique, persistent id.
+	 * @param files A list of the ISourceFiles that have been run through the detector.
 	 */
-	public void AddFileIds(List<Long> fileIds) {
-		this.fileIds.addAll(fileIds);
-	}
+	public void AddFiles(List<ISourceFile> files) {
+		for(ISourceFile file : files) {
+			fileIds.add(file.getPersistentId());
+			fileMap.put(file.getPersistentId(), file);
 
-	/**
-	 * To be called by the PostProcessor.
-	 *
-	 * @param methodNames Each list contains every method name for each file.
-	 */
-	public void AddMethodNames(Map<Long, List<String>> methodNames) {
-		this.methodNames.putAll(methodNames);
-	}
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param variableNames Each list contains every variable name for each file.
-	 */
-	public void AddVariableNames(Map<Long, List<String>> variableNames) {
-		this.variableNames.putAll(variableNames);
+			//If this is the first file of this submission seen, create a new list and put it into submissionFileMap.
+			//otherwise add to the existing list.
+			if(submissionFileMap.get(file.getSubmissionId()) == null) {
+				ArrayList<Long> idList = new ArrayList<>();
+				idList.add(file.getPersistentId());
+				submissionFileMap.put(file.getSubmissionId(), idList);
+			} else {
+				submissionFileMap.get(file.getSubmissionId()).add(file.getPersistentId());
+			}
+		}
 	}
 
 	/**
@@ -114,10 +112,44 @@ public class ReportManager {
 			relevantGroups.add(codeBlockGroup);
 		}
 
-		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups, variableNames.get(sourceFile.getPersistentId()));
+		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups);
 
 		reports.put(sourceFile.getPersistentId(), fileReport);
 		return fileReport;
+	}
+
+	/**
+	 * To be called by the web report pages. Gets a list of submission summaries
+	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
+	 */
+	public List<SubmissionSummary> getMatchingSubmissions() {
+		ArrayList<SubmissionSummary> output = new ArrayList<>();
+
+		for(Long submissionId : submissionFileMap.keySet()) {
+			//TODO: need to get the proper overall score somehow
+			Random tempRandom = new Random();
+			float overallScore = tempRandom.nextFloat();
+			SubmissionSummary submissionSummary = new SubmissionSummary(submissionId, overallScore);
+			ArrayList<Tuple<Long, Float>> matchingSubs = new ArrayList<>();
+
+			//Look through all the code block groups to determine which submissions have been matched with which other submissions.
+			for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+				//If this group contains a file for the current submission, add all other submissions in the group to the list.
+				if(codeBlockGroup.submissionIdPresent(submissionId)) {
+					for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
+						if(codeBlock.getFile().getSubmissionId() != submissionId) {
+							//TODO: need to add the proper relative score somehow
+							float relativeScore = tempRandom.nextFloat();
+							matchingSubs.add(new Tuple<>(codeBlock.getFile().getSubmissionId(), relativeScore));
+						}
+					}
+				}
+
+			}
+			submissionSummary.AddMatchingSubmissions(matchingSubs);
+		}
+
+		return output;
 	}
 
 	/**

@@ -68,6 +68,16 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	@Override
+	public boolean submissionIdPresent(long submissionId) {
+		for(EntityCodeBlock codeBlock : this.blockMap.values()) {
+			if(codeBlock.getFile().getSubmissionId() == submissionId)
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public ICodeBlock getCodeBlock(ISourceFile file) {
 		return this.blockMap.get(file.getPersistentId());
 	}

@@ -15,7 +15,7 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups, List<String> variableNames) {
+	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups) {
 		FileReport fileReport = new FileReport(sourceFile.getPersistentId());
 
 		StringJoiner stringJoiner = new StringJoiner("; ", "", ".");
@@ -46,7 +46,6 @@ public class ReportGenerator implements IReportGenerator {
 
 			String filename_string = "File %s: ";
 			//Extend the description for the number of files in the group, and format each string along the way.
-			//TODO: other formatting?
 			for (int i = 0; i < codeBlockGroup.getCodeBlocks().size(); i++) {
 				String formatted_filename = String.format(filename_string, fileNames.get(i));
 

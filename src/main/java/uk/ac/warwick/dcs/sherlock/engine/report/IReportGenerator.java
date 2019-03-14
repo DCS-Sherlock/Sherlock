@@ -15,9 +15,8 @@ public interface IReportGenerator {
 	 *
 	 * @param sourceFile    The file that the report will be generated for.
 	 * @param codeBlockGroups The ICodeBlockGroups that contain ICodeBlocks from the file whose report will be generated. Supplied by the Report Manager.
-	 * @param variableNames   A list of all relevant variable names used in the file.
 	 *
 	 * @return The report itself.
 	 */
-	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups, List<String> variableNames);
+	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups);
 }
