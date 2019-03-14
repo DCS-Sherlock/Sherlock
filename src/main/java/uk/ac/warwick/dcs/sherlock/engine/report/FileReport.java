@@ -15,7 +15,7 @@ public class FileReport {
 	private long persistentId;
 
 	/**
-	 * The report body. Each element in the list should be a separate component e.g. the first item describes one similarity, the second item describes, the next, etc.
+	 * The report body. Each element in the list should be a separate component e.g. the first item describes one similarity, the second item describes the next, etc.
 	 */
 	private List<FileReportItem> reportContent;
 

@@ -44,6 +44,36 @@ public class ReportManager {
 	private IReportGenerator reportGenerator;
 
 	/**
+	 * Initialises the report manager (default).
+	 */
+	public ReportManager() {
+		this.reportGenerator = new ReportGenerator();
+
+		submissionFileMap = new HashMap<>();
+		reports = new HashMap<>();
+		fileIds = new ArrayList<>();
+		codeBlockGroups = new ArrayList<>();
+	}
+
+	/**
+	 * Initialises the report manager and adds files and code block groups to it immediately.
+	 * @param files The files to generate reports for (see AddFiles()).
+	 * @param codeBlockGroups The matches that will be used by the Report Generator (see AddCodeBlockGroups()).
+	 */
+	public ReportManager(List<ISourceFile> files, List<ICodeBlockGroup> codeBlockGroups) {
+		this.reportGenerator = new ReportGenerator();
+
+		submissionFileMap = new HashMap<>();
+		reports = new HashMap<>();
+		fileIds = new ArrayList<>();
+		codeBlockGroups = new ArrayList<>();
+
+		AddFiles(files);
+		AddCodeBlockGroups(codeBlockGroups);
+	}
+
+	/**
+	 * Initialises the report manager (use if different varieties of IReportGenerator are added).
 	 * @param reportGenerator The implementation of IReportGenerator that will generate all reports for this project.
 	 */
 	public ReportManager(IReportGenerator reportGenerator) {
@@ -119,6 +149,16 @@ public class ReportManager {
 	}
 
 	/**
+	 * Generates a report for all ISourceFiles in fileMap that don't have a report already generated for them.
+	 */
+	public void GenerateAllReports() {
+		for(Long fileId : fileIds) {
+			if(!reports.containsKey(fileId))
+				GenerateReport(fileMap.get(fileId));
+		}
+	}
+
+	/**
 	 * To be called by the web report pages. Gets a list of submission summaries
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
@@ -150,6 +190,40 @@ public class ReportManager {
 		}
 
 		return output;
+	}
+
+	/**
+	 * WIP
+	 * need some new class to act as comparison report or something?
+	 *
+	 * @param submissions
+	 */
+	public void getSubmissionComparison(Tuple<ISubmission, ISubmission> submissions) {
+		/**
+		 * list of file matches between each submission.
+		 * each match has:
+		 * id for the 2 files
+		 * score for that match
+		 * reason for that match (description)
+		 * line numbers
+		 */
+		List<FileReport> fileReports = new ArrayList<>();
+		for(int s = 0; s < 2; s++) {
+			ISubmission submission;
+			if(s == 0)
+				submission = submissions.getKey();
+			else
+				submission = submissions.getValue();
+
+			//If any files haven't got a report already, generate it. Add it to fileReports regardless.
+				for(ISourceFile file : submission.getAllFiles()) {
+				if(!reports.containsKey(file.getPersistentId()))
+					fileReports.add(GenerateReport(file));
+				else
+					fileReports.add(reports.get(file.getPersistentId()));
+
+			}
+		}
 	}
 
 	/**
