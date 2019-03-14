@@ -43,11 +43,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-body d-block d-lg-none d-xl-none" >
+                    <div class="alert alert-danger mb-0">
+                        <span th:text="#{results.too_small}"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row sticky-top" id="matches-container">
+    <div class="row d-none d-lg-block sticky-top" id="matches-container">
         <div class="col-lg-12 collapse show">
             <div class="card border-top-0 border-bottom">
                 <div class="card-body pb-0">
@@ -98,7 +103,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row d-none d-lg-block">
         <div class="col-12">
             <div class="card border-top-0 shadow-sm">
                 <div class="card-body">

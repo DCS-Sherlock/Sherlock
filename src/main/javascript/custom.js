@@ -959,6 +959,7 @@ function table() {
         "bLengthChange": false,
         "bInfo": false,
         "searching": true,
+        "autoWidth": false,
         "language": {
             search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>'
         }
@@ -973,6 +974,7 @@ function table() {
         "paging": false,
         "bInfo": false,
         "searching": true,
+        "autoWidth": false,
         "language": {
             search: '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text oi oi-magnifying-glass"></span></div>'
         },
