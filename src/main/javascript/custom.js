@@ -398,7 +398,8 @@ function loadAreaAjax(input){
         input.attr("data-js-href"),
         function(result, status, xhr) {
             input.html(result);
-        }
+        },
+        input
     );
 }
 
@@ -459,7 +460,8 @@ function loadAreaInputTrigger(){
             url + value,
             function(result, status, xhr) {
                 $(target).html(result);
-            }
+            },
+            target
         );
 
         return false;
@@ -521,7 +523,8 @@ function modalLink(){
                 $("#modal").html(result);
                 $("#modal").modal('show');
                 loadAreaInputTrigger();
-            }
+            },
+            $("#modal")
         );
 
         input.prop("disabled", false);
@@ -847,7 +850,8 @@ function submitForm(){
             function(result, status, xhr) {
                 target.html(result);
             },
-            "POST"
+            "POST",
+            target
         );
 
         return false;
@@ -874,11 +878,11 @@ function displayModalLinks() {
  * @param url
  * @param success
  */
-function getAjax(url, success) {
+function getAjax(url, success, target) {
     var data = {
         ajax: "true"
     };
-    submitAjax(url, data, success, "GET");
+    submitAjax(url, data, success, "GET", target);
 }
 
 /**
@@ -887,8 +891,9 @@ function getAjax(url, success) {
  * @param data
  * @param success
  * @param type
+ * @param target
  */
-function submitAjax(url, data, success, type) {
+function submitAjax(url, data, success, type, target) {
     var input = {
         type: type,
         accept:"text/html",
@@ -905,10 +910,21 @@ function submitAjax(url, data, success, type) {
             rebindEvents();
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            console.log(thrownError);
-            $('#javascript-error').removeClass('d-none');
-            $('#javascript-error-message').text(xhr.status);
-            $("#modal").modal('hide');
+            var copy = $('#javascript-error-clone').clone();
+
+            if (copy.find("."+xhr.status).length == 1){
+                copy.find(".alert").html(copy.find("."+xhr.status).html());
+            } else {
+                copy.find(".alert").html(copy.find(".other").html());
+                copy.find('.status-code').text(xhr.status);
+            }
+
+            if (target.attr("id") == "modal" || $("#modal").find(target).length == 1) {
+                $("#modal").modal('hide');
+                $("#javascript-error").html(copy.html());
+            } else {
+                target.html(copy.html());
+            }
         }
     };
 

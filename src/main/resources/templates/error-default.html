@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{error.title}"></title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1" th:text="#{error.title}"></h1>
+                </div>
+                <div class="card-body text-center">
+                    <th:block th:if="${msg}">
+                        <div class="alert alert-danger"><span th:text="#{''+${msg}}"></span></div>
+                    </th:block>
+                    <th:block th:unless="${msg}">
+                        <div class="alert alert-danger"><span th:text="#{'error.404'}"></span></div>
+                    </th:block>
+
+                    <a href="javascript:history.go(-1)" class="btn btn-primary" th:text="#{error.return}"></a>
+
+                    <br /><br />
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound'}"
+                       th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.WorkspaceNotFound'}"
+                       th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'org.springframework.web.multipart.MaxUploadSizeExceededException'}"
+                       th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountNotFound'}"
+                       th:href="@{/admin}" class="btn btn-primary " th:text="#{admin.accounts.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountOwner'}"
+                       th:href="@{/admin}" class="btn btn-primary " th:text="#{admin.accounts.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateNotFound'}"
+                       th:href="@{/dashboard/templates}" class="btn btn-primary " th:text="#{templates.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.ResultsNotFound'}"
+                    th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound'}"
+                    th:href="@{/dashboard/templates}" class="btn btn-primary " th:text="#{templates.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.SubmissionNotFound'}"
+                    th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner'}"
+                    th:href="@{/dashboard/templates}" class="btn btn-primary " th:text="#{templates.return}"></a>
+
+                    <br /><br />
+
+                    <a th:href="@{/}" class="btn btn-primary" th:text="#{home.return}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>

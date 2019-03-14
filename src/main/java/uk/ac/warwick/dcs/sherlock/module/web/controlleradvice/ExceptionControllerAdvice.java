@@ -3,11 +3,14 @@ package uk.ac.warwick.dcs.sherlock.module.web.controlleradvice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 
 import java.util.Arrays;
@@ -18,6 +21,8 @@ import java.util.Arrays;
 @ControllerAdvice
 public class ExceptionControllerAdvice {
     //All @Autowired variables are automatically loaded by Spring
+    @Autowired
+    private AccountRepository accountRepository;
     @Autowired
     private Environment environment;
 
@@ -75,12 +80,14 @@ public class ExceptionControllerAdvice {
             SubmissionNotFound.class,
             DetectorNotFound.class,
             ResultsNotFound.class,
-            SourceFileNotFound.class
+            SourceFileNotFound.class,
+            AccountNotFound.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String notFoundError(Model model, Exception e) {
+    public String notFoundError(Model model, Authentication authentication, Exception e) {
+        model = addAccountToModel(model, authentication);
         model.addAttribute("msg", e.getClass().getName());
-        return "error";
+        return "error-default";
     }
 
     /**
@@ -97,17 +104,27 @@ public class ExceptionControllerAdvice {
             AccountOwner.class
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String notAuthorisedError(Model model, Exception e) {
+    public String notAuthorisedError(Model model, Authentication authentication, Exception e) {
+        model = addAccountToModel(model, authentication);
         model.addAttribute("msg", e.getClass().getName());
-        return "error";
+        return "error-default";
     }
 
     @ExceptionHandler({
             MaxUploadSizeExceededException.class
     })
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
-    public String uploadSizeExceededError(Model model, Exception e) {
+    public String uploadSizeExceededError(Model model, Authentication authentication, Exception e) {
+        model = addAccountToModel(model, authentication);
         model.addAttribute("msg", e.getClass().getName());
-        return "error";
+        return "error-default";
+    }
+
+    private Model addAccountToModel(Model model, Authentication authentication) {
+        AccountWrapper accountWrapper = new AccountWrapper();
+        if (authentication != null)
+            accountWrapper = new AccountWrapper(accountRepository.findByEmail(authentication.getName()));
+        model.addAttribute("account", accountWrapper);
+        return model;
     }
 }

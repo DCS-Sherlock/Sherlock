@@ -5,7 +5,7 @@
 </head>
 <body>
 <main role="main" class="container" layout:fragment="content">
-    <form class="form-login text-center" th:action="@{/login}" method="post">
+    <form class="text-center">
         <div class="logo">
             <a class="" th:href="@{/}">
                 <img th:src="@{/img/logo-100.png}">
@@ -19,6 +19,9 @@
         <th:block th:unless="${msg}">
             <div class="alert alert-danger"><span th:text="#{'error.404'}"></span></div>
         </th:block>
+        <a href="javascript:history.go(-1)" class="btn btn-primary btn-lg" th:text="#{error.return}"></a>
+        <br /><br />
+        <a th:href="@{/}" class="btn btn-primary btn-lg" th:text="#{home.return}"></a>
     </form>
 </main>
 </body>

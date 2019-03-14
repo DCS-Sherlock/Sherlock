@@ -16,12 +16,29 @@
 
 <div th:replace="fragments/header :: header" th:with="page=${page}"></div>
 
-<div class="container d-none" id="javascript-error">
-    <div class="row mb-2">
-        <div class="col-12">
-            <div class="alert alert-warning"><span th:text="#{error.javascript}"></span> <span id="javascript-error-message"></span></div>
+<div class="d-none">
+    <div class="container" id="javascript-error-clone">
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="alert alert-warning">
+
+                </div>
+            </div>
+        </div>
+        <div class="d-none">
+            <div class="other">
+                <span th:text="#{error.javascript}"></span> <span class="status-code"></span>
+            </div>
+            <span class="404" th:text="#{error.404}"></span>
+            <span class="403" th:text="#{error.403}"></span>
+            <span class="413" th:text="#{error.413}"></span>
+            <span class="500" th:text="#{error.500}"></span>
         </div>
     </div>
+</div>
+
+<div id="javascript-error" class="container">
+
 </div>
 
 <main layout:fragment="content"></main>
