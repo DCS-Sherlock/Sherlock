@@ -599,7 +599,7 @@ public class Registry implements IRegistry {
 			return;
 		}
 
-		Map<String, Float> map = null;
+		Map<String, Double> map = null;
 		int mapSize = 0;
 		File weightFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Weightings.yaml");
 		if (!weightFile.exists()) {
@@ -620,10 +620,10 @@ public class Registry implements IRegistry {
 		if (map != null) {
 			for (DetectionType type : this.detectionTypeRegistry.values()) {
 				if (map.containsKey(type.getIdentifier())) {
-					type.setWeighting(map.get(type.getIdentifier()));
+					type.setWeighting(map.get(type.getIdentifier()).floatValue());
 				}
 				else {
-					map.put(type.getIdentifier(), type.getWeighting());
+					map.put(type.getIdentifier(), (double) type.getWeighting());
 				}
 			}
 
