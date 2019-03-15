@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,17 +23,26 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.RoleRepository;
 import javax.validation.Valid;
 import java.util.Optional;
 
+/**
+ * The controller that deals with all the admin sub-account pages
+ */
 @Controller
-public class AdminSubaccountController {
-    @Autowired
+public class SubaccountController {
+	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private RoleRepository roleRepository;
 
-    public AdminSubaccountController() { }
-
+    /**
+     * Handles GET requests to the manage account page
+     *
+     * @param subAccount the account being managed
+     * @param model holder for model attributes
+     *
+     * @return the path to the manage account page
+     */
 	@GetMapping("/admin/manage/{pathid}")
 	public String manageGet(
 			@ModelAttribute("subAccount") AccountWrapper subAccount,
@@ -43,6 +52,18 @@ public class AdminSubaccountController {
 		return "settings/admin/manage";
 	}
 
+    /**
+     * Handles POST requests to the manage account page, updates the
+     * username, email and roles based on the form contents
+     *
+     * @param accountForm the form that should be submitted in the request
+     * @param result the results of the validation on the form above
+     * @param subAccount the account being managed
+     * @param account the account wrapper for the logged in user
+     * @param model holder for model attributes
+     *
+     * @return the path to the manage account page
+     */
 	@PostMapping("/admin/manage/{pathid}")
 	public String managePost(
 			@Valid @ModelAttribute AccountForm accountForm,
@@ -83,19 +104,37 @@ public class AdminSubaccountController {
                 roleRepository.delete(adminRole);
             }
 
-            accountForm.setOldPassword("");
             model.addAttribute("success_msg", "admin.accounts.manage.updated");
 		}
 
+        accountForm.setOldPassword("");
 		return "settings/admin/manage";
 	}
 
+    /**
+     * Handles GET requests to the reset password page
+     *
+     * @param model holder for model attributes
+     *
+     * @return the path to the reset page
+     */
 	@GetMapping("/admin/password/{pathid}")
 	public String passwordGet(Model model) {
 		model.addAttribute("passwordForm", new PasswordForm());
 		return "settings/admin/password";
 	}
 
+    /**
+     * Handles POST requests to the reset password page
+     *
+     * @param passwordForm the form that should be submitted in the request
+     * @param result the results of the validation on the form above
+     * @param subAccount the account being managed
+     * @param account the account wrapper for the logged in user
+     * @param model holder for model attributes
+     *
+     * @return the path to the reset password page
+     */
 	@PostMapping("/admin/password/{pathid}")
 	public String passwordPost(
 			@Valid @ModelAttribute PasswordForm passwordForm,
@@ -119,12 +158,30 @@ public class AdminSubaccountController {
 		return "settings/admin/password";
 	}
 
+    /**
+     * Handles GET requests to the delete account page
+     *
+     * @param model holder for model attributes
+     *
+     * @return the path to the delete page
+     */
 	@GetMapping("/admin/delete/{pathid}")
 	public String deleteGet(Model model) {
 		model.addAttribute("passwordForm", new PasswordForm());
 		return "settings/admin/delete";
 	}
 
+    /**
+     * Handles POST requests to the delete account page
+     *
+     * @param passwordForm the form that should be submitted in the request
+     * @param result the results of the validation on the form above
+     * @param subAccount the account being managed
+     * @param account the account wrapper for the logged in user
+     * @param model holder for model attributes
+     *
+     * @return the path to the delete page
+     */
 	@PostMapping("/admin/delete/{pathid}")
 	public String deletePost(
 			@Valid @ModelAttribute PasswordForm passwordForm,
@@ -141,6 +198,19 @@ public class AdminSubaccountController {
 		return "settings/admin/delete";
 	}
 
+    /**
+     * Gets the account wrapper for the account where the id equals the
+     * "pathid" attribute in the URL
+     *
+     * @param account the account object of the current user
+     * @param pathid the account id from the path variable
+     * @param model holder for model attributes
+     *
+     * @return the sub account wrapper
+     *
+     * @throws AccountOwner if the sub account is actually the account of the current user
+     * @throws AccountNotFound if the account was not found
+     */
 	@ModelAttribute("subAccount")
 	private AccountWrapper getAccount(
             @ModelAttribute("account") AccountWrapper account,

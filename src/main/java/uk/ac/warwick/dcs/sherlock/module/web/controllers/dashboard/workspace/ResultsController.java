@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspace;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,18 +13,35 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceRepository;
 
+/**
+ * The controller that deals with the workspace results pages
+ */
 @Controller
-public class WorkspaceResultsController {
+public class ResultsController {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
-    public WorkspaceResultsController() { }
-
+    /**
+     * Handles GET requests to the results page
+     *
+     * @return the path to the results template
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}")
     public String viewGet() {
         return "dashboard/workspaces/results/view";
     }
 
+    /**
+     * Handles GET requests to the graph fragment
+     *
+     * @param isAjax whether or not the request was ajax or not
+     * @param pathid the id of the workspace
+     * @param jobid the id of the job
+     *
+     * @return the path to the graph fragment template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @RequestMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/graph")
     public String graphGetFragment(
             @ModelAttribute("isAjax") boolean isAjax,
@@ -35,11 +52,28 @@ public class WorkspaceResultsController {
         return "dashboard/workspaces/results/fragments/graph";
     }
 
+    /**
+     * Handles GET requests to the network graph page
+     *
+     * @return the path to the graph template
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/network")
     public String networkGet( ) {
         return "dashboard/workspaces/results/network";
     }
 
+    /**
+     * Handles GET requests to the report submission page
+     *
+     * @param workspaceWrapper the workspace being managed
+     * @param id the id of the submission to report on
+     * @param model holder for model attributes
+     *
+     * @return the path to the report template
+     *
+     * @throws SubmissionNotFound if the submission was not found
+     * @throws MapperException if there was an issue initialising the line mappers
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{submission}")
     public String reportGet(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -55,6 +89,19 @@ public class WorkspaceResultsController {
         return "dashboard/workspaces/results/report";
     }
 
+    /**
+     * Handles GET requests for the compare submission page
+     *
+     * @param workspaceWrapper the workspace being managed
+     * @param id1 the first submission to compare
+     * @param id2 the second submission to compare
+     * @param model holder for model attributes
+     *
+     * @return the path to the compare template
+     *
+     * @throws SubmissionNotFound if the submission was not found
+     * @throws MapperException if there was an issue initialising the line mappers
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/compare/{submission1}/{submission2}")
     public String comparisonGet(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -73,11 +120,24 @@ public class WorkspaceResultsController {
         return "dashboard/workspaces/results/compare";
     }
 
+    /**
+     * Handles GET requests to the delete results page
+     *
+     * @return the path to the delete template
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/delete")
     public String deleteGet() {
         return "dashboard/workspaces/results/delete";
     }
 
+    /**
+     * Handles GET requests to the delete results page
+     *
+     * @param workspaceWrapper the workspace being managed
+     * @param resultsWrapper the results to delete
+     *
+     * @return the path to the delete template
+     */
     @PostMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/delete")
     public String deletePost(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -87,6 +147,18 @@ public class WorkspaceResultsController {
         return "redirect:/dashboard/workspaces/manage/"+workspaceWrapper.getId()+"?msg=deleted_job";
     }
 
+    /**
+     * Gets the workspace where the id equals the "pathid" path variable
+     *
+     * @param account the account of the current user
+     * @param pathid the workspace id
+     * @param model holder for model attributes
+     *
+     * @return the workspace wrapper
+     *
+     * @throws IWorkspaceNotFound if the workspace was not found in the Engine database
+     * @throws WorkspaceNotFound if the workspace was not found in the web database
+     */
     @ModelAttribute("workspace")
     private WorkspaceWrapper getWorkspaceWrapper(
             @ModelAttribute("account") AccountWrapper account,
@@ -99,6 +171,17 @@ public class WorkspaceResultsController {
         return workspaceWrapper;
     }
 
+    /**
+     * Gets the results for the job with the id "jobid"
+     *
+     * @param workspaceWrapper the workspace being managed
+     * @param jobid the job id to find the results
+     * @param model holder for model attributes
+     *
+     * @return the job results wrapper
+     *
+     * @throws ResultsNotFound if the job was not found in the database
+     */
     @ModelAttribute("results")
     private JobResultsData getResults(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
@@ -118,6 +201,4 @@ public class WorkspaceResultsController {
         model.addAttribute("results", wrapper);
         return wrapper;
     }
-
-//    private
 }

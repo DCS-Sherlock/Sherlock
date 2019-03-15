@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.templates;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +18,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TemplateRepositor
 import javax.validation.Valid;
 import java.util.Set;
 
+/**
+ * The controller that deals with the templates pages
+ */
 @Controller
 public class TemplatesController {
 	@Autowired
@@ -25,14 +28,28 @@ public class TemplatesController {
 	@Autowired
 	private TDetectorRepository tDetectorRepository;
 
-	public TemplatesController() { }
-
-	@RequestMapping ("/dashboard/templates")
+	/**
+	 * Handles GET requests to the templates page
+	 *
+	 * @return the path to the templates page template
+	 */
+	@GetMapping ("/dashboard/templates")
 	public String indexGet() {
 		return "dashboard/templates/index";
 	}
 
-	@RequestMapping ("/dashboard/templates/list")
+	/**
+	 * Handles GET requests to the template list page
+	 *
+	 * @param account the account of the current user
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the template list page template
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
+	@GetMapping ("/dashboard/templates/list")
 	public String listGetFragment(
 			@ModelAttribute("account") AccountWrapper account,
 			@ModelAttribute("isAjax") boolean isAjax,
@@ -48,6 +65,13 @@ public class TemplatesController {
 		return "dashboard/templates/fragments/list";
 	}
 
+	/**
+	 * Handles GET requests to the add template page
+	 *
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the add template page template
+	 */
 	@GetMapping ("/dashboard/templates/add")
 	public String addGet(Model model) {
 		Set<String> languages = SherlockRegistry.getLanguages();
@@ -58,6 +82,19 @@ public class TemplatesController {
 		return "dashboard/templates/add";
 	}
 
+	/**
+	 * Handles POST requests to the add template page
+	 *
+	 * @param templateForm the form that should be submitted in the request
+	 * @param result the results of the validation on the form above
+	 * @param account the account of the current user
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the add template page template
+	 *
+	 * @throws NotTemplateOwner if the user attempts to modify a template that is public and not theirs
+	 */
 	@PostMapping("/dashboard/templates/add")
 	public String addPost(
 			@Valid @ModelAttribute TemplateForm templateForm,
@@ -76,6 +113,18 @@ public class TemplatesController {
 		return "redirect:/dashboard/templates/manage/" + templateWrapper.getTemplate().getId();
 	}
 
+	/**
+	 * Handles GET requests to the detectors list page, which lists
+	 * the detectors available for the specified language
+	 *
+	 * @param model holder for model attributes
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param language the language to fetch the detectors for
+	 *
+	 * @return the path to the detectors list template
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@GetMapping ("/dashboard/templates/detectors/{language}")
 	public String detectorsGetFragment(
 			Model model,

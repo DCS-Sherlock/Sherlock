@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspaces;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspace;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,20 +19,38 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceReposito
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * The controller that deals with the manage workspace pages
+ */
 @Controller
-public class WorkspaceManageController {
+public class WorkspaceController {
     @Autowired
     private WorkspaceRepository workspaceRepository;
     @Autowired
     private TemplateRepository templateRepository;
 
-    public WorkspaceManageController() { }
-
+    /**
+     * Handles the GET request to the manage workspace page
+     *
+     * @return the path to the manage template
+     */
 	@GetMapping("/dashboard/workspaces/manage/{pathid}")
 	public String manageGet() {
 		return "dashboard/workspaces/manage";
 	}
 
+    /**
+     * Handles the GET request to the workspace details fragment
+     *
+     * @param pathid the id of the workspace
+     * @param workspaceWrapper the workspace being managed
+     * @param isAjax whether or not the request was ajax or not
+     * @param model holder for model attributes
+     *
+     * @return the path to the workspace details fragment
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/details")
     public String detailsGetFragment(
             @PathVariable("pathid") long pathid,
@@ -47,6 +65,20 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/details";
     }
 
+    /**
+     * Handles POST requests to the workspace details fragment
+     *
+     * @param pathid the id of the workspace
+     * @param workspaceWrapper the workspace being managed
+     * @param isAjax whether or not the request was ajax or not
+     * @param workspaceForm the form that should be submitted in the request
+     * @param result the results of the validation on the form above
+     * @param model holder for model attributes
+     *
+     * @return the path to the details fragment template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @PostMapping("/dashboard/workspaces/manage/{pathid}/details")
     public String detailsPostFragment(
             @PathVariable("pathid") long pathid,
@@ -67,11 +99,30 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/details";
     }
 
+    /**
+     * Handles GET requests to the upload submissions page
+     *
+     * @return the path to the upload template
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions/upload")
     public String uploadGetFragment() {
         return "dashboard/workspaces/submissions/upload";
     }
 
+    /**
+     * Handles POST requests to the upload submissions page
+     *
+     * @param pathid the id of the workspace
+     * @param workspaceWrapper the workspace being managed
+     * @param isAjax whether or not the request was ajax or not
+     * @param submissionsForm the form that should be submitted in the request
+     * @param result the results of the validation on the form above
+     * @param model holder for model attributes
+     *
+     * @return the path to the upload confirmed template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @PostMapping("/dashboard/workspaces/manage/{pathid}/submissions/upload")
     public String uploadPostFragment(
             @PathVariable("pathid") long pathid,
@@ -99,6 +150,16 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/submissions/uploadConfirm";
     }
 
+    /**
+     * Handles the GET requests for the submissions list fragment
+     *
+     * @param pathid the id of the workspace
+     * @param isAjax whether or not the request was ajax or not
+     *
+     * @return the path to the submissions list template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/submissions")
     public String submissionsGetFragment(
             @PathVariable("pathid") long pathid,
@@ -109,6 +170,19 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/submissions";
     }
 
+    /**
+     * Handles GET requests to the run analysis fragment
+     *
+     * @param pathid the id of the workspace
+     * @param workspaceWrapper the workspace being managed
+     * @param account the account of the current user
+     * @param isAjax whether or not the request was ajax or not
+     * @param model holder for model attributes
+     *
+     * @return the path to the run template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/run")
     public String runGetFragment(
             @PathVariable("pathid") long pathid,
@@ -123,6 +197,21 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/run";
     }
 
+    /**
+     * Handles POST requests to the run analysis fragment
+     *
+     * @param pathid the id of the workspace
+     * @param template_id the id of the template to run
+     * @param workspaceWrapper the workspace being managed
+     * @param account the account of the current user
+     * @param isAjax whether or not the request was ajax or not
+     * @param model holder for model attributes
+     *
+     * @return the path to the run template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     * @throws TemplateNotFound if the template was not found
+     */
     @PostMapping("/dashboard/workspaces/manage/{pathid}/run")
     public String runPostFragment(
             @PathVariable("pathid") long pathid,
@@ -153,6 +242,18 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/run";
     }
 
+    /**
+     * Handles GET requests to the results fragment
+     *
+     * @param pathid the id of the workspace
+     * @param workspaceWrapper the workspace being managed
+     * @param isAjax whether or not the request was ajax or not
+     * @param model holder for model attributes
+     *
+     * @return the path to the results fragment template
+     *
+     * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+     */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results")
     public String resultsGetFragment(
             @PathVariable("pathid") long pathid,
@@ -168,17 +269,41 @@ public class WorkspaceManageController {
         return "dashboard/workspaces/fragments/results";
     }
 
+    /**
+     * Handles GET requests to the delete workspace page
+     *
+     * @return the path to the delete template
+     */
     @GetMapping("/dashboard/workspaces/{pathid}/delete")
     public String deleteGet() {
         return "dashboard/workspaces/delete";
     }
 
+    /**
+     * Handles POST requests to the delete workspace page
+     *
+     * @param workspaceWrapper the workspace being managed
+     *
+     * @return the path to the delete template
+     */
     @PostMapping("/dashboard/workspaces/{pathid}/delete")
     public String deletePost(@ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper) {
         workspaceWrapper.delete(workspaceRepository);
 		return "redirect:/dashboard/workspaces?msg=deleted";
     }
 
+    /**
+     * Gets the workspace where the id equals the "pathid" path variable
+     *
+     * @param account the account of the current user
+     * @param pathid the workspace id
+     * @param model holder for model attributes
+     *
+     * @return the workspace wrapper
+     *
+     * @throws IWorkspaceNotFound if the workspace was not found in the Engine database
+     * @throws WorkspaceNotFound if the workspace was not found in the web database
+     */
 	@ModelAttribute("workspace")
 	private WorkspaceWrapper getWorkspaceWrapper(
             @ModelAttribute("account") AccountWrapper account,

@@ -2,7 +2,13 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
+import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.TaskWrapper;
 
@@ -111,9 +117,33 @@ public class JobResultsData {
     private void fillResultsMap() {
         resultsMap = new HashMap<>();
 
-        //TODO: Actually load the real results, not random data
+//        ReportManager report = new ReportManager(); //TODO: load with data
+//
+//        Map<Long, String> map = new HashMap<>();
+//        job.getWorkspace().getSubmissions().forEach(s -> map.put(s.getId(), s.getName()));
+//
+//        for (SubmissionSummary summary : report.getMatchingSubmissions()) {
+//            String name = "Deleted";
+//            if (map.containsKey(summary.getPersistentId())) {
+//                name = map.get(summary.getPersistentId());
+//            }
+//
+//            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore());
+//
+//            List<SubmissionScore> list = new ArrayList<>();
+//            for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
+//                String name2 = "Deleted";
+//                if (map.containsKey(tuple.getKey())) {
+//                    name2 = map.get(tuple.getKey());
+//                }
+//
+//                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()));
+//            }
+//
+//            resultsMap.put(score, list);
+//        }
 
-        //Generates the fake data
+//        Generates the fake data
         {
             for (int id = 0; id < 50; id++){
                 SubmissionScore wrapper = new SubmissionScore(id, "Submission " + id, this.tempRandomScore());

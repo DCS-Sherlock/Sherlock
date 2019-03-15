@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.settings.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +21,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository
 import javax.validation.Valid;
 import java.util.Collection;
 
+/**
+ * The controller that deals with account settings pages
+ */
 @Controller
 public class AccountController {
 	@Autowired
@@ -28,11 +31,27 @@ public class AccountController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	/**
+	 * Handles requests to the account page
+	 *
+	 * @return the path to the account page
+	 */
 	@GetMapping ("/account")
 	public String indexGet() {
 		return "settings/account/index";
 	}
 
+	/**
+	 * Handles GET requests to the name fragment on the account page
+	 *
+	 * @param model holder for model attributes
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param account the account wrapper for the logged in user
+	 *
+	 * @return the path to the name fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@GetMapping ("/account/name")
 	public String nameGetFragment(
 			Model model,
@@ -45,6 +64,19 @@ public class AccountController {
 		return "settings/account/fragments/name";
 	}
 
+	/**
+	 * Handles POST requests to the name fragment on the account page
+	 *
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param account the account wrapper for the logged in user
+	 * @param accountNameForm the form that should be submitted in the request
+	 * @param result the results of the validation on the form above
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the name fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@PostMapping ("/account/name")
 	public String namePostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,
@@ -65,6 +97,17 @@ public class AccountController {
 		return "settings/account/fragments/name";
 	}
 
+	/**
+	 * Handles GET requests to the email fragment of the account page
+	 *
+	 * @param model holder for model attributes
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param account the account wrapper for the logged in user
+	 *
+	 * @return the path to the email fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@GetMapping ("/account/email")
 	public String emailGetFragment(
 			Model model,
@@ -77,6 +120,19 @@ public class AccountController {
 		return "settings/account/fragments/email";
 	}
 
+	/**
+	 * Handles the POST requests to the email fragment on the accounts page
+     *
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param account the account wrapper for the logged in user
+	 * @param accountEmailForm the form that should be submitted in the request
+	 * @param result the results of the validation on the form above
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the email fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@PostMapping ("/account/email")
 	public String emailPostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,
@@ -114,13 +170,24 @@ public class AccountController {
 					new UsernamePasswordAuthenticationToken(account.getEmail(), account.getPassword(), authorities);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			accountEmailForm.setOldPassword("");
 			model.addAttribute("success_msg", "account.email.updated");
 		}
+
+		accountEmailForm.setOldPassword("");
 
 		return "settings/account/fragments/email";
 	}
 
+	/**
+	 * Handles GET requests to the password fragment on the account page
+	 *
+	 * @param model holder for model attributes
+	 * @param isAjax whether or not the request was ajax or not
+	 *
+	 * @return the path to the password fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@GetMapping ("/account/password")
 	public String passwordGetFragment(
 			Model model,
@@ -132,6 +199,19 @@ public class AccountController {
 		return "settings/account/fragments/password";
 	}
 
+	/**
+	 * Handles POST requests to the password fragment on the accounts page
+	 *
+	 * @param isAjax whether or not the request was ajax or not
+	 * @param account the account wrapper for the logged in user
+	 * @param accountPasswordForm the form that should be submitted in the request
+	 * @param result the results of the validation on the form above
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the password fragment
+	 *
+	 * @throws NotAjaxRequest if the request was not an ajax one, the message is where to redirect the user to
+	 */
 	@PostMapping ("/account/password")
 	public String passwordPostFragment(
 			@ModelAttribute("isAjax") boolean isAjax,

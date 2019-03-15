@@ -75,8 +75,10 @@ public class FileMatch {
      *
      * @param file1Id the first file id
      * @param file1Name the first file name
+     * @param file1Submission the id of the first submission
      * @param file1CodeBlocks the matches from the first file
      * @param file2Id the second file id
+     * @param file2Submission the id of the second submission
      * @param file2Name the second file name
      * @param file2CodeBlocks the matches from the second file
      * @param reason the reason text

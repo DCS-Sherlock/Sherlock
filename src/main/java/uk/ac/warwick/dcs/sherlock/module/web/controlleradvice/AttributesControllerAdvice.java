@@ -17,7 +17,6 @@ import java.util.Arrays;
  */
 @ControllerAdvice
 public class AttributesControllerAdvice {
-    //All @Autowired variables are automatically loaded by Spring
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -27,8 +26,8 @@ public class AttributesControllerAdvice {
      * Gets the account of the currently logged in user using the authentication
      * details and adds it to the model attributes
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     * @param authentication the authentication class (auto-filled by Spring)
+     * @param model holder for model attributes
+     * @param authentication the authentication class
      *
      * @return the account wrapper if logged in, or an empty wrapper if not
      */
@@ -47,8 +46,8 @@ public class AttributesControllerAdvice {
     /**
      * Adds an "is ajax" boolean to the attributes of all requests
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     * @param request the http request information (auto-filled by Spring)
+     * @param model holder for model attributes
+     * @param request the http request information
      */
     @ModelAttribute
     public void addIsAjax(Model model, HttpServletRequest request) {
@@ -58,8 +57,8 @@ public class AttributesControllerAdvice {
     /**
      * Adds an "is printing" boolean to the attribute of all requests
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     * @param request the http request information (auto-filled by Spring)
+     * @param model holder for model attributes
+     * @param request the http request information
      */
     @ModelAttribute
     public void addIsPrinting(Model model, HttpServletRequest request) {
@@ -70,7 +69,7 @@ public class AttributesControllerAdvice {
     /**
      * Checks whether the current request is ajax or not
      *
-     * @param request the http request information (auto-filled by Spring)
+     * @param request the http request information
      *
      * @return whether or not the request is an ajax one
      */
@@ -83,7 +82,7 @@ public class AttributesControllerAdvice {
      * Sets the javascript url to the standard version when running the
      * webdev profile and the minified in all other cases
      *
-     * @param model holder for model attributes (auto-filled by Spring)
+     * @param model holder for model attributes
      */
     @ModelAttribute
     public void addJsUrl(Model model) {

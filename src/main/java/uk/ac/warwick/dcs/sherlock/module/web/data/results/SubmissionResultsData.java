@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
@@ -58,7 +59,9 @@ public class SubmissionResultsData {
         this.matches = new ArrayList<>();
         this.submissions = new ArrayList<>();
 
-        //TODO: fetch real data from report generator
+        ReportManager report = new ReportManager(); //TODO: load with data
+
+
 
         //Generates fake data
         {
@@ -234,7 +237,7 @@ public class SubmissionResultsData {
      *
      * e.g. if lines 2-10 are mapped to a match, this would return "2,3,4,5,6,7,8,9,10"
      *
-     * @param fileId
+     * @param fileId the id of the file to get the highlighted lines for
      *
      * @return the comma separated list, or an empty list if the file isn't found
      */

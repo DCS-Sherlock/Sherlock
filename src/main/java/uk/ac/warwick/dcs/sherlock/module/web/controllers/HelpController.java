@@ -15,10 +15,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * The controller that deals with the help pages (help centre, terms and privacy policy)
+ */
 @Controller
 public class HelpController {
-	public HelpController() { }
-
+	/**
+	 * Handles requests to the help page
+	 *
+	 * @param model holder for model attributes (auto-filled by Spring)
+	 * @param request the http request information (auto-filled by Spring)
+	 *
+	 * @return the path to the help page
+	 *
+	 * @throws LoadingHelpFailed if the help.properties file for both the current
+	 * locale and default failed to load
+	 */
 	@RequestMapping ("/help")
 	public String index(Model model, HttpServletRequest request) throws LoadingHelpFailed {
 		String locale = RequestContextUtils.getLocale(request).toLanguageTag();
@@ -44,16 +56,35 @@ public class HelpController {
 		return "help/index";
 	}
 
+	/**
+	 * Handles requests to the terms page
+	 *
+	 * @return the path to the terms page
+	 */
 	@RequestMapping ("/terms")
 	public String terms() {
 		return "help/terms";
 	}
 
+	/**
+	 * Handles requests to the privacy page
+	 *
+	 * @return the path to the privacy page
+	 */
 	@RequestMapping ("/privacy")
 	public String privacy() {
 		return "help/privacy";
 	}
 
+	/**
+	 * Loads the help.properties file for the supplied locale
+	 *
+	 * @param locale the locale to load the properties file for
+	 *
+	 * @return the properties object
+	 *
+	 * @throws LoadingHelpFailed if the help.properties file for locale failed to load
+	 */
 	private Properties loadProperties(String locale) throws LoadingHelpFailed {
 		if (locale.length() > 0) {
 			locale = "_" + locale;

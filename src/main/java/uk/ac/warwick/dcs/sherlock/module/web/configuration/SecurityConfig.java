@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 *
 	 * @param auth Spring's authentication manager
 	 *
-	 * @throws Exception
+	 * @throws Exception if there was an issue with the user details service
 	 */
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -100,7 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 *
 	 * @param http Spring's http security object that allows configuring web based security for specific http requests
 	 *
-	 * @throws Exception
+	 * @throws Exception if there was an issue with http security
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

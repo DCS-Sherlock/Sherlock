@@ -89,6 +89,8 @@ public class LineMapper {
      * elements in it, all others should only contain one element.
      *
      * @param match the match to insert into the map
+     *
+     * @throws MapperException if add match was called after fill
      */
     public void AddMatch(FileMatch match) throws MapperException {
         //This function can only run if the fill function has not been ran

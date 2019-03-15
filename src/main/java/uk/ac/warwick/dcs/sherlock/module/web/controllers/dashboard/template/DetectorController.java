@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.templates;
+package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.template;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,15 +17,26 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterReposit
 
 import javax.validation.Valid;
 
+/**
+ * The controller that deals with the template detector pages
+ */
 @Controller
-public class TemplateDetectorController {
-    @Autowired
-    private TDetectorRepository tDetectorRepository;
-    @Autowired
+public class DetectorController {
+	@Autowired
+	private TDetectorRepository tDetectorRepository;
+	@Autowired
 	private TParameterRepository tParameterRepository;
 
-    public TemplateDetectorController() { }
-
+	/**
+	 * Handles GET requests to the detector parameter page
+	 *
+	 * @param detectorWrapper the detector being managed
+	 * @param model holder for model attributes
+	 *
+	 * @return the path of the parameter template
+	 *
+	 * @throws DetectorNotFound if the detector was not found
+	 */
 	@GetMapping("/dashboard/templates/manage/detectors/{pathid}/parameters")
 	public String parmetersGet(
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
@@ -36,6 +47,18 @@ public class TemplateDetectorController {
 		return "dashboard/templates/parameters";
 	}
 
+	/**
+	 * Handles POST request to the detector parameter page
+	 *
+	 * @param parameterForm the form that should be submitted in the request
+	 * @param result the results of the validation on the form above
+	 * @param detectorWrapper the detector being managed
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the parameter template
+	 *
+	 * @throws DetectorNotFound if the detector was not found
+	 */
 	@PostMapping("/dashboard/templates/manage/detectors/{pathid}/parameters")
 	public String parametersPost(
 			@Valid @ModelAttribute ParameterForm parameterForm,
@@ -54,6 +77,17 @@ public class TemplateDetectorController {
 		return "dashboard/templates/parameters";
 	}
 
+	/**
+	 * Gets the detector where the id equals the "pathid" path variable
+	 *
+	 * @param account the account of the current user
+	 * @param pathid the id of the template
+	 * @param model holder for model attributes
+	 *
+	 * @return the detector wrapper
+	 *
+	 * @throws DetectorNotFound if the detector was not found
+	 */
 	@ModelAttribute("detector")
 	private DetectorWrapper getDetectorWrapper(
             @ModelAttribute("account") AccountWrapper account,

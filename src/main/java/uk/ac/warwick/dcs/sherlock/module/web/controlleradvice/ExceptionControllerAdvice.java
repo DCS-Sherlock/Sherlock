@@ -20,7 +20,6 @@ import java.util.Arrays;
  */
 @ControllerAdvice
 public class ExceptionControllerAdvice {
-    //All @Autowired variables are automatically loaded by Spring
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -43,8 +42,7 @@ public class ExceptionControllerAdvice {
     /**
      * Handles all generic/unknown errors
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     *
+     * @param model holder for model attributes
      * @param e the exception object
      *
      * @return the path to the error page
@@ -60,15 +58,14 @@ public class ExceptionControllerAdvice {
             e.printStackTrace();
         }
 
-//        model.addAttribute("msg", e.getClass().getName());
         return "error";
     }
 
     /**
      * Handles all "not found" errors
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     *
+     * @param model holder for model attributes
+     * @param authentication the authentication class
      * @param e the exception object
      *
      * @return the path to the error page
@@ -93,8 +90,8 @@ public class ExceptionControllerAdvice {
     /**
      * Handles all requests which are not authorised
      *
-     * @param model holder for model attributes (auto-filled by Spring)
-     *
+     * @param model holder for model attributes
+     * @param authentication the authentication class
      * @param e the exception object
      *
      * @return the path to the error page
@@ -110,6 +107,15 @@ public class ExceptionControllerAdvice {
         return "error-default";
     }
 
+    /**
+     * Handles all requests where the user tried to upload files that are larger than allowed
+     *
+     * @param model holder for model attributes
+     * @param authentication the authentication class
+     * @param e the exception object
+     *
+     * @return the path to the error page
+     */
     @ExceptionHandler({
             MaxUploadSizeExceededException.class
     })
@@ -120,6 +126,14 @@ public class ExceptionControllerAdvice {
         return "error-default";
     }
 
+    /**
+     * Adds the account object of the current user to the display model
+     *
+     * @param model holder for model attributes
+     * @param authentication the authentication class
+     *
+     * @return the model updated with the account object
+     */
     private Model addAccountToModel(Model model, Authentication authentication) {
         AccountWrapper accountWrapper = new AccountWrapper();
         if (authentication != null)

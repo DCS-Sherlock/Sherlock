@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.TParameter;
+import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.TemplateNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
@@ -139,6 +141,39 @@ public class TemplateWrapper {
                 );
             }
         }
+    }
+
+    public Template copy(
+            AccountWrapper account,
+            TemplateRepository templateRepository,
+            TDetectorRepository tDetectorRepository,
+            TParameterRepository tParameterRepository
+    ) {
+        Template template = new Template();
+        template.setAccount(account.getAccount());
+        template.setLanguage(this.template.getLanguage());
+        template.setPublic(false);
+        template.setName(this.template.getName() + " - Copy");
+        templateRepository.save(template);
+
+        for (TDetector detector : this.template.getDetectors()) {
+            TDetector newDetector = new TDetector();
+            newDetector.setName(detector.getName());
+            newDetector.setTemplate(template);
+
+            tDetectorRepository.save(newDetector);
+
+            for (TParameter parameter : detector.getParameters()) {
+                TParameter newParameter = new TParameter();
+                newParameter.setName(parameter.getName());
+                newParameter.setValue(parameter.getValue());
+                newParameter.setDetector(newDetector);
+
+                tParameterRepository.save(newParameter);
+            }
+        }
+
+        return template;
     }
 
     public void delete(TemplateRepository templateRepository) throws NotTemplateOwner {

@@ -22,6 +22,8 @@ public class FileMapper {
      * Initialise the file mapper
      *
      * @param matches the list of matches to initialise with
+     *
+     * @throws MapperException if add match was called after fill
      */
     public FileMapper(List<FileMatch> matches) throws MapperException {
         this.map = new HashMap<>();
@@ -71,7 +73,7 @@ public class FileMapper {
      *
      * e.g. if lines 2-10 are mapped to a match, this would return "2,3,4,5,6,7,8,9,10"
      *
-     * @param fileId
+     * @param fileId the id of the file to get the highlighted lines for
      *
      * @return the comma separated list, or an empty list if the file isn't found
      */

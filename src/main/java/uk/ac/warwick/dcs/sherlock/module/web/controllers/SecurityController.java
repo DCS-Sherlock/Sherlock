@@ -1,28 +1,28 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
+/**
+ * The controller that deals with the login page
+ */
 @Controller
 public class SecurityController {
-
-	@Autowired
-	private Environment environment;
-
+	/**
+	 * Handles requests to the login page, automatically fills in the
+	 * login form when running as a client
+	 *
+	 * @param environment the details about the spring boot environment
+	 * @param model holder for model attributes
+	 *
+	 * @return the path to the login page
+	 */
 	@GetMapping ("/login")
-	public String login(Model model) {
+	public String login(Environment environment, Model model) {
 		//Automatically login if running locally
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
             model.addAttribute("local_username", "local.sherlock@example.com");
