@@ -65,6 +65,18 @@
                         </h5>
                     </div>
                     <div class="text-right">
+                        <button class="btn btn-outline-primary btn-sm" data-js="matches-left" type="button">
+                            <span th:text="#{results.expand_left}"></span>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm restore-left d-none" data-js="matches-restore" type="button">
+                            <span th:text="#{results.minimise_left}"></span>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" data-js="matches-right" type="button">
+                            <span th:text="#{results.expand_right}"></span>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm restore-right d-none" data-js="matches-restore" type="button">
+                            <span th:text="#{results.minimise_right}"></span>
+                        </button>
                         <button class="btn btn-outline-primary btn-sm" data-js="matches-list" type="button">
                             <span th:text="#{results.show_matches}"></span>
                         </button>
@@ -242,7 +254,7 @@
                         </th:block>
                         <th:block th:unless="${printing}">
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-6" id="left">
                                     <h5>
                                         <span th:text="#{results.compare.submission.title}"></span>
                                         <span th:text="${submission1.getName()}"></span>
@@ -271,7 +283,7 @@
                                         </th:block>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-6" id="right">
                                     <h5>
                                         <span th:text="#{results.compare.submission.title}"></span>
                                         <span th:text="${submission2.getName()}"></span>

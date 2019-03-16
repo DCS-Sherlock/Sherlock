@@ -27,7 +27,19 @@
                     </h5>
                 </th>
                 <td class="align-middle text-right">
-                    <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getTemplate().getId()})}" th:text="#{link.manage}"></a>
+                    <div class="btn-group btn-group-sm float-right">
+                        <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getTemplate().getId()})}" th:text="#{link.manage}"></a>
+                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <form th:action="@{/dashboard/templates/{id}/copy(id=${template.getTemplate().getId()})}" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button type="submit" style="cursor: pointer" class="dropdown-item" th:text="#{link.copy}"></button>
+                            </form>
+                            <a class="dropdown-item" data-js="modal" th:href="@{/dashboard/templates/{id}/delete(id=${template.getTemplate().getId()})}" th:text="#{link.delete}"></a>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </th:block>

@@ -13,6 +13,8 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceRepository;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * The controller that deals with the workspace results pages
  */
@@ -55,10 +57,19 @@ public class ResultsController {
     /**
      * Handles GET requests to the network graph page
      *
+     * @param model holder for model attributes
+     * @param request the http request information
+     *
      * @return the path to the graph template
      */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/network")
-    public String networkGet( ) {
+    public String networkGet(Model model, HttpServletRequest request) {
+        if (request.getParameterMap().containsKey("start")) {
+            model.addAttribute("start", request.getParameterMap().get("start"));
+        } else {
+            model.addAttribute("start", "-1");
+        }
+
         return "dashboard/workspaces/results/network";
     }
 

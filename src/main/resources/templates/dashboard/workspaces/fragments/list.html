@@ -21,7 +21,15 @@
                 </h5>
             </td>
             <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.manage}"></a>
+                <div class="btn-group btn-group-sm float-right">
+                    <a class="btn btn-primary btn-sm" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.manage}"></a>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" data-js="modal" th:href="@{/dashboard/workspaces/{id}/delete(id=${workspace.getId()})}" th:text="#{link.delete}"></a>
+                    </div>
+                </div>
             </td>
         </tr>
     </th:block>

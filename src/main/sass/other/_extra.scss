@@ -48,6 +48,22 @@ button, html [type="button"], [type="reset"], [type="submit"] {
   -webkit-appearance: none;
 }
 
+/* Prevent tables and buttons overflowing */
+h2 .btn {
+    white-space:normal !important;
+    word-wrap: break-word;
+    width: 100%;
+}
+td {
+    word-wrap:break-word;
+    word-break:break-all;
+}
+table {
+    table-layout:fixed;
+    width:100% !important;
+}
+
+
 /* Compare */
 .sticky-matches {
     overflow: auto;

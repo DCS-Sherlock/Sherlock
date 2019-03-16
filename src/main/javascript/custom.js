@@ -309,6 +309,54 @@ function submissionResultsPage() {
                 hideAll();
             });
 
+            $("[data-js='matches-left']").unbind();
+            $("[data-js='matches-left']").click(function(e) {
+                $("#left").addClass("col-lg-9");
+                $("#left").removeClass("col-lg-6");
+                $("#left").removeClass("col-lg-3");
+
+                $("#right").addClass("col-lg-3");
+                $("#right").removeClass("col-lg-6");
+                $("#right").removeClass("col-lg-9");
+
+                $("[data-js='matches-left']").addClass("d-none");
+                $("[data-js='matches-right']").removeClass("d-none");
+                $(".restore-left").removeClass("d-none");
+                $(".restore-right").addClass("d-none");
+            });
+
+            $("[data-js='matches-right']").unbind();
+            $("[data-js='matches-right']").click(function(e) {
+                $("#right").addClass("col-lg-9");
+                $("#right").removeClass("col-lg-6");
+                $("#right").removeClass("col-lg-3");
+
+                $("#left").addClass("col-lg-3");
+                $("#left").removeClass("col-lg-6");
+                $("#left").removeClass("col-lg-9");
+
+                $("[data-js='matches-left']").removeClass("d-none");
+                $("[data-js='matches-right']").addClass("d-none");
+                $(".restore-left").addClass("d-none");
+                $(".restore-right").removeClass("d-none");
+            });
+
+            $("[data-js='matches-restore']").unbind();
+            $("[data-js='matches-restore']").click(function(e) {
+                $("#left").addClass("col-lg-6");
+                $("#left").removeClass("col-lg-9");
+                $("#left").removeClass("col-lg-3");
+
+                $("#right").addClass("col-lg-6");
+                $("#right").removeClass("col-lg-3");
+                $("#right").removeClass("col-lg-9");
+
+                $("[data-js='matches-left']").removeClass("d-none");
+                $("[data-js='matches-right']").removeClass("d-none");
+                $(".restore-left").addClass("d-none");
+                $(".restore-right").addClass("d-none");
+            });
+
             //List for click events on the "toggle table" button
             $("[data-js='matches-list']").unbind();
             $("[data-js='matches-list']").click(function(e) {

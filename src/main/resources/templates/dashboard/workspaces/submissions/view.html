@@ -41,6 +41,7 @@
                                                th:text="#{link.download}" th:download="${file.getFileDisplayName()}"
                                                th:href="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></a>
                                             <a class="btn btn-primary"
+                                               th:if="${submission.getAllFiles().size() > 1}"
                                                th:text="#{link.delete}" data-js='modal'
                                                th:href="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}/delete(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></a>
                                         </div>

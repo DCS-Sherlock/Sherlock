@@ -12,7 +12,14 @@
                 <div class="card-header">
                     <h4 class="float-left mt-1">
                         <span th:text="#{results.network.title}"></span>
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.return}"></a>
+                        <a class="btn btn-sm btn-outline-primary"
+                           th:if="${start == '-1'}"
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}"
+                           th:text="#{results.return}"></a>
+                        <a class="btn btn-sm btn-outline-primary"
+                           th:unless="${start == '-1'}"
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/report/{submission}(id=${workspace.getId()},job_id=${results.getPersistentId()},submission=${start})}"
+                           th:text="#{results.report.return}"></a>
                     </h4>
                 </div>
                 <div class="card-body">
