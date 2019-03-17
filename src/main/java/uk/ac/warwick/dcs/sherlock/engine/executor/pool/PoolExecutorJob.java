@@ -146,6 +146,13 @@ public class PoolExecutorJob implements Runnable {
 			}
 
 			jobRes.store();
+
+			try {
+				SherlockEngine.storage.getReportGenerator(jobRes);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		else {
 			synchronized (ExecutorUtils.logger) {

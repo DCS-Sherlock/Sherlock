@@ -108,11 +108,16 @@ public class Registry implements IRegistry {
 
 	@Override
 	public DetectionType getDetectionType(String identifier) throws UnknownDetectionTypeException {
-		if (this.detectionTypeRegistry.containsKey(identifier)) {
-			return this.detectionTypeRegistry.get(identifier);
+		if (identifier != null) {
+			if (this.detectionTypeRegistry.containsKey(identifier)) {
+				return this.detectionTypeRegistry.get(identifier);
+			}
+			else {
+				throw new UnknownDetectionTypeException(String.format("Detection Type '%s' is not recognised, verify that all required modules are present and active", identifier));
+			}
 		}
 		else {
-			throw new UnknownDetectionTypeException("Detection Type '%s' is not recognised, verify that all required modules are present and active");
+			return null;
 		}
 	}
 

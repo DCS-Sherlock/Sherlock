@@ -157,9 +157,10 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 					try {
 						if (processedResults.cleanGroups()) {
 							synchronized (ExecutorUtils.logger) {
-								ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set", this.getTask().getJob().getPersistentId(),
+								ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set, results will be ignored", this.getTask().getJob().getPersistentId(),
 										this.getTask().getPersistentId());
 							}
+							//return null;
 						}
 					}
 					catch (UnknownDetectionTypeException e) {
@@ -168,6 +169,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 									this.getTask().getPersistentId());
 						}
 						e.printStackTrace();
+						return null;
 					}
 
 					List<ICodeBlockGroup> gs = processedResults.getGroups();

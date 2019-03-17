@@ -39,7 +39,7 @@ public class BaseStorage implements IStorageWrapper {
 		this.database = new EmbeddedDatabase();
 		this.filesystem = new BaseStorageFilesystem();
 
-		int cacheCapacity = 5;
+		int cacheCapacity = 3;
 		this.reportManagerCache = new HashMap<>();
 		this.reportManagerCacheQueue = new ArrayDeque<>(cacheCapacity);
 		for (int i = 0; i < cacheCapacity; i++) {
@@ -155,8 +155,9 @@ public class BaseStorage implements IStorageWrapper {
 				this.reportManagerCache.remove(rem);
 			}
 
-			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()),
-					res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).flatMap(y -> y.getContainingBlocks().stream()).collect(Collectors.toList()));
+			List<ICodeBlockGroup> groups = new LinkedList<>();
+			res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).filter(y -> y.getContainingBlocks() != null).forEach(y -> groups.addAll(y.getContainingBlocks()));
+			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()), groups);
 
 			this.reportManagerCache.put(res.getPersistentId(), manager);
 			this.reportManagerCacheQueue.add(res.getPersistentId());
