@@ -30,6 +30,9 @@
                     <a th:if="${msg == 'org.springframework.web.multipart.MaxUploadSizeExceededException'}"
                        th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
 
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.CompareSameSubmission'}"
+                       th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
                     <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountNotFound'}"
                        th:href="@{/admin}" class="btn btn-primary " th:text="#{admin.accounts.return}"></a>
 

@@ -119,7 +119,11 @@ public class ResultsController {
             @PathVariable(value="submission1") long id1,
             @PathVariable(value="submission2") long id2,
             Model model
-    ) throws SubmissionNotFound, MapperException {
+    ) throws SubmissionNotFound, MapperException, CompareSameSubmission {
+        if (id1 == id2) {
+            throw new CompareSameSubmission("You cannot compare a submission with itself");
+        }
+
         ISubmission submission1 = ResultsHelper.getSubmission(workspaceWrapper, id1);
         ISubmission submission2 = ResultsHelper.getSubmission(workspaceWrapper, id2);
 
