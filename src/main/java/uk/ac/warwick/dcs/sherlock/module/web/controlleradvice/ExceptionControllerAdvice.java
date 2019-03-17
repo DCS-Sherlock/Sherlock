@@ -78,7 +78,8 @@ public class ExceptionControllerAdvice {
             DetectorNotFound.class,
             ResultsNotFound.class,
             SourceFileNotFound.class,
-            AccountNotFound.class
+            AccountNotFound.class,
+            CompareSameSubmission.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFoundError(Model model, Authentication authentication, Exception e) {

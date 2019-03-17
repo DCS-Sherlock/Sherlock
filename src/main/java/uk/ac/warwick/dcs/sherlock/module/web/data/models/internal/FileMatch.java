@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 
 import java.util.*;
@@ -16,39 +18,29 @@ public class FileMatch {
     private int id;
 
     /**
-     * The ID of the first file
+     * The first file
      */
-    private long file1Id;
+    private ISourceFile file1;
 
     /**
-     * The name of the first file
+     * The second file
      */
-    private String file1Name;
+    private ISourceFile file2;
 
     /**
-     * The submission id of the first file
+     * The submission of the first file
      */
-    private long file1Submission;
+    private ISubmission submission1;
+
+    /**
+     * The submission of the second file
+     */
+    private ISubmission submission2;
 
     /**
      * The list of code blocks in the first file, plagiarised from the second
      */
     private List<CodeBlock> file1CodeBlocks;
-
-    /**
-     * The ID of the second file
-     */
-    private long file2Id;
-
-    /**
-     * The name of the second file
-     */
-    private String file2Name;
-
-    /**
-     * The submission id of the second file
-     */
-    private long file2Submission;
 
     /**
      * The list of code blocks in the second file, plagiarised from the first
@@ -73,26 +65,30 @@ public class FileMatch {
     /**
      * Initialise this match
      *
-     * @param file1Id the first file id
-     * @param file1Name the first file name
-     * @param file1Submission the id of the first submission
+     * @param file1 the first file
+     * @param submission1 the submission of the first file
      * @param file1CodeBlocks the matches from the first file
-     * @param file2Id the second file id
-     * @param file2Submission the id of the second submission
-     * @param file2Name the second file name
+     * @param file2 the first file
+     * @param submission2 the submission of the first file
      * @param file2CodeBlocks the matches from the second file
      * @param reason the reason text
      * @param score the score associated with this match
      */
-    public FileMatch(long file1Id, String file1Name, long file1Submission, List<CodeBlock> file1CodeBlocks, long file2Id, String file2Name, long file2Submission, List<CodeBlock> file2CodeBlocks, String reason, float score) {
-        this.file1Id = file1Id;
-        this.file1Name = file1Name;
-        this.file1Submission = file1Submission;
+    public FileMatch(
+            ISourceFile file1,
+            ISubmission submission1,
+            List<CodeBlock> file1CodeBlocks,
+            ISourceFile file2,
+            ISubmission submission2,
+            List<CodeBlock> file2CodeBlocks,
+            String reason,
+            float score) {
+        this.file1 = file1;
+        this.submission1 = submission1;
         this.file1CodeBlocks = file1CodeBlocks;
 
-        this.file2Id = file2Id;
-        this.file2Name = file2Name;
-        this.file2Submission = file2Submission;
+        this.file2 = file2;
+        this.submission2 = submission2;
         this.file2CodeBlocks = file2CodeBlocks;
 
         this.reason = reason;
@@ -103,21 +99,39 @@ public class FileMatch {
     }
 
     /**
-     * Get the id of the first file
+     * Get the first file
      *
-     * @return the file id
+     * @return the file
      */
-    public long getFile1Id() {
-        return file1Id;
+    public ISourceFile getFile1() {
+        return file1;
     }
 
     /**
-     * Get the name of the first file
+     * Get the second file
      *
-     * @return the file name
+     * @return the file
      */
-    public String getFile1Name() {
-        return file1Name;
+    public ISourceFile getFile2() {
+        return file2;
+    }
+
+    /**
+     * Get the submission of the first file
+     *
+     * @return the submission
+     */
+    public ISubmission getSubmission1() {
+        return submission1;
+    }
+
+    /**
+     * Get the submission of the second file
+     *
+     * @return the submission
+     */
+    public ISubmission getSubmission2() {
+        return submission2;
     }
 
     /**
@@ -127,24 +141,6 @@ public class FileMatch {
      */
     public List<CodeBlock> getFile1CodeBlocks() {
         return file1CodeBlocks;
-    }
-
-    /**
-     * Get the id of the second file
-     *
-     * @return the file id
-     */
-    public long getFile2Id() {
-        return file2Id;
-    }
-
-    /**
-     * Get the name of the second file
-     *
-     * @return the file name
-     */
-    public String getFile2Name() {
-        return file2Name;
     }
 
     /**
@@ -252,12 +248,14 @@ public class FileMatch {
     public JSONObject toJSON() {
         JSONObject result = new JSONObject();
 
-        result.put("file1Id", file1Id);
-        result.put("file2Id", file2Id);
-        result.put("file1Name", file1Name);
-        result.put("file2Name", file2Name);
-        result.put("file1Submission", file1Submission);
-        result.put("file2Submission", file2Submission);
+        result.put("file1Id", file1.getPersistentId());
+        result.put("file2Id", file2.getPersistentId());
+        result.put("file1Name", file1.getFileIdentifier());
+        result.put("file2Name", file2.getFileIdentifier());
+        result.put("file1DisplayName", file1.getFileDisplayName());
+        result.put("file2DisplayName", file2.getFileDisplayName());
+        result.put("file1Submission", submission1.getId());
+        result.put("file2Submission", submission2.getId());
         result.put("reason", reason);
         result.put("score", score);
         result.put("colour", colour);

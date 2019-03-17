@@ -30,8 +30,8 @@ public class FileMapper {
 
         //Loop through all the matches
         for (FileMatch match : matches) {
-            long file1 = match.getFile1Id();
-            long file2 = match.getFile2Id();
+            long file1 = match.getFile1().getPersistentId();
+            long file2 = match.getFile2().getPersistentId();
 
             //Ensure that the map contains an entry for both files
             if (!map.containsKey(file1)) {

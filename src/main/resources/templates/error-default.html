@@ -21,8 +21,6 @@
 
                     <a href="javascript:history.go(-1)" class="btn btn-primary" th:text="#{error.return}"></a>
 
-                    <br /><br />
-
                     <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.IWorkspaceNotFound'}"
                        th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
 
@@ -30,6 +28,9 @@
                        th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
 
                     <a th:if="${msg == 'org.springframework.web.multipart.MaxUploadSizeExceededException'}"
+                       th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
+
+                    <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.CompareSameSubmission'}"
                        th:href="@{/dashboard/workspaces}" class="btn btn-primary " th:text="#{workspaces.return}"></a>
 
                     <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.AccountNotFound'}"
@@ -52,8 +53,6 @@
 
                     <a th:if="${msg == 'uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner'}"
                     th:href="@{/dashboard/templates}" class="btn btn-primary " th:text="#{templates.return}"></a>
-
-                    <br /><br />
 
                     <a th:href="@{/}" class="btn btn-primary" th:text="#{home.return}"></a>
                 </div>

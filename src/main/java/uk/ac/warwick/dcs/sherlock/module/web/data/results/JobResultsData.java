@@ -145,19 +145,30 @@ public class JobResultsData {
 
 //        Generates the fake data
         {
-            for (int id = 0; id < 50; id++){
-                SubmissionScore wrapper = new SubmissionScore(id, "Submission " + id, this.tempRandomScore());
+            for (ISubmission submission : this.job.getWorkspace().getSubmissions()) {
+                SubmissionScore wrapper = new SubmissionScore(submission.getId(), submission.getName(), this.tempRandomScore());
                 List<SubmissionScore> list = new ArrayList<>();
 
-                int max = this.tempRandomNumberInRange(0, 10);
-                for (int count = 0; count <= max; count++) {
-                    int subId = this.tempRandomNumberInRange(1, 10);
-                    if (subId != id) {
-                        list.add(new SubmissionScore(subId, "Submission " + subId, this.tempRandomScore()));
-                    }
+                for (ISubmission match : this.job.getWorkspace().getSubmissions()) {
+                    list.add(new SubmissionScore(match.getId(), match.getName(), this.tempRandomScore()));
                 }
                 resultsMap.put(wrapper, list);
             }
+
+
+//            for (int id = 0; id < 5; id++){
+//                SubmissionScore wrapper = new SubmissionScore(id, "Submission " + id, this.tempRandomScore());
+//                List<SubmissionScore> list = new ArrayList<>();
+//
+//                int max = this.tempRandomNumberInRange(0, 10);
+//                for (int count = 0; count <= max; count++) {
+//                    int subId = this.tempRandomNumberInRange(1, 10);
+//                    if (subId != id) {
+//                        list.add(new SubmissionScore(subId, "Submission " + subId, this.tempRandomScore()));
+//                    }
+//                }
+//                resultsMap.put(wrapper, list);
+//            }
         }
     }
 
