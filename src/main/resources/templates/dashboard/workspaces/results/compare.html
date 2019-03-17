@@ -6,7 +6,6 @@
 <body>
 
 <main role="main" class="ml-3 mr-3" id="comparison" layout:fragment="content">
-
     <script id="compare-data">
         function getMapJSON() {
             return JSON.parse('[(${wrapper.getMapJSON()})]');
@@ -168,7 +167,20 @@
 
                                 <h5 th:text="#{results.table.matches}"></h5>
 
-                                <table class="table">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <span th:text="#{results.print.table.reason}"></span>
+                                            </th>
+                                            <th>
+                                                <span th:text="#{results.print.table.score}"></span>
+                                            </th>
+                                            <th>
+                                                <span th:text="#{results.print.table.location}"></span>
+                                            </th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                     <th:block th:each="match : ${wrapper.getMatches()}">
                                         <tr>
@@ -176,7 +188,7 @@
                                                 <span th:text="${match.getReason()}"></span>
                                             </td>
                                             <td>
-                                                <span th:text="#{results.compare.score}"></span><span th:text="${match.getScore()}"></span>
+                                                <span th:text="${match.getScore()}"></span>
                                             </td>
                                             <td>
                                                 <span th:text="#{results.match.file}"></span>
@@ -204,14 +216,14 @@
                         <th:block th:if="${printing}">
                             <div class="row d-none d-print-block">
                                 <div class="col-lg-12">
-                                    <h5>
-                                        <span th:text="#{results.compare.submission.title}"></span>
-                                        <span th:text="${submission1.getName()}"></span>
-                                    </h5>
                                     <div class="accordion">
                                         <th:block th:each="file : ${submission1.getAllFiles()}">
                                             <div class="card page-break-after">
                                                 <div class="card-header">
+                                                    <h5>
+                                                        <span th:text="#{results.compare.submission.title}"></span>
+                                                        <span th:text="${submission1.getName()}"></span>
+                                                    </h5>
                                                     <h2 class="mb-0">
                                                         <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">
                                                             <span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>
@@ -225,7 +237,7 @@
                                         <pre class="line-numbers" style="height: 800px"
                                              th:data-file-id="${file.getPersistentId()}"
                                              th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"
-                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission1.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
+                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?print(id=${workspace.getId()},submission_id=${submission1.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -235,14 +247,14 @@
                             </div>
                             <div class="row d-none d-print-block page-break">
                                 <div class="col-lg-12">
-                                    <h5>
-                                        <span th:text="#{results.compare.submission.title}"></span>
-                                        <span th:text="${submission2.getName()}"></span>
-                                    </h5>
                                     <div class="accordion">
                                         <th:block th:each="file : ${submission2.getAllFiles()}">
                                             <div class="card page-break-after">
                                                 <div class="card-header">
+                                                    <h5>
+                                                        <span th:text="#{results.compare.submission.title}"></span>
+                                                        <span th:text="${submission2.getName()}"></span>
+                                                    </h5>
                                                     <h2 class="mb-0">
                                                         <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">
                                                             <span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>
@@ -256,7 +268,7 @@
                                         <pre class="line-numbers" style="height: 800px"
                                              th:data-file-id="${file.getPersistentId()}"
                                              th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"
-                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission2.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
+                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?print(id=${workspace.getId()},submission_id=${submission2.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
                                                     </div>
                                                 </div>
                                             </div>
