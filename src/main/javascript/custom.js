@@ -169,6 +169,11 @@ function submissionResultsPage() {
                     name = match.file2DisplayName;
                 }
 
+                area.find("#match-file1").text(match.file1DisplayName);
+                area.find("#match-file2").text(match.file2DisplayName);
+                area.find("#match-sub1").text(match.file1SubmissionName);
+                area.find("#match-sub2").text(match.file2SubmissionName);
+
                 //Refresh the code area
                 area.find("#match-code").html('<pre class="line-numbers" style="height: 500px; resize: vertical"\n' +
                     'data-line="'+lines+'"\n' +
@@ -188,9 +193,15 @@ function submissionResultsPage() {
             row.find("[data-js='match-hide']").removeClass("d-none");
 
             //Collapse all files except for the two involved
-            $("[data-js='comparison']").find(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
-            $("#id-"+match.file1Id).collapse('show');
-            $("#id-"+match.file2Id).collapse('show');
+            if (compareArea) {
+                $(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
+                $("#id-"+match.file1Id).collapse('show');
+                $("#id-"+match.file2Id).collapse('show');
+            } else {
+                $(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").removeClass('show');
+                $("#id-"+match.file1Id).addClass('show');
+                $("#id-"+match.file2Id).addClass('show');
+            }
 
             //Remove all the line highlights
             $(".line-highlight").each(function() {

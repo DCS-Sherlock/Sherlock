@@ -54,7 +54,7 @@
     </div>
 
     <div class="row d-none sticky-top" th:classappend="${printing ? '' : 'd-lg-block'}" id="matches-container">
-        <div class="col-lg-12 collapse show">
+        <div class="col-lg-12">
             <div class="card border-top-0 border-bottom">
                 <div class="card-body pb-0">
                     <div class="float-left">
@@ -215,7 +215,7 @@
                                             </tr>
                                         </th:block>
                                         <tr th:if="${wrapper.getMatches().empty}">
-                                            <th>
+                                            <th colspan="3">
                                                 <h5 class="mb-0">
                                                     <span th:text="#{results.compare.no_matches}"></span>
                                                 </h5>
@@ -247,9 +247,15 @@
                                             <div th:id="'id-' + ${file.getPersistentId()}" class="collapse show">
                                                 <div class="card-body">
                                                     <pre class="line-numbers"
+                                                         th:unless="${printing}"
                                                          th:data-file-id="${file.getPersistentId()}"
                                                          th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"
-                                                         th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?{print}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()},print=${printing ? 'print' : ''})}"></pre>
+                                                         th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
+                                                    <pre class="line-numbers"
+                                                         th:if="${printing}"
+                                                        th:data-file-id="${file.getPersistentId()}"
+                                                        th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"
+                                                        th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?print(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
                                                 </div>
                                             </div>
                                         </div>
@@ -267,8 +273,17 @@
 
                                         <div class="card-body">
                                             <div class="mb-2">
-                                                <span id="match-reason"></span>
-                                                (<span th:text="#{results.compare.score}"></span><span id="match-score"></span>)
+                                                <span class="font-italic" id="match-file1"></span>
+                                                <span th:text="#{results.report.match.submission}"></span>
+                                                <span class="font-italic" id="match-sub1"></span>
+                                                <span th:text="#{results.report.match.with}"></span>
+                                                <span class="font-italic" id="match-file2"></span>
+                                                <span th:text="#{results.report.match.submission}"></span>
+                                                <span class="font-italic" id="match-sub2"></span>:
+                                                    <br /><br />
+                                                <span class="font-italic" id="match-reason"></span>
+                                                    <br /><br />
+                                                <span th:text="#{results.compare.score}"></span><span id="match-score"></span>
                                             </div>
                                             <div id="match-code" class="mb-3">
 

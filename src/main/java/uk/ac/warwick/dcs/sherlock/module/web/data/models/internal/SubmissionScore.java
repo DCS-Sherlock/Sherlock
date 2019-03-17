@@ -22,7 +22,7 @@ public class SubmissionScore {
      * - the overall score if this object is stored in the key of the results map
      * - the relative score if this object is stored in the value of the results map
      */
-    private float score;
+    private int score;
 
     /**
      * Initialise the submission score object
@@ -32,6 +32,19 @@ public class SubmissionScore {
      * @param score the score to display to the user
      */
     public SubmissionScore(long id, String name, float score) {
+        this.name = name;
+        this.id = id;
+        this.score = Math.round(score);
+    }
+
+    /**
+     * Initialise the submission score object
+     *
+     * @param id the id of the submission
+     * @param name the name of the submission
+     * @param score the score to display to the user
+     */
+    public SubmissionScore(long id, String name, int score) {
         this.name = name;
         this.id = id;
         this.score = score;
@@ -87,8 +100,17 @@ public class SubmissionScore {
      *
      * @param score the new score
      */
-    public void setScore(float score) {
+    public void setScore(int score) {
         this.score = score;
+    }
+
+    /**
+     * Set the submission score
+     *
+     * @param score the new score
+     */
+    public void setScore(float score) {
+        this.score = Math.round(score);
     }
 
     /**

@@ -88,12 +88,13 @@ public class ResultsController {
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/report/{submission}")
     public String reportGet(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
+            @ModelAttribute("results") JobResultsData jobResultsData,
             @PathVariable(value="submission") long id,
             Model model
     ) throws SubmissionNotFound, MapperException {
         ISubmission submission = ResultsHelper.getSubmission(workspaceWrapper, id);
 
-        SubmissionResultsData wrapper = new SubmissionResultsData(submission, workspaceWrapper);
+        SubmissionResultsData wrapper = new SubmissionResultsData(jobResultsData.getJob(), submission);
 
         model.addAttribute("submission", submission);
         model.addAttribute("wrapper", wrapper);
@@ -116,6 +117,7 @@ public class ResultsController {
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/compare/{submission1}/{submission2}")
     public String comparisonGet(
             @ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper,
+            @ModelAttribute("results") JobResultsData jobResultsData,
             @PathVariable(value="submission1") long id1,
             @PathVariable(value="submission2") long id2,
             Model model
@@ -127,7 +129,7 @@ public class ResultsController {
         ISubmission submission1 = ResultsHelper.getSubmission(workspaceWrapper, id1);
         ISubmission submission2 = ResultsHelper.getSubmission(workspaceWrapper, id2);
 
-        SubmissionResultsData wrapper = new SubmissionResultsData(submission1, submission2);
+        SubmissionResultsData wrapper = new SubmissionResultsData(jobResultsData.getJob(), submission1, submission2);
 
         model.addAttribute("submission1", submission1);
         model.addAttribute("submission2", submission2);

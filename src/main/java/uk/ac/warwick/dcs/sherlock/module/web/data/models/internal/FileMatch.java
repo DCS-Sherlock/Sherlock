@@ -256,6 +256,8 @@ public class FileMatch {
         result.put("file2DisplayName", file2.getFileDisplayName());
         result.put("file1Submission", submission1.getId());
         result.put("file2Submission", submission2.getId());
+        result.put("file1SubmissionName", submission1.getName());
+        result.put("file2SubmissionName", submission2.getName());
         result.put("reason", reason);
         result.put("score", score);
         result.put("colour", colour);

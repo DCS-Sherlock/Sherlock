@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;
@@ -121,35 +122,36 @@ public class JobResultsData {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
             //No results
+//            e.printStackTrace();
             return;
         }
 
-        Map<Long, String> map = new HashMap<>();
-        job.getWorkspace().getSubmissions().forEach(s -> map.put(s.getId(), s.getName()));
+        Map<Long, String> idToName = new HashMap<>();
+        job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
-        for (SubmissionSummary summary : report.getMatchingSubmissions()) {
+        for (SubmissionSummary summary : report.GetMatchingSubmissions()) {
             String name = "Deleted";
-            if (map.containsKey(summary.getPersistentId())) {
-                name = map.get(summary.getPersistentId());
+            if (idToName.containsKey(summary.getPersistentId())) {
+                name = idToName.get(summary.getPersistentId());
             }
 
-            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore());
+            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore()*100);
 
             List<SubmissionScore> list = new ArrayList<>();
             for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
                 String name2 = "Deleted";
-                if (map.containsKey(tuple.getKey())) {
-                    name2 = map.get(tuple.getKey());
+                if (idToName.containsKey(tuple.getKey())) {
+                    name2 = idToName.get(tuple.getKey());
                 }
 
-                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()));
+                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()*100));
             }
 
             resultsMap.put(score, list);
         }
 
 //        Generates the fake data
-        {
+//        {
 //            for (ISubmission submission : this.job.getWorkspace().getSubmissions()) {
 //                SubmissionScore wrapper = new SubmissionScore(submission.getId(), submission.getName(), this.tempRandomScore());
 //                List<SubmissionScore> list = new ArrayList<>();
@@ -159,22 +161,7 @@ public class JobResultsData {
 //                }
 //                resultsMap.put(wrapper, list);
 //            }
-
-
-//            for (int id = 0; id < 5; id++){
-//                SubmissionScore wrapper = new SubmissionScore(id, "Submission " + id, this.tempRandomScore());
-//                List<SubmissionScore> list = new ArrayList<>();
-//
-//                int max = this.tempRandomNumberInRange(0, 10);
-//                for (int count = 0; count <= max; count++) {
-//                    int subId = this.tempRandomNumberInRange(1, 10);
-//                    if (subId != id) {
-//                        list.add(new SubmissionScore(subId, "Submission " + subId, this.tempRandomScore()));
-//                    }
-//                }
-//                resultsMap.put(wrapper, list);
-//            }
-        }
+//        }
     }
 
     /**
