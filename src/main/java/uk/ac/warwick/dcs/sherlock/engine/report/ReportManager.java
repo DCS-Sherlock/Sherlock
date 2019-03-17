@@ -200,6 +200,7 @@ public class ReportManager {
 
 			}
 			submissionSummary.AddMatchingSubmissions(matchingSubs);
+			output.add(submissionSummary);
 		}
 
 		return output;
