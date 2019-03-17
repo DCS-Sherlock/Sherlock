@@ -2,11 +2,10 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
@@ -117,43 +116,49 @@ public class JobResultsData {
     private void fillResultsMap() {
         resultsMap = new HashMap<>();
 
-//        ReportManager report = new ReportManager(); //TODO: load with data
-//
-//        Map<Long, String> map = new HashMap<>();
-//        job.getWorkspace().getSubmissions().forEach(s -> map.put(s.getId(), s.getName()));
-//
-//        for (SubmissionSummary summary : report.getMatchingSubmissions()) {
-//            String name = "Deleted";
-//            if (map.containsKey(summary.getPersistentId())) {
-//                name = map.get(summary.getPersistentId());
-//            }
-//
-//            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore());
-//
-//            List<SubmissionScore> list = new ArrayList<>();
-//            for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
-//                String name2 = "Deleted";
-//                if (map.containsKey(tuple.getKey())) {
-//                    name2 = map.get(tuple.getKey());
-//                }
-//
-//                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()));
-//            }
-//
-//            resultsMap.put(score, list);
-//        }
+        ReportManager report = null;
+        try {
+            report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
+        } catch (ResultJobUnsupportedException e) {
+            //No results
+            return;
+        }
+
+        Map<Long, String> map = new HashMap<>();
+        job.getWorkspace().getSubmissions().forEach(s -> map.put(s.getId(), s.getName()));
+
+        for (SubmissionSummary summary : report.getMatchingSubmissions()) {
+            String name = "Deleted";
+            if (map.containsKey(summary.getPersistentId())) {
+                name = map.get(summary.getPersistentId());
+            }
+
+            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore());
+
+            List<SubmissionScore> list = new ArrayList<>();
+            for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
+                String name2 = "Deleted";
+                if (map.containsKey(tuple.getKey())) {
+                    name2 = map.get(tuple.getKey());
+                }
+
+                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()));
+            }
+
+            resultsMap.put(score, list);
+        }
 
 //        Generates the fake data
         {
-            for (ISubmission submission : this.job.getWorkspace().getSubmissions()) {
-                SubmissionScore wrapper = new SubmissionScore(submission.getId(), submission.getName(), this.tempRandomScore());
-                List<SubmissionScore> list = new ArrayList<>();
-
-                for (ISubmission match : this.job.getWorkspace().getSubmissions()) {
-                    list.add(new SubmissionScore(match.getId(), match.getName(), this.tempRandomScore()));
-                }
-                resultsMap.put(wrapper, list);
-            }
+//            for (ISubmission submission : this.job.getWorkspace().getSubmissions()) {
+//                SubmissionScore wrapper = new SubmissionScore(submission.getId(), submission.getName(), this.tempRandomScore());
+//                List<SubmissionScore> list = new ArrayList<>();
+//
+//                for (ISubmission match : this.job.getWorkspace().getSubmissions()) {
+//                    list.add(new SubmissionScore(match.getId(), match.getName(), this.tempRandomScore()));
+//                }
+//                resultsMap.put(wrapper, list);
+//            }
 
 
 //            for (int id = 0; id < 5; id++){
