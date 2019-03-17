@@ -39,7 +39,7 @@ public class BaseStorage implements IStorageWrapper {
 		this.database = new EmbeddedDatabase();
 		this.filesystem = new BaseStorageFilesystem();
 
-		int cacheCapacity = 5;
+		int cacheCapacity = 3;
 		this.reportManagerCache = new HashMap<>();
 		this.reportManagerCacheQueue = new ArrayDeque<>(cacheCapacity);
 		for (int i = 0; i < cacheCapacity; i++) {
