@@ -101,9 +101,9 @@ public class LineMapper {
         List<CodeBlock> blocks = new ArrayList<>();
 
         //Get the code blocks for this file
-        if (fileId == match.getFile1Id()) {
+        if (fileId == match.getFile1().getPersistentId()) {
             blocks = match.getFile1CodeBlocks();
-        } else if (fileId == match.getFile2Id()) {
+        } else if (fileId == match.getFile2().getPersistentId()) {
             blocks = match.getFile2CodeBlocks();
         }
 

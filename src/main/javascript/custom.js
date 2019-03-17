@@ -15,8 +15,9 @@ loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="75px">';
  * - If you click "view" on a match, it'll display the details for that match
  * - Toggles the visibility of the matches table
  *
- * Please Note: "pointer-events: none" must be removed from the .line-highlight
- * class in prism.css if PrismJS is updated!
+ * Please note that the following changes must be made if Prism is updated!:
+ * "pointer-events: none" must be removed from the .line-highlight
+ * class in prism.css
  */
 function submissionResultsPage() {
     //Only run on the compare submissions page
@@ -35,7 +36,9 @@ function submissionResultsPage() {
 
         var active = -1; //Which match is active
         var loaded = 0;
+        var failed = 0;
         var showing = false;
+        var printed = false;
         var loadingReport = false; //Whether the page is loading, or a match on the report page
 
         /**
@@ -155,7 +158,7 @@ function submissionResultsPage() {
                 var submission = match.file1Submission; //the submission id of the match
                 var lines = match.file1Lines.join(); //the lines to highlight
                 var file =  match.file1Id; //the id of the file
-                var name = match.file1Name; //the name of the file
+                var name = match.file1DisplayName; //the name of the file
 
                 //Check if we're loading the wrong match
                 if (submissionId == submission) {
@@ -163,7 +166,7 @@ function submissionResultsPage() {
                     submission = match.file2Submission;
                     lines = match.file2Lines.join();
                     file =  match.file2Id;
-                    name = match.file2Name;
+                    name = match.file2DisplayName;
                 }
 
                 //Refresh the code area
@@ -376,8 +379,37 @@ function submissionResultsPage() {
 
         function printEvent() {
             if (isPrinting()) {
-                if (loaded == $("pre").length) {
-                    window.print();
+                //Count the number of files that failed to load
+                failed = 0;
+                $("pre").each(function() {
+                    var input = $(this);
+                    var content = input.html();
+
+                    if (content.includes("✖ Error")) {
+                        failed++;
+                    }
+                });
+
+                //Update the progress bar
+                var progress = (loaded/$("pre").length) * 100;
+                $("#loaded-progress").css("width", progress+"%");
+                var progress2 = (failed/$("pre").length) * 100;
+                $("#failed-progress").css("width", progress2+"%");
+
+                if ((loaded+failed) >= $("pre").length && printed == false) {
+                    printed = true;
+
+                    setTimeout(function() {
+                        //Show the print button
+                        $("#print").removeClass("d-none");
+
+                        //Warn the user if some files failed
+                        if (failed != 0) {
+                            alert("Some of the files may have failed to load. Please print the report to PDF, or use the print preview, to check that all the files have loaded successfully.");
+                        }
+
+                        window.print();
+                    }, 1000);
                 }
             }
         }

@@ -6,6 +6,7 @@
 <body>
 
 <main role="main" class="ml-3 mr-3" id="comparison" layout:fragment="content">
+
     <script id="compare-data">
         function getMapJSON() {
             return JSON.parse('[(${wrapper.getMapJSON()})]');
@@ -28,22 +29,16 @@
                                 <h4 class="float-left mt-1">
                                     <span th:text="#{results.compare.title}"></span>
                                     <a class="btn btn-sm btn-outline-primary" th:classappend="${printing ? '' : 'd-none'}" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/compare/{s1}/{s2}(id=${workspace.getId()},job_id=${results.getPersistentId()},s1=${submission1.getId()},s2=${submission2.getId()})}" th:text="#{error.return}"></a>
-                                    <!--<a href="javascript:history.go(-1)" class="btn btn-sm btn-outline-primary" th:classappend="${printing ? '' : 'd-none'}" th:text="#{error.return}"></a>-->
                                     <a class="btn btn-sm btn-outline-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.return}"></a>
                                 </h4>
                                 <div class="btn-toolbar float-right" th:classappend="${printing ? 'd-none' : ''}">
-                                    <div class="btn-group">
-                                        <div class="btn-group">
-                                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/compare/{s1}/{s2}?print(id=${workspace.getId()},job_id=${results.getPersistentId()},s1=${submission1.getId()},s2=${submission2.getId()})}" th:text="#{link.print}"></a>
-                                            <!--<a class="btn btn-primary" href="#" onclick="window.print();return false;" th:text="#{link.print}"></a>-->
-                                        </div>
-                                    </div>
+                                    <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/compare/{s1}/{s2}?print(id=${workspace.getId()},job_id=${results.getPersistentId()},s1=${submission1.getId()},s2=${submission2.getId()})}" th:text="#{link.print}"></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body d-print-none"  th:classappend="${printing ? 'd-none' : 'd-block d-lg-none d-xl-none'}">
+                <div class="card-body"  th:classappend="${printing ? 'd-none' : 'd-block d-lg-none d-xl-none'}">
                     <div class="alert alert-danger mb-0">
                         <span th:text="#{results.too_small}"></span>
                     </div>
@@ -132,7 +127,32 @@
         </div>
     </div>
 
-    <div class="row d-print-block" th:classappend="${printing ? '' : 'd-none d-lg-block'}">
+    <th:block th:if="${printing}">
+        <div class="row d-print-none">
+            <div class="col-lg-12">
+                <div class="alert alert-warning">
+                    <span th:text="#{results.print}"></span>
+                    <div class="progress mt-3">
+                        <div class="progress-bar progress-bar-striped bg-primary" id="loaded-progress" role="progressbar"></div>
+                        <div class="progress-bar progress-bar-striped bg-danger" id="failed-progress" role="progressbar"></div>
+                    </div>
+                    <a href="#" id="print" class="btn btn-secondary mt-3 d-none" onclick="window.print();return false;" th:text="#{link.print}"></a>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:unless="${printing}">
+        <div class="row d-none d-print-block">
+            <div class="col-lg-12">
+                <div class="alert alert-warning">
+                    <span th:text="#{results.print.wrong_page}"></span>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <div class="row d-none" th:classappend="${printing ? 'd-print-block' : 'd-lg-block'}">
         <div class="col-12">
             <div class="card border-top-0 shadow-sm">
                 <div class="card-body">
@@ -160,11 +180,11 @@
                                             </td>
                                             <td>
                                                 <span th:text="#{results.match.file}"></span>
-                                                <span th:text="${match.getFile1Id()}"></span>
+                                                <span th:text="${match.getFile1().getPersistentId()}"></span>
                                                 <span th:text="#{results.match.lines}"></span>
                                                 <span th:text="${match.getFile1Lines()}"></span>
                                                 <span th:text="#{results.match.matches}"></span>
-                                                <span th:text="${match.getFile2Id()}"></span>
+                                                <span th:text="${match.getFile2().getPersistentId()}"></span>
                                                 <span th:text="#{results.match.lines}"></span>
                                                 <span th:text="${match.getFile2Lines()}"></span>
                                             </td>
@@ -182,13 +202,6 @@
                             </div>
                         </div>
                         <th:block th:if="${printing}">
-                            <div class="row d-print-none">
-                                <div class="col-lg-12">
-                                    <div class="alert alert-warning">
-                                        <span th:text="#{results.print}"></span>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="row d-none d-print-block">
                                 <div class="col-lg-12">
                                     <h5>

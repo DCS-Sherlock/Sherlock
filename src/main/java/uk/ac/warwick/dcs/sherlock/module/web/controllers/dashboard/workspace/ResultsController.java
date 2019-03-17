@@ -93,7 +93,7 @@ public class ResultsController {
     ) throws SubmissionNotFound, MapperException {
         ISubmission submission = ResultsHelper.getSubmission(workspaceWrapper, id);
 
-        SubmissionResultsData wrapper = new SubmissionResultsData(submission);
+        SubmissionResultsData wrapper = new SubmissionResultsData(submission, workspaceWrapper);
 
         model.addAttribute("submission", submission);
         model.addAttribute("wrapper", wrapper);

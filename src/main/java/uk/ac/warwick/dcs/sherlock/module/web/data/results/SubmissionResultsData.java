@@ -1,16 +1,18 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.WorkspaceWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Stores all the data for the compare submissions page or the submission report page
@@ -50,10 +52,11 @@ public class SubmissionResultsData {
      * Initialise the report data object
      *
      * @param submission the submission to report
+     * @param workspace TEMPORARY FOR FAKE DATA
      *
      * @throws MapperException thrown if the FileMapper isn't initialised correctly
      */
-    public SubmissionResultsData(ISubmission submission) throws MapperException {
+    public SubmissionResultsData(ISubmission submission, WorkspaceWrapper workspace) throws MapperException {
         this.submission1 = submission;
 
         this.matches = new ArrayList<>();
@@ -61,15 +64,14 @@ public class SubmissionResultsData {
 
         ReportManager report = new ReportManager(); //TODO: load with data
 
-
-
         //Generates fake data
         {
-            long file1Id = submission.getAllFiles().get(0).getPersistentId();
-//            long file2Id = submission.getAllFiles().get(0).getPersistentId();
-            long file2Id = 2;
-            String file1Name = submission1.getAllFiles().get(0).getFileDisplayName();
-            String file2Name = "SherlockHelper.java";
+            ISourceFile file1 = submission1.getAllFiles().get(0);
+            ISubmission submission2 = workspace.getiWorkspace().getSubmissions().get(0);
+            if (submission1.getId() == submission2.getId()) {
+                submission2 = workspace.getiWorkspace().getSubmissions().get(1);
+            }
+            ISourceFile file2 = submission2.getAllFiles().get(0);
 
             for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
@@ -77,9 +79,9 @@ public class SubmissionResultsData {
                 List<CodeBlock> list2 = new ArrayList<>();
                 list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
-                matches.add(new FileMatch(file1Id, file1Name, submission.getId(), list1, file2Id, file2Name, 2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
+                matches.add(new FileMatch(file1, submission1, list1, file2,submission2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {
-                    matches.add(new FileMatch(file1Id, file1Name, submission.getId(), list1, file2Id, file2Name, 2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
+                    matches.add(new FileMatch(file1, submission1, list1, file2,submission2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
                 }
             }
 
@@ -123,10 +125,8 @@ public class SubmissionResultsData {
 
         //Generates fake data
         {
-            long file1Id = submission1.getAllFiles().get(0).getPersistentId();
-            long file2Id = submission2.getAllFiles().get(0).getPersistentId();
-            String file1Name = submission1.getAllFiles().get(0).getFileDisplayName();
-            String file2Name = submission2.getAllFiles().get(0).getFileDisplayName();
+            ISourceFile file1 = submission1.getAllFiles().get(0);
+            ISourceFile file2 = submission2.getAllFiles().get(0);
 
             for (int i = 1; i < 50; i++) {
                 List<CodeBlock> list1 = new ArrayList<>();
@@ -134,9 +134,9 @@ public class SubmissionResultsData {
                 List<CodeBlock> list2 = new ArrayList<>();
                 list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
 
-                matches.add(new FileMatch(file1Id, file1Name, submission1.getId(), list1, file2Id, file2Name, submission2.getId(), list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
+                matches.add(new FileMatch(file1, submission1, list1, file2, submission2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
                 if (i == 1) {
-                    matches.add(new FileMatch(file1Id, file1Name, submission1.getId(), list1, file2Id, file2Name, submission2.getId(), list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
+                    matches.add(new FileMatch(file1, submission1, list1, file2, submission2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
                 }
             }
         }
@@ -229,6 +229,34 @@ public class SubmissionResultsData {
         }
 
         return object.toString();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Map<ISubmission, SortedMap<Long, ISourceFile>> getMatchedFiles() {
+        Map<ISubmission, SortedMap<Long, ISourceFile>> map = new HashMap<>();
+
+        for (FileMatch match : matches) {
+            ISubmission submission = match.getSubmission1();
+            ISourceFile file = match.getFile1();
+
+            if (submission.getId() == submission1.getId()) {
+                submission = match.getSubmission2();
+                file = match.getFile2();
+            }
+
+            if (!map.containsKey(submission)) {
+                map.put(submission, new TreeMap<>());
+            }
+
+            if (!map.get(submission).containsKey(file.getPersistentId())) {
+                map.get(submission).put(file.getPersistentId(), file);
+            }
+        }
+
+        return map;
     }
 
     /**
