@@ -168,32 +168,71 @@ table .min {
 
 /* Printing */
 @media print {
-    .line-numbers {
-        height: auto !important;
+    @page {
+        size: auto;
+        margin: 1.6cm 0 1.6cm 0
     }
     .line-highlight {
         background: none !important;
     }
-    button, h5, span, a {
+    span, a, button, h4, h5 {
         color: #000 !important;
     }
-    h5, h4 {
-        font-size: 35px;
+    h1 {
+        font-size: 30px !important;
+    }
+    h4 {
+        font-size: 25px !important;
+    }
+    h5 {
+        text-align: center;
+        font-size: 20px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    button {
+        padding: 0 !important;
+        margin: 0 !important;
     }
     button span {
-        font-size: 30px;
+        font-size: 15px !important;
     }
-    @page { margin: 1.6cm 0 1.6cm 0; }
     .card, .card-header, .card-body {
         border: none !important;
+        padding-top: 0px;
     }
     .shadow-sm {
         box-shadow: none !important;
     }
-}
-.page-break {
-    page-break-before: always;
-}
-.page-break-after {
-    page-break-after: always;
+    .page-break {
+        page-break-before: always;
+    }
+    .page-break-after {
+        page-break-after: always;
+    }
+    table {
+        table-layout: auto;
+    }
+    td {
+        word-break: break-word;
+    }
+
+    pre {
+        height: auto !important;
+        width: 100% !important;
+        overflow: hidden;
+        padding-left: 10px !important;
+    }
+    pre, code {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        word-wrap: break-word !important;
+    }
+
+    .line-highlight:before,
+    .line-highlight[data-end]:after {
+        content: none !important;
+        background: none !important;
+        border: none !important;
+    }
 }

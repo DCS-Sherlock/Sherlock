@@ -142,7 +142,7 @@
     </th:block>
 
 
-    <div class="row d-none" th:classappend="${printing ? 'd-print-block' : 'd-lg-block'}">
+    <div class="row d-none" th:classappend="${printing ? 'd-lg-block- d-print-block' : 'd-lg-block'}">
         <div class="col-12">
             <div class="card border-top-0 shadow-sm">
                 <div class="card-body">
@@ -177,9 +177,22 @@
                                 </p>
 
                                 <div class="d-none d-print-block">
-                                    <h5 th:text="#{results.table.matches}"></h5>
+                                    <h4 th:text="#{results.table.matches}"></h4>
 
-                                    <table class="table">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <span th:text="#{results.print.table.reason}"></span>
+                                                </th>
+                                                <th>
+                                                    <span th:text="#{results.print.table.score}"></span>
+                                                </th>
+                                                <th>
+                                                    <span th:text="#{results.print.table.location}"></span>
+                                                </th>
+                                            </tr>
+                                        </thead>
                                         <tbody>
                                         <th:block th:each="match : ${wrapper.getMatches()}">
                                             <tr>
@@ -187,9 +200,9 @@
                                                     <span th:text="${match.getReason()}"></span>
                                                 </td>
                                                 <td>
-                                                    <span th:text="#{results.compare.score}"></span><span th:text="${match.getScore()}"></span>
+                                                    <span th:text="${match.getScore()}"></span>
                                                 </td>
-                                                <td>
+                                                <td class="">
                                                     <span th:text="#{results.match.file}"></span>
                                                     <span th:text="${match.getFile1().getPersistentId()}"></span>
                                                     <span th:text="#{results.match.lines}"></span>
@@ -215,14 +228,14 @@
                         </div>
                         <div class="row" data-js="comparison">
                             <div class="col-lg-6" id="left">
-                                <h5 class="d-none d-print-block">
-                                    <span th:text="#{results.compare.submission.title}"></span>
-                                    <span th:text="${submission.getName()}"></span>
-                                </h5>
                                 <div class="accordion">
                                     <th:block th:each="file : ${submission.getAllFiles()}">
                                         <div class="card page-break-after">
                                             <div class="card-header">
+                                                <h5 class="d-none d-print-block">
+                                                    <span th:text="#{results.compare.submission.title}"></span>
+                                                    <span th:text="${submission.getName()}"></span>
+                                                </h5>
                                                 <h2 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">
                                                         <span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>
@@ -236,7 +249,7 @@
                                                     <pre class="line-numbers"
                                                          th:data-file-id="${file.getPersistentId()}"
                                                          th:data-line="${wrapper.getHighlightedLines(file.getPersistentId())}"
-                                                         th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()})}"></pre>
+                                                         th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?{print}(id=${workspace.getId()},submission_id=${submission.getId()},file_id=${file.getPersistentId()},file_name=${file.getFileIdentifier()},print=${printing ? 'print' : ''})}"></pre>
                                                 </div>
                                             </div>
                                         </div>
@@ -275,9 +288,6 @@
                         <th:block th:if="${printing}">
                             <div class="row page-break">
                                 <div class="col-lg-12">
-                                    <h5 class="d-none d-print-block">
-                                        <span th:text="#{results.print.file_matches}"></span>
-                                    </h5>
                                     <th:block th:each="sub : ${wrapper.getMatchedFiles()}">
                                         <h5 class="d-none d-print-block">
                                             <span th:text="#{results.compare.submission.title}"></span>
@@ -287,7 +297,7 @@
                                             <th:block th:each="file : ${sub.getValue()}">
                                                 <div class="card page-break-after">
                                                     <div class="card-header">
-                                                        <h2 class="mb-0">
+                                                        <h2 class="mb-0" th:id="${'file-'+file.getKey()}">
                                                             <button class="btn btn-link" type="button" >
                                                                 <span th:text="${'#'+file.getKey()+':'}"></span>
                                                                 <span th:text="${file.getValue().getFileDisplayName()}"></span>
@@ -298,7 +308,7 @@
                                                     <div>
                                                         <div class="card-body">
                                                         <pre class="line-numbers"
-                                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}(id=${workspace.getId()},submission_id=${sub.getKey().getId()},file_id=${file.getKey()},file_name=${file.getValue().getFileIdentifier()})}"></pre>
+                                                             th:data-src="@{/dashboard/workspaces/manage/{id}/submission/{submission_id}/file/{file_id}/{file_name}?print(id=${workspace.getId()},submission_id=${sub.getKey().getId()},file_id=${file.getKey()},file_name=${file.getValue().getFileIdentifier()})}"></pre>
                                                         </div>
                                                     </div>
                                                 </div>

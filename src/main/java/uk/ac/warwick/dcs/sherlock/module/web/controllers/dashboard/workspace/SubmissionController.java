@@ -44,9 +44,21 @@ public class SubmissionController {
     @ResponseBody
     public String fileGet(
             @ModelAttribute("submission") ISubmission submission,
-            @PathVariable(value="fileid") long fileid
+            @PathVariable(value="fileid") long fileid,
+            @ModelAttribute("isPrinting") boolean isPrinting
     ) throws SourceFileNotFound {
         ISourceFile sourceFile = this.getFile(submission, fileid);
+
+        if (isPrinting) {
+            String result = "";
+            int i = 1;
+            for (String line : sourceFile.getFileContentsAsStringList()) {
+                result += i + " | " + line + System.getProperty("line.separator");
+                i++;
+            }
+            return result;
+        }
+
         return sourceFile.getFileContentsAsString();
     }
 

@@ -65,6 +65,19 @@ public class AttributesControllerAdvice {
         model.addAttribute("printing", request.getParameterMap().containsKey("print"));
     }
 
+    /**
+     * Checks whether or not the request is attempting to print
+     *
+     * @param model holder for model attributes
+     * @param request the http request information
+     *
+     * @return whether or not the request is attempting to print
+     */
+    @ModelAttribute("isPrinting")
+    public boolean isPrinting(Model model, HttpServletRequest request) {
+        return request.getParameterMap().containsKey("print");
+    }
+
 
     /**
      * Checks whether the current request is ajax or not
