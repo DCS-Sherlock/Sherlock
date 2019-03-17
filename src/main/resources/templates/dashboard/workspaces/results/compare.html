@@ -115,7 +115,11 @@
         <div class="col-lg-12" id="match-info">
             <div class="card bg-orange border-top-0 border-bottom-0">
                 <div class="card-header">
-                    <button class="btn btn-outline-primary btn-sm float-right" data-js="match-hide" th:text="#{results.compare.hide}"></button>
+                    <div class="btn-group btn-group-sm float-right">
+                        <button class="btn btn-outline-primary btn-sm" data-js="match-previous" th:text="#{link.previous}"></button>
+                        <button class="btn btn-outline-primary btn-sm" data-js="match-next" th:text="#{link.next}"></button>
+                        <button class="btn btn-outline-primary btn-sm ml-2" data-js="match-hide" th:text="#{results.compare.hide}"></button>
+                    </div>
                     <div id="match-info-block">
                         <div class="match-colour"></div>
                         <span id="match-reason"></span>
