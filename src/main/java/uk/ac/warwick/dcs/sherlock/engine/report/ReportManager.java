@@ -172,6 +172,11 @@ public class ReportManager {
 	}
 
 	/**
+	 *    A list of submissions containing the following attributes:
+	 *         The submission id
+	 *         The overall score for the submission
+	 *         A list of matching submissions, with the match submission id and the score between the two *submissions
+	 *
 	 * To be called by the web report pages. Gets a list of submission summaries
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
@@ -184,16 +189,19 @@ public class ReportManager {
 			float overallScore = tempRandom.nextFloat();
 			SubmissionSummary submissionSummary = new SubmissionSummary(submissionId, overallScore);
 			ArrayList<Tuple<Long, Float>> matchingSubs = new ArrayList<>();
+			ArrayList<Long> matchingSubIds = new ArrayList<>();
 
 			//Look through all the code block groups to determine which submissions have been matched with which other submissions.
 			for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-				//If this group contains a file for the current submission, add all other submissions in the group to the list.
+				//If this group contains a file for the current submission, add all other submissions in the group to the list, if they aren't already added
 				if(codeBlockGroup.submissionIdPresent(submissionId)) {
 					for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-						if(codeBlock.getFile().getSubmissionId() != submissionId) {
+						long currentId = codeBlock.getFile().getSubmissionId();
+						if(currentId != submissionId && !matchingSubIds.contains(currentId)) {
 							//TODO: need to add the proper relative score somehow
 							float relativeScore = tempRandom.nextFloat();
-							matchingSubs.add(new Tuple<>(codeBlock.getFile().getSubmissionId(), relativeScore));
+							matchingSubs.add(new Tuple<>(currentId, relativeScore));
+							matchingSubIds.add(currentId);
 						}
 					}
 				}
