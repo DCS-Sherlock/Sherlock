@@ -5,14 +5,13 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
-import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
 
 import java.util.*;
 
 /**
- * A class to handle report generation in general (does not generate reports itself).
+ * A class to handle report generation in general (does not generate fileReportMap itself).
  * <p>
- * It takes all possible inputs that may be relevant from postprocessing, and handles requests for reports; sending the relevant information to the actual report generator in use.
+ * It takes all possible inputs that may be relevant from postprocessing, and handles requests for fileReportMap; sending the relevant information to the actual report generator in use.
  */
 public class ReportManager {
 
@@ -27,7 +26,7 @@ public class ReportManager {
 	private Map<Long, ISourceFile> fileMap;
 
 	/**
-	 * Contains most necessary information to generate reports for every file, including DetectionType, score, line numbers, etc.
+	 * Contains most necessary information to generate fileReportMap for every file, including DetectionType, score, line numbers, etc.
 	 */
 	private List<ICodeBlockGroup> codeBlockGroups;
 
@@ -37,10 +36,18 @@ public class ReportManager {
 	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
-	 * All generated reports are stored as FileReports. The key is each file's unique id.
+	 * All generated file reports are stored as FileReports. The key is each file's unique id.
 	 */
-	private Map<Long, FileReport> reports;
+	private Map<Long, FileReport> fileReportMap;
 
+	/**
+	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission matches make up the report.
+	 */
+	private Map<Long, List<SubmissionMatch>> submissionReportMap;
+
+	/**
+	 * The object used to generate the report information.
+	 */
 	private IReportGenerator reportGenerator;
 
 	/**
@@ -51,14 +58,15 @@ public class ReportManager {
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.reports = new HashMap<>();
+		this.fileReportMap = new HashMap<>();
 		this.fileIds = new ArrayList<>();
 		this.codeBlockGroups = new ArrayList<>();
+		this.submissionReportMap = new HashMap<>();
 	}
 
 	/**
 	 * Initialises the report manager and adds files and code block groups to it immediately.
-	 * @param files The files to generate reports for (see AddFiles()).
+	 * @param files The files to generate fileReportMap for (see AddFiles()).
 	 * @param codeBlockGroups The matches that will be used by the Report Generator (see AddCodeBlockGroups()).
 	 */
 	public ReportManager(List<ISourceFile> files, List<ICodeBlockGroup> codeBlockGroups) {
@@ -66,9 +74,10 @@ public class ReportManager {
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.reports = new HashMap<>();
+		this.fileReportMap = new HashMap<>();
 		this.fileIds = new ArrayList<>();
 		this.codeBlockGroups = new ArrayList<>();
+		this.submissionReportMap = new HashMap<>();
 
 		AddFiles(files);
 		AddCodeBlockGroups(codeBlockGroups);
@@ -76,16 +85,17 @@ public class ReportManager {
 
 	/**
 	 * Initialises the report manager (use if different varieties of IReportGenerator are added).
-	 * @param reportGenerator The implementation of IReportGenerator that will generate all reports for this project.
+	 * @param reportGenerator The implementation of IReportGenerator that will generate all fileReportMap for this project.
 	 */
 	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.reports = new HashMap<>();
+		this.fileReportMap = new HashMap<>();
 		this.fileIds = new ArrayList<>();
 		this.codeBlockGroups = new ArrayList<>();
+		this.submissionReportMap = new HashMap<>();
 	}
 
 	/**
@@ -147,7 +157,7 @@ public class ReportManager {
 
 		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups);
 
-		reports.put(sourceFile.getPersistentId(), fileReport);
+		fileReportMap.put(sourceFile.getPersistentId(), fileReport);
 		return fileReport;
 	}
 
@@ -156,7 +166,7 @@ public class ReportManager {
 	 */
 	public void GenerateAllReports() {
 		for(Long fileId : fileIds) {
-			if(!reports.containsKey(fileId))
+			if(!fileReportMap.containsKey(fileId))
 				GenerateReport(fileMap.get(fileId));
 		}
 	}
@@ -165,7 +175,7 @@ public class ReportManager {
 	 * To be called by the web report pages. Gets a list of submission summaries
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
-	public List<SubmissionSummary> getMatchingSubmissions() {
+	public List<SubmissionSummary> GetMatchingSubmissions() {
 		ArrayList<SubmissionSummary> output = new ArrayList<>();
 
 		for(Long submissionId : submissionFileMap.keySet()) {
@@ -201,7 +211,7 @@ public class ReportManager {
 	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
 	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
-	public List<SubmissionMatch> getSubmissionComparison(List<ISubmission> submissions) {
+	public List<SubmissionMatch> GetSubmissionComparison(List<ISubmission> submissions) {
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
 		if(submissions.size() < 2)
@@ -217,16 +227,50 @@ public class ReportManager {
 	}
 
 	/**
-	 * Retrieve a report which has already been generated.
+	 * Generate a report for a single submission, containing all matches for all files within it.
+	 *
+	 * @param submission The submission to generate the report for.
+	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
+	 */
+	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
+
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
+
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			if(codeBlockGroup.submissionIdPresent(submission.getId()))
+				relevantGroups.add(codeBlockGroup);
+		}
+
+		//Store this report and return it.
+		List<SubmissionMatch> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups);
+		submissionReportMap.put(submission.getId(), submissionReport);
+		return submissionReport;
+	}
+
+	/**
+	 * Retrieve an already-generated submission report for the specified submission id.
+	 * @param submissionId the id of the submission to get the report for.
+	 * @return The list of submission matches making up the report if it exists; an empty list if there is no such report.
+	 */
+	public List<SubmissionMatch> GetSubmissionReport(long submissionId) {
+		//If the report for this submission already exists, return it
+		if (submissionReportMap.containsKey(submissionId))
+			return submissionReportMap.get(submissionId);
+		else
+			return new ArrayList<SubmissionMatch>();
+	}
+
+	/**
+	 * Retrieve a file report which has already been generated.
 	 * TODO: print something to error if exception? idk
 	 *
 	 * @param sourceFile The file to retrieve the report for
 	 * @return a FileReport object that is the report in question
 	 * @throws NullPointerException if there is no report for this file
 	 */
-	public FileReport GetReport(ISourceFile sourceFile) throws NullPointerException {
+	public FileReport GetFileReport(ISourceFile sourceFile) throws NullPointerException {
 		try {
-			return reports.get(sourceFile.getPersistentId());
+			return fileReportMap.get(sourceFile.getPersistentId());
 		} catch(NullPointerException e) {
 			throw e;
 		}

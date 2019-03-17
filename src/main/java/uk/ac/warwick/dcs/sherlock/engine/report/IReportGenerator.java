@@ -29,4 +29,13 @@ public interface IReportGenerator {
 	 * @return a list of SubmissionMatch objects, which each contain the ids of the files involved, the score for that match, a reason from DetectionType, and line numbers where the match occurs.
 	 */
 	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups);
+
+	/**
+	 * Generate a report for a single submission, containing all matches for all files within it.
+	 *
+	 * @param submission The submission to generate the report for.
+	 * @param codeBlockGroups The ICodeBlockGroups where at least one ICodeBlock is from a file in the specified submission. Supplied by the Report Manager.
+	 * @return a list of SubmissionMatch objects, which each contain the ids of the files involved, the score for that match, a reason from DetectionType, and line numbers where the match occurs.
+	 */
+	public List<SubmissionMatch> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups);
 }
