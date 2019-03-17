@@ -49,11 +49,11 @@ public class ReportManager {
 	public ReportManager() {
 		this.reportGenerator = new ReportGenerator();
 
-		submissionFileMap = new HashMap<>();
-		fileMap = new HashMap<>();
-		reports = new HashMap<>();
-		fileIds = new ArrayList<>();
-		codeBlockGroups = new ArrayList<>();
+		this.submissionFileMap = new HashMap<>();
+		this.fileMap = new HashMap<>();
+		this.reports = new HashMap<>();
+		this.fileIds = new ArrayList<>();
+		this.codeBlockGroups = new ArrayList<>();
 	}
 
 	/**
@@ -64,11 +64,11 @@ public class ReportManager {
 	public ReportManager(List<ISourceFile> files, List<ICodeBlockGroup> codeBlockGroups) {
 		this.reportGenerator = new ReportGenerator();
 
-		submissionFileMap = new HashMap<>();
-		fileMap = new HashMap<>();
-		reports = new HashMap<>();
-		fileIds = new ArrayList<>();
-		codeBlockGroups = new ArrayList<>();
+		this.submissionFileMap = new HashMap<>();
+		this.fileMap = new HashMap<>();
+		this.reports = new HashMap<>();
+		this.fileIds = new ArrayList<>();
+		this.codeBlockGroups = new ArrayList<>();
 
 		AddFiles(files);
 		AddCodeBlockGroups(codeBlockGroups);
@@ -81,11 +81,11 @@ public class ReportManager {
 	public ReportManager(IReportGenerator reportGenerator) {
 		this.reportGenerator = reportGenerator;
 
-		submissionFileMap = new HashMap<>();
-		fileMap = new HashMap<>();
-		reports = new HashMap<>();
-		fileIds = new ArrayList<>();
-		codeBlockGroups = new ArrayList<>();
+		this.submissionFileMap = new HashMap<>();
+		this.fileMap = new HashMap<>();
+		this.reports = new HashMap<>();
+		this.fileIds = new ArrayList<>();
+		this.codeBlockGroups = new ArrayList<>();
 	}
 
 	/**
