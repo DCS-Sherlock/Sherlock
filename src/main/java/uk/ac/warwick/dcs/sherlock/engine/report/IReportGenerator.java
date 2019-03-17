@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 
 import java.util.*;
 
@@ -19,4 +20,13 @@ public interface IReportGenerator {
 	 * @return The report itself.
 	 */
 	public FileReport GenerateReport(ISourceFile sourceFile, List<? extends ICodeBlockGroup> codeBlockGroups);
+
+	/**
+	 * Compare two submissions and find all the instances of detected plagiarism between all files within them.
+	 *
+	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
+	 * @param codeBlockGroups The ICodeBlockGroups that contain at least one ICodeBlock from a file from each submission. Supplied by the Report Manager.
+	 * @return a list of SubmissionMatch objects, which each contain the ids of the files involved, the score for that match, a reason from DetectionType, and line numbers where the match occurs.
+	 */
+	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups);
 }
