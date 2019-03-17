@@ -119,7 +119,6 @@ public class EntityArchive implements ISubmission, Serializable {
 
 		BaseStorage.instance.database.refreshObject(this);
 		BaseStorage.instance.database.removeObject(this);
-		BaseStorage.instance.database.refreshObject(this.workspace);
 	}
 
 	void clean() {

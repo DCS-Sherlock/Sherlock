@@ -109,6 +109,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 			j.remove();
 		}
 
+		BaseStorage.instance.database.refreshObject(this);
 		BaseStorage.instance.database.removeObject(this);
 	}
 

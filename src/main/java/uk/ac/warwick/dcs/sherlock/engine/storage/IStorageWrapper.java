@@ -2,10 +2,13 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
+import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 
 import java.util.*;
 
@@ -66,6 +69,13 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @return a list of all workspaces in the database
 	 */
 	List<IWorkspace> getWorkspaces();
+
+	/**
+	 * Returns a prepared report manager for the IResultJob, uses cached instances were possible
+	 * @param resultJob result to generate reports for
+	 * @return instance of ReportManager
+	 */
+	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
 
 	/**
 	 * Stores the passed code block groups to the database

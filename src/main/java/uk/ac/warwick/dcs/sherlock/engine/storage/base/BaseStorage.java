@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
-import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.engine.component.*;
+import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
+import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
 import java.io.BufferedReader;
@@ -31,11 +30,21 @@ public class BaseStorage implements IStorageWrapper {
 	EmbeddedDatabase database;
 	BaseStorageFilesystem filesystem;
 
+	private Map<Long, ReportManager> reportManagerCache;
+	private ArrayDeque<Long> reportManagerCacheQueue;
+
 	public BaseStorage() {
 		instance = this;
 
 		this.database = new EmbeddedDatabase();
 		this.filesystem = new BaseStorageFilesystem();
+
+		int cacheCapacity = 5;
+		this.reportManagerCache = new HashMap<>();
+		this.reportManagerCacheQueue = new ArrayDeque<>(cacheCapacity);
+		for (int i = 0; i < cacheCapacity; i++) {
+			this.reportManagerCacheQueue.add((long) -1);
+		}
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
 		List orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
@@ -124,6 +133,36 @@ public class BaseStorage implements IStorageWrapper {
 	public List<IWorkspace> getWorkspaces() {
 		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
 		return new LinkedList<>(l);
+	}
+
+	@Override
+	public ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException {
+		if (!(resultJob instanceof EntityResultJob)) {
+			throw new ResultJobUnsupportedException("IResultJob instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityResultJob res = (EntityResultJob) resultJob;
+
+		if (this.reportManagerCache.containsKey(res.getPersistentId())){
+			if (this.reportManagerCacheQueue.remove(res.getPersistentId())) {
+				this.reportManagerCacheQueue.add(res.getPersistentId());
+			}
+
+			return this.reportManagerCache.get(res.getPersistentId());
+		}
+		else {
+			long rem = this.reportManagerCacheQueue.remove();
+			if (rem > -1) {
+				this.reportManagerCache.remove(rem);
+			}
+
+			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()),
+					res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).flatMap(y -> y.getContainingBlocks().stream()).collect(Collectors.toList()));
+
+			this.reportManagerCache.put(res.getPersistentId(), manager);
+			this.reportManagerCacheQueue.add(res.getPersistentId());
+
+			return manager;
+		}
 	}
 
 	@Override

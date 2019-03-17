@@ -5,6 +5,7 @@ package uk.ac.warwick.dcs.sherlock.api.model.detection;
  * <p>
  * (Not sure how usable all of these are in practice)
  */
+@Deprecated
 public enum LegecyDetectionType {COMMENT, IDENTIFIER, OPERAND_ORDER, DATA_TYPE, EXPR_EQUIV, REDUNDANT_ADDED, STATEMENT_ORDER, ITERATION_STRUCTURE, SELECT_STRUCTURE, BODY_REPLACE_CALL,
 	NON_STRUCTURED_STATEMENTS, COMBINE_NEW_OLD}
 

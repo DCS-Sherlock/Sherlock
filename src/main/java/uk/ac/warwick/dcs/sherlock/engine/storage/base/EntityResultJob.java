@@ -5,6 +5,9 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IResultFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.*;
 
@@ -12,6 +15,10 @@ import java.util.*;
 public class EntityResultJob implements IResultJob, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	private long id;
 
 	private List<EntityResultFile> fileResults;
 
@@ -36,6 +43,11 @@ public class EntityResultJob implements IResultJob, Serializable {
 	@Override
 	public List<IResultFile> getFileResults() {
 		return new LinkedList<>(this.fileResults);
+	}
+
+	@Override
+	public long getPersistentId() {
+		return this.id;
 	}
 
 	@Override

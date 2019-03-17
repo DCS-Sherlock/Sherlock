@@ -189,6 +189,7 @@ public class EntityJob implements IJob, Serializable {
 		}
 
 		BaseStorage.instance.database.refreshObject(this);
+		BaseStorage.instance.database.removeObject(this);
 
 	}
 }
