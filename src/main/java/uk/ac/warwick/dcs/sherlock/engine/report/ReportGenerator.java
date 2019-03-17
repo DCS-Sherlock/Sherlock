@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class ReportGenerator implements IReportGenerator {
 		//Each codeBlockGroup represents a different similarity; each gets its own string added to the report.
 		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 
-			//New code to get detection type, not connected to rest of this method so the code still compiles
+			//Get detection type
 			DetectionType detectionType = null;
 			try {
 				detectionType = codeBlockGroup.getDetectionType();
@@ -80,5 +81,51 @@ public class ReportGenerator implements IReportGenerator {
 		}
 
 		return fileReport;
+	}
+
+	@Override
+	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups) {
+		List<SubmissionMatch> matches = new ArrayList<>();
+		//Create a SubmissionMatch object for each CodeBlockGroup
+		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			long fileId1 = -1, fileId2 = -1;
+			float score = 1f;	//TODO: get actual score
+			String reason = "";
+			List<ITuple<Integer, Integer>> lineNumbers1 = new ArrayList<>(), lineNumbers2 = new ArrayList<>();
+
+			//Try to get the detection type and use it to get the string reason
+			DetectionType detectionType = null;
+			try {
+				detectionType = codeBlockGroup.getDetectionType();
+			}
+			catch (UnknownDetectionTypeException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				reason = detectionType.getReason();
+			}
+			catch(NullPointerException e) {
+				e.printStackTrace();
+			}
+
+			//get the file ids and line numbers
+			for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
+				if(submissions.get(0).getId() == codeBlock.getFile().getSubmissionId()) {
+					fileId1 = codeBlock.getFile().getPersistentId();
+					lineNumbers1 = codeBlock.getLineNumbers();
+				}
+				else if (submissions.get(1).getId() == codeBlock.getFile().getSubmissionId()) {
+					fileId2 = codeBlock.getFile().getPersistentId();
+					lineNumbers2 = codeBlock.getLineNumbers();
+				}
+			}
+
+			//Add the SubmissionMatch to the list
+			SubmissionMatch match = new SubmissionMatch(fileId1, fileId2, score, reason, lineNumbers1, lineNumbers2);
+			matches.add(match);
+		}
+
+		return matches;
 	}
 }

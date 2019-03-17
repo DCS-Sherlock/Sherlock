@@ -193,37 +193,24 @@ public class ReportManager {
 	}
 
 	/**
-	 * WIP
-	 * need some new class to act as comparison report or something?
+	 * Compares two submissions, finds all the matches in files they contain between them, and returns all relevant information about them.
 	 *
-	 * @param submissions
+	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
+	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
-	public void getSubmissionComparison(Tuple<ISubmission, ISubmission> submissions) {
-		/**
-		 * list of file matches between each submission.
-		 * each match has:
-		 * id for the 2 files
-		 * score for that match
-		 * reason for that match (description)
-		 * line numbers
-		 */
-		List<FileReport> fileReports = new ArrayList<>();
-		for(int s = 0; s < 2; s++) {
-			ISubmission submission;
-			if(s == 0)
-				submission = submissions.getKey();
-			else
-				submission = submissions.getValue();
+	public List<SubmissionMatch> getSubmissionComparison(List<ISubmission> submissions) {
+		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
-			//If any files haven't got a report already, generate it. Add it to fileReports regardless.
-				for(ISourceFile file : submission.getAllFiles()) {
-				if(!reports.containsKey(file.getPersistentId()))
-					fileReports.add(GenerateReport(file));
-				else
-					fileReports.add(reports.get(file.getPersistentId()));
+		if(submissions.size() < 2)
+			return null;
 
-			}
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			if(codeBlockGroup.submissionIdPresent(submissions.get(0).getId()) &&
+			codeBlockGroup.submissionIdPresent(submissions.get(1).getId()))
+				relevantGroups.add(codeBlockGroup);
 		}
+
+		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups);
 	}
 
 	/**

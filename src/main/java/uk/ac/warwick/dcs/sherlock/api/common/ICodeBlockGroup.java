@@ -74,10 +74,7 @@ public interface ICodeBlockGroup {
 	void setComment(String comment);
 
 	/**
-	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by
-	 * the algs in the first place.
-	 *
-	 * @return the the type of plagiarism that was detected for these blocks of code
+	 * @return the type of plagiarism that was detected for these blocks of code
 	 *
 	 * @throws UnknownDetectionTypeException thrown if the stored identifier is not registered in the current session
 	 */
