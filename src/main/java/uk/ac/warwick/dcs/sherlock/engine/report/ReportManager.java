@@ -50,6 +50,7 @@ public class ReportManager {
 		this.reportGenerator = new ReportGenerator();
 
 		submissionFileMap = new HashMap<>();
+		fileMap = new HashMap<>();
 		reports = new HashMap<>();
 		fileIds = new ArrayList<>();
 		codeBlockGroups = new ArrayList<>();
@@ -64,6 +65,7 @@ public class ReportManager {
 		this.reportGenerator = new ReportGenerator();
 
 		submissionFileMap = new HashMap<>();
+		fileMap = new HashMap<>();
 		reports = new HashMap<>();
 		fileIds = new ArrayList<>();
 		codeBlockGroups = new ArrayList<>();
@@ -80,6 +82,7 @@ public class ReportManager {
 		this.reportGenerator = reportGenerator;
 
 		submissionFileMap = new HashMap<>();
+		fileMap = new HashMap<>();
 		reports = new HashMap<>();
 		fileIds = new ArrayList<>();
 		codeBlockGroups = new ArrayList<>();
