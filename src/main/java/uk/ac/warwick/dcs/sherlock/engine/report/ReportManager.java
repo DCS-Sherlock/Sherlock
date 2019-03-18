@@ -172,12 +172,7 @@ public class ReportManager {
 	}
 
 	/**
-	 *    A list of submissions containing the following attributes:
-	 *         The submission id
-	 *         The overall score for the submission
-	 *         A list of matching submissions, with the match submission id and the score between the two *submissions
-	 *
-	 * To be called by the web report pages. Gets a list of submission summaries
+	 * To be called by the web report pages. Gets a list of submission summaries, which
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
 	public List<SubmissionSummary> GetMatchingSubmissions() {

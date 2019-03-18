@@ -88,7 +88,7 @@ public class ReportGenerator implements IReportGenerator {
 		List<SubmissionMatch> matches = new ArrayList<>();
 		//Create a SubmissionMatch object for each CodeBlockGroup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			long fileId1 = -1, fileId2 = -1;
+			ISourceFile file1 = null, file2 = null;
 			float score = 1f;	//TODO: get actual score
 			String reason = "";
 			List<ITuple<Integer, Integer>> lineNumbers1 = new ArrayList<>(), lineNumbers2 = new ArrayList<>();
@@ -115,17 +115,17 @@ public class ReportGenerator implements IReportGenerator {
 			//TODO: make more efficient (just retrieve files directly rather than looping through)
 			for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
 				if(submissions.get(0).getId() == codeBlock.getFile().getSubmissionId()) {
-					fileId1 = codeBlock.getFile().getPersistentId();
+					file1 = codeBlock.getFile();
 					lineNumbers1 = codeBlock.getLineNumbers();
 				}
 				else if (submissions.get(1).getId() == codeBlock.getFile().getSubmissionId()) {
-					fileId2 = codeBlock.getFile().getPersistentId();
+					file2 = codeBlock.getFile();
 					lineNumbers2 = codeBlock.getLineNumbers();
 				}
 			}
 
 			//Add the SubmissionMatch to the list
-			SubmissionMatch match = new SubmissionMatch(fileId1, fileId2, score, reason, lineNumbers1, lineNumbers2);
+			SubmissionMatch match = new SubmissionMatch(file1, file2, score, reason, lineNumbers1, lineNumbers2);
 			matches.add(match);
 		}
 
@@ -137,7 +137,7 @@ public class ReportGenerator implements IReportGenerator {
 		List<SubmissionMatch> matches = new ArrayList<>();
 		//Create a SubmissionMatch object for each CodeBlockGroup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			long fileId = -1;
+			ISourceFile file = null;
 			float score = 1f;	//TODO: get actual score
 			String reason = "";
 			List<ITuple<Integer, Integer>> lineNumbers = new ArrayList<>();
@@ -161,24 +161,24 @@ public class ReportGenerator implements IReportGenerator {
 			}
 
 			//Used to store info for all the other files that don't belong to submission
-			List<Long> otherIds = new ArrayList<>();
+			List<ISourceFile> otherFiles = new ArrayList<>();
 			List<List<ITuple<Integer, Integer>>> otherLineNumbers = new ArrayList<>();
 
 			//get the file id and line numbers
 			for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
 				if(submission.getId() == codeBlock.getFile().getSubmissionId()) {
-					fileId = codeBlock.getFile().getPersistentId();
+					file = codeBlock.getFile();
 					lineNumbers = codeBlock.getLineNumbers();
 				}
 				else {
-					otherIds.add(codeBlock.getFile().getPersistentId());
+					otherFiles.add(codeBlock.getFile());
 					otherLineNumbers.add(codeBlock.getLineNumbers());
 				}
 			}
 
 			//Create a submission match object for every pair between the specified submission's file in this ICodeBlockGroup and the other files in it, and add them to matches.
-			for(int i = 0; i < otherIds.size(); i++) {
-				SubmissionMatch match = new SubmissionMatch(fileId, otherIds.get(i), score, reason, lineNumbers, otherLineNumbers.get(i));
+			for(int i = 0; i < otherFiles.size(); i++) {
+				SubmissionMatch match = new SubmissionMatch(file, otherFiles.get(i), score, reason, lineNumbers, otherLineNumbers.get(i));
 				matches.add(match);
 			}
 		}

@@ -1,18 +1,23 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import java.util.*;
+
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
+/**
+ * Object to be sent to web report pages, detailing a particular match between files in different submissions.
+ */
 public class SubmissionMatch {
 	/**
-	 * The id for the first file in this match
+	 * The first file in this match
 	 */
-	private long fileId1;
+	private ISourceFile file1;
 
 	/**
-	 * The id for the second file in this match
+	 * The second file in this match
 	 */
-	private long fileId2;
+	private ISourceFile file2;
 
 	/**
 	 * The score assigned to this match
@@ -36,17 +41,17 @@ public class SubmissionMatch {
 
 	/**
 	 * Initialise a new SubmissionMatch object. Make sure the file ids and line numbers correspond to each other.
-	 * @param fileId1 id of first file
-	 * @param fileId2 id of second file
+	 * @param file1 first file
+	 * @param file2 second file
 	 * @param score score for this match
 	 * @param reason description of plagiarism type
 	 * @param lineNumbers1 line numbers in the first file
 	 * @param lineNumbers2 line numbers in the second file
 	 */
-	public SubmissionMatch(long fileId1, long fileId2, float score, String reason,
+	public SubmissionMatch(ISourceFile file1, ISourceFile file2, float score, String reason,
 						   List<ITuple<Integer, Integer>> lineNumbers1, List<ITuple<Integer, Integer>> lineNumbers2) {
-		this.fileId1 = fileId1;
-		this.fileId2 = fileId2;
+		this.file1 = file1;
+		this.file2 = file2;
 		this.matchScore = score;
 		this.reason = reason;
 		this.lineNumbers1 = lineNumbers1;
@@ -54,17 +59,17 @@ public class SubmissionMatch {
 	}
 
 	/**
-	 * @return the persistent id of the first file
+	 * @return the first file
 	 */
-	public long getFileId1() {
-		return fileId1;
+	public ISourceFile getFile1() {
+		return file1;
 	}
 
 	/**
-	 * @return the persistent id of the second file
+	 * @return the second file
 	 */
-	public long getFileId2() {
-		return fileId2;
+	public ISourceFile getFile2() {
+		return file2;
 	}
 
 	/**
