@@ -149,11 +149,13 @@ public class ReportGenerator implements IReportGenerator {
 				e.printStackTrace();
 			}
 
-			try {
-				reason = detectionType.getReason();
-			}
-			catch(NullPointerException e) {
-				e.printStackTrace();
+			if (detectionType != null ) {
+				try {
+					reason = detectionType.getReason();
+				}
+				catch (NullPointerException e) {
+					e.printStackTrace();
+				}
 			}
 
 			//Used to store info for all the other files that don't belong to submission
