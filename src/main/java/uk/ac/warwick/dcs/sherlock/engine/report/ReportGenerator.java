@@ -102,11 +102,13 @@ public class ReportGenerator implements IReportGenerator {
 				e.printStackTrace();
 			}
 
-			try {
-				reason = detectionType.getReason();
-			}
-			catch(NullPointerException e) {
-				e.printStackTrace();
+			if (detectionType != null ) {
+				try {
+					reason = detectionType.getReason();
+				}
+				catch (NullPointerException e) {
+					e.printStackTrace();
+				}
 			}
 
 			//get the file ids and line numbers
