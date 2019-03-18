@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 
 import java.util.*;

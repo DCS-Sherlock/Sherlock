@@ -4,7 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 
 import java.util.*;
 

@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;

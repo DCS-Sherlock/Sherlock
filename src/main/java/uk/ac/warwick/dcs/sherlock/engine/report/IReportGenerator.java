@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 
 import java.util.*;
 

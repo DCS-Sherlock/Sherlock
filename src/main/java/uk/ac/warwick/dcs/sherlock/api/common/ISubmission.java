@@ -1,6 +1,4 @@
-package uk.ac.warwick.dcs.sherlock.engine.component;
-
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+package uk.ac.warwick.dcs.sherlock.api.common;
 
 import java.util.*;
 

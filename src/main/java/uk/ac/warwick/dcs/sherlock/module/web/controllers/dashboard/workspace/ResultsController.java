@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.SubmissionResultsData;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.JobResultsData;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;

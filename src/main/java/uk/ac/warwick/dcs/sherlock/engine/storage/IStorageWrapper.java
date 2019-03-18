@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;

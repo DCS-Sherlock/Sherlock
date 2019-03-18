@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import org.apache.commons.io.FileUtils;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
@@ -137,6 +137,16 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public long getSubmissionId() {
 		return this.archive.getId();
+	}
+
+	@Override
+	public ISubmission getTopSubmission() {
+		EntityArchive sub = this.archive;
+		while (sub.getParent() != null) {
+			sub = sub.getParent();
+		}
+
+		return sub;
 	}
 
 	@Override

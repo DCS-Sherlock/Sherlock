@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 
 import java.util.*;
 

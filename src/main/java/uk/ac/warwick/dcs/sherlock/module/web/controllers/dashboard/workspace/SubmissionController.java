@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;

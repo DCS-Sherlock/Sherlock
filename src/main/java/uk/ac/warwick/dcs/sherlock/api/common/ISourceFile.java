@@ -50,9 +50,16 @@ public interface ISourceFile {
 	long getPersistentId();
 
 	/**
-	 * @return
+	 *  Get the id for the immediate parent submission, this may not be the top level submission seen by the user
+	 * @return the id for the submission
 	 */
 	long getSubmissionId();
+
+	/**
+	 * Get the top level, "super parent", submission object, this is the submission for this file seen by the user, NOT a sub-directory
+	 * @return the highest level parent submission
+	 */
+	ISubmission getTopSubmission();
 
 	/**
 	 * Remove the file

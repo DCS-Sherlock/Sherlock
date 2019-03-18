@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
-import uk.ac.warwick.dcs.sherlock.engine.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.SubmissionNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.WorkspaceWrapper;
 
