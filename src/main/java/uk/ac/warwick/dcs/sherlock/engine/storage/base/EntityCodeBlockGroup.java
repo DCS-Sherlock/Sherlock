@@ -4,11 +4,14 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
-import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.*;
 
@@ -18,6 +21,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@OneToMany (mappedBy = "group", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	Map<Long, EntityCodeBlock> blockMap;
 
 	private String type;
@@ -37,7 +41,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 		}
 		else {
 			if (file instanceof EntityFile) {
-				EntityCodeBlock block = new EntityCodeBlock((EntityFile) file, score, line);
+				EntityCodeBlock block = new EntityCodeBlock(this, (EntityFile) file, score, line);
 				this.blockMap.put(file.getPersistentId(), block);
 			}
 			else {
@@ -53,7 +57,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 		}
 		else {
 			if (file instanceof EntityFile) {
-				EntityCodeBlock block = new EntityCodeBlock((EntityFile) file, score, lines);
+				EntityCodeBlock block = new EntityCodeBlock(this, (EntityFile) file, score, lines);
 				this.blockMap.put(file.getPersistentId(), block);
 			}
 			else {
@@ -104,7 +108,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	@Override
 	public void setDetectionType(String detectionTypeIdentifier) throws UnknownDetectionTypeException {
-		this.type = type;
+		this.type = detectionTypeIdentifier;
 	}
 
 	@Override
@@ -112,10 +116,14 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 		return this.blockMap.size() > 1;
 	}
 
+	void markRemove() {
+		this.type = "---remove---";
+		BaseStorage.instance.database.storeObject(this);
+	}
+
 	void remove() {
-		for (EntityCodeBlock b : this.blockMap.values()) {
-			b.remove();
-		}
+		BaseStorage.instance.database.refreshObject(this);
+		BaseStorage.instance.database.removeObject(this.blockMap.values());
 		BaseStorage.instance.database.removeObject(this);
 	}
 }

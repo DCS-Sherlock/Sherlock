@@ -45,13 +45,6 @@ public interface IJob {
 	long getPersistentId();
 
 	/**
-	 * get the list of processed results for this job
-	 *
-	 * @return all processed results
-	 */
-	List<IResultJob> getResults();
-
-	/**
 	 * Returns the status of the job
 	 *
 	 * @return the stored status

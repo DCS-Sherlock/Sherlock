@@ -61,6 +61,9 @@ public class BaseStorage implements IStorageWrapper {
 			}
 		});
 
+		List<Long> fids = this.database.runQuery("SELECT f from File f", EntityFile.class).stream().map(EntityFile::getPersistentId).collect(Collectors.toList());
+		jobs.stream().filter(j ->  !fids.containsAll(j.getFilesList())).forEach(j -> j.setStatus(WorkStatus.MISSING_FILES));
+
 		jobs = jobs.stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
 		if (jobs.size() > 0) {
 			logger.warn("Removing jobs with no tasks...");

@@ -145,14 +145,7 @@ public class PoolExecutorJob implements Runnable {
 				fileRes.setOverallScore(ExecutorUtils.aggregateScores(fileRes.getFileScores().values()));
 			}
 
-			jobRes.store();
-
-			try {
-				SherlockEngine.storage.getReportGenerator(jobRes);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			//jobRes.store();
 		}
 		else {
 			synchronized (ExecutorUtils.logger) {

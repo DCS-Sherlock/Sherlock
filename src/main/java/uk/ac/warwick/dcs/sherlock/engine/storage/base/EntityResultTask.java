@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.*;
 
@@ -13,6 +14,9 @@ import java.util.*;
 public class EntityResultTask implements IResultTask, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@ManyToOne
+	private EntityResultFile fileRes;
 
 	private EntityTask task;
 	private float taskScore;
@@ -24,8 +28,9 @@ public class EntityResultTask implements IResultTask, Serializable {
 		super();
 	}
 
-	EntityResultTask(EntityTask task) {
+	EntityResultTask(EntityResultFile fileRes, EntityTask task) {
 		super();
+		this.fileRes = fileRes;
 		this.task = task;
 		this.taskScore = 0;
 
@@ -90,10 +95,7 @@ public class EntityResultTask implements IResultTask, Serializable {
 	}
 
 	void remove() {
-		for (EntityCodeBlockGroup g : this.containingBlocks) {
-			g.remove();
-		}
-		BaseStorage.instance.database.refreshObject(this);
+		this.containingBlocks.forEach(EntityCodeBlockGroup::markRemove);
 		BaseStorage.instance.database.removeObject(this);
 	}
 }

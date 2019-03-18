@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.*;
 
 @Entity (name = "Job")
 public class EntityJob implements IJob, Serializable {
@@ -37,7 +38,8 @@ public class EntityJob implements IJob, Serializable {
 	@OneToMany (mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityTask> tasks = new ArrayList<>();
 
-	private List<EntityResultJob> results = new ArrayList<>();
+	@OneToOne (mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private EntityResultJob results = null;
 
 	public EntityJob() {
 		super();
@@ -84,10 +86,13 @@ public class EntityJob implements IJob, Serializable {
 
 	@Override
 	public IResultJob createNewResult() {
-		EntityResultJob j = new EntityResultJob();
-		this.results.add(j);
-		BaseStorage.instance.database.storeObject(j);
-		return j;
+		if (this.results != null) {
+			this.results.remove();
+		}
+
+		this.results = new EntityResultJob(this);
+		BaseStorage.instance.database.storeObject(this.results);
+		return this.results;
 	}
 
 	@Override
@@ -95,21 +100,19 @@ public class EntityJob implements IJob, Serializable {
 		return this.filesPresent;
 	}
 
+	public List<Long> getFilesList() {
+		return Arrays.stream(this.filesPresent).boxed().collect(Collectors.toList());
+	}
+
 	@Override
 	public IResultJob getLatestResult() {
 		BaseStorage.instance.database.refreshObject(this);
-		return this.results.size() > 0 ? this.results.get(this.results.size() - 1) : null;
+		return this.results;
 	}
 
 	@Override
 	public long getPersistentId() {
 		return this.id;
-	}
-
-	@Override
-	public List<IResultJob> getResults() {
-		//TODO: do results api so we can write the getter
-		return null;
 	}
 
 	@Override
@@ -181,16 +184,17 @@ public class EntityJob implements IJob, Serializable {
 	@Override
 	public void remove() {
 
-		for (EntityTask t : this.tasks) {
-			t.remove();
+		if (this.tasks != null) {
+			for (EntityTask t : this.tasks) {
+				t.remove();
+			}
 		}
 
-		for (EntityResultJob r : this.results) {
-			r.remove();
+		if (this.results != null) {
+			this.results.remove();
 		}
 
 		BaseStorage.instance.database.refreshObject(this);
 		BaseStorage.instance.database.removeObject(this);
-
 	}
 }

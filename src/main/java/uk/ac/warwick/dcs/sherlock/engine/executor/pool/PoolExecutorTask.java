@@ -160,7 +160,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 								ExecutorUtils.logger.warn("At least one result group for job {} [task {}] does not have it's detection type set, results will be ignored", this.getTask().getJob().getPersistentId(),
 										this.getTask().getPersistentId());
 							}
-							//return null;
+							return null;
 						}
 					}
 					catch (UnknownDetectionTypeException e) {

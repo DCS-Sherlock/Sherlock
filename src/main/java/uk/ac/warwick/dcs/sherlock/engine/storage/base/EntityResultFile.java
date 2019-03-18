@@ -5,7 +5,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IResultFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -14,18 +14,24 @@ public class EntityResultFile implements IResultFile, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne
+	private EntityResultJob jobRes;
+
 	private EntityFile file;
 	private float overallScore;
 
 	private Map<EntityFile, Float> fileScores;
+
+	@OneToMany (mappedBy = "fileRes", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityResultTask> taskResults;
 
 	EntityResultFile() {
 		super();
 	}
 
-	EntityResultFile(EntityFile file) {
+	EntityResultFile(EntityResultJob jobRes, EntityFile file) {
 		super();
+		this.jobRes = jobRes;
 		this.file = file;
 		this.overallScore = 0;
 
@@ -45,8 +51,9 @@ public class EntityResultFile implements IResultFile, Serializable {
 		//Check task not in results first!!!
 
 		if (task instanceof EntityTask) {
-			EntityResultTask t = new EntityResultTask((EntityTask) task);
+			EntityResultTask t = new EntityResultTask(this, (EntityTask) task);
 			this.taskResults.add(t);
+			BaseStorage.instance.database.storeObject(t);
 			return t;
 		}
 
