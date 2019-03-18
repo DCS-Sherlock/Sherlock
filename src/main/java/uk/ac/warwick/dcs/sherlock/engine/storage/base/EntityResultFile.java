@@ -88,8 +88,10 @@ public class EntityResultFile implements IResultFile, Serializable {
 	}
 
 	void remove() {
-		for (EntityResultTask t : this.taskResults) {
-			t.remove();
+		if (this.taskResults != null) {
+			for (EntityResultTask t : this.taskResults) {
+				t.remove();
+			}
 		}
 		BaseStorage.instance.database.removeObject(this);
 	}

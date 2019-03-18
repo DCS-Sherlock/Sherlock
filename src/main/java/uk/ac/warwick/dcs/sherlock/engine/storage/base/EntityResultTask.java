@@ -93,6 +93,7 @@ public class EntityResultTask implements IResultTask, Serializable {
 		for (EntityCodeBlockGroup g : this.containingBlocks) {
 			g.remove();
 		}
+		BaseStorage.instance.database.refreshObject(this);
 		BaseStorage.instance.database.removeObject(this);
 	}
 }
