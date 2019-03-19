@@ -2,9 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.io.File;
 import java.util.*;
 
@@ -28,8 +26,35 @@ public class EmbeddedDatabase {
 		this.dbFactory.close();
 	}
 
+	public Query createQuery(String query) {
+		return em.createQuery(query);
+	}
+
+	public <X> TypedQuery<X> createQuery(String query, Class<X> xclass) {
+		return em.createQuery(query, xclass);
+	}
+
 	public void refreshObject(Object obj) {
 		this.em.refresh(obj);
+	}
+
+	public int executeUpdate(Query query) {
+		if (query != null) {
+			int count;
+			try {
+				em.getTransaction().begin();
+				count = query.executeUpdate();
+				em.getTransaction().commit();
+			}
+			finally {
+				if (em.getTransaction().isActive()) {
+					em.getTransaction().rollback();
+				}
+			}
+			return count;
+		}
+
+		return -1;
 	}
 
 	public void removeObject(Object obj) {

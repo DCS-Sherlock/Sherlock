@@ -14,6 +14,7 @@ import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
+import javax.persistence.Query;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -63,13 +64,15 @@ public class BaseStorage implements IStorageWrapper {
 		});
 
 		List<Long> fids = this.database.runQuery("SELECT f from File f", EntityFile.class).stream().map(EntityFile::getPersistentId).collect(Collectors.toList());
-		jobs.stream().filter(j ->  !fids.containsAll(j.getFilesList())).forEach(j -> j.setStatus(WorkStatus.MISSING_FILES));
+		jobs.stream().filter(j -> !fids.containsAll(j.getFilesList())).forEach(j -> j.setStatus(WorkStatus.MISSING_FILES));
 
 		jobs = jobs.stream().filter(j -> j.getTasks().size() == 0).collect(Collectors.toList());
 		if (jobs.size() > 0) {
 			logger.warn("Removing jobs with no tasks...");
-			this.database.removeObject(jobs);
+			jobs.forEach(EntityJob::remove);
 		}
+
+		this.removeCodeBlockGroups();
 	}
 
 	@Override
@@ -110,6 +113,37 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException {
+		if (!(resultJob instanceof EntityResultJob)) {
+			throw new ResultJobUnsupportedException("IResultJob instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityResultJob res = (EntityResultJob) resultJob;
+
+		if (this.reportManagerCache.containsKey(res.getPersistentId())) {
+			if (this.reportManagerCacheQueue.remove(res.getPersistentId())) {
+				this.reportManagerCacheQueue.add(res.getPersistentId());
+			}
+
+			return this.reportManagerCache.get(res.getPersistentId());
+		}
+		else {
+			long rem = this.reportManagerCacheQueue.remove();
+			if (rem > -1) {
+				this.reportManagerCache.remove(rem);
+			}
+
+			List<ICodeBlockGroup> groups = new LinkedList<>();
+			res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).filter(y -> y.getContainingBlocks() != null).forEach(y -> groups.addAll(y.getContainingBlocks()));
+			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()), groups);
+
+			this.reportManagerCache.put(res.getPersistentId(), manager);
+			this.reportManagerCacheQueue.add(res.getPersistentId());
+
+			return manager;
+		}
+	}
+
+	@Override
 	public ISourceFile getSourceFile(long persistentId) {
 		List<EntityFile> f = this.database.runQuery("SELECT f FROM File f WHERE f.id=" + persistentId, EntityFile.class);
 		if (f.size() != 1) {
@@ -137,37 +171,6 @@ public class BaseStorage implements IStorageWrapper {
 	public List<IWorkspace> getWorkspaces() {
 		List<EntityWorkspace> l = this.database.runQuery("SELECT w FROM Workspace w", EntityWorkspace.class);
 		return new LinkedList<>(l);
-	}
-
-	@Override
-	public ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException {
-		if (!(resultJob instanceof EntityResultJob)) {
-			throw new ResultJobUnsupportedException("IResultJob instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
-		}
-		EntityResultJob res = (EntityResultJob) resultJob;
-
-		if (this.reportManagerCache.containsKey(res.getPersistentId())){
-			if (this.reportManagerCacheQueue.remove(res.getPersistentId())) {
-				this.reportManagerCacheQueue.add(res.getPersistentId());
-			}
-
-			return this.reportManagerCache.get(res.getPersistentId());
-		}
-		else {
-			long rem = this.reportManagerCacheQueue.remove();
-			if (rem > -1) {
-				this.reportManagerCache.remove(rem);
-			}
-
-			List<ICodeBlockGroup> groups = new LinkedList<>();
-			res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).filter(y -> y.getContainingBlocks() != null).forEach(y -> groups.addAll(y.getContainingBlocks()));
-			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()), groups);
-
-			this.reportManagerCache.put(res.getPersistentId(), manager);
-			this.reportManagerCacheQueue.add(res.getPersistentId());
-
-			return manager;
-		}
 	}
 
 	@Override
@@ -220,6 +223,14 @@ public class BaseStorage implements IStorageWrapper {
 		this.database.refreshObject(s);
 	}
 
+	void removeCodeBlockGroups() {
+		Query q = BaseStorage.instance.database.createQuery("DELETE FROM CodeBlockGroup e WHERE e.type = \"---remove---\"");
+		BaseStorage.instance.database.executeUpdate(q);
+
+		q = BaseStorage.instance.database.createQuery("DELETE FROM CodeBlock b WHERE b.size = -5");
+		BaseStorage.instance.database.executeUpdate(q);
+	}
+
 	private void storeArchive(EntityArchive submission, byte[] fileContent) {
 		try {
 			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
@@ -270,7 +281,8 @@ public class BaseStorage implements IStorageWrapper {
 			e.printStackTrace();
 		}
 
-		EntityFile file = new EntityFile(archive, FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), fileContent.length, line, contentLine);
+		EntityFile file =
+				new EntityFile(archive, FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), fileContent.length, line, contentLine);
 		if (!this.filesystem.storeFile(file, fileContent)) {
 			return;
 		}

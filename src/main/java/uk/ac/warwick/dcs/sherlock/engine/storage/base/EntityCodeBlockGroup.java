@@ -8,10 +8,7 @@ import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.*;
 
@@ -21,7 +18,6 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany (mappedBy = "group", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	Map<Long, EntityCodeBlock> blockMap;
 
 	private String type;
@@ -117,13 +113,11 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	}
 
 	void markRemove() {
+		for (EntityCodeBlock e : this.blockMap.values()) {
+			e.markRemove();
+		}
+
 		this.type = "---remove---";
 		BaseStorage.instance.database.storeObject(this);
-	}
-
-	void remove() {
-		BaseStorage.instance.database.refreshObject(this);
-		BaseStorage.instance.database.removeObject(this.blockMap.values());
-		BaseStorage.instance.database.removeObject(this);
 	}
 }

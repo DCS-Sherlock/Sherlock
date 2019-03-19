@@ -59,6 +59,7 @@ public class EntityResultJob implements IResultJob, Serializable {
 			f.remove();
 		}
 		BaseStorage.instance.database.refreshObject(this);
+		BaseStorage.instance.removeCodeBlockGroups();
 		BaseStorage.instance.database.removeObject(this);
 	}
 

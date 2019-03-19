@@ -84,7 +84,7 @@ public class SubmissionResultsData {
             int i = 0;
             List<SubmissionMatch> list = report.GetSubmissionReport(submission1);
             for (SubmissionMatch entry : list) {
-                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFileId1()).collect(Collectors.toList());
+                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile1().getPersistentId()).collect(Collectors.toList());
                 if (files.size() != 1) {
                     break;
                 }
@@ -96,7 +96,7 @@ public class SubmissionResultsData {
                 }
                 ISubmission sub1 = submissions.get(0);
 
-                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFileId2()).collect(Collectors.toList());
+                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile2().getPersistentId()).collect(Collectors.toList());
                 if (files.size() != 1) {
                     break;
                 }
@@ -219,7 +219,7 @@ public class SubmissionResultsData {
             List<SubmissionMatch> list = report.GetSubmissionComparison(compare);
 
             for (SubmissionMatch entry : list) {
-                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFileId1()).collect(Collectors.toList());
+                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile1().getPersistentId()).collect(Collectors.toList());
                 if (files.size() != 1) {
                     break;
                 }
@@ -231,7 +231,7 @@ public class SubmissionResultsData {
                 }
                 ISubmission sub1 = submissions.get(0);
 
-                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFileId2()).collect(Collectors.toList());
+                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile2().getPersistentId()).collect(Collectors.toList());
                 if (files.size() != 1) {
                     break;
                 }

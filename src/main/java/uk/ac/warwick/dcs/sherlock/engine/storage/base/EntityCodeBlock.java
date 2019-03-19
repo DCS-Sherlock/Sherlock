@@ -6,7 +6,6 @@ import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.*;
@@ -16,7 +15,6 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne
 	private EntityCodeBlockGroup group;
 
 	private EntityFile file;
@@ -31,6 +29,7 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 
 	EntityCodeBlock(EntityCodeBlockGroup group, EntityFile file, float score, ITuple<Integer, Integer> lines) {
 		super();
+		this.group = group;
 		this.file = file;
 		this.score = score;
 
@@ -75,8 +74,8 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		lines.forEach(this::addLineToList);
 	}
 
-	void remove() {
-		BaseStorage.instance.database.removeObject(this);
+	void markRemove() {
+		this.size = -5;
 	}
 
 	private void addLineToList(ITuple<Integer, Integer> line) {
