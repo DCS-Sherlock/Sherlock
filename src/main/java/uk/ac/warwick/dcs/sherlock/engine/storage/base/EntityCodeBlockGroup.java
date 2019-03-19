@@ -118,6 +118,5 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 		}
 
 		this.type = "---remove---";
-		BaseStorage.instance.database.storeObject(this);
 	}
 }

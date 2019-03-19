@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
@@ -172,7 +171,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 						return null;
 					}
 
-					List<ICodeBlockGroup> gs = processedResults.getGroups();
+					/*List<ICodeBlockGroup> gs = processedResults.getGroups();
 					synchronized (ExecutorUtils.logger) {
 						ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
 						for (ICodeBlockGroup g : gs) {
@@ -181,7 +180,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 							g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {} - {}%", x.getFile(), x.getLineNumbers().toString(), x.getBlockScore() * 100));
 							System.out.println();
 						}
-					}
+					}*/
 
 					return processedResults;
 				}

@@ -38,7 +38,11 @@ public class PoolExecutorJob implements Runnable {
 	}
 
 	public JobStatus getStatus() {
-		return status;
+		return this.status;
+	}
+
+	public IJob getJob() {
+		return this.job;
 	}
 
 	@Override
@@ -48,10 +52,7 @@ public class PoolExecutorJob implements Runnable {
 
 		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS) && tasks.size() > 0) {
 			job.setStatus(WorkStatus.ACTIVE);
-
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.info("Job {} preprocessing", job.getPersistentId());
-			}
+			this.status.nextStep();
 
 			List<PoolExecutorTask> detTasks = tasks.stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).collect(Collectors.toList());
 
@@ -65,10 +66,7 @@ public class PoolExecutorJob implements Runnable {
 				}
 			}).forEach(detTasks::remove);
 
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.info("Job {} detecting", job.getPersistentId());
-			}
-
+			this.status.nextStep();
 			try {
 				exServ.invokeAll(detTasks);
 			}
@@ -77,10 +75,7 @@ public class PoolExecutorJob implements Runnable {
 			}
 			job.setStatus(WorkStatus.REGEN_RESULTS);
 		}
-
-		synchronized (ExecutorUtils.logger) {
-			ExecutorUtils.logger.info("Job {} postprocessing", job.getPersistentId());
-		}
+		this.status.setStep(4);
 
 		// do the post stuff
 		tasks.forEach(x -> x.callType = 2);
@@ -101,9 +96,7 @@ public class PoolExecutorJob implements Runnable {
 		}
 
 		if (results.size() > 0) {
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.info("Job {} finalising", job.getPersistentId());
-			}
+			this.status.nextStep();
 
 			List<ICodeBlockGroup> allGroups = results.stream().flatMap(f -> f.getValue().getGroups().stream()).collect(Collectors.toList());
 			SherlockEngine.storage.storeCodeBlockGroups(allGroups);
@@ -144,8 +137,6 @@ public class PoolExecutorJob implements Runnable {
 				}
 				fileRes.setOverallScore(ExecutorUtils.aggregateScores(fileRes.getFileScores().values()));
 			}
-
-			//jobRes.store();
 		}
 		else {
 			synchronized (ExecutorUtils.logger) {

@@ -7,7 +7,9 @@ import java.util.*;
 
 public interface IExecutor {
 
-	List<IJob> getCurrentJobs();
+	List<JobStatus> getAllJobStatuses();
+
+	List<IJob> getWaitingJobs();
 
 	JobStatus getJobStatus(IJob job);
 

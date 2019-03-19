@@ -29,7 +29,7 @@ import java.util.stream.*;
 public class TestResultsFactory implements IExecutor {
 
 	@Override
-	public List<IJob> getCurrentJobs() {
+	public List<IJob> getWaitingJobs() {
 		return null;
 	}
 
