@@ -53,8 +53,7 @@ public class SherlockEngine {
 	private boolean valid;
 
 	public SherlockEngine(Side side) {
-		SherlockEngine.classloader = new URLClassLoader(new URL[0], this.getClass().getClassLoader());
-		//AnnotationLoader.replaceSystemClassLoader();
+		SherlockEngine.classloader = new URLClassLoader(new URL[0], this.getClass().getClassLoader()); // Custom classloader for the modules
 
 		this.valid = false;
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
