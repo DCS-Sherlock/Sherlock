@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<table class="table table-hover table-borderless" data-js="table">
+    <thead class="d-none">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="acc : ${accounts}">
+        <tr>
+            <th class="align-middle">
+                <h5 class="mb-0">
+                    <span th:text="${acc.getUsername()}"></span>
+                </h5>
+            </th>
+            <td class="align-middle">
+                <span th:text="${acc.getEmail()}"></span>
+            </td>
+            <td class="align-middle">
+                <th:block th:each="role : ${acc.getRoles()}">
+                    <span class="badge badge-info" th:text="${role.getName()}"></span>
+                </th:block>
+            </td>
+            <td class="align-middle text-right">
+                <div class="btn-group btn-group-sm float-right">
+                    <a class="btn btn-primary btn-sm" data-js='modal' th:classappend="${account.getId() == acc.getId() ? 'disabled' : ''}" th:href="@{/admin/manage/{id}(id=${acc.getId()})}" th:text="#{link.manage}"></a>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:classappend="${account.getId() == acc.getId() ? 'disabled' : ''}">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" th:if="${account.getId() == acc.getId() ? 'disabled' : ''}">
+                        <a class="dropdown-item" data-js='modal'  th:href="@{/admin/password/{id}(id=${acc.getId()})}" th:text="#{link.password}"></a>
+                        <a class="dropdown-item" data-js='modal' th:href="@{/admin/delete/{id}(id=${acc.getId()})}" th:text="#{link.delete}"></a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </th:block>
+    <tr th:if="${accounts.empty}">
+        <th>
+            <h5 class="mb-0">
+                <span th:text="#{admin.accounts.none}"></span>
+            </h5>
+        </th>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

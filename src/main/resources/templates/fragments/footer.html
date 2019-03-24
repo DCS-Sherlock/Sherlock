@@ -4,8 +4,8 @@
 </head>
 
 <body>
-    <footer th:fragment="footer" class="blog-footer">
-        <p><span th:text="#{footer_name}"></span> &copy; <a href="https://github.com/DCS-Sherlock/" target="_blank" th:text="#{footer_link}"></a> <span th:text="${#dates.format(#dates.createNow(),'YYYY')}"></span></p>
+    <footer th:fragment="footer" class="blog-footer d-print-none">
+        <p><span th:text="#{footer.name}"></span> &copy; <a href="https://github.com/DCS-Sherlock/" target="_blank" th:text="#{footer.link}"></a> <span th:text="${#dates.format(#dates.createNow(),'YYYY')}"></span></p>
     </footer>
 </body>
 </html>

@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
@@ -66,7 +67,7 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public Class<? extends IDetector> getDetector() {
 		try {
-			return (Class<? extends IDetector>) Class.forName(this.detector);
+			return (Class<? extends IDetector>) Class.forName(this.detector, true, SherlockEngine.classloader);
 		}
 		catch (Exception e) {
 			logger.error("Issue getting detector for task {}", this.id);
@@ -203,6 +204,11 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.paramMap.put(paramObj.getReference(), value);
 		BaseStorage.instance.database.storeObject(this);
 		return true;
+	}
+
+	void remove() {
+		BaseStorage.instance.filesystem.removeTaskRawResults(this);
+		BaseStorage.instance.database.removeObject(this);
 	}
 
 	void setRawResultsNoStore(List<AbstractModelTaskRawResult> rawResults) {

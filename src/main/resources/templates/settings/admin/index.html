@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='admin'">
+<head>
+    <title th:text="#{admin.title}"></title>
+</head>
+<body>
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1" th:text="#{admin.title}"></h4>
+                    <div class="btn-toolbar float-right">
+                        <div class="btn-group">
+                            <a class="btn btn-primary" data-js='modal' th:href="@{/admin/add}" th:text="#{link.add_new}"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 th:text="#{admin.accounts.title}"></h5>
+                    <div th:replace="fragments/js-area :: js-area(areaid='list-parent', arealink=@{/admin/list})"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

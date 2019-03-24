@@ -10,6 +10,15 @@ public interface IResultJob {
 
 	List<IResultFile> getFileResults();
 
+	/**
+	 * The unique id for the job result
+	 *
+	 * @return the unique id
+	 */
+	long getPersistentId();
+
+	void remove();
+
 	void store();
 
 }

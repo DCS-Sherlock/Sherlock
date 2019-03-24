@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/default}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{results.network.title}"></title>
+</head>
+<body>
+
+<main role="main" class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="float-left mt-1">
+                        <span th:text="#{results.network.title}"></span>
+                        <a class="btn btn-sm btn-outline-primary"
+                           th:if="${start == '-1'}"
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${results.getPersistentId()})}"
+                           th:text="#{results.return}"></a>
+                        <a class="btn btn-sm btn-outline-primary"
+                           th:unless="${start == '-1'}"
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/report/{submission}(id=${workspace.getId()},job_id=${results.getPersistentId()},submission=${start})}"
+                           th:text="#{results.report.return}"></a>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="container" >
+                        <div class="row">
+                            <button data-js="nodeMatches" class="btn btn-primary mr-3" th:text="#{link.add_matches}"></button>
+                            <div class="btn-group">
+                                <button data-js="edgeDelete" class="btn btn-primary" th:text="#{link.remove_edge}"></button>
+                                <button data-js="nodeDelete" class="btn btn-primary mr-3" th:text="#{link.remove_node}"></button>
+                            </div>
+                            <a data-js="graphDownload" href='#' download="graph.png" class="btn btn-primary mr-3" th:text="#{link.download_graph}"></a>
+                            <a class="btn btn-primary" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.reset_graph}"></a>
+                        </div>
+                        <script>
+                            function graphData() {
+                                return JSON.parse('[(${results.getJSONMap()})]');
+                            }
+                        </script>
+                        <div data-js="networkArea">
+                            <div class="row mt-3">
+                                <div class="col-lg-12">
+                                    <div id="network-graph" class="border border-primary" style="height: 600px"></div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <h5>
+                                        <span th:text="#{results.network.visible}"></span>
+                                    </h5>
+                                    <table class="table table-hover table-borderless">
+                                        <tbody id="network-included">
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-included-template">
+                                            <tr>
+                                                <th class="align-middle">
+                                                    <h5 class="mb-0 js-label"></h5>
+                                                </th>
+                                                <td class="align-middle text-right">
+                                                    <div class="btn-group">
+                                                        <button data-js="submissionMatches" class="btn btn-primary btn-sm js-id" th:text="#{link.add_matches}"></button>
+                                                        <button data-js="submissionDelete" class="btn btn-primary btn-sm js-id" th:text="#{link.remove}"></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-included-template-empty">
+                                            <tr>
+                                                <th>
+                                                    <h5 class="mb-0">
+                                                        <span th:text="#{results.network.none_visible}"></span>
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h5>
+                                        <span th:text="#{results.network.hidden}"></span>
+                                    </h5>
+                                    <table class="table table-hover table-borderless">
+                                        <tbody id="network-excluded">
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-excluded-template">
+                                            <tr>
+                                                <th class="align-middle">
+                                                    <h5 class="mb-0 js-label">
+                                                    </h5>
+                                                </th>
+                                                <td class="align-middle text-right">
+                                                    <button data-js="submissionAdd" class="btn btn-primary btn-sm js-id" th:text="#{link.add}"></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="d-none">
+                                        <tbody id="network-excluded-template-empty">
+                                            <tr>
+                                                <th>
+                                                    <h5 class="mb-0">
+                                                        <span th:text="#{results.network.none_hidden}"></span>
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

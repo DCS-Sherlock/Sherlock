@@ -81,6 +81,38 @@ public class BaseStorageFilesystem {
 	}
 
 	/**
+	 * Removes a file from the filesystem
+	 * @param file file to remove
+	 */
+	void removeFile(EntityFile file) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
+			return;
+		}
+
+		String tmp = this.computeLocator(this.computeFileIdentifier(file));
+		if (filesInStore.contains(tmp)) {
+			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
+		}
+	}
+
+	/**
+	 * Removes a tasks raw results object from the filesystem
+	 * @param task task to remove
+	 */
+	void removeTaskRawResults(EntityTask task) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
+			return;
+		}
+
+		String tmp = this.computeLocator(this.computeTaskIdentifier(task));
+		if (filesInStore.contains(tmp)) {
+			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
+		}
+	}
+
+	/**
 	 * Stores a tasks raw results on the filesystem
 	 *
 	 * @param task task to store
@@ -111,13 +143,8 @@ public class BaseStorageFilesystem {
 	 * @return Objects to be removed from the database (files and tasks)
 	 */
 	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
-		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
-
-		List<String> filesInStore;
-		try {
-			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
-		}
-		catch (Exception e) {
+		List<String> filesInStore = this.getAllFiles();
+		if (filesInStore == null) {
 			return null;
 		}
 
@@ -171,7 +198,7 @@ public class BaseStorageFilesystem {
 	}
 
 	private String getArchiveName(EntityArchive archive) {
-		return archive != null ? archive.getFilename() + this.getArchiveName(archive.getParent()) : "";
+		return archive != null ? archive.getName() + this.getArchiveName(archive.getParent()) : "";
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {
@@ -277,11 +304,27 @@ public class BaseStorageFilesystem {
 				FileUtils.writeByteArrayToFile(fileToStore, content);
 			}
 		}
-		catch (IOException | IllegalBlockSizeException | InvalidParameterSpecException | BadPaddingException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException e) {
+		catch (IOException | IllegalBlockSizeException | InvalidParameterSpecException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
+		}
+		catch (InvalidKeyException e) {
+			logger.error("Error generating encryption key, file encryption can be disabled in the config file", e);
 		}
 
 		return true;
+	}
+
+	private List<String> getAllFiles() {
+		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
+		List<String> filesInStore;
+		try {
+			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
+		}
+		catch (Exception e) {
+			return null;
+		}
+
+		return filesInStore;
 	}
 
 	/**

@@ -5,7 +5,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IResultFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -14,37 +14,46 @@ public class EntityResultFile implements IResultFile, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne
+	private EntityResultJob jobRes;
+
 	private EntityFile file;
 	private float overallScore;
 
-	private Map<EntityFile, Float> overallFileScores;
+	private Map<EntityFile, Float> fileScores;
+
+	@OneToMany (mappedBy = "fileRes", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityResultTask> taskResults;
 
 	EntityResultFile() {
 		super();
 	}
 
-	EntityResultFile(EntityFile file) {
+	EntityResultFile(EntityResultJob jobRes, EntityFile file) {
 		super();
+		this.jobRes = jobRes;
 		this.file = file;
 		this.overallScore = 0;
 
-		this.overallFileScores = new HashMap<>();
+		this.fileScores = new HashMap<>();
 		this.taskResults = new LinkedList<>();
 	}
 
-	/*@Override
-	public boolean addFileScore(ISourceFile file, float score) {
-		return false;
-	}*/
+	@Override
+	public void addFileScore(ISourceFile file, float score) {
+		if (file instanceof EntityFile) {
+			this.fileScores.put((EntityFile) file, score);
+		}
+	}
 
 	@Override
 	public IResultTask addTaskResult(ITask task) {
 		//Check task not in results first!!!
 
 		if (task instanceof EntityTask) {
-			EntityResultTask t = new EntityResultTask((EntityTask) task);
+			EntityResultTask t = new EntityResultTask(this, (EntityTask) task);
 			this.taskResults.add(t);
+			BaseStorage.instance.database.storeObject(t);
 			return t;
 		}
 
@@ -57,8 +66,17 @@ public class EntityResultFile implements IResultFile, Serializable {
 	}
 
 	@Override
-	public Map<ISourceFile, Float> getOverallFileScores() {
-		return new HashMap<>(this.overallFileScores);
+	public float getFileScore(ISourceFile file) {
+		if (file instanceof EntityFile) {
+			return this.fileScores.getOrDefault(file, 0f);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public Map<ISourceFile, Float> getFileScores() {
+		return new HashMap<>(this.fileScores);
 	}
 
 	@Override
@@ -66,14 +84,23 @@ public class EntityResultFile implements IResultFile, Serializable {
 		return this.overallScore;
 	}
 
-	/*@Override
+	@Override
 	public void setOverallScore(float score) {
 		this.overallScore = score;
-	}*/
+	}
 
 	@Override
 	public List<IResultTask> getTaskResults() {
 		return new LinkedList<>(this.taskResults);
+	}
+
+	void remove() {
+		if (this.taskResults != null) {
+			for (EntityResultTask t : this.taskResults) {
+				t.remove();
+			}
+		}
+		BaseStorage.instance.database.removeObject(this);
 	}
 
 	List<Object> store() {

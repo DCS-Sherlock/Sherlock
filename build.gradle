@@ -9,6 +9,8 @@ plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "org.ajoberstar.grgit" version "3.0.0"
     id "idea"
+    id "com.eriwen.gradle.js" version "2.14.1"
+    id "com.github.salomonbrys.gradle.sass" version "1.2.0"
 }
 
 apply plugin: 'project-report'
@@ -30,19 +32,19 @@ repositories {
 }
 
 dependencies {
-    antlr 'org.antlr:antlr4:4.7.1'
+    antlr 'org.antlr:antlr4:4.7.2'
 
     implementation (
-            'org.antlr:antlr4-runtime:4.7.1',
-            'com.google.guava:guava:26.0-jre',
-            'org.reflections:reflections:0.9.10',
+            'org.antlr:antlr4-runtime:4.7.2',
+            'com.google.guava:guava:27.0.1-jre',
+            'org.reflections:reflections:0.9.11',
             'commons-io:commons-io:2.6',
-            'org.apache.commons:commons-lang3:3.8.1',
-            'commons-codec:commons-codec:1.11',
-            'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.3',
+            'org.apache.commons:commons-lang3',
+            'commons-codec:commons-codec',
+            'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.4',
             'javax.transaction:jta:1.1',
             'com.objectdb:objectdb:2.7.6',
-            'org.yaml:snakeyaml:1.23',
+            'org.yaml:snakeyaml',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-mail',
@@ -54,9 +56,10 @@ dependencies {
             'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect',
             'org.thymeleaf.extras:thymeleaf-extras-springsecurity5',
             'org.springframework.boot:spring-boot-devtools',
-            'javax.xml.bind:jaxb-api:2.3.0',
+            'javax.xml.bind:jaxb-api',
             'com.h2database:h2',
-            'mysql:mysql-connector-java'
+            'mysql:mysql-connector-java',
+            'org.json:json:20180813'
     )
 
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
@@ -67,8 +70,7 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-test',
             'org.springframework.security:spring-security-test',
             'org.junit.jupiter:junit-jupiter-api:5.3.1',
-            'org.junit.jupiter:junit-jupiter-params:5.3.1',
-            'commons-io:commons-io:2.6'
+            'org.junit.jupiter:junit-jupiter-params:5.3.1'
     )
 
     testRuntimeOnly(
@@ -180,6 +182,8 @@ jar {
 }
 
 bootJar {
+    dependsOn minifyJs
+    dependsOn sassCompile
     destinationDir = file("$buildDir/out")
     mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
     manifest {
@@ -197,6 +201,8 @@ bootJar {
 jar.dependsOn bootJar
 
 bootWar {
+    dependsOn minifyJs
+    dependsOn sassCompile
     destinationDir = file("$buildDir/out")
     mainClassName = 'uk.ac.warwick.dcs.sherlock.launch.SherlockServer'
     manifest {
@@ -214,6 +220,8 @@ war.dependsOn bootWar
 assemble.dependsOn jar
 
 bootRun {
+    dependsOn minifyJs
+    dependsOn sassCompile
     main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
 }
 
@@ -227,6 +235,40 @@ task branchSetup {
             fileset(dir: project.projectDir, includes: 'README.md')
         }
     }
+}
+
+combineJs.doFirst {
+    delete "${projectDir}/src/main/resources/static/js/default.js"
+}
+combineJs {
+    encoding = "UTF-8"
+    source = [
+            "${projectDir}/src/main/javascript/jquery.min.js",
+            "${projectDir}/src/main/javascript/popper.min.js",
+            "${projectDir}/src/main/javascript/bootstrap.min.js",
+            "${projectDir}/src/main/javascript/datatables.min.js",
+            "${projectDir}/src/main/javascript/loader.js",
+            "${projectDir}/src/main/javascript/vis.min.js",
+            "${projectDir}/src/main/javascript/prism.js",
+            "${projectDir}/src/main/javascript/custom.js"
+    ]
+    dest = file("${projectDir}/src/main/resources/static/js/default.js")
+}
+
+minifyJs.doFirst {
+    delete "${projectDir}/src/main/resources/static/js/default.min.js"
+}
+minifyJs {
+    source = combineJs
+    dest = file("${projectDir}/src/main/resources/static/js/default.min.js")
+    closure {
+        warningLevel = 'QUIET'
+    }
+}
+
+sassCompile {
+    style = compressed
+    outputDir = file("src/main/resources/static/css")
 }
 
 class TagSupport {

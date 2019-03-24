@@ -2,11 +2,13 @@ package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.*;
 
 @Entity (name = "Workspace")
 public class EntityWorkspace implements IWorkspace, Serializable {
@@ -21,10 +23,10 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	private String lang;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityFile> files = new ArrayList<>();
+	private List<EntityArchive> submissions;
 
 	@OneToMany (mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<EntityJob> jobs = new ArrayList<>();
+	private List<EntityJob> jobs;
 
 	public EntityWorkspace() {
 		super();
@@ -46,12 +48,29 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public List<ISourceFile> getFiles() {
 		BaseStorage.instance.database.refreshObject(this);
-		return new LinkedList<>(this.files);
+		if (this.submissions == null) {
+			return null;
+		}
+
+		return this.submissions.stream().map(EntityArchive::getAllFiles).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ISubmission> getSubmissions() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.submissions == null) {
+			return null;
+		}
+
+		return new LinkedList<>(this.submissions);
 	}
 
 	@Override
 	public List<IJob> getJobs() {
 		BaseStorage.instance.database.refreshObject(this);
+		if (this.jobs == null) {
+			return null;
+		}
 		return new LinkedList<>(this.jobs);
 	}
 
@@ -78,6 +97,20 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public long getPersistentId() {
 		return id;
+	}
+
+	@Override
+	public void remove() {
+		for (EntityArchive a : this.submissions) {
+			a.remove();
+		}
+
+		for (EntityJob j : this.jobs) {
+			j.remove();
+		}
+
+		BaseStorage.instance.database.refreshObject(this);
+		BaseStorage.instance.database.removeObject(this);
 	}
 
 	private void storeName(String name) {

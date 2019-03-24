@@ -281,7 +281,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			ArrayList<IndexedString> linesF2 = new ArrayList<IndexedString>(this.file2.getPreProcessedLines("no_whitespace"));
 
 			// make
-			// TODO check this is valid init form (not sure of the ints are needed)
 			res = new NGramRawResult<>(this.file1.getFile(), this.file2.getFile());
 
 			// generate the N-grams for file 1 and load them into a hash map
@@ -353,7 +352,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 					// nothing substantial has flagged, reset lists
 					if (reference.size() == minimum_window && sim_val < threshold) {
-						System.out.println("miss");
+//						System.out.println("miss");
 						// if another case of the starting N-gram exists in the other file move to that and reperform the check
 						if (storage_map.containsKey(reference.get(0).getNgram() + (ngram_id + 1))) {
 							// move file position back to apropriete N-gram
@@ -368,7 +367,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 						last_val = 0.0f;                    // if value drops window has reached max useful length
 					}
 					else if (reference.size() > minimum_window && sim_val < threshold) {
-						System.out.println("hit1");
+//						System.out.println("hit1");
 						matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 						ngram_id = 0;
 						// set head to null so a new reference can be made
@@ -380,7 +379,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 				}
 			}
 			if (compare(reference, check) > threshold) {
-				System.out.println("hit2");
+//				System.out.println("hit2");
 				// if at EOF there is a match then output it
 				matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 				ngram_id = 0;

@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.pool.PoolExecutorJob;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 
 public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
@@ -16,6 +17,8 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	private ExecutorService exec;
 	private ExecutorService execScheduler;
 
+	private int curID;
+
 	public PoolExecutor() {
 		this.scheduler = new PriorityWorkScheduler();
 
@@ -23,6 +26,8 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		this.execScheduler = Executors.newSingleThreadExecutor();
 		this.queue = new PriorityBlockingQueue(5, Comparator.comparing(PoolExecutorJob::getPriority));
 		this.jobMap = new HashMap<>();
+
+		this.curID = 0;
 
 		this.execScheduler.execute(() -> {
 			while (true) {
@@ -34,6 +39,8 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 						ExecutorUtils.logger.info("Job {} starting", job.getId());
 					}
 
+					this.getAllJobStatuses().forEach(x -> System.out.println(x.getMessage()));
+
 					job.getStatus().startJob();
 
 					Future f = this.exec.submit(job);
@@ -41,8 +48,23 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 					job.getStatus().finishJob();
 
+					//Remove after a minute
+					Runnable runnable = () -> {
+						try {
+							Thread.sleep(60000);
+							synchronized (this.jobMap) {
+								this.jobMap.remove(job.getJob());
+							}
+						}
+						catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					};
+					Thread thread = new Thread(runnable);
+					thread.start();
+
 					synchronized (ExecutorUtils.logger) {
-						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().formatDuration());
+						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().getFormattedDuration());
 					}
 				}
 				catch (InterruptedException | ExecutionException e) {
@@ -53,13 +75,25 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	}
 
 	@Override
-	public List<IJob> getCurrentJobs() {
-		return null;
+	public List<JobStatus> getAllJobStatuses() {
+		List<JobStatus> res;
+		synchronized (this.jobMap) {
+			 res = new ArrayList<>(this.jobMap.values());
+		}
+		res.sort(JobStatus::compareTo);
+		return res;
+	}
+
+	@Override
+	public List<IJob> getWaitingJobs() {
+		return this.queue.stream().map(PoolExecutorJob::getJob).collect(Collectors.toList());
 	}
 
 	@Override
 	public JobStatus getJobStatus(IJob job) {
-		return null;
+		synchronized (this.jobMap) {
+			return this.jobMap.getOrDefault(job, null);
+		}
 	}
 
 	@Override
@@ -115,13 +149,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 			return false;
 		}
 
-		/*List<ISourceFile> f = job.getWorkspace().getFiles();
-		IResultJob res = job.createNewResult();
-		res.addFile(f.get(0));
-		res.addFile(f.get(1));*/
-
-		JobStatus s = new JobStatus(Priority.DEFAULT);
-
+		JobStatus s = new JobStatus(curID++, Priority.DEFAULT);
 		synchronized (this.jobMap) {
 			this.jobMap.put(job, s);
 		}

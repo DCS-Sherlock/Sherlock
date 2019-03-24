@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<div id="chart_div"></div>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    window.onresize = drawChart;
+
+    function drawChart() {
+        var scoreText = '[(#{results.graph.score})]';
+        var submissionText = '[(#{results.graph.submissions})]';
+        var score_0_10 = '[(#{results.graph.0_10})]';
+        var score_10_20 = '[(#{results.graph.10_20})]';
+        var score_20_30 = '[(#{results.graph.20_30})]';
+        var score_30_40 = '[(#{results.graph.30_40})]';
+        var score_40_50 = '[(#{results.graph.40_50})]';
+        var score_50_60 = '[(#{results.graph.50_60})]';
+        var score_60_70 = '[(#{results.graph.60_70})]';
+        var score_70_80 = '[(#{results.graph.70_80})]';
+        var score_80_90 = '[(#{results.graph.80_90})]';
+        var score_90_100 = '[(#{results.graph.90_100})]';
+
+        var data = google.visualization.arrayToDataTable([
+            [scoreText, submissionText],
+            [score_0_10, [(${results.getGroupCounts().get(0)})]],
+            [score_10_20, [(${results.getGroupCounts().get(1)})]],
+            [score_20_30, [(${results.getGroupCounts().get(2)})]],
+            [score_30_40, [(${results.getGroupCounts().get(3)})]],
+            [score_40_50, [(${results.getGroupCounts().get(4)})]],
+            [score_50_60, [(${results.getGroupCounts().get(5)})]],
+            [score_60_70, [(${results.getGroupCounts().get(6)})]],
+            [score_70_80, [(${results.getGroupCounts().get(7)})]],
+            [score_80_90, [(${results.getGroupCounts().get(8)})]],
+            [score_90_100, [(${results.getGroupCounts().get(9)})]]
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            legend: { position: "none" },
+            height: 400,
+            chartArea: {left:100, right:10, bottom: 100, top: 10},
+            backgroundColor: '#4E5D6C',
+            colors: ['#f47b2a'],
+            vAxis: {
+                title: scoreText,
+                textStyle: {
+                    color: '#fff',
+                },
+                titleTextStyle: {
+                    color: '#fff',
+                },
+                gridlines: {
+                    color: "#4E5D6C"
+                },
+                baselineColor: '#4E5D6C',
+                format: '0'
+            },
+            hAxis: {
+                title: submissionText,
+                textStyle: {
+                    color: '#fff',
+                },
+                titleTextStyle: {
+                    color: '#fff',
+                },
+                gridlines: {
+                    color: "#fff"
+                },
+                baselineColor: '#4E5D6C',
+                format: '0'
+            }
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById("chart_div"));
+        chart.draw(view, options);
+    }
+</script>
+
+</body>
+</html>

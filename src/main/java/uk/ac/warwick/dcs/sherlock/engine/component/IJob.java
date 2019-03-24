@@ -45,13 +45,6 @@ public interface IJob {
 	long getPersistentId();
 
 	/**
-	 * get the list of processed results for this job
-	 *
-	 * @return all processed results
-	 */
-	List<IResultJob> getResults();
-
-	/**
 	 * Returns the status of the job
 	 *
 	 * @return the stored status
@@ -110,4 +103,9 @@ public interface IJob {
 	 * @return returns true if removed, false if not present in the job or the job has been prepared
 	 */
 	boolean removeDetector(Class<? extends IDetector> det);
+
+	/**
+	 * Delete the job, all tasks and results. Cannot be undone
+	 */
+	void remove();
 }

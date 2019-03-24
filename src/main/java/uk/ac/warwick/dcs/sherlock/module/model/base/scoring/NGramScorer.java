@@ -50,31 +50,47 @@ public class NGramScorer implements IScoreFunction {
 	 *
 	 * @return Total similarity score for all relevant file match pairs
 	 */
+	// TODO: alter to give out whole file similarity accounting for non-match lines
 	@Override
 	public float score(ISourceFile mainFile, ISourceFile referenceFile, List<ICodeBlockGroup> mutualGroups) {
-//		return 0;
-		// add a 3rd list which contains all match cases where the file is first in a pair
-		// search this list for both files, and where the pair is the 2 files add the score to an accumulator
-		int index = match_list.lastIndexOf(mainFile);
+		// counter for total score
 		float accumulator = 0.0f;
-		// for every file matched with the main file, find where the file was the reference file
-		for (NgramMatch match : file_matches.get(index).matches) {
-			if (match.file2.equals(referenceFile)) {
-				// where the match is between the 2 files passed increment the accumulator
-				accumulator += match.similarity;
+		// instance multiplier for each match based on it's line size
+		int line_multiplier = 1;
+		// check if first file is in list
+		int index = match_list.lastIndexOf(mainFile);
+		// if not in list then is paired with something in the list so check second file
+		if (index == -1) {
+			index = match_list.lastIndexOf(referenceFile);
+			// if not in the list print debug message
+			// TODO: turn this into exception handling
+			if (index == -1) {
+				System.out.println("File pair: (" + mainFile.getFileDisplayName() + ", " + referenceFile.getFileDisplayName() + ") cannot be found in list of files:");
+				for (ISourceFile file : match_list ) {
+					System.out.println(file.getFileDisplayName());
+				}
+			}
+			// where the match is between the 2 files passed increment the accumulator
+			for (NgramMatch match : file_matches.get(index).matches) {
+				if (match.file1.equals(mainFile)) {
+					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+					accumulator += match.similarity * line_multiplier;
+				}
+			}
+		} else {
+			// where the match is between the 2 files passed increment the accumulator
+			for (NgramMatch match : file_matches.get(index).matches) {
+				if (match.file2.equals(referenceFile)) {
+					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+					accumulator += match.similarity * line_multiplier;
+				}
 			}
 		}
-		// perform above for opposite match direction
-		// NOTE: (In theory this should never run, and is here for the sake of completeness)
-		index = match_list.lastIndexOf(referenceFile);
-		for (NgramMatch match : file_matches.get(index).matches) {
-			if (match.file1.equals(mainFile)) {
-				// where the match is between the 2 files passed increment the accumulator
-				accumulator += match.similarity;
-			}
-		}
-		// return cumulative score
-		return accumulator;
+		// TODO: resolve issues with overlapping blocks counting as duplicate lines fro the sake of the line count
+		// normalise the score by the size of each file
+		accumulator = (accumulator / mainFile.getTotalLineCount()) + (accumulator / referenceFile.getTotalLineCount());
+		// return cumulative score normalised and averaged over the 2 files
+		return accumulator / 2;
 	}
 
 	/**

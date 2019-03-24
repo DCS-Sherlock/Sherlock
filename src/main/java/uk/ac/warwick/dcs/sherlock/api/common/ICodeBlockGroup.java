@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.common;
 
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
@@ -38,6 +39,15 @@ public interface ICodeBlockGroup {
 	boolean filePresent(ISourceFile file);
 
 	/**
+	 * Tests whether any files in the group belong to the specified submission
+	 *
+	 * @param submissionId the ID of the submission to test
+	 *
+	 * @return true if there is such a file, false otherwise
+	 */
+	boolean submissionIdPresent(long submissionId);
+
+	/**
 	 * return the block of code for a specific file
 	 *
 	 * @param file file to search
@@ -64,19 +74,20 @@ public interface ICodeBlockGroup {
 	void setComment(String comment);
 
 	/**
-	 * TODO It might make more sense if this returns a list of DetectionTypes in case multiple kinds of plagiarism are TODO detected. Not sure; also depends on how the DetectionTypes are decided on by
-	 * the algs in the first place.
+	 * @return the type of plagiarism that was detected for these blocks of code
 	 *
-	 * @return the the type of plagiarism that was detected for these blocks of code
+	 * @throws UnknownDetectionTypeException thrown if the stored identifier is not registered in the current session
 	 */
-	DetectionType getDetectionType();
+	DetectionType getDetectionType() throws UnknownDetectionTypeException;
 
 	/**
 	 * Set the detection type for this block
 	 *
-	 * @param type detection type
+	 * @param detectionTypeIdentifier detection type
+	 *
+	 * @throws UnknownDetectionTypeException thrown if the passed identifier is not registered in the current session
 	 */
-	void setDetectionType(DetectionType type);
+	void setDetectionType(String detectionTypeIdentifier) throws UnknownDetectionTypeException;
 
 	/**
 	 * Check whether the group covers at least two files

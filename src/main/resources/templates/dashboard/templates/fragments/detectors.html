@@ -15,14 +15,14 @@
                 </h6>
             </th>
             <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" data-js="modal" th:href="@{/dashboard/templates/manage/detectors/parameters/{id}(id=${detector.getId()})}" th:text="#{templates_link_manage_parameters}"></a>
+                <a class="btn btn-primary btn-sm" data-js="modal" th:href="@{/dashboard/templates/manage/detectors/{id}/parameters(id=${detector.getId()})}" th:text="#{templates.parameters.link}"></a>
             </td>
         </tr>
     </th:block>
     <tr th:if="${template.getDetectors().empty}">
         <th>
             <h6 class="mb-0">
-                <span th:text="#{templates_detectors_none_msg}"></span>
+                <span th:text="#{templates.detectors.none}"></span>
             </h6>
         </th>
     </tr>

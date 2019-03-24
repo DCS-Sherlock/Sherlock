@@ -12,21 +12,22 @@
             <th class="align-middle">
                 <h6 class="mb-0">
                     <span th:text="${job.getPersistentId()}"></span>
+                    <span class="badge" th:classappend="#{${job.getStatus()+'.badge'}}" th:text="#{${job.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${job.getStatus()+'.tooltip'}}"></span>
                 </h6>
             </th>
             <td>
                 <div class="btn-group btn-group-sm float-right">
                     <a type="button" class="btn btn-primary"
-                       th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
-                       th:text="#{link_view}"></a>
+                       th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
+                       th:text="#{link.view}"></a>
                     <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item"
                            data-js='modal'
-                           th:href="@{/dashboard/workspaces/manage/results/{id}/{job_id}/delete(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
-                           th:text="#{link_delete}"></a>
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/delete(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
+                           th:text="#{link.delete}"></a>
                     </div>
                 </div>
             </td>
@@ -35,58 +36,12 @@
     <tr th:if="${workspace.getJobs().empty}">
         <th>
             <h6 class="mb-0">
-                <span th:text="#{workspaces_results_none_msg}"></span>
+                <span th:text="#{workspaces.results.none}"></span>
             </h6>
         </th>
     </tr>
     </tbody>
 </table>
-
-<!--<th:block th:each="job : ${workspace.getJobs()}">-->
-    <!--<table class="table table-hover table-borderless">-->
-        <!--<tbody>-->
-            <!--<tr>-->
-                <!--<th class="align-middle">-->
-                    <!--<h6 class="mb-0">-->
-                        <!--JOB ID-->
-                        <!--<span th:text="${job.getPersistentId()}"></span>-->
-                    <!--</h6>-->
-                <!--</th>-->
-            <!--</tr>-->
-            <!--<th:block th:each="task : ${job.getTasks()}">-->
-                <!--<tr>-->
-                    <!--<th class="align-middle">-->
-                        <!--<h6 class="mb-0">-->
-                            <!--TASK ID-->
-                            <!--<span th:text="${task.getPersistentId()}"></span>-->
-                        <!--</h6>-->
-                    <!--</th>-->
-                <!--</tr>-->
-                <!--<th:block th:each="result : ${task.getRawResults()}">-->
-                    <!--<tr>-->
-                        <!--<th class="align-middle">-->
-                            <!--<h6 class="mb-0">-->
-                                <!--<span th:text="${result.toString()}"></span>-->
-                            <!--</h6>-->
-                        <!--</th>-->
-                    <!--</tr>-->
-                <!--</th:block>-->
-            <!--</th:block>-->
-        <!--</tbody>-->
-    <!--</table>-->
-<!--</th:block>-->
-
-<!--<table class="table table-hover table-borderless">-->
-    <!--<tbody>-->
-        <!--<tr th:if="${jobs.empty}">-->
-            <!--<th>-->
-                <!--<h6 class="mb-0">-->
-                    <!--<span th:text="#{workspaces_results_none_msg}"></span>-->
-                <!--</h6>-->
-            <!--</th>-->
-        <!--</tr>-->
-    <!--</tbody>-->
-<!--</table>-->
 
 </body>
 </html>

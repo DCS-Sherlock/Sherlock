@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.*;
 
@@ -13,6 +14,9 @@ import java.util.*;
 public class EntityResultTask implements IResultTask, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@ManyToOne
+	private EntityResultFile fileRes;
 
 	private EntityTask task;
 	private float taskScore;
@@ -24,19 +28,15 @@ public class EntityResultTask implements IResultTask, Serializable {
 		super();
 	}
 
-	EntityResultTask(EntityTask task) {
+	EntityResultTask(EntityResultFile fileRes, EntityTask task) {
 		super();
+		this.fileRes = fileRes;
 		this.task = task;
 		this.taskScore = 0;
 
 		this.fileScores = new HashMap<>();
 		this.containingBlocks = new LinkedList<>();
 	}
-
-	/*@Override
-	public void addFileScore(ISourceFile file, float score) {
-
-	}*/
 
 	@Override
 	public void addContainingBlock(ICodeBlockGroup blockGroup) {
@@ -54,8 +54,24 @@ public class EntityResultTask implements IResultTask, Serializable {
 	}
 
 	@Override
+	public void addFileScore(ISourceFile file, float score) {
+		if (file instanceof EntityFile) {
+			this.fileScores.put((EntityFile) file, score);
+		}
+	}
+
+	@Override
 	public List<ICodeBlockGroup> getContainingBlocks() {
 		return new LinkedList(this.containingBlocks);
+	}
+
+	@Override
+	public float getFileScore(ISourceFile file) {
+		if (file instanceof EntityFile) {
+			return this.fileScores.getOrDefault(file, 0f);
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -73,8 +89,13 @@ public class EntityResultTask implements IResultTask, Serializable {
 		return this.taskScore;
 	}
 
-	/*@Override
+	@Override
 	public void setTaskScore(float score) {
+		this.taskScore = score;
+	}
 
-	}*/
+	void remove() {
+		this.containingBlocks.forEach(EntityCodeBlockGroup::markRemove);
+		BaseStorage.instance.database.removeObject(this);
+	}
 }

@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.scoring.IScoreFunction;
 
 import java.util.*;
@@ -64,10 +65,22 @@ public class ModelTaskProcessedResults {
 	/**
 	 * Fetches a list of groups containing the passed file
 	 *
+	 * @param file file present in all groups
 	 * @return list of groups
 	 */
 	public List<ICodeBlockGroup> getGroups(ISourceFile file) {
 		return groups.stream().filter(g -> g.filePresent(file)).collect(Collectors.toList());
+	}
+
+	/**
+	 * Fetches a list of groups containing the passed files
+	 *
+	 * @param file1 file present in all groups
+	 * @param file2 file present in all groups
+	 * @return list of groups
+	 */
+	public List<ICodeBlockGroup> getGroups(ISourceFile file1, ISourceFile file2) {
+		return groups.stream().filter(g -> g.filePresent(file1) && g.filePresent(file2)).collect(Collectors.toList());
 	}
 
 	/**
@@ -80,8 +93,14 @@ public class ModelTaskProcessedResults {
 	/**
 	 * Remove any empty groups from the list
 	 */
-	public boolean cleanGroups() {
+	public boolean cleanGroups() throws UnknownDetectionTypeException {
 		this.groups = this.groups.stream().filter(ICodeBlockGroup::isPopulated).collect(Collectors.toList());
-		return this.groups.stream().anyMatch(x -> x.getDetectionType() == null);
+
+		for (ICodeBlockGroup g :  this.groups) {
+			if (g.getDetectionType() == null) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

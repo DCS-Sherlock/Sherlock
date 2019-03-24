@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{workspaces.submissions.upload}"></title>
+</head>
+<body>
+
+<div id="upload-parent" class="container" layout:fragment="content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{workspaces.submissions.upload}"></h5>
+            </div>
+            <div class="modal-body">
+                <!--<div th:if="${#fields.hasAnyErrors()}">-->
+                    <!--<div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>-->
+                <!--</div>-->
+
+                <h6>
+                    <span th:text="#{workspaces.submissions.upload.num_submissions}"></span>
+                </h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="num_sub" id="num_sub_one" value="num_sub_one_div" data-js="radio-div">
+                    <label class="form-check-label" for="num_sub_one">
+                        <span th:text="#{workspaces.submissions.upload.one}"></span>
+                    </label>
+                </div>
+                <div id="num_sub_one_div" class="card bg-primary num_sub ml-4 d-none">
+                    <div class="card-body">
+                        <h6>
+                            <span th:text="#{workspaces.submissions.upload.num_files}"></span>
+                        </h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="num_file" id="num_file_one" value="num_file_one_div" data-js="radio-div">
+                            <label class="form-check-label" for="num_file_one">
+                                <span th:text="#{workspaces.submissions.upload.one}"></span>
+                            </label>
+                        </div>
+                        <div id="num_file_one_div" class="num_file ml-4 d-none">
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <input type="file" name="files">
+                                        <input type="hidden" name="single" value="true">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="num_file" id="num_file_multi" value="num_file_multi_div" data-js="radio-div">
+                            <label class="form-check-label" for="num_file_multi">
+                                <span th:text="#{workspaces.submissions.upload.multiple}"></span>
+                            </label>
+                        </div>
+                        <div id="num_file_multi_div" class="card num_file ml-4 d-none">
+                            <div class="card-body">
+                                <h6>
+                                    <span th:text="#{workspaces.submissions.upload.single_zip}"></span>
+                                </h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="archive" id="archive_yes" value="archive_yes_div" data-js="radio-div">
+                                    <label class="form-check-label" for="archive_yes">
+                                        <span th:text="#{workspaces.submissions.upload.yes}"></span>
+                                    </label>
+                                </div>
+                                <div id="archive_yes_div" class="archive ml-4 d-none">
+                                    <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <input type="file" name="files" accept=".zip">
+                                                <input type="hidden" name="single" value="true">
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="archive" id="archive_no" value="archive_no_div" data-js="radio-div">
+                                    <label class="form-check-label" for="archive_no">
+                                        <span th:text="#{workspaces.submissions.upload.no}"></span>
+                                    </label>
+                                </div>
+                                <div id="archive_no_div" class="archive ml-4 d-none">
+                                    <span th:text="#{workspaces.submissions.upload.instructions.zip_submission}"></span><a href="https://www.wikihow.com/Make-a-Zip-File" target="_blank" th:text="#{workspaces.submissions.upload.instructions.zip_link}"></a>
+
+                                    <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <input type="file" name="files" accept=".zip">
+                                                <input type="hidden" name="single" value="true">
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="num_sub" id="num_sub_multi" value="num_sub_multi_div" data-js="radio-div">
+                    <label class="form-check-label" for="num_sub_multi">
+                        <span th:text="#{workspaces.submissions.upload.multiple}"></span>
+                    </label>
+                </div>
+                <div id="num_sub_multi_div" class="card bg-primary num_sub ml-4 d-none">
+                    <div class="card-body">
+                        <h6>
+                            <span th:text="#{workspaces.submissions.upload.submission_organisation}"></span>
+                        </h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sub_org" id="sub_org_file" value="sub_org_file_div" data-js="radio-div">
+                            <label class="form-check-label" for="sub_org_file">
+                                <span th:text="#{workspaces.submissions.upload.submission_file}"></span>
+                            </label>
+                        </div>
+                        <div id="sub_org_file_div" class="sub_org ml-4 d-none">
+                            <span th:text="#{workspaces.submissions.upload.instructions.multiple_files}"></span>
+
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <input type="file" name="files" multiple>
+                                        <input type="hidden" name="single" value="true">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sub_org" id="sub_org_folder" value="sub_org_folder_div" data-js="radio-div">
+                            <label class="form-check-label" for="sub_org_folder">
+                                <span th:text="#{workspaces.submissions.upload.submission_folder}"></span>
+                            </label>
+                        </div>
+                        <div id="sub_org_folder_div" class="sub_org ml-4 d-none">
+                            <span th:text="#{workspaces.submissions.upload.instructions.zip_submissions}"></span><a href="https://www.wikihow.com/Make-a-Zip-File" target="_blank" th:text="#{workspaces.submissions.upload.instructions.zip_link}"></a>
+
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <input type="file" name="files" accept=".zip">
+                                        <input type="hidden" name="single" value="false">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sub_org" id="sub_org_archive" value="sub_org_archive_div" data-js="radio-div">
+                            <label class="form-check-label" for="sub_org_archive">
+                                <span th:text="#{workspaces.submissions.upload.submission_archive}"></span>
+                            </label>
+                        </div>
+                        <div id="sub_org_archive_div" class="sub_org ml-4 d-none">
+                            <span th:text="#{workspaces.submissions.upload.instructions.multiple_files}"></span>
+
+                            <form th:action="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" enctype="multipart/form-data" data-js='form' data-js-target="#upload-parent" method="post" class="mt-3">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <input type="file" name="files" accept=".zip" multiple>
+                                        <input type="hidden" name="single" value="true">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.close}"></button>
+                <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.close}"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
+<head>
+    <title th:text="#{submissions.delete.title}"></title>
+</head>
+<body>
+
+<div id="delete-parent" class="container" layout:fragment="content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{submissions.delete.title}"></h5>
+            </div>
+            <form th:action="@{/dashboard/workspaces/manage/{id}/submission/{file_id}/delete(id=${workspace.getId()},file_id=${submission.getId()})}" data-js='form' data-js-target="#delete-parent" method="post">
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" th:text="#{submissions.delete.warning}"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces/manage/{id}(id=${workspace.getId()})}" th:text="#{link.cancel}"></a>
+                    <button type="submit" class="btn btn-primary" th:text="#{link.delete}"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='workspaces'">
 <head>
-    <title th:text="#{workspaces_add_title}"></title>
+    <title th:text="#{workspaces.add.title}"></title>
 </head>
 <body>
 
@@ -9,7 +9,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="#{workspaces_add_title}"></h5>
+                <h5 class="modal-title" th:text="#{workspaces.add.title}"></h5>
             </div>
             <form th:action="@{/dashboard/workspaces/add}" data-js='form' data-js-target="#add-parent" th:object="${workspaceForm}" method="post">
                 <div class="modal-body">
@@ -19,14 +19,14 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="name" th:text="#{variable_name}"></label>
-                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable_name}" th:value="*{name}" />
+                            <label for="name" th:text="#{variable.name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable.name}" th:value="*{name}" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label  th:for="*{language}" th:text="#{variable_language}"></label>
+                            <label  th:for="*{language}" th:text="#{variable.language}"></label>
                             <select class="form-control" th:field="*{language}">
                                 <option th:each="language : ${languageList}"
                                         th:value="${language}"
@@ -37,9 +37,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link_cancel}"></button>
-                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link_cancel}"></a>
-                    <button type="submit" class="btn btn-primary" th:text="#{link_save}"></button>
+                    <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link.cancel}"></a>
+                    <button type="submit" class="btn btn-primary" th:text="#{link.save}"></button>
                 </div>
             </form>
         </div>

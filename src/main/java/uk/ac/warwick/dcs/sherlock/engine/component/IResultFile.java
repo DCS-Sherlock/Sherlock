@@ -6,17 +6,19 @@ import java.util.*;
 
 public interface IResultFile {
 
-	/*boolean addFileScore(ISourceFile file, float score);*/
+	void addFileScore(ISourceFile file, float score);
 
 	IResultTask addTaskResult(ITask task);
 
 	ISourceFile getFile();
 
-	Map<ISourceFile, Float> getOverallFileScores();
+	float getFileScore(ISourceFile file);
+
+	Map<ISourceFile, Float> getFileScores();
 
 	float getOverallScore();
 
-	/*void setOverallScore(float score);*/
+	void setOverallScore(float score);
 
 	List<IResultTask> getTaskResults();
 

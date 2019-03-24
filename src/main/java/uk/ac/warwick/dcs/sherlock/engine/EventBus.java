@@ -29,7 +29,7 @@ class EventBus implements IEventBus {
 	public void publishEvent(IEvent event) {
 		List<EventInvocation> list = this.eventMap.get(event.getClass());
 		if (list != null) {
-			list.parallelStream().forEach(x -> x.invoke(event));
+			list.stream().forEach(x -> x.invoke(event));
 		}
 	}
 

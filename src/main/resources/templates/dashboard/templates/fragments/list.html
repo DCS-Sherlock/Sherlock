@@ -5,27 +5,52 @@
 </head>
 <body>
 
-<table class="table table-hover table-borderless">
-    <tbody>
-    <th:block th:each="template : ${templates}">
+<table class="table table-hover table-borderless" data-js="table">
+    <thead class="d-none">
         <tr>
-            <th class="align-middle">
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <th:block th:each="template : ${templates}">
+            <tr>
+                <th class="align-middle">
+                    <h5 class="mb-0">
+                        <span th:text="${template.getTemplate().getName()}"></span>
+                        <span th:if="${template.isPublic() && template.isOwner()}" class="badge badge-primary">
+                            <span th:text="#{templates.public}"></span>
+                        </span>
+                        <span th:if="${!template.isOwner()}" class="badge badge-primary">
+                            <span th:text="#{templates.creator}"></span> <span th:text="${template.getOwnerName()}"></span>
+                        </span>
+                    </h5>
+                </th>
+                <td class="align-middle text-right">
+                    <div class="btn-group btn-group-sm float-right">
+                        <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getTemplate().getId()})}" th:text="#{link.manage}"></a>
+                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <form th:action="@{/dashboard/templates/{id}/copy(id=${template.getTemplate().getId()})}" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button type="submit" style="cursor: pointer" class="dropdown-item" th:text="#{link.copy}"></button>
+                            </form>
+                            <a class="dropdown-item" data-js="modal" th:href="@{/dashboard/templates/{id}/delete(id=${template.getTemplate().getId()})}" th:text="#{link.delete}"></a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </th:block>
+        <tr th:if="${templates.empty}">
+            <th>
                 <h5 class="mb-0">
-                    <span th:text="${template.getTemplate().getName()}"></span>
+                    <span th:text="#{templates.none}"></span>
                 </h5>
             </th>
-            <td class="align-middle text-right">
-                <a class="btn btn-primary btn-sm" th:href="@{/dashboard/templates/manage/{id}(id=${template.getTemplate().getId()})}" th:text="#{link_manage}"></a>
-            </td>
+            <th></th>
         </tr>
-    </th:block>
-    <tr th:if="${templates.empty}">
-        <th>
-            <h5 class="mb-0">
-                <span th:text="#{templates_none_msg}"></span>
-            </h5>
-        </th>
-    </tr>
     </tbody>
 </table>
 

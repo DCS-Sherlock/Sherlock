@@ -15,6 +15,8 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private EntityCodeBlockGroup group;
+
 	private EntityFile file;
 	private float score;
 
@@ -25,8 +27,9 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		super();
 	}
 
-	EntityCodeBlock(EntityFile file, float score, ITuple<Integer, Integer> lines) {
+	EntityCodeBlock(EntityCodeBlockGroup group, EntityFile file, float score, ITuple<Integer, Integer> lines) {
 		super();
+		this.group = group;
 		this.file = file;
 		this.score = score;
 
@@ -35,8 +38,9 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		this.addLineToList(lines);
 	}
 
-	EntityCodeBlock(EntityFile file, float score, List<ITuple<Integer, Integer>> lines) {
+	EntityCodeBlock(EntityCodeBlockGroup group, EntityFile file, float score, List<ITuple<Integer, Integer>> lines) {
 		super();
+		this.group = group;
 		this.file = file;
 		this.score = score;
 
@@ -70,9 +74,12 @@ public class EntityCodeBlock implements ICodeBlock, Serializable {
 		lines.forEach(this::addLineToList);
 	}
 
+	void markRemove() {
+		this.size = -5;
+	}
+
 	private void addLineToList(ITuple<Integer, Integer> line) {
-		if (line == null || line.getKey() == null || line.getValue() == null)
-		{
+		if (line == null || line.getKey() == null || line.getValue() == null) {
 			BaseStorage.logger.warn("Null line tuple added to code block");
 			return;
 		}

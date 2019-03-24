@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{${ajax} ? @{layouts/modal} : @{layouts/default}}" th:with="page='admin'">
+<head>
+    <title th:text="#{admin.accounts.add.title}"></title>
+</head>
+<body>
+<div id="add-parent" class="container" layout:fragment="content">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{admin.accounts.add.title}"></h5>
+            </div>
+            <form th:action="@{/admin/add}" data-js='form' data-js-target="#add-parent" id="add-form" th:object="${accountForm}" method="post">
+                <div class="modal-body">
+                    <div th:if="${#fields.hasAnyErrors()}">
+                        <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="name" th:text="#{variable.name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" th:placeholder="#{variable.name}" th:value="*{name}" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="email" th:text="#{variable.email}"></label>
+                            <input type="email" id="email" name="email" class="form-control" th:placeholder="#{variable.email}" th:value="*{email}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <label th:text="#{variable.admin}"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="isAdmin">
+                                <input type="checkbox" name="isAdmin" id="isAdmin" th:checked="*{isAdmin}" />
+                                <span th:text="#{variable.admin_msg}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="oldPassword" th:text="#{variable.current_password}"></label>
+                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" th:placeholder="#{variable.current_password}" th:value="*{oldPassword}" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <label th:text="#{admin.accounts.add.password_msg}"></label>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
+                <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link.cancel}"></a>
+                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link.save}"></button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

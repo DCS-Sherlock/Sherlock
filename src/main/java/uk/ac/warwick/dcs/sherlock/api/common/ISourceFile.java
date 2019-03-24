@@ -6,6 +6,15 @@ import java.util.*;
 public interface ISourceFile {
 
 	/**
+	 * File equality check
+	 *
+	 * @param file file to compare
+	 *
+	 * @return equals
+	 */
+	boolean equals(ISourceFile file);
+
+	/**
 	 * @return the content of the file
 	 */
 	InputStream getFileContents();
@@ -21,12 +30,65 @@ public interface ISourceFile {
 	List<String> getFileContentsAsStringList();
 
 	/**
-	 * @return string containing the name of the file to display, this should be a path including any parent archives
+	 * @return a web path safe file identifier
+	 */
+	String getFileIdentifier();
+
+	/**
+	 * @return string containing display formatted file name
 	 */
 	String getFileDisplayName();
+
+	/**
+	 * @return string containing display formatted file path
+	 */
+	String getFileDisplayPath();
 
 	/**
 	 * @return fetches a unique, persistent id for the file. No other file should EVER be able to take this ID, even if this file is deleted.
 	 */
 	long getPersistentId();
+
+	/**
+	 *  Get the id for the immediate parent submission, this may not be the top level submission seen by the user
+	 * @return the id for the submission
+	 */
+	long getSubmissionId();
+
+	/**
+	 * Get the top level, "super parent", submission object, this is the submission for this file seen by the user, NOT a sub-directory
+	 * @return the highest level parent submission
+	 */
+	ISubmission getTopSubmission();
+
+	/**
+	 * Remove the file
+	 */
+	void remove();
+
+	/**
+	 * Count of the number of lines in the file containing characters, non empty
+	 * @return count of non empty lines
+	 */
+	int getNonEmptyLineCount();
+
+	/**
+	 * Count of the total number of lines in the file
+	 * @return count of all lines
+	 */
+	int getTotalLineCount();
+
+	/**
+	 * Fetches the file size in bytes
+	 * @return file size in bytes
+	 */
+	long getFileSize();
+
+	/**
+	 * Fetches the file size in String form with the correct extension
+	 * @param si use SI (1000) or binary (1024) for calculations
+	 * @return string for the file size
+	 */
+	String getDisplayFileSize(boolean si);
+
 }
