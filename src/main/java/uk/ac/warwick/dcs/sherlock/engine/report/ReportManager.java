@@ -18,6 +18,11 @@ import java.util.*;
 public class ReportManager {
 
 	/**
+	 * Contains all the information needed to generate reports from.
+	 */
+	private IResultJob results;
+
+	/**
 	 * A map of all the individual files according to their persitent ids.
 	 */
 	private Map<Long, ISourceFile> fileMap;
@@ -37,9 +42,15 @@ public class ReportManager {
 	 */
 	private Map<Long, List<SubmissionMatch>> submissionReportMap;
 
-	private IResultJob results;
 
+	/**
+	 * Maps submission ids to their overall scores
+	 */
 	private Map<Long, Float> submissionScores;
+
+	/**
+	 * Maps pairs of file ids to the relative scores between them
+	 */
 	private Map<ITuple<Long, Long>, Float> relativeFileScores;
 
 
@@ -48,6 +59,10 @@ public class ReportManager {
 	 */
 	private IReportGenerator reportGenerator;
 
+	/**
+	 * Initialises the report manager with a set of results.
+	 * @param results Contains a full set of results from postprocessing; all useful info is extracted from here
+	 */
 	public ReportManager(IResultJob results) {
 		this.reportGenerator = new ReportGenerator();
 
@@ -58,38 +73,11 @@ public class ReportManager {
 		this.results = results;
 		this.submissionScores = new HashMap<>();
 		this.relativeFileScores = new HashMap<>();
-		this.results.getFileResults().stream().forEach(resultFile -> this.fileMap.put(resultFile.getFile().getPersistentId(), resultFile.getFile()));
-		this.results.getFileResults().stream().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new Tuple<Long, Long>(resultFile.getFile().getPersistentId(), file2.getPersistentId()), resultFile.getFileScore(file2))));
-		this.results.getFileResults().stream().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmissionId(), resultFile.getOverallScore()));
+		this.results.getFileResults().forEach(resultFile -> this.fileMap.put(resultFile.getFile().getPersistentId(), resultFile.getFile()));
+		this.results.getFileResults().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new Tuple<Long, Long>(resultFile.getFile().getPersistentId(), file2.getPersistentId()), resultFile.getFileScore(file2))));
+		this.results.getFileResults().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmissionId(), resultFile.getOverallScore()));
 
 		FillSubmissionFileMap();
-	}
-
-	/**
-	 * Initialises the report manager and adds files and code block groups to it immediately.
-	 * @param files The files to generate fileReportMap for (see FillSubmissionFileMap()).
-	 * @param codeBlockGroups The matches that will be used by the Report Generator (see AddCodeBlockGroups()).
-	 */
-	public ReportManager(List<ISourceFile> files, List<ICodeBlockGroup> codeBlockGroups) {
-		this.reportGenerator = new ReportGenerator();
-
-		this.submissionFileMap = new HashMap<>();
-		this.fileMap = new HashMap<>();
-		this.fileReportMap = new HashMap<>();
-		this.submissionReportMap = new HashMap<>();
-
-		FillSubmissionFileMap();
-		AddCodeBlockGroups(codeBlockGroups);
-	}
-
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
-	 */
-	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
-		GetCodeBlockGroups();
 	}
 
 	private List<ICodeBlockGroup> GetCodeBlockGroups() {
