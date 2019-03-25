@@ -7,15 +7,15 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Workspace;
 
 import java.util.Set;
 
-/*
+/**
     Somehow if you use form binding to set a variable with the same name as a variable in the
-    Account object, the variable in the @ModelAttribute("account") instance of the Account
+    Account object, the variable in the ModelAttribute("account") instance of the Account
     object is overwritten.
 
     e.g. if you have a form with a variable called "email", the email variable in
-    @ModelAttribute("account") is being overwritten with the result of the form binding.
+    ModelAttribute("account") is being overwritten with the result of the form binding.
 
-    Therefore, @ModelAttribute("account") now returns AccountWrapper instead of Account to
+    Therefore, ModelAttribute("account") now returns AccountWrapper instead of Account to
     prevent variables being overwritten. All get functions in this wrapper must match
     those in the Account object.
  */

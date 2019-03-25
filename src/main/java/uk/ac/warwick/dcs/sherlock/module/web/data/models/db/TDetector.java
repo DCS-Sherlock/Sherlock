@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The database table storing detectors assigned to a template
+ */
 @Entity
 @Table(name="detector")
 public class TDetector {

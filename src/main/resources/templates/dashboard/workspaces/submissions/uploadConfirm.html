@@ -18,10 +18,11 @@
                         <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" th:text="#{link.return}"></a>
                     </div>
 
+                    <div data-js="triggerArea" data-js-target="#submissions-parent"></div>
+                    <div data-js="triggerArea" data-js-target="#results-parent"></div>
+
                     <div th:if="${success_msg}">
                         <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
-                        <div data-js="triggerArea" data-js-target="#submissions-parent"></div>
-                        <div data-js="triggerArea" data-js-target="#results-parent"></div>
                     </div>
                 </div>
                 <div class="modal-footer">

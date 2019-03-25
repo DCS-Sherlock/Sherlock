@@ -6,6 +6,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidLanguag
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * The form to add/modify workspaces
+ */
 public class WorkspaceForm {
 
     @NotNull(message = "{error.name.empty}")

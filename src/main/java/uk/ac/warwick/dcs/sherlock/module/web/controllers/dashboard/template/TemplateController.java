@@ -167,7 +167,7 @@ public class TemplateController {
             @ModelAttribute("template") TemplateWrapper templateWrapper
     ) throws NotTemplateOwner {
         templateWrapper.delete(templateRepository);
-        return "redirect:/dashboard/templates?msg=deleted";
+        return "redirect:/dashboard/templates?msg=deleted_template";
     }
 
     /**

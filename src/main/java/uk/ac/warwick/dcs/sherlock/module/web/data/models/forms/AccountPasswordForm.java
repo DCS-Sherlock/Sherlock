@@ -6,6 +6,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidPasswor
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * The form for changing an account password
+ */
 @PasswordsMatch
 public class AccountPasswordForm {
     @NotNull(message = "{error.current_password.invalid}")

@@ -195,14 +195,13 @@
                                                 <span th:text="${match.getScore()}"></span>
                                             </td>
                                             <td>
-                                                <span th:text="#{results.match.file}"></span>
-                                                <span th:text="${match.getFile1().getPersistentId()}"></span>
-                                                <span th:text="#{results.match.lines}"></span>
-                                                <span th:text="${match.getFile1Lines()}"></span>
-                                                <span th:text="#{results.match.matches}"></span>
-                                                <span th:text="${match.getFile2().getPersistentId()}"></span>
-                                                <span th:text="#{results.match.lines}"></span>
-                                                <span th:text="${match.getFile2Lines()}"></span>
+                                                <th:block th:each="entry : ${match.getMap()}">
+                                                    <span th:text="#{results.match.file}"></span>
+                                                    <span th:text="${entry.key.getPersistentId()}"></span>
+                                                    <span th:text="#{results.match.lines}"></span>
+                                                    <span th:text="${match.getFileLines(entry.key)}"></span>
+                                                    <br />
+                                                </th:block>
                                             </td>
                                         </tr>
                                     </th:block>

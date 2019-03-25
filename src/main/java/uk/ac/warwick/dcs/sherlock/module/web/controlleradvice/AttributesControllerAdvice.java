@@ -44,6 +44,21 @@ public class AttributesControllerAdvice {
     }
 
     /**
+     * Adds the msg parameter to the attributes of all requests
+     *
+     * @param model holder for model attributes
+     * @param request the http request information
+     */
+    @ModelAttribute
+    public void addMessage(Model model, HttpServletRequest request) {
+        if (request.getParameterMap().containsKey("msg")) {
+            model.addAttribute("message", request.getParameterMap().get("msg"));
+        } else {
+            model.addAttribute("message", "");
+        }
+    }
+
+    /**
      * Adds an "is ajax" boolean to the attributes of all requests
      *
      * @param model holder for model attributes

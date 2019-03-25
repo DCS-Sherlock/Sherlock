@@ -120,8 +120,8 @@ public class JobResultsData {
         try {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
-            //No results
-//            e.printStackTrace();
+            // No results
+            // e.printStackTrace();
             return;
         }
 
@@ -129,38 +129,17 @@ public class JobResultsData {
         job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
         for (SubmissionSummary summary : report.GetMatchingSubmissions()) {
-            String name = "Deleted";
-            if (idToName.containsKey(summary.getPersistentId())) {
-                name = idToName.get(summary.getPersistentId());
-            }
-
-            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore()*100);
+            String name = idToName.getOrDefault(summary.getPersistentId(), "Deleted");
+            SubmissionScore score = new SubmissionScore(summary.getPersistentId(), name, summary.getScore() * 100);
 
             List<SubmissionScore> list = new ArrayList<>();
             for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
-                String name2 = "Deleted";
-                if (idToName.containsKey(tuple.getKey())) {
-                    name2 = idToName.get(tuple.getKey());
-                }
-
-                list.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()*100));
+                String matchName = idToName.getOrDefault(tuple.getKey(), "Deleted");
+                list.add(new SubmissionScore(tuple.getKey(), matchName, tuple.getValue() * 100));
             }
 
             resultsMap.put(score, list);
         }
-
-//        Generates the fake data
-//        {
-//            for (ISubmission submission : this.job.getWorkspace().getSubmissions()) {
-//                SubmissionScore wrapper = new SubmissionScore(submission.getId(), submission.getName(), this.tempRandomScore());
-//                List<SubmissionScore> list = new ArrayList<>();
-//
-//                for (ISubmission match : this.job.getWorkspace().getSubmissions()) {
-//                    list.add(new SubmissionScore(match.getId(), match.getName(), this.tempRandomScore()));
-//                }
-//                resultsMap.put(wrapper, list);
-//            }
-//        }
     }
 
     /**
@@ -229,21 +208,5 @@ public class JobResultsData {
         result.put("nodes", nodes);
         result.put("matches", matches);
         return result.toString();
-    }
-
-    //TODO: Remove when loading real data
-    private float tempRandomScore() {
-        return this.tempRandomNumberInRange(1, 100);
-    }
-
-    //TODO: Remove when loading real data
-    @SuppressWarnings("Duplicates")
-    private int tempRandomNumberInRange(int min, int max) {
-        if (min >= max) {
-            return max;
-        }
-
-        Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
     }
 }

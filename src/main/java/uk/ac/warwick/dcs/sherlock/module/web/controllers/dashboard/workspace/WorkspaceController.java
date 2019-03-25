@@ -136,12 +136,14 @@ public class WorkspaceController {
 
         if (!result.hasErrors()) {
             try {
-                workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
+                workspaceWrapper.addSubmissions(submissionsForm);
                 model.addAttribute("success_msg", "workspaces.submissions.uploaded");
             } catch (NoFilesUploaded e) {
                 result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
                 result.reject("error.file.failed");
+            } catch (DuplicateSubmissionNames e) {
+                result.reject("error.file.duplicated");
             } catch (NotImplementedException e) {
                 result.reject("error.not_implemented");
             }
@@ -289,7 +291,7 @@ public class WorkspaceController {
     @PostMapping("/dashboard/workspaces/{pathid}/delete")
     public String deletePost(@ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper) {
         workspaceWrapper.delete(workspaceRepository);
-		return "redirect:/dashboard/workspaces?msg=deleted";
+		return "redirect:/dashboard/workspaces?msg=deleted_workspace";
     }
 
     /**

@@ -7,6 +7,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.DetectorWrapper;
 
 import java.util.*;
 
+/**
+ * The form for changing parameters on a template detector
+ */
 public class ParameterForm {
 
     public Map<String, Float> parameters = new HashMap<>();
@@ -37,6 +40,17 @@ public class ParameterForm {
         this.parameters = parameters;
     }
 
+    /**
+     * Loops through all of the parameters in the form to check the following:
+     * - That the parameter exists for the detector
+     * - That the min bound, max bound and step restrictions are respected
+     * If any conditions are not met, add errors to the binding result object
+     *
+     * @param result the result holder for a DataBinder
+     * @param parameterObjList the list of parameters to validate the form against
+     *
+     * @return the updated results holder
+     */
     public BindingResult validate(BindingResult result, List<AdjustableParameterObj> parameterObjList) {
         Map<String, AdjustableParameterObj> map = new HashMap<>();
 

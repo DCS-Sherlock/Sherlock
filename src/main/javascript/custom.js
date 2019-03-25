@@ -1,5 +1,5 @@
 /*
-    SHERLOCK JS
+    SHERLOCK Web UI
  */
 
 /**
@@ -34,11 +34,11 @@ function submissionResultsPage() {
             submissionId = getSubmissionId();
         }
 
-        var active = -1; //Which match is active
-        var loaded = 0;
-        var failed = 0;
-        var showing = false;
-        var printed = false;
+        var active = -1; // which match is active
+        var loaded = 0; // how many files have loaded
+        var failed = 0; // how many files have failed to load
+        var showing = false; // true if showMatch is running
+        var printed = false; // true if the print dialog has been shown
         var loadingReport = false; //Whether the page is loading, or a match on the report page
 
         /**
@@ -88,11 +88,9 @@ function submissionResultsPage() {
                     var position = parseInt(line.css("top"), 10);
 
                     //Scroll the file div to the top of the line
-                    // if (position != null) {
                     $("#id-" + fileId).find(".line-numbers").scrollTop(
                         position
                     );
-                    // }
 
                     //Ensure that the report match box is at the same position as the first line
                     var offset = line.offset();
@@ -122,6 +120,7 @@ function submissionResultsPage() {
             if (active >= 0) {
                 //Find the row in the table
                 row = $("#row-" + active);
+
                 //Remove the active class and display the show button
                 row.removeClass("active");
                 row.find("[data-js='match-show']").removeClass("d-none");
@@ -148,69 +147,54 @@ function submissionResultsPage() {
             }
 
             //Update the text
-            area.find("#match-reason").text(match.reason);
+            area.find("#match-reason").text("#" + matchId + ": " + match.reason);
             area.find("#match-score").text(match.score);
             area.find(".match-colour").css("background-color", match.colour);
 
             //Show the file code on the report page
             if (!compareArea) {
-                //Load the details of the first match
-                var submission = match.file1Submission; //the submission id of the match
-                var lines = match.file1Lines.join(); //the lines to highlight
-                var file =  match.file1Id; //the id of the file
-                var name = match.file1DisplayName; //the name of the file
-
-                //Check if we're loading the wrong match
-                if (submissionId == submission) {
-                    //Therefore, load the details of the second match
-                    submission = match.file2Submission;
-                    lines = match.file2Lines.join();
-                    file =  match.file2Id;
-                    name = match.file2DisplayName;
-                }
-
-                area.find("#match-file1").text(match.file1DisplayName);
-                area.find("#match-file2").text(match.file2DisplayName);
-                area.find("#match-sub1").text(match.file1SubmissionName);
-                area.find("#match-sub2").text(match.file2SubmissionName);
-
-                //Refresh the code area
-                area.find("#match-code").html('<pre class="line-numbers" style="height: 500px; resize: vertical"\n' +
-                    'data-line="'+lines+'"\n' +
-                    'data-src="/dashboard/workspaces/manage/'+workspaceId+'/submission/'+submission+'/file/'+file+'/'+name+'"></pre>');
-                Prism.fileHighlight();
-
                 loadingReport = true;
+                area.find("#match-code").html("");
+                for(var i = 0; i < match.matches.length; i++) {
+                    var obj = match.matches[i];
+
+                    if (obj.submission != submissionId) {
+                        //Refresh the code area
+                        area.find("#match-code").append('<div class="card-header">'+obj.submissionName+': '+obj.displayName+'</div><pre class="line-numbers mt-0" style="height: 300px; resize: vertical"\n' +
+                            'data-line="'+obj.lines+'"\n' +
+                            'data-src="/dashboard/workspaces/manage/'+workspaceId+'/submission/'+obj.submission+'/file/'+obj.id+'/'+obj.name+'"></pre>');
+                    }
+                }
+                Prism.fileHighlight();
             }
 
             area.show(); //show the info area
 
             //Find the row in the table
             row = $("#row-" + active);
+
             //Add the active class and display the hide button
             row.addClass("active");
             row.find("[data-js='match-show']").addClass("d-none");
             row.find("[data-js='match-hide']").removeClass("d-none");
 
-            //Collapse all files except for the two involved
-            if (compareArea) {
-                $(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").collapse('hide');
-                $("#id-"+match.file1Id).collapse('show');
-                $("#id-"+match.file2Id).collapse('show');
-            } else {
-                $(".collapse:not([id=id-"+match.file1Id+"],[id=id-"+match.file2Id+"])").removeClass('show');
-                $("#id-"+match.file1Id).addClass('show');
-                $("#id-"+match.file2Id).addClass('show');
-            }
 
             //Remove all the line highlights
             $(".line-highlight").each(function() {
                 $(this).css('background', "");
             });
 
+            //Collapse all the files
+            $(".collapse").removeClass('show');
+
             //Highlight the lines involved with this match
-            highlight(match.file1Id, match.file1Lines, match.colour);
-            highlight(match.file2Id, match.file2Lines, match.colour);
+            for(var i = 0; i < match.matches.length; i++) {
+                var obj = match.matches[i];
+                //Show the files involved
+                $("#id-"+obj.id).addClass('show');
+                //Highlight the lines
+                highlight(obj.id, obj.lines, match.colour)
+            }
 
             var height;
             //Calculate the height to scroll the window to
@@ -246,6 +230,7 @@ function submissionResultsPage() {
             if (active >= 0) {
                 //Find the row in the table
                 var row = $("#row-" + active);
+
                 //Remove the active class and display the show button
                 row.removeClass("active");
                 row.find("[data-js='match-show']").removeClass("d-none");
@@ -385,7 +370,14 @@ function submissionResultsPage() {
                 if (showing == false) {
                     hideAll();
                 }
-            })
+            });
+
+            //Hides the match when a file is opened
+            $('.accordion').on('show.bs.collapse', function () {
+                if (showing == false) {
+                    hideAll();
+                }
+            });
         }
 
         function printEvent() {
@@ -492,11 +484,12 @@ function submissionResultsPage() {
 }
 
 /**
+ * Load an area of a page using the href attribute as the source
  *
- * @param input
+ * @param input the area to load
  */
-function loadAreaAjax(input){
-    getAjax(
+function loadArea(input){
+    submitGetAjax(
         input.attr("data-js-href"),
         function(result, status, xhr) {
             input.html(result);
@@ -506,49 +499,49 @@ function loadAreaAjax(input){
 }
 
 /**
- *
+ * For each area, load the requested sub-page and replace the area contents
  */
-function loadArea() {
+function triggerArea() {
     $("[data-js='area']").each(function () {
         var input = $(this);
         input.attr("data-js", "area-loaded");
-        loadAreaAjax(input);
+        loadArea(input);
     });
 }
 
 /**
- *
+ * For each trigger element, trigger the load area fn
  */
-function loadAreaTrigger() {
+function triggerLoadArea() {
     $("[data-js='triggerArea']").each(function () {
         var input = $(this);
         var target = input.attr("data-js-target");
 
         input.remove();
         $(target).html(loadingHTML);
-        loadAreaAjax($(target));
+        loadArea($(target));
     });
 }
 
 /**
- *
+ * Bind events for the trigger area links
  */
-function loadAreaLink() {
+function bindAreaLink() {
     $("[data-js='triggerAreaLink']").unbind();
     $("[data-js='triggerAreaLink']").click(function () {
         var input = $(this);
         var target = input.attr("data-js-target");
 
         $(target).html(loadingHTML);
-        loadAreaAjax($(target));
+        loadArea($(target));
         $("#modal").modal('hide');
     });
 }
 
 /**
- *
+ * Bind change events for the select inputs
  */
-function loadAreaInputTrigger(){
+function bindSelectChange(){
     $("select[data-js='select']").unbind();
     $("select[data-js='select']").on('change', function () {
         var input = $(this);
@@ -558,7 +551,7 @@ function loadAreaInputTrigger(){
 
         $(target).html(loadingHTML);
 
-        getAjax(
+        submitGetAjax(
             url + value,
             function(result, status, xhr) {
                 $(target).html(result);
@@ -571,17 +564,10 @@ function loadAreaInputTrigger(){
 }
 
 /**
- *
+ * Bind change events for the radio inputs on the add submissions page
  */
-function radioChange(){
+function bindRadioChange() {
     $("[data-js='radio-div']").unbind();
-    $("[data-js='radio-div']").each(function() {
-        var input = $(this);
-        var name = input.attr("name");
-
-        $("."+name).hide();
-        $("."+name).removeClass("d-none");
-    });
     $("[data-js='radio-div']").on('change', function () {
         var input = $(this);
         var value = input.val();
@@ -590,14 +576,27 @@ function radioChange(){
         $("."+name+":not(#"+value+")").slideUp();
         $("#"+value).slideDown();
 
+        Cookies.set(name, value);
+
         return false;
+    });
+    $("[data-js='radio-div']").each(function() {
+        var input = $(this);
+        var name = input.attr("name");
+        var value = Cookies.get(name);
+
+        if (value != null) {
+            $('input:radio[name="'+name+'"][value="'+value+'"]').attr('checked', true).trigger('change');
+        }
+
+        $("."+name).removeClass("d-none");
     });
 }
 
 /**
- *
+ * If the username was changed on the account page, update the name on the navigation bar
  */
-function usernameChange(){
+function bindUsernameChange(){
     $("[data-js='triggerNameChange']").each(function () {
         var input = $(this);
 
@@ -608,9 +607,9 @@ function usernameChange(){
 }
 
 /**
- *
+ * Bind click events for modal links
  */
-function modalLink(){
+function bindModalLinks(){
     $("[data-js='modal']").unbind();
     $("[data-js='modal']").click(function () {
         var input = $(this);
@@ -619,12 +618,12 @@ function modalLink(){
         input.prop("disabled", true);
         input.addClass("disabled");
 
-        getAjax(
+        submitGetAjax(
             url,
             function(result, status, xhr) {
                 $("#modal").html(result);
                 $("#modal").modal('show');
-                loadAreaInputTrigger();
+                bindSelectChange();
             },
             $("#modal")
         );
@@ -637,9 +636,9 @@ function modalLink(){
 }
 
 /**
- *
+ * Loads the graph and manages the tables on the network graph page
  */
-function loadNetworkGraph() {
+function networkGraphPage() {
     if ($("[data-js='networkArea']").length) {
         var includedArea = $("#network-included");
         var includedTemplate = $("#network-included-template");
@@ -804,7 +803,6 @@ function loadNetworkGraph() {
             }
         }
 
-
         function bindEvents() {
             $("[data-js='submissionAdd']").unbind();
             $("[data-js='submissionAdd']").click(function () {
@@ -931,9 +929,9 @@ function loadNetworkGraph() {
 }
 
 /**
- *
+ * Bind form submit events
  */
-function submitForm(){
+function bindForms(){
     $("[data-js='form']").unbind();
     $("[data-js='form']").submit(function () {
         var input = $(this);
@@ -946,7 +944,7 @@ function submitForm(){
         var data = new FormData(this);
         data.append("ajax", "true");
 
-        submitAjax(
+        submitGenericAjax(
             url,
             data,
             function(result, status, xhr) {
@@ -961,7 +959,7 @@ function submitForm(){
 }
 
 /**
- *
+ * On modal pages, hide the close link and show the modal close button
  */
 function displayModalLinks() {
     $( ".js-cancel" ).each(function() {
@@ -976,26 +974,28 @@ function displayModalLinks() {
 }
 
 /**
+ * Runs a GET ajax request
  *
- * @param url
- * @param success
+ * @param url the url to get/post to
+ * @param success the success callback
  */
-function getAjax(url, success, target) {
+function submitGetAjax(url, success, target) {
     var data = {
         ajax: "true"
     };
-    submitAjax(url, data, success, "GET", target);
+    submitGenericAjax(url, data, success, "GET", target);
 }
 
 /**
+ * Runs an ajax request
  *
- * @param url
- * @param data
- * @param success
- * @param type
- * @param target
+ * @param url the url to get/post to
+ * @param data the data to include with the request
+ * @param success the success callback
+ * @param type post type: GET/POST
+ * @param target the target to update if there was an error
  */
-function submitAjax(url, data, success, type, target) {
+function submitGenericAjax(url, data, success, type, target) {
     var input = {
         type: type,
         accept:"text/html",
@@ -1042,17 +1042,17 @@ function submitAjax(url, data, success, type, target) {
 }
 
 /**
- *
+ * Enables bootstrap tooltips/popovers
  */
-function displayTooltips() {
+function bindTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover()
 }
 
 /**
- *
+ * Enables DataTables support
  */
-function table() {
+function bindTables() {
     $.fn.dataTable.ext.errMode = 'throw';
 
     $('[data-js="table"]').dataTable( {
@@ -1090,6 +1090,12 @@ function table() {
         var input = $(this);
         input.attr("data-js", "table-loaded");
     });
+
+    $(".dataTables_filter").each(function() {
+       var parent = $(this).parent();
+        parent.removeClass("col-md-6");
+        parent.addClass("col-md-12");
+    });
 }
 
 /**
@@ -1112,30 +1118,32 @@ function getParameter(name) {
 
     return "";
 }
+
 /**
- *
+ * Rebind the jQuery events when the page has been updated
  */
 function rebindEvents() {
-    loadArea();
-    displayTooltips();
-    loadAreaInputTrigger();
-    modalLink();
-    submitForm();
+    triggerArea();
+    bindTooltips();
+    bindSelectChange();
+    bindModalLinks();
+    bindForms();
     displayModalLinks();
-    loadAreaTrigger();
-    loadAreaLink();
-    usernameChange();
-    loadNetworkGraph();
-    radioChange();
-    table();
+    triggerLoadArea();
+    bindAreaLink();
+    bindUsernameChange();
+    bindRadioChange();
+    bindTables();
 }
 
 /**
- *
+ * Runs when the page has loaded
  */
 $(function () {
+    $('form[data-js="autoSubmit"]').submit(); //automatically submits the login page when running locally
+
     rebindEvents();
-    $('form[data-js="autoSubmit"]').submit();
+
     submissionResultsPage();
-    // submissionReportPage();
+    networkGraphPage();
 });
