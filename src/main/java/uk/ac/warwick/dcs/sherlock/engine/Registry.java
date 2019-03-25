@@ -628,7 +628,7 @@ public class Registry implements IRegistry {
 					type.setWeighting(map.get(type.getIdentifier()).floatValue());
 				}
 				else {
-					map.put(type.getIdentifier(), (double) type.getWeighting());
+					map.put(type.getIdentifier(), type.getWeighting());
 				}
 			}
 
