@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 
 import java.util.*;
@@ -84,12 +85,12 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups) {
+	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups, Map<ITuple<Long, Long>, Float> relativeFileScores) {
 		List<SubmissionMatch> matches = new ArrayList<>();
 		//Create a SubmissionMatch object for each CodeBlockGroup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 			ISourceFile file1 = null, file2 = null;
-			float score = 1f;	//TODO: get actual score
+			float score = 1f;
 			String reason = "";
 			List<ITuple<Integer, Integer>> lineNumbers1 = new ArrayList<>(), lineNumbers2 = new ArrayList<>();
 
@@ -124,6 +125,11 @@ public class ReportGenerator implements IReportGenerator {
 				}
 			}
 
+			//Get the relative score between these 2 files
+			if(file1 != null && file2 != null) {
+				score = relativeFileScores.get(new Tuple<>(file1.getPersistentId(), file2.getPersistentId()));
+			}
+
 			//Add the SubmissionMatch to the list
 			SubmissionMatch match = new SubmissionMatch(file1, file2, score, reason, lineNumbers1, lineNumbers2);
 			matches.add(match);
@@ -133,12 +139,12 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public List<SubmissionMatch> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups) {
+	public List<SubmissionMatch> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups, Map<ITuple<Long, Long>, Float> relativeFileScores) {
 		List<SubmissionMatch> matches = new ArrayList<>();
 		//Create a SubmissionMatch object for each CodeBlockGroup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 			ISourceFile file = null;
-			float score = 1f;	//TODO: get actual score
+			List<Float> scores = new ArrayList<Float>();
 			String reason = "";
 			List<ITuple<Integer, Integer>> lineNumbers = new ArrayList<>();
 
@@ -176,9 +182,17 @@ public class ReportGenerator implements IReportGenerator {
 				}
 			}
 
+			//Get the relatives scores for each pair of files
+			if(file != null) {
+				for (ISourceFile otherFile : otherFiles) {
+					//Get the relative score between these 2 files
+					scores.add(relativeFileScores.get(new Tuple<>(file.getPersistentId(), otherFile.getPersistentId())));
+				}
+			}
+
 			//Create a submission match object for every pair between the specified submission's file in this ICodeBlockGroup and the other files in it, and add them to matches.
 			for(int i = 0; i < otherFiles.size(); i++) {
-				SubmissionMatch match = new SubmissionMatch(file, otherFiles.get(i), score, reason, lineNumbers, otherLineNumbers.get(i));
+				SubmissionMatch match = new SubmissionMatch(file, otherFiles.get(i), scores.get(i), reason, lineNumbers, otherLineNumbers.get(i));
 				matches.add(match);
 			}
 		}
