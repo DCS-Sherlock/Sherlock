@@ -145,7 +145,7 @@ public class PoolExecutorJob implements Runnable {
 								return 0;
 							}
 						}).sum();
-						taskRes.setTaskScore(s);
+						taskRes.setTaskScore(/*s > 1 ? 1 : s*/ s); // cap to 100%
 
 						// Score each file for the task from relative weightings
 						for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
@@ -159,7 +159,7 @@ public class PoolExecutorJob implements Runnable {
 										return 0;
 									}
 								}).sum();
-								taskRes.addFileScore(fileComp, s);
+								taskRes.addFileScore(fileComp, /*s > 1 ? 1 : s*/ s);  // cap to 100%
 							}
 						}
 					}
