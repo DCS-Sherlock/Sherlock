@@ -1,7 +1,10 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
@@ -45,6 +48,7 @@ public class PoolExecutorJob implements Runnable {
 		return this.job;
 	}
 
+	@SuppressWarnings ("Duplicates")
 	@Override
 	public void run() {
 		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
@@ -106,20 +110,58 @@ public class PoolExecutorJob implements Runnable {
 			IResultJob jobRes = this.job.createNewResult();
 			for (ISourceFile file : this.job.getWorkspace().getFiles()) {
 				IResultFile fileRes = jobRes.addFile(file);
-				for (ITuple<ITask, ModelTaskProcessedResults> t : results) {
-					IResultTask taskRes = fileRes.addTaskResult(t.getKey());
-					List<ICodeBlockGroup> groupsContainingFile = t.getValue().getGroups(file);
-					taskRes.addContainingBlock(groupsContainingFile);
 
-					//DO SCORING
+				for (ITuple<ITask, ModelTaskProcessedResults> t : results) {
 					try {
+						List<ICodeBlockGroup> groupsContainingFile = t.getValue().getGroups(file);
+						int fileTotal = t.getValue().getFileTotal(file);
+
+						// Construct block scores weighted against the whole file, by default uses file line count, but can be set to custom totals (eg. variable counts)
+						List<ITuple<ICodeBlockGroup, Float>> groupScores = groupsContainingFile.stream().map(x -> {
+							ICodeBlock b = x.getCodeBlock(file);
+							float size = b.getLineNumbers().stream().mapToInt(y -> y.getValue()- y.getKey() + 1).sum();
+							return new Tuple<>(x, b.getBlockScore() * (size/fileTotal));
+						}).collect(Collectors.toList());
+
+						IResultTask taskRes = fileRes.addTaskResult(t.getKey());
+						taskRes.addContainingBlock(groupsContainingFile);
+
+						// Calculate types and their relative weightings within this task
+						Map<DetectionType, Double> typeWeights = new HashMap<>();
+						for (ICodeBlockGroup g : groupsContainingFile) {
+							typeWeights.putIfAbsent(g.getDetectionType(), 0.0);
+						}
+
+						double weightSum = typeWeights.keySet().stream().mapToDouble(DetectionType::getWeighting).sum();
+						typeWeights.keySet().forEach(z -> typeWeights.put(z, z.getWeighting()/weightSum));
+
+						// Score the task overall from relative weightings
+						s = (float) groupScores.stream().mapToDouble(x -> {
+							try {
+								return x.getValue() * typeWeights.get(x.getKey().getDetectionType());
+							}
+							catch (UnknownDetectionTypeException e) {
+								e.printStackTrace();
+								return 0;
+							}
+						}).sum();
+						taskRes.setTaskScore(s);
+
+						// Score each file for the task from relative weightings
 						for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
 							if (!fileComp.equals(file)) {
-								s = t.getValue().getScorer().score(file, fileComp, groupsContainingFile.stream().filter(g -> g.filePresent(fileComp)).collect(Collectors.toList()));
+								s = (float) groupScores.stream().filter(g -> g.getKey().filePresent(fileComp)).mapToDouble(x -> {
+									try {
+										return x.getValue() * typeWeights.get(x.getKey().getDetectionType());
+									}
+									catch (UnknownDetectionTypeException e) {
+										e.printStackTrace();
+										return 0;
+									}
+								}).sum();
 								taskRes.addFileScore(fileComp, s);
 							}
 						}
-						taskRes.setTaskScore(ExecutorUtils.aggregateScores(taskRes.getFileScores().values()));
 					}
 					catch (Exception e) {
 						synchronized (ExecutorUtils.logger) {

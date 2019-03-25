@@ -10,16 +10,16 @@ import java.util.*;
 
 public class SimpleObjectEqualityRawResult<T extends Serializable> extends AbstractModelTaskRawResult {
 
-	long file1id;
-	long file2id;
+	private long file1id;
+	private long file2id;
 
-	int file1NumObjs;
-	int file2NumObjs;
+	private int file1NumObjs;
+	private int file2NumObjs;
 
-	List<T> objects;
-	List<PairedTuple<Integer, Integer, Integer, Integer>> locations;
+	private List<T> objects;
+	private List<PairedTuple<Integer, Integer, Integer, Integer>> locations;
 
-	int size;
+	private int size;
 
 	public SimpleObjectEqualityRawResult(ISourceFile file1, ISourceFile file2, int numObjectsFile1, int numObjectsFile2) {
 		this.file1id = file1.getPersistentId();
