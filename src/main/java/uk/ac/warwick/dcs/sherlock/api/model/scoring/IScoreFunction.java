@@ -5,6 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 
 import java.util.*;
 
+@Deprecated
 public interface IScoreFunction {
 
 	/**
