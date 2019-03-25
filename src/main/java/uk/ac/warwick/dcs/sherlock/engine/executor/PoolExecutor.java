@@ -39,8 +39,6 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 						ExecutorUtils.logger.info("Job {} starting", job.getId());
 					}
 
-					this.getAllJobStatuses().forEach(x -> System.out.println(x.getMessage()));
-
 					job.getStatus().startJob();
 
 					Future f = this.exec.submit(job);
