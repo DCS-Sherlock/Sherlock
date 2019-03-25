@@ -132,9 +132,7 @@ public class BaseStorage implements IStorageWrapper {
 				this.reportManagerCache.remove(rem);
 			}
 
-			List<ICodeBlockGroup> groups = new LinkedList<>();
-			res.getFileResults().stream().flatMap(x -> x.getTaskResults().stream()).filter(y -> y.getContainingBlocks() != null).forEach(y -> groups.addAll(y.getContainingBlocks()));
-			ReportManager manager = new ReportManager(res.getFileResults().stream().map(IResultFile::getFile).collect(Collectors.toList()), groups);
+			ReportManager manager = new ReportManager(res);
 
 			this.reportManagerCache.put(res.getPersistentId(), manager);
 			this.reportManagerCacheQueue.add(res.getPersistentId());
