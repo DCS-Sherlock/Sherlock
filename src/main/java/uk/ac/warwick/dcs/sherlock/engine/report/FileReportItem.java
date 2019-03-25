@@ -4,8 +4,6 @@ import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.LegecyDetectionType;
-import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
 
