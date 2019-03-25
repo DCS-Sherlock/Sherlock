@@ -140,7 +140,7 @@ public class ModelTaskProcessedResults {
 	}
 
 	/**
-	 * Set the file -> integer map for the scoring totals, which are used to calculate the percentage of a file taken by each block, for example this is set to the number of variables in a file for
+	 * Set the file to integer map for the scoring totals, which are used to calculate the percentage of a file taken by each block, for example this is set to the number of variables in a file for
 	 * the variable detector to score against this.
 	 * <p>
 	 * By default the total is set to the line count for a file
