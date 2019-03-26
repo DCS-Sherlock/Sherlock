@@ -10,93 +10,37 @@ import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
  */
 public class SubmissionMatch {
 	/**
-	 * The first file in this match
-	 */
-	private ISourceFile file1;
-
-	/**
-	 * The second file in this match
-	 */
-	private ISourceFile file2;
-
-	/**
-	 * The score assigned to this match
-	 */
-	private float matchScore;
-
-	/**
 	 * The description of the type of plagiarism for this match (from DetectionType)
 	 */
 	private String reason;
 
 	/**
-	 * The line numbers in the first file where this match was found
+	 * The contents of the matches; each has an ISourceFile, a score, and line numbers.
 	 */
-	private List<ITuple<Integer, Integer>> lineNumbers1;
+	private List<SubmissionMatchItem> items;
 
 	/**
-	 * The line numbers in the second file where this match was found
-	 */
-	private List<ITuple<Integer, Integer>> lineNumbers2;
-
-	/**
-	 * Initialise a new SubmissionMatch object. Make sure the file ids and line numbers correspond to each other.
-	 * @param file1 first file
-	 * @param file2 second file
-	 * @param score score for this match
+	 * Initialise a new SubmissionMatch object.
 	 * @param reason description of plagiarism type
-	 * @param lineNumbers1 line numbers in the first file
-	 * @param lineNumbers2 line numbers in the second file
+	 * @param items SubmissionMatchItems to populate this object with (see SubmissionMatchItem constructor)
 	 */
-	public SubmissionMatch(ISourceFile file1, ISourceFile file2, float score, String reason,
-						   List<ITuple<Integer, Integer>> lineNumbers1, List<ITuple<Integer, Integer>> lineNumbers2) {
-		this.file1 = file1;
-		this.file2 = file2;
-		this.matchScore = score;
+	public SubmissionMatch(String reason, List<SubmissionMatchItem> items) {
 		this.reason = reason;
-		this.lineNumbers1 = lineNumbers1;
-		this.lineNumbers2 = lineNumbers2;
-	}
-
-	/**
-	 * @return the first file
-	 */
-	public ISourceFile getFile1() {
-		return file1;
-	}
-
-	/**
-	 * @return the second file
-	 */
-	public ISourceFile getFile2() {
-		return file2;
-	}
-
-	/**
-	 * @return the score for this match
-	 */
-	public float getScore() {
-		return matchScore;
+		this.items = items;
 	}
 
 	/**
 	 * @return the description for this match
 	 */
 	public String getReason() {
-		return reason;
+		return this.reason;
 	}
 
-	/**
-	 * @return the line numbers for the first file
-	 */
-	public List<ITuple<Integer, Integer>> getLineNumbers1() {
-		return lineNumbers1;
-	}
 
 	/**
-	 * @return the line numbers for the second file
+	 * @return a list of SubmissionMatchItems, each containing an ISourceFile, a score, and a set of line numbers.
 	 */
-	public List<ITuple<Integer, Integer>> getLineNumbers2() {
-		return lineNumbers2;
+	public List<SubmissionMatchItem> getItems() {
+		return this.items;
 	}
 }
