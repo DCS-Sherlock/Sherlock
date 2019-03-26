@@ -71,7 +71,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().getFormattedDuration());
 					}
 				}
-				catch (InterruptedException | ExecutionException e) {
+				catch (InterruptedException e) {
 					break;
 				}
 			}
