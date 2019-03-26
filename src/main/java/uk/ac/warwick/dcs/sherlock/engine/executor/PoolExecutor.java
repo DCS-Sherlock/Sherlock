@@ -7,6 +7,7 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.pool.PoolExecutorJob;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
 public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
@@ -91,6 +92,25 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	public JobStatus getJobStatus(IJob job) {
 		synchronized (this.jobMap) {
 			return this.jobMap.getOrDefault(job, null);
+		}
+	}
+
+	@Override
+	public IJob getJob(JobStatus jobStatus) {
+		synchronized (this.jobMap) {
+			if (this.jobMap.containsValue(jobStatus)) {
+				AtomicReference<IJob> ret = new AtomicReference<>(null);
+				this.jobMap.forEach((job, status) -> {
+					if (jobStatus.equals(status)) {
+						ret.set(job);
+					}
+				});
+
+				return ret.get();
+			}
+			else {
+				return null;
+			}
 		}
 	}
 

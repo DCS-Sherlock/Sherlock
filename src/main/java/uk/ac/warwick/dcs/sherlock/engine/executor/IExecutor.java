@@ -13,6 +13,8 @@ public interface IExecutor {
 
 	JobStatus getJobStatus(IJob job);
 
+	IJob getJob(JobStatus jobStatus);
+
 	void shutdown();
 
 	boolean submitJob(IJob job);
