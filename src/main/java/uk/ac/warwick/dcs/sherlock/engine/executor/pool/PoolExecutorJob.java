@@ -52,12 +52,13 @@ public class PoolExecutorJob implements Runnable {
 
 	@Override
 	public void run() {
-		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
+		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(this.status, scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
 		ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
 
 		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS) && tasks.size() > 0) {
 			job.setStatus(WorkStatus.ACTIVE);
 			this.status.nextStep();
+			this.status.calculateProgressIncrement(tasks.stream().mapToInt(t -> t.getPreProcessingStrategies().size()).sum() * this.job.getWorkspace().getFiles().size());
 
 			List<PoolExecutorTask> detTasks = tasks.stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).collect(Collectors.toList());
 
@@ -72,23 +73,35 @@ public class PoolExecutorJob implements Runnable {
 			}).forEach(detTasks::remove);
 
 			this.status.nextStep();
+			this.status.calculateProgressIncrement(detTasks.size());
 			try {
 				exServ.invokeAll(detTasks);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+
+			this.status.nextStep();
+			this.status.calculateProgressIncrement(detTasks.stream().mapToInt(PoolExecutorTask::getWorkerSize).sum());
+			try {
+				exServ.invokeAll(detTasks);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 			job.setStatus(WorkStatus.REGEN_RESULTS);
 		}
 		else {
 			job.setStatus(WorkStatus.ACTIVE);
+			tasks.forEach(x -> x.callType = 3);
 		}
-		this.status.setStep(4);
 
 		// do the post stuff
-		tasks.forEach(x -> x.callType = 2);
+		this.status.setStep(5);
 		List<PoolExecutorTask> postTasks = tasks.stream().filter(x -> x.getStatus() == WorkStatus.COMPLETE).collect(Collectors.toList());
 		List<ITuple<ITask, ModelTaskProcessedResults>> results = new LinkedList<>();
+		this.status.calculateProgressIncrement(postTasks.size());
 
 		try {
 			List<Future<ModelTaskProcessedResults>> tmp = exServ.invokeAll(postTasks);
@@ -105,6 +118,7 @@ public class PoolExecutorJob implements Runnable {
 
 		if (results.size() > 0) {
 			this.status.nextStep();
+			this.status.calculateProgressIncrement(((this.job.getWorkspace().getFiles().size() * results.size()) * 2) + this.job.getWorkspace().getFiles().size());
 
 			List<ICodeBlockGroup> allGroups = results.stream().flatMap(f -> f.getValue().getGroups().stream()).collect(Collectors.toList());
 			SherlockEngine.storage.storeCodeBlockGroups(allGroups);
@@ -134,6 +148,7 @@ public class PoolExecutorJob implements Runnable {
 							float factor = fullSize.get() / fileTotal;
 							groupScores.forEach(x -> x.setValue(x.getValue()/factor));
 						}
+						this.status.incrementProgress();
 
 						IResultTask taskRes = fileRes.addTaskResult(t.getKey());
 						taskRes.addContainingBlock(groupsContainingFile);
@@ -141,6 +156,8 @@ public class PoolExecutorJob implements Runnable {
 						// calculate and store the scores from the group scores, uses weightings
 						calculateScoreForBlockList(file, groupScores, taskRes, taskRes.getClass().getDeclaredMethod("setTaskScore", float.class), taskRes.getClass().getDeclaredMethod("addFileScore", ISourceFile.class, float.class));
 						overallGroupScores.addAll(groupScores);
+
+						this.status.incrementProgress();
 					}
 					catch (Exception e) {
 						synchronized (ExecutorUtils.logger) {
@@ -155,6 +172,8 @@ public class PoolExecutorJob implements Runnable {
 				catch (NoSuchMethodException e) {
 					e.printStackTrace();
 				}
+
+				this.status.incrementProgress();
 			}
 		}
 		else {

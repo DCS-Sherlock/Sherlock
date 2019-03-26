@@ -13,10 +13,12 @@ import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.Priority;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkDetect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
@@ -27,17 +29,24 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 	int callType;
 
 	private IPriorityWorkSchedulerWrapper scheduler;
+	private JobStatus status;
+
 	private ITask task;
 	private String language;
 	private List<PreProcessingStrategy> preProcessingStrategies;
 
-	PoolExecutorTask(IPriorityWorkSchedulerWrapper scheduler, ITask task, String language) {
+	private List<AbstractDetectorWorker> workers;
+	private IDetector detector;
+
+	PoolExecutorTask(JobStatus jobStatus, IPriorityWorkSchedulerWrapper scheduler, ITask task, String language) {
 		this.callType = 1;
+		this.status = jobStatus;
 		this.scheduler = scheduler;
 		this.task = task;
 		this.language = language;
 
 		this.dataItems = Collections.synchronizedList(new LinkedList<>());
+		this.workers = null;
 
 		try {
 			IDetector instance = task.getDetector().newInstance();
@@ -56,9 +65,12 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 	@Override
 	public ModelTaskProcessedResults call() {
 		if (this.callType == 1) {
-			this.runDetector();
+			this.build();
 		}
 		else if (this.callType == 2) {
+			this.runDetector();
+		}
+		else if (this.callType == 3) {
 			return this.runPostProcessing();
 		}
 
@@ -84,33 +96,47 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		return this.task.getStatus();
 	}
 
+	@Override
+	public JobStatus getJobStatus() {
+		return this.status;
+	}
+
 	public ITask getTask() {
 		return task;
 	}
 
-	private void runDetector() {
-		IDetector instance;
+	void build() {
 		try {
-			instance = this.task.getDetector().newInstance();
+			this.detector = this.task.getDetector().getConstructor().newInstance();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 			return;
 		}
 
+		ExecutorUtils.processAdjustableParameters(this.detector, this.task.getParameterMapping());
+		this.workers = this.detector.buildWorkers(this.dataItems);
+
+		this.status.incrementProgress();
+		this.callType = 2;
+	}
+
+	int getWorkerSize() {
+		return this.workers.size();
+	}
+
+	private void runDetector() {
 		try {
-			ExecutorUtils.processAdjustableParameters(instance, this.task.getParameterMapping());
 
-			List<AbstractDetectorWorker> workers = instance.buildWorkers(this.dataItems);
-			int threshold = Math.min(Math.max(workers.size() / Runtime.getRuntime().availableProcessors(), 2), 6); //set min and max num workers in a thread
+			int threshold = Math.min(Math.max(this.workers.size() / Runtime.getRuntime().availableProcessors(), 1), 4); //set min and max num workers in a thread
 
-			WorkDetect detect = new WorkDetect(workers, threshold);
+			WorkDetect detect = new WorkDetect(this.status, this.workers, threshold);
 			this.scheduler.invokeWork(detect, Priority.DEFAULT);
 			List<AbstractModelTaskRawResult> rawResults = detect.getResults();
 
-			if (workers.size() != rawResults.size()) {
+			if (this.workers.size() != rawResults.size()) {
 				synchronized (ExecutorUtils.logger) {
-					ExecutorUtils.logger.error("Error running workers, got {} results from {} workers", rawResults.size(), workers.size());
+					ExecutorUtils.logger.error("Error running workers, got {} results from {} workers", rawResults.size(), this.workers.size());
 					return;
 				}
 			}
@@ -132,6 +158,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 			}
 
 			this.task.setComplete();
+			this.callType = 3;
 		}
 		catch (Exception e) {
 			synchronized (ExecutorUtils.logger) {
@@ -172,6 +199,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 						e.printStackTrace();
 						return null;
 					}
+					this.status.incrementProgress();
 
 					return processedResults;
 				}

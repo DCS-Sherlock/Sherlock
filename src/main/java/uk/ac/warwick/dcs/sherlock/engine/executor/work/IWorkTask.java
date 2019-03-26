@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 
 import java.util.*;
 
@@ -15,5 +16,7 @@ public interface IWorkTask {
 	String getLanguage();
 
 	List<PreProcessingStrategy> getPreProcessingStrategies();
+
+	JobStatus getJobStatus();
 
 }
