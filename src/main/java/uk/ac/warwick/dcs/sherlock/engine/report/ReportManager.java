@@ -240,7 +240,7 @@ public class ReportManager {
 	 */
 	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
 
-		if (!submission.hasParent()) {
+		if (submission.hasParent()) {
 			// submission is not top level, don't make reports on non-top level submission.
 
 			//Either just return null with an error msg
