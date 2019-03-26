@@ -80,6 +80,12 @@ public class PoolExecutorJob implements Runnable {
 			}
 			job.setStatus(WorkStatus.REGEN_RESULTS);
 		}
+		else {
+			job.setStatus(WorkStatus.ACTIVE);
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.info("Skipping raw processing, job {} already run", job.getPersistentId());
+			}
+		}
 		this.status.setStep(4);
 
 		// do the post stuff
