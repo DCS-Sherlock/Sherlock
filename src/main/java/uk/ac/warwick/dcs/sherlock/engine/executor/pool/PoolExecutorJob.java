@@ -82,9 +82,6 @@ public class PoolExecutorJob implements Runnable {
 		}
 		else {
 			job.setStatus(WorkStatus.ACTIVE);
-			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.info("Skipping raw processing, job {} already run", job.getPersistentId());
-			}
 		}
 		this.status.setStep(4);
 

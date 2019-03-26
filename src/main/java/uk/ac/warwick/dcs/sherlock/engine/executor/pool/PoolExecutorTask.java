@@ -152,6 +152,8 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 							return null;
 						}
 					}
+
+					ExecutorUtils.processAdjustableParameters(postProcessor, this.task.getParameterMapping());
 					ModelTaskProcessedResults processedResults = postProcessor.processResults(this.task.getJob().getWorkspace().getFiles(), rawResults);
 					try {
 						if (processedResults.cleanGroups()) {
