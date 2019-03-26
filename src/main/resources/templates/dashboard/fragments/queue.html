@@ -5,6 +5,10 @@
 </head>
 <body>
 
+<div th:if="${success_msg}">
+    <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
+</div>
+
 <table class="table table-borderless">
     <thead class="d-none">
         <tr>
@@ -17,16 +21,18 @@
         <tr>
             <td class="pb-0 align-middle">
                 <h6 class="mb-0">
-                    <span th:text="${'#'+executor.getJob(job).getPersistentId()}"></span>: <span th:text="${executor.getJob(job).getWorkspace().getName()}"></span>
+                    <span th:text="${executor.getJob(job).getWorkspace().getName()}"></span>: <span th:text="${'#'+executor.getJob(job).getPersistentId()}"></span>
                     <span class="badge badge-primary" th:text="${job.getMessage()}"></span>
                 </h6>
             </td>
             <td class="align-middle text-right pb-0">
-                <span th:if="${job.isFinished()}" th:text="${job.getFormattedDuration()}"></span>
-                <a th:unless="${job.isFinished()}" class="btn btn-primary btn-sm disabled" th:href="@{/dashboard/index/queue/{id}(id=${job.getId()})}" th:text="#{link.cancel}"></a>
+                <form th:action="@{/dashboard/index/queue/{id}(id=${job.getId()})}" data-js="form" data-js-target="#queue-parent" method="post">
+                    <button th:if="${job.isFinished()}" type="submit" style="cursor: pointer" class="btn btn-primary btn-sm" th:text="#{link.hide}"></button>
+                    <button th:unless="${job.isFinished()}" type="submit" style="cursor: pointer" class="btn btn-primary btn-sm" th:text="#{link.cancel}"></button>
+                </form>
             </td>
         </tr>
-        <tr th:unless="${job.isFinished()}">
+        <tr th:if="${!job.isFinished() && job.getMessage() != 'Queued'}">
             <td class="pt-1" colspan="2">
                 <div class="progress border-primary" style="border-style: solid; border-width: 1px; height: 30px">
                     <div class="progress-bar" role="progressbar" th:style="${'width: ' + job.getProgress() + '%'}"><span th:text="${ job.getProgress() + '%'}"></span></div>

@@ -103,6 +103,28 @@ public class ResultsController {
         return "redirect:/dashboard/workspaces/manage/" + pathid + "/results/" + jobid;
     }
 
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/dismiss")
+    public String dismissPost(
+            @PathVariable(value="pathid") long pathid,
+            @PathVariable(value="jobid") long jobid,
+            @ModelAttribute("results") JobResultsData results
+    ) {
+        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+
+        String msg = "";
+        if (status != null) {
+            if (status.isFinished()) {
+                SherlockEngine.executor.dismissJob(status);
+                msg = "?msg=dismissed_job";
+            } else {
+                SherlockEngine.executor.cancelJob(status);
+                msg = "?msg=cancelled_job";
+            }
+        }
+
+        return "redirect:/dashboard/workspaces/manage/" + pathid + "/results/" + jobid + msg;
+    }
+
     /**
      * Handles GET requests to the graph fragment
      *

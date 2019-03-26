@@ -22,7 +22,10 @@
                                 <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/delete(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.delete}"></a>
                             </div>
                             <div class="btn-group" th:unless="${finished}">
-                                <a class="btn btn-primary disabled" data-js='modal' th:text="#{link.cancel}"></a>
+
+                                <form th:action="@{/dashboard/workspaces/manage/{id}/results/{job_id}/dismiss(id=${workspace.getId()},job_id=${results.getPersistentId()})}"  method="post">
+                                    <button type="submit" style="cursor: pointer" class="btn btn-primary btn-sm" th:text="#{link.cancel}"></button>
+                                </form>
                             </div>
                         </div>
                     </div>

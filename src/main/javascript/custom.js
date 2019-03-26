@@ -979,75 +979,6 @@ function displayModalLinks() {
 }
 
 /**
- * Runs a GET ajax request
- *
- * @param url the url to get/post to
- * @param success the success callback
- * @param target
- */
-function submitGetAjax(url, success, target) {
-    var data = {
-        ajax: "true"
-    };
-    submitGenericAjax(url, data, success, "GET", target);
-}
-
-/**
- * Runs an ajax request
- *
- * @param url the url to get/post to
- * @param data the data to include with the request
- * @param success the success callback
- * @param type post type: GET/POST
- * @param target the target to update if there was an error
- */
-function submitGenericAjax(url, data, success, type, target) {
-    var input = {
-        type: type,
-        accept:"text/html",
-        dataType: "html",
-        url: url,
-        timeout: 30000,
-        data: data,
-        success: function (result, status, xhr) {
-            if (xhr.getResponseHeader("sherlock-url") != url || result.includes("<link ")) {
-                window.location = xhr.getResponseHeader("sherlock-url");
-            } else {
-                success(result, status, xhr);
-            }
-            rebindEvents();
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            var copy = $('#javascript-error-clone').clone();
-
-            if (copy.find("."+xhr.status).length == 1){
-                copy.find(".alert").html(copy.find("."+xhr.status).html());
-            } else {
-                copy.find(".alert").html(copy.find(".other").html());
-                copy.find('.status-code').text(xhr.status);
-            }
-
-            if (target.attr("id") == "modal" || $("#modal").find(target).length == 1) {
-                $("#modal").modal('hide');
-                $("#javascript-error").html(copy.html());
-            } else {
-                target.html(copy.html());
-            }
-        }
-    };
-
-    if (type == "POST") {
-        $.extend(input, {
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    }
-
-    $.ajax(input);
-}
-
-/**
  * Enables bootstrap tooltips/popovers
  */
 function bindTooltips() {
@@ -1126,6 +1057,75 @@ function getParameter(name) {
 }
 
 /**
+ * Runs a GET ajax request
+ *
+ * @param url the url to get/post to
+ * @param success the success callback
+ * @param target
+ */
+function submitGetAjax(url, success, target) {
+    var data = {
+        ajax: "true"
+    };
+    submitGenericAjax(url, data, success, "GET", target);
+}
+
+/**
+ * Runs an ajax request
+ *
+ * @param url the url to get/post to
+ * @param data the data to include with the request
+ * @param success the success callback
+ * @param type post type: GET/POST
+ * @param target the target to update if there was an error
+ */
+function submitGenericAjax(url, data, success, type, target) {
+    var input = {
+        type: type,
+        accept:"text/html",
+        dataType: "html",
+        url: url,
+        timeout: 30000,
+        data: data,
+        success: function (result, status, xhr) {
+            if (xhr.getResponseHeader("sherlock-url") != url || result.includes("<link ")) {
+                window.location = xhr.getResponseHeader("sherlock-url");
+            } else {
+                success(result, status, xhr);
+            }
+            rebindEvents();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            var copy = $('#javascript-error-clone').clone();
+
+            if (copy.find("."+xhr.status).length == 1){
+                copy.find(".alert").html(copy.find("."+xhr.status).html());
+            } else {
+                copy.find(".alert").html(copy.find(".other").html());
+                copy.find('.status-code').text(xhr.status);
+            }
+
+            if (target.attr("id") == "modal" || $("#modal").find(target).length == 1) {
+                $("#modal").modal('hide');
+                $("#javascript-error").html(copy.html());
+            } else {
+                target.html(copy.html());
+            }
+        }
+    };
+
+    if (type == "POST") {
+        $.extend(input, {
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    $.ajax(input);
+}
+
+/**
  * Rebind the jQuery events when the page has been updated
  */
 function rebindEvents() {
@@ -1181,5 +1181,13 @@ $(function () {
                 }
             });
         }, 10000);
+    }
+
+    if ($("#queue-parent").length) {
+        setInterval(function() {
+            submitGetAjax("/dashboard/index/queue", function(result, status, xhr) {
+                $("#queue-parent").html(result);
+            }, $("#modal"))
+        }, 15000);
     }
 });
