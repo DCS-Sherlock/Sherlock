@@ -40,11 +40,6 @@ public class ReportManager {
 	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
-	 * All generated file reports are stored as FileReports. The key is each file's unique id.
-	 */
-	private Map<Long, FileReport> fileReportMap;
-
-	/**
 	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission matches make up the report.
 	 */
 	private Map<Long, List<SubmissionMatch>> submissionReportMap;
@@ -74,7 +69,6 @@ public class ReportManager {
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.fileReportMap = new HashMap<>();
 		this.submissionReportMap = new HashMap<>();
 		this.results = results;
 		this.submissionScores = new HashMap<>();
@@ -113,48 +107,6 @@ public class ReportManager {
 			} else {
 				submissionFileMap.get(file.getSubmission().getId()).add(file.getPersistentId());
 			}
-		}
-	}
-
-	/**
-	 * Generates a report for a single specified file, stores it, and returns it.
-	 *
-	 * @param sourceFile The file to generate a report for.
-	 *
-	 * @return The FileReport object that is generated.
-	 */
-	public FileReport GenerateReport(ISourceFile sourceFile) {
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		//Get all the codeblockgroups which contain the desired file.
-		//this is kind of gross honestly with the current setup
-		for (ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
-			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
-
-			boolean fileInGroup = false;
-			for (ICodeBlock codeBlock : codeBlocks) {
-				if (codeBlock.getFile().getPersistentId() == sourceFile.getPersistentId()) {
-					fileInGroup = true;
-					break;
-				}
-			}
-
-			relevantGroups.add(codeBlockGroup);
-		}
-
-		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups);
-
-		fileReportMap.put(sourceFile.getPersistentId(), fileReport);
-		return fileReport;
-	}
-
-	/**
-	 * Generates a report for all ISourceFiles in fileMap that don't have a report already generated for them.
-	 */
-	public void GenerateAllReports() {
-		for(Long fileId : fileMap.keySet()) {
-			if(!fileReportMap.containsKey(fileId))
-				GenerateReport(fileMap.get(fileId));
 		}
 	}
 
@@ -277,22 +229,6 @@ public class ReportManager {
 			return submissionReportMap.get(submissionId);
 		else
 			return new ArrayList<>();
-	}
-
-	/**
-	 * Retrieve a file report which has already been generated.
-	 * TODO: print something to error if exception? idk
-	 *
-	 * @param sourceFile The file to retrieve the report for
-	 * @return a FileReport object that is the report in question
-	 * @throws NullPointerException if there is no report for this file
-	 */
-	public FileReport GetFileReport(ISourceFile sourceFile) throws NullPointerException {
-		try {
-			return fileReportMap.get(sourceFile.getPersistentId());
-		} catch(NullPointerException e) {
-			throw e;
-		}
 	}
 
 }
