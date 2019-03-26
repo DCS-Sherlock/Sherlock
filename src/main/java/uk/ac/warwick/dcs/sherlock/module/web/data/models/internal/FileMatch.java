@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
+import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatchItem;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 
 import java.util.*;
@@ -45,22 +46,17 @@ public class FileMatch {
     public FileMatch(SubmissionMatch match) {
         this.map = new HashMap<>();
         this.reason = match.getReason();
-        this.score = match.getScore();
+
+        for (SubmissionMatchItem item : match.getItems()) {
+            List<CodeBlock> blocks = new ArrayList<>();
+            item.GetLineNumbers().forEach(t -> blocks.add(new CodeBlock(t.getKey(), t.getValue())));
+            map.put(item.GetFile(), blocks);
+            this.score = item.GetScore();
+        }
+//        this.score = match.getScore();
 
         //Generate a random colour
         this.colour = ResultsHelper.randomColour();
-
-        //TODO: Replace with updated submission match
-        {
-            List<CodeBlock> blocks1 = new ArrayList<>();
-            List<CodeBlock> blocks2 = new ArrayList<>();
-
-            match.getLineNumbers1().forEach(t -> blocks1.add(new CodeBlock(t.getKey(), t.getValue())));
-            match.getLineNumbers2().forEach(t -> blocks2.add(new CodeBlock(t.getKey(), t.getValue())));
-
-            map.put(match.getFile1(), blocks1);
-            map.put(match.getFile2(), blocks2);
-        }
     }
 
     /**
