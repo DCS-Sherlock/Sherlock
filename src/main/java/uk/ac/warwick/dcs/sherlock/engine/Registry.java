@@ -11,7 +11,6 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -143,15 +142,6 @@ public class Registry implements IRegistry {
 	public Set<String> getDetectorLanguages(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
 			return this.detectorRegistry.get(det).languages;
-		}
-
-		return null;
-	}
-
-	@Override
-	public DetectorRank getDetectorRank(Class<? extends IDetector> det) {
-		if (this.detectorRegistry.containsKey(det)) {
-			return this.detectorRegistry.get(det).rank;
 		}
 
 		return null;
@@ -380,7 +370,6 @@ public class Registry implements IRegistry {
 		DetectorData data = new DetectorData();
 		data.name = tester.getDisplayName();
 		data.desc = "NOT YET IMPLEMENTED, SORRY";
-		data.rank = tester.getRank();
 		data.strategies = tester.getPreProcessors();
 		data.resultClass = resultsClass;
 
@@ -687,7 +676,6 @@ public class Registry implements IRegistry {
 
 		String name;
 		String desc;
-		DetectorRank rank;
 		Set<String> languages;
 		List<PreProcessingStrategy> strategies;
 		List<AdjustableParameterObj> adjustables;

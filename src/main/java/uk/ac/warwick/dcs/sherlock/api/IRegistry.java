@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -74,15 +73,6 @@ public interface IRegistry {
 	 * @return languages supported by the detector
 	 */
 	Set<String> getDetectorLanguages(Class<? extends IDetector> det);
-
-	/**
-	 * Get the rank of the detector (Should it be a primary result, or just a reinforcing result (secondary))
-	 *
-	 * @param det detector class
-	 *
-	 * @return the detector rank
-	 */
-	DetectorRank getDetectorRank(Class<? extends IDetector> det);
 
 	/**
 	 * Fetch the set of all detectors registered to Sherlock

@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.component;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 
@@ -16,8 +15,6 @@ public interface ITask {
 	Map<String, Float> getParameterMapping();
 
 	long getPersistentId();
-
-	DetectorRank getRank();
 
 	List<AbstractModelTaskRawResult> getRawResults();
 

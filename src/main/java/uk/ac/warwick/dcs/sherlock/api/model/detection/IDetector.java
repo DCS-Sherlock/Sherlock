@@ -44,5 +44,6 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	 *
 	 * @return the rank of the detector
 	 */
+	@Deprecated
 	DetectorRank getRank();
 }

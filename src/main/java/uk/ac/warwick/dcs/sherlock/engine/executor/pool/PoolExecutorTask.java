@@ -171,17 +171,6 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 						return null;
 					}
 
-					/*List<ICodeBlockGroup> gs = processedResults.getGroups();
-					synchronized (ExecutorUtils.logger) {
-						ExecutorUtils.logger.warn("Found {} groups:\n", gs.size());
-						for (ICodeBlockGroup g : gs) {
-							ExecutorUtils.logger.warn("{} - {}", g.getComment() == null ? "No Comment" : g.getComment(), g.getDetectionType());
-							ExecutorUtils.logger.warn("==================");
-							g.getCodeBlocks().forEach(x -> ExecutorUtils.logger.warn("{} - {} - {}%", x.getFile(), x.getLineNumbers().toString(), x.getBlockScore() * 100));
-							System.out.println();
-						}
-					}*/
-
 					return processedResults;
 				}
 				catch (Exception e) {
