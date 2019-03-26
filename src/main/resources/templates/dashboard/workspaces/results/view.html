@@ -16,9 +16,13 @@
                     </h4>
                     <div class="btn-toolbar float-right">
                         <div class="btn-group">
-                            <div class="btn-group">
+                            <div class="btn-group" th:if="${finished}">
                                 <a class="btn btn-primary mr-3" th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/network(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{results.network.link}"></a>
+                                <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/rerun(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.rerun}"></a>
                                 <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/delete(id=${workspace.getId()},job_id=${results.getPersistentId()})}" th:text="#{link.delete}"></a>
+                            </div>
+                            <div class="btn-group" th:unless="${finished}">
+                                <a class="btn btn-primary disabled" data-js='modal' th:text="#{link.cancel}"></a>
                             </div>
                         </div>
                     </div>
@@ -32,6 +36,7 @@
                                 </h4>
                                 <p>
                                     <span class="badge" th:classappend="#{${results.getStatus()+'.badge'}}" th:text="#{${results.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${results.getStatus()+'.tooltip'}}"></span>
+                                    <span id="job-status" th:unless="${finished}" class="badge badge-primary" th:text="${status_message}"></span>
                                 </p>
                             </div>
                             <div class="col-md-3">
@@ -53,7 +58,7 @@
                         </div>
                         <!--<hr>-->
                         <div class="row text-center">
-                            <div class="col-md-3">
+                            <div class="col-lg-4">
                                 <h4>
                                     <span th:text="#{results.submissions}"></span>
                                 </h4>
@@ -61,7 +66,7 @@
                                     <span th:text="${results.getSubmissionCount()}"></span>
                                 </p>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-lg-8">
                                 <h4>
                                     <span th:text="#{results.detectors}"></span>
                                 </h4>
@@ -75,24 +80,25 @@
                                 </th:block>
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <h4 th:text="#{results.score_distribution}"></h4>
-                                <th:block th:if="${results.getResultsMap().empty}">
-                                    <span th:text="#{workspaces.results.none}"></span>
-                                </th:block>
-                                <th:block th:unless="${results.getResultsMap().empty}">
-                                    <div th:replace="fragments/js-area :: js-area(areaid='graph-parent', arealink=@{/dashboard/workspaces/manage/{id}/results/{job_id}/graph(id=${workspace.getId()},job_id=${results.getPersistentId()})})"></div>
-                                </th:block>
+                        <th:block th:if="${results.getStatus() == 'COMPLETE'}">
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 th:text="#{results.score_distribution}"></h4>
+                                    <th:block th:if="${results.getResultsMap().empty}">
+                                        <span th:text="#{workspaces.results.none}"></span>
+                                    </th:block>
+                                    <th:block th:unless="${results.getResultsMap().empty}">
+                                        <div th:replace="fragments/js-area :: js-area(areaid='graph-parent', arealink=@{/dashboard/workspaces/manage/{id}/results/{job_id}/graph(id=${workspace.getId()},job_id=${results.getPersistentId()})})"></div>
+                                    </th:block>
+                                </div>
                             </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4 th:text="#{results.submissions}"></h4>
-                                <table class="table table-hover table-borderless table-responsive" data-js="table-matches">
-                                    <thead>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 th:text="#{results.submissions}"></h4>
+                                    <table class="table table-hover table-borderless table-responsive" data-js="table-matches">
+                                        <thead>
                                         <tr>
                                             <th class="text-center"><h5 th:text="#{results.table.name}"></h5></th>
                                             <th class="text-center d-none d-xl-table-cell"><h5 th:text="#{results.table.score}"></h5></th>
@@ -100,8 +106,8 @@
                                             <th class="text-center"><h5 th:text="#{results.table.matches}"></h5></th>
                                             <th class="text-center"><h5 th:text="#{results.table.report}"></h5></th>
                                         </tr>
-                                    </thead>
-                                    <tbody>
+                                        </thead>
+                                        <tbody>
                                         <th:block th:each="result : ${results.getResultsMap()}">
                                             <tr>
                                                 <td class="align-middle text-center shrink">
@@ -146,10 +152,23 @@
                                             <th></th>
                                             <th></th>
                                         </tr>
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
+                        </th:block>
+
+                        <th:block th:unless="${finished}">
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-12 text-center">
+                                    <span th:text="#{results.status_refresh}"></span>
+                                    <div class="progress border-primary" style="border-style: solid; border-width: 1px; height: 30px">
+                                        <div id="job-progress" class="progress-bar" role="progressbar" th:style="${'width: ' + status_progress + '%'}"><span th:text="${ status_progress + '%'}"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
             </div>

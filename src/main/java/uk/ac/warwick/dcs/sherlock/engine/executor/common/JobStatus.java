@@ -116,5 +116,4 @@ public class JobStatus implements Comparable<JobStatus> {
 		this.startTime = Instant.now();
 		this.step = 1;
 	}
-
 }

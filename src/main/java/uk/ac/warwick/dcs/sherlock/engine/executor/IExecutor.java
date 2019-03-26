@@ -19,4 +19,12 @@ public interface IExecutor {
 
 	boolean submitJob(IJob job);
 
+	boolean dismissJob(JobStatus jobStatus);
+
+	boolean dismissJob(IJob job);
+
+	boolean cancelJob(JobStatus jobStatus);
+
+	boolean cancelJob(IJob job);
+
 }
