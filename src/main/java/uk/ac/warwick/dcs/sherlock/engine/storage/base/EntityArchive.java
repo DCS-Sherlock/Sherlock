@@ -95,6 +95,10 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent;
 	}
 
+	EntityArchive getParent_() {
+		return this.parent;
+	}
+
 	@Override
 	public int getTotalFileCount() {
 		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();

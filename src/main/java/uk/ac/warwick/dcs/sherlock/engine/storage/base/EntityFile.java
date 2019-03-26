@@ -142,8 +142,8 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public ISubmission getSubmission() {
 		EntityArchive sub = this.archive;
-		while (sub.getParent() != null) {
-			sub = sub.getParent();
+		while (sub.hasParent()) {
+			sub = sub.getParent_();
 		}
 
 		return sub;
@@ -210,8 +210,8 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	private void getFileDisplayNameRecurse(StringBuilder build, EntityArchive archive, String sep) {
-		if (archive.getParent() != null) {
-			this.getFileDisplayNameRecurse(build, archive.getParent(), sep);
+		if (archive.hasParent()) {
+			this.getFileDisplayNameRecurse(build, archive.getParent_(), sep);
 		}
 		build.append(archive.getName()).append(sep);
 	}

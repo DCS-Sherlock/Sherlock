@@ -198,7 +198,7 @@ public class BaseStorageFilesystem {
 	}
 
 	private String getArchiveName(EntityArchive archive) {
-		return archive != null ? archive.getName() + this.getArchiveName(archive.getParent()) : "";
+		return archive != null ? archive.getName() + this.getArchiveName(archive.getParent_()) : "";
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {
