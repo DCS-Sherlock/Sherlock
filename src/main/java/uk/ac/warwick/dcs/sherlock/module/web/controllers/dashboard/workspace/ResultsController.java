@@ -1,11 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.module.web.controllers.dashboard.workspace;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.SubmissionResultsData;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.JobResultsData;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
@@ -26,11 +29,78 @@ public class ResultsController {
     /**
      * Handles GET requests to the results page
      *
+     * @param model holder for model attributes
+     * @param results the job results object
+     *
      * @return the path to the results template
      */
     @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}")
-    public String viewGet() {
+    public String viewGet(
+            Model model,
+            @ModelAttribute("results") JobResultsData results
+    ) {
+        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+
+        if (status == null) {
+            model.addAttribute("finished", true);
+            model.addAttribute("status_message", "Finished");
+            model.addAttribute("status_progress", 100);
+        } else {
+            model.addAttribute("finished", (status.getMessage() == "Finished"));
+            model.addAttribute("status_message", status.getMessage());
+            model.addAttribute("status_progress", status.getProgress()*100);
+        }
+
         return "dashboard/workspaces/results/view";
+    }
+
+//    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/json")
+    @RequestMapping(value = "/dashboard/workspaces/manage/{pathid}/results/{jobid}/json", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String jsonGet(
+            @ModelAttribute("results") JobResultsData results
+    ) {
+        JSONObject result = new JSONObject();
+        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+
+        if (status == null) {
+            result.put("message", "Finished");
+            result.put("progress", 1);
+        } else {
+            result.put("message", status.getMessage());
+            result.put("progress", status.getProgress());
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Handles GET requests to the rerun page
+     *
+     * @return the path to the rerun template
+     */
+    @GetMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/rerun")
+    public String rerunGet() {
+        return "dashboard/workspaces/results/rerun";
+    }
+
+    /**
+     * Handles POST requests to the rerun page
+     *
+     * @param pathid the workspace id
+     * @param jobid the job id
+     * @param results the job results object
+     *
+     * @return redirect to the job results page
+     */
+    @PostMapping("/dashboard/workspaces/manage/{pathid}/results/{jobid}/rerun")
+    public String rerunPost(
+            @PathVariable(value="pathid") long pathid,
+            @PathVariable(value="jobid") long jobid,
+            @ModelAttribute("results") JobResultsData results
+    ) {
+        SherlockEngine.executor.submitJob(results.getJob());
+        return "redirect:/dashboard/workspaces/manage/" + pathid + "/results/" + jobid;
     }
 
     /**
@@ -50,7 +120,7 @@ public class ResultsController {
             @PathVariable(value="pathid") long pathid,
             @PathVariable(value="jobid") long jobid
     ) throws NotAjaxRequest {
-        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/results/" + pathid + "/" + jobid);
+        if (!isAjax) throw new NotAjaxRequest("/dashboard/workspaces/manage/" + pathid + "/results/" + jobid);
         return "dashboard/workspaces/results/fragments/graph";
     }
 
