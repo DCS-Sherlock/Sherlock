@@ -26,6 +26,10 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item"
                            data-js='modal'
+                           th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/rerun(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
+                           th:text="#{link.rerun}"></a>
+                        <a class="dropdown-item"
+                           data-js='modal'
                            th:href="@{/dashboard/workspaces/manage/{id}/results/{job_id}/delete(id=${workspace.getId()},job_id=${job.getPersistentId()})}"
                            th:text="#{link.delete}"></a>
                     </div>

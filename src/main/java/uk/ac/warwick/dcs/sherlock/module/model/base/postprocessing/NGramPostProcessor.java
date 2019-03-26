@@ -31,24 +31,17 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 * @param second The second match to compare.
 	 * @return A boolean showing if the 2 matches are on the same code block or not.
 	 */
+	// TODO possible add extension for fuzzy matches, e.g. subsets and overlaps
 	private boolean isLinked(NgramMatch first, NgramMatch second) {
-		// TODO find a better way to do this
-		// precompute key and value matches. This is slightly more inefficient than doing it post file match check, but improves readability for negligible loss
-		// if the start lines of 2 blocks match up
-		boolean r_key = first.reference_lines.getKey() == second.reference_lines.getKey();
-		boolean c_key = first.check_lines.getKey() == second.check_lines.getKey();
-		// if the end lines of the 2 blocks line up
-		boolean r_val = first.reference_lines.getValue() == second.reference_lines.getValue();
-		boolean c_val = first.check_lines.getValue() == second.check_lines.getValue();
-		// for each possible pair check if they are the same file and the line numbers match up
-		if (first.file1.equals(second.file1)) {
-			return r_key && r_val;
-		} else if (first.file1.equals(second.file2)) {
-			return r_key && c_val;
-		} else if (first.file2.equals(second.file1)) {
-			return c_key && r_val;
-		} else if (first.file2.equals(second.file2)) {
-			return c_key && c_val;
+		// for each file combination
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				// if the files are the same
+				if (first.files[i].equals(second.files[j])) {
+					// return if the block is the same
+					return first.lines.get(i).equals(second.lines.get(j));
+				}
+			}
 		}
 		// if no match is found
 		return false;
@@ -111,7 +104,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 			if (scorer.checkSize(files.size(), list)) {
 				// get the score for each file in the list
 				for (ISourceFile file : scorer.file_list) {
-					scorer.getScore(file, out_group);
+					scorer.addScoredBlock(file, out_group);
 				}
 				out_group.setComment("N-Gram Match Group");
 				try {

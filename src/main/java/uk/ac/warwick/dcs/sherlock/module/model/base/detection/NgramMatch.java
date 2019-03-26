@@ -4,6 +4,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Contains all data for a single matched pair.
@@ -17,13 +18,22 @@ import java.io.Serializable;
  * </p>
  */
 public class NgramMatch implements Serializable {
-    public Tuple<Integer, Integer> reference_lines;
-    public Tuple<Integer, Integer> check_lines;
+    /**
+     * The line positions of both blocks.
+     */
+    public ArrayList<Tuple<Integer, Integer>> lines;    // array list used for type safety of generics
+    /**
+     * The similarity between the section of both files.
+     */
     public float similarity;
-    // TODO change these out for an array pair to allow iteration
-    public ISourceFile file1;
-    public ISourceFile file2;
-    // used to allow skipping during score methods if the math is considered common
+    /**
+     * The two files with matching sections.
+     */
+    public ISourceFile[] files;
+    /**
+     * Used to allow skipping during score methods if the math is considered common. Is now redundant due to
+     * depreciation, but has been left in if needed in future use cases.
+     */
     public boolean common;
 
 
@@ -38,11 +48,18 @@ public class NgramMatch implements Serializable {
      * @param file2 The second file.
      */
     NgramMatch(int refStart, int refEnd, int checkStart, int checkEnd, float similarity, ISourceFile file1, ISourceFile file2) {
-        reference_lines = new Tuple<>(refStart, refEnd);
-        check_lines = new Tuple<>(checkStart, checkEnd);
+        // init the array list
+        lines = new ArrayList<>();
+        // fill with line positions
+        lines.add(new Tuple<>(refStart, refEnd));
+        lines.add(new Tuple<>(checkStart, checkEnd));
+
         this.similarity = similarity;
-        this.file1 = file1;
-        this.file2 = file2;
+        // init the array to a pair
+        files = new ISourceFile[2];
+        // store the file objects (pointers, the same pointers should be used globally)
+        files[0] = file1;
+        files[1] = file2;
         // default common as false
         this.common = false;
     }
@@ -53,6 +70,6 @@ public class NgramMatch implements Serializable {
      * @return True if the blocks are the same.
      */
     public boolean equals(NgramMatch pair) {
-        return this.reference_lines.equals(pair.reference_lines) && this.check_lines.equals(pair.check_lines);
+        return this.lines.get(0).equals(pair.lines.get(0)) && this.lines.get(1).equals(pair.lines.get(1));
     }
 }

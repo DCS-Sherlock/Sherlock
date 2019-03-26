@@ -576,20 +576,25 @@ function bindRadioChange() {
         $("."+name+":not(#"+value+")").slideUp();
         $("#"+value).slideDown();
 
-        Cookies.set(name, value);
+        Cookies.set("radio_" + name, value);
 
         return false;
     });
     $("[data-js='radio-div']").each(function() {
         var input = $(this);
         var name = input.attr("name");
-        var value = Cookies.get(name);
+        var value = Cookies.get("radio_" + name);
+        console.log(name, value);
 
+        var checked = false;
         if (value != null) {
-            $('input:radio[name="'+name+'"][value="'+value+'"]').attr('checked', true).trigger('change');
+            checked = true;
         }
 
+        $('input:radio[name="'+name+'"][value="'+value+'"]').attr('checked', checked).trigger('change');
+
         $("."+name).removeClass("d-none");
+        $("."+name).hide();
     });
 }
 
@@ -978,6 +983,7 @@ function displayModalLinks() {
  *
  * @param url the url to get/post to
  * @param success the success callback
+ * @param target
  */
 function submitGetAjax(url, success, target) {
     var data = {
@@ -1123,13 +1129,13 @@ function getParameter(name) {
  * Rebind the jQuery events when the page has been updated
  */
 function rebindEvents() {
+    displayModalLinks();
     triggerArea();
+    triggerLoadArea();
     bindTooltips();
     bindSelectChange();
     bindModalLinks();
     bindForms();
-    displayModalLinks();
-    triggerLoadArea();
     bindAreaLink();
     bindUsernameChange();
     bindRadioChange();
@@ -1149,8 +1155,31 @@ $(function () {
 
     // FROM: https://itsolutionstuff.com/post/how-to-remove-query-string-from-urlexample.html
     var uri = window.location.toString();
+    var clean_uri = uri;
     if (uri.indexOf("?") > 0) {
-        var clean_uri = uri.substring(0, uri.indexOf("?"));
+        clean_uri = uri.substring(0, uri.indexOf("?"));
         window.history.replaceState({}, document.title, clean_uri);
+    }
+
+    // Check the status of a job on the results page every 10 seconds
+    if ($("#job-status").length && $("#job-progress").length) {
+        var json_uri = clean_uri + "/json";
+
+        setInterval(function() {
+            $.getJSON(json_uri, function(data) {
+                // Update the status badge
+                $("#job-status").html(data.message);
+
+                // Update the progress bar
+                var percent = (data.progress*100) + "%";
+                $("#job-progress").css("width", percent);
+                $("#job-progress span").html(percent);
+
+                // If finished, reload the page to view the results
+                if (data.message == "Finished") {
+                    location.reload();
+                }
+            });
+        }, 10000);
     }
 });
