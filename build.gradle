@@ -223,6 +223,7 @@ bootRun {
     dependsOn minifyJs
     dependsOn sassCompile
     main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
+    jvmArgs = ["-Dspring.profiles.active=dev", "-Dspring.output.ansi.enabled=ALWAYS"]
 }
 
 test {
