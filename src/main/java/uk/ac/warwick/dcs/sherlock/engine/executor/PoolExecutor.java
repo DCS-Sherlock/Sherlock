@@ -42,15 +42,20 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 					job.getStatus().startJob();
 
-					Future f = this.exec.submit(job);
-					f.get();
+					try {
+						Future f = this.exec.submit(job);
+						f.get();
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
 
 					job.getStatus().finishJob();
 
 					//Remove after a minute
 					Runnable runnable = () -> {
 						try {
-							Thread.sleep(60000);
+							Thread.sleep(180000);
 							synchronized (this.jobMap) {
 								this.jobMap.remove(job.getJob());
 							}
