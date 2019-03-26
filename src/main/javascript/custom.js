@@ -1180,7 +1180,7 @@ $(function () {
                     location.reload();
                 }
             });
-        }, 10000);
+        }, 3000);
     }
 
     if ($("#queue-parent").length) {
@@ -1188,6 +1188,6 @@ $(function () {
             submitGetAjax("/dashboard/index/queue", function(result, status, xhr) {
                 $("#queue-parent").html(result);
             }, $("#modal"))
-        }, 15000);
+        }, 3000);
     }
 });

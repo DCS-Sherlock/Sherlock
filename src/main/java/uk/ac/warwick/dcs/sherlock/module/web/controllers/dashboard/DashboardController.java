@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 
@@ -73,12 +74,11 @@ public class DashboardController {
 	) throws NotAjaxRequest {
 		if (!isAjax) throw new NotAjaxRequest("/dashboard/index");
 
-//		model.addAttribute(
-//				"jobs",
-//				SherlockEngine.executor.getAllJobStatuses()
-//		);
+		List<IWorkspace> workspaces = SherlockEngine.storage.getWorkspaces();
+        model.addAttribute("workspaces", workspaces.size());
+        model.addAttribute("submissions", workspaces.stream().mapToInt(w -> w.getSubmissions().size()).sum());
 
-		return "dashboard/fragments/statistics";
+        return "dashboard/fragments/statistics";
 	}
 
 	private Model updateModel(Model model) {
