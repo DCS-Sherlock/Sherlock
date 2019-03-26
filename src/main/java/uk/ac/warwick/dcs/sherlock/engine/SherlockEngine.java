@@ -133,6 +133,8 @@ public class SherlockEngine {
 			catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+
+			SherlockEngine.writeConfiguration(configFile);
 		}
 	}
 

@@ -8,7 +8,6 @@ public class Configuration {
 
 	private String dataPath;
 	private Boolean encryptFiles;
-
 	private int jobCompleteDismissalTime;
 
 	public Configuration() {
@@ -21,7 +20,7 @@ public class Configuration {
 		return dataPath;
 	}
 
-	private void setDataPath(String data_path) {
+	public void setDataPath(String data_path) {
 		this.dataPath = data_path.replace("/", File.separator).replace("\\", File.separator).replaceAll(File.separator + "$", "");
 	}
 
@@ -29,7 +28,7 @@ public class Configuration {
 		return encryptFiles;
 	}
 
-	private void setEncryptFiles(Boolean encryptFiles) {
+	public void setEncryptFiles(Boolean encryptFiles) {
 		this.encryptFiles = encryptFiles;
 	}
 
@@ -37,7 +36,7 @@ public class Configuration {
 		return jobCompleteDismissalTime;
 	}
 
-	private void setJobCompleteDismissalTime(int jobCompleteDismissalTime) {
+	public void setJobCompleteDismissalTime(int jobCompleteDismissalTime) {
 		this.jobCompleteDismissalTime = jobCompleteDismissalTime;
 	}
 }
