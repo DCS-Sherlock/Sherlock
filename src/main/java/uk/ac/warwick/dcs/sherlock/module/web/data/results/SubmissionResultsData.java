@@ -248,13 +248,13 @@ public class SubmissionResultsData {
             for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
                 ISourceFile entryFile = entry.getKey();
 
-                if (!entryFile.getTopSubmission().equals(this.submission1)) {
-                    if (!map.containsKey(entryFile.getTopSubmission())) {
-                        map.put(entryFile.getTopSubmission(), new TreeMap<>());
+                if (!entryFile.getSubmission().equals(this.submission1)) {
+                    if (!map.containsKey(entryFile.getSubmission())) {
+                        map.put(entryFile.getSubmission(), new TreeMap<>());
                     }
 
-                    if (!map.get(entryFile.getTopSubmission()).containsKey(entryFile.getPersistentId())) {
-                        map.get(entryFile.getTopSubmission()).put(entryFile.getPersistentId(), entryFile);
+                    if (!map.get(entryFile.getSubmission()).containsKey(entryFile.getPersistentId())) {
+                        map.get(entryFile.getSubmission()).put(entryFile.getPersistentId(), entryFile);
                     }
                 }
             }

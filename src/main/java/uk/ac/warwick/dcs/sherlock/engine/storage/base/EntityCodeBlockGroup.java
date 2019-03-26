@@ -70,7 +70,7 @@ public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {
 	@Override
 	public boolean submissionIdPresent(long submissionId) {
 		for(EntityCodeBlock codeBlock : this.blockMap.values()) {
-			if(codeBlock.getFile().getSubmissionId() == submissionId)
+			if(codeBlock.getFile().getSubmission().getId() == submissionId)
 				return true;
 		}
 

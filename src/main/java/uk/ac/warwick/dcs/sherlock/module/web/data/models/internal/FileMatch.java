@@ -3,7 +3,6 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 
@@ -185,8 +184,8 @@ public class FileMatch {
             match.put("id", entryFile.getPersistentId());
             match.put("name", entryFile.getFileIdentifier());
             match.put("displayName", entryFile.getFileDisplayName());
-            match.put("submission", entryFile.getTopSubmission().getId());
-            match.put("submissionName", entryFile.getTopSubmission().getName());
+            match.put("submission", entryFile.getSubmission().getId());
+            match.put("submissionName", entryFile.getSubmission().getName());
 
             Set<Integer> lines = new LinkedHashSet<>();
             entryList.forEach(cb -> lines.addAll(cb.toLineNumList()));

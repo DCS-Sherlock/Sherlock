@@ -115,11 +115,11 @@ public class ReportGenerator implements IReportGenerator {
 			//get the file ids and line numbers
 			//TODO: make more efficient (just retrieve files directly rather than looping through)
 			for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-				if(submissions.get(0).getId() == codeBlock.getFile().getSubmissionId()) {
+				if(submissions.get(0).getId() == codeBlock.getFile().getSubmission().getId()) {
 					file1 = codeBlock.getFile();
 					lineNumbers1 = codeBlock.getLineNumbers();
 				}
-				else if (submissions.get(1).getId() == codeBlock.getFile().getSubmissionId()) {
+				else if (submissions.get(1).getId() == codeBlock.getFile().getSubmission().getId()) {
 					file2 = codeBlock.getFile();
 					lineNumbers2 = codeBlock.getLineNumbers();
 				}
@@ -144,7 +144,7 @@ public class ReportGenerator implements IReportGenerator {
 		//Create a SubmissionMatch object for each CodeBlockGroup
 		for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
 			ISourceFile file = null;
-			List<Float> scores = new ArrayList<Float>();
+			List<Float> scores = new ArrayList<>();
 			String reason = "";
 			List<ITuple<Integer, Integer>> lineNumbers = new ArrayList<>();
 
@@ -172,7 +172,7 @@ public class ReportGenerator implements IReportGenerator {
 
 			//get the file id and line numbers
 			for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-				if(submission.getId() == codeBlock.getFile().getSubmissionId()) {
+				if(submission.getId() == codeBlock.getFile().getSubmission().getId()) {
 					file = codeBlock.getFile();
 					lineNumbers = codeBlock.getLineNumbers();
 				}

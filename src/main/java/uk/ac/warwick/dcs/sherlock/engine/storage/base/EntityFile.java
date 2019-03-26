@@ -135,12 +135,12 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
-	public long getSubmissionId() {
+	public long getArchiveId() {
 		return this.archive.getId();
 	}
 
 	@Override
-	public ISubmission getTopSubmission() {
+	public ISubmission getSubmission() {
 		EntityArchive sub = this.archive;
 		while (sub.getParent() != null) {
 			sub = sub.getParent();

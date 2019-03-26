@@ -75,7 +75,7 @@ public class ReportManager {
 		this.relativeFileScores = new HashMap<>();
 		this.results.getFileResults().forEach(resultFile -> this.fileMap.put(resultFile.getFile().getPersistentId(), resultFile.getFile()));
 		this.results.getFileResults().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new Tuple<Long, Long>(resultFile.getFile().getPersistentId(), file2.getPersistentId()), resultFile.getFileScore(file2))));
-		this.results.getFileResults().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmissionId(), resultFile.getOverallScore()));
+		this.results.getFileResults().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmission().getId(), resultFile.getOverallScore()));
 
 		FillSubmissionFileMap();
 	}
@@ -100,12 +100,12 @@ public class ReportManager {
 		for(ISourceFile file : this.fileMap.values()) {
 			//If this is the first file of this submission seen, create a new list and put it into submissionFileMap.
 			//otherwise add to the existing list.
-			if(submissionFileMap.get(file.getSubmissionId()) == null) {
+			if(submissionFileMap.get(file.getSubmission().getId()) == null) {
 				ArrayList<Long> idList = new ArrayList<>();
 				idList.add(file.getPersistentId());
-				submissionFileMap.put(file.getSubmissionId(), idList);
+				submissionFileMap.put(file.getSubmission().getId(), idList);
 			} else {
-				submissionFileMap.get(file.getSubmissionId()).add(file.getPersistentId());
+				submissionFileMap.get(file.getSubmission().getId()).add(file.getPersistentId());
 			}
 		}
 	}
@@ -171,7 +171,7 @@ public class ReportManager {
 				//If this group contains a file for the current submission, add all other submissions in the group to the list, if they aren't already added
 				if(codeBlockGroup.submissionIdPresent(submissionId)) {
 					for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-						long currentId = codeBlock.getFile().getSubmissionId();
+						long currentId = codeBlock.getFile().getSubmission().getId();
 						if(currentId != submissionId && !matchingSubIds.contains(currentId)) {
 							//TODO: need to add the proper relative score somehow
 							float relativeScore = tempRandom.nextFloat();
