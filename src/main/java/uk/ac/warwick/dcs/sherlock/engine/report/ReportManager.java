@@ -1,11 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 
 import java.util.*;
@@ -16,6 +18,11 @@ import java.util.*;
  * It takes all possible inputs that may be relevant from postprocessing, and handles requests for fileReportMap; sending the relevant information to the actual report generator in use.
  */
 public class ReportManager {
+
+	/**
+	 * Logger instance
+	 */
+	private final Logger logger = LoggerFactory.getLogger(ReportManager.class);
 
 	/**
 	 * Contains all the information needed to generate reports from.
@@ -197,6 +204,20 @@ public class ReportManager {
 	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
 	public List<SubmissionMatch> GetSubmissionComparison(List<ISubmission> submissions) {
+		if (submissions.stream().anyMatch(ISubmission::hasParent)) {
+			// one of the submissions is not top level, don't make reports on non-top level submission.
+
+			//Either just return null with an error msg
+			logger.error("Cannot generate comparison on a submission which has a parent");
+			return null;
+
+			// or get the parent recursively and generate on that!
+			/*ISubmission sub = ...
+			while (sub.hasParent()) {
+				sub = sub.getParent();
+			}*/
+		}
+
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
 		if(submissions.size() < 2)
@@ -218,6 +239,20 @@ public class ReportManager {
 	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
 	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
+
+		if (!submission.hasParent()) {
+			// submission is not top level, don't make reports on non-top level submission.
+
+			//Either just return null with an error msg
+			logger.error("Cannot generate report on a submission which has a parent");
+			return null;
+
+			// or get the parent recursively
+			/*ISubmission sub = ...
+			while (sub.hasParent()) {
+				sub = sub.getParent();
+			}*/
+		}
 
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 

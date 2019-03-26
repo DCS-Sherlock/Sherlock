@@ -6,7 +6,9 @@ public interface ISubmission extends Comparable<ISubmission> {
 
 	/**
 	 * submission equality check
+	 *
 	 * @param o submission to check against
+	 *
 	 * @return is submission equal
 	 */
 	boolean equals(ISubmission o);
@@ -33,6 +35,13 @@ public interface ISubmission extends Comparable<ISubmission> {
 	List<ISourceFile> getContainedFiles();
 
 	/**
+	 * Calculates the file count of this directory and all subdirectories
+	 *
+	 * @return count
+	 */
+	int getFileCount();
+
+	/**
 	 * Fetches the submission unique id
 	 *
 	 * @return the unique id
@@ -47,6 +56,13 @@ public interface ISubmission extends Comparable<ISubmission> {
 	String getName();
 
 	/**
+	 * Get the parent, return null if no parent exists
+	 *
+	 * @return parent or null if there isn't one
+	 */
+	ISubmission getParent();
+
+	/**
 	 * Returns the total count of all files in this submission
 	 *
 	 * @return the total file count
@@ -54,11 +70,11 @@ public interface ISubmission extends Comparable<ISubmission> {
 	int getTotalFileCount();
 
 	/**
-	 * Calculates the file count of this directory and all subdirectories
+	 * Does this instance have a parent submission. If true this instance is a containedDirectory of the parent
 	 *
-	 * @return count
+	 * @return has a parent
 	 */
-	int getFileCount();
+	boolean hasParent();
 
 	/**
 	 * Remove the submission from the database, cannot be recovered.
