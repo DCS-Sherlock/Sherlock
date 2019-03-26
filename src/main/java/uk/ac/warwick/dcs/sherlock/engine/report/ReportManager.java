@@ -60,7 +60,6 @@ public class ReportManager {
 	 */
 	private Map<ITuple<Long, Long>, Float> relativeFileScores;
 
-
 	/**
 	 * The object used to generate the report information.
 	 */
@@ -96,7 +95,7 @@ public class ReportManager {
 
 	private List<ISourceFile> GetSourceFiles() {
 		List<ISourceFile> sourceFiles = new ArrayList<>();
-		this.results.getFileResults().stream().forEach(file -> sourceFiles.add(file.getFile()));
+		this.results.getFileResults().forEach(file -> sourceFiles.add(file.getFile()));
 		return sourceFiles;
 	}
 
@@ -229,7 +228,7 @@ public class ReportManager {
 				relevantGroups.add(codeBlockGroup);
 		}
 
-		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups, relativeFileScores);
+		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups);
 	}
 
 	/**
@@ -262,7 +261,7 @@ public class ReportManager {
 		}
 
 		//Store this report and return it.
-		List<SubmissionMatch> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups, relativeFileScores);
+		List<SubmissionMatch> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups);
 		submissionReportMap.put(submission.getId(), submissionReport);
 		return submissionReport;
 	}
@@ -277,7 +276,7 @@ public class ReportManager {
 		if (submissionReportMap.containsKey(submissionId))
 			return submissionReportMap.get(submissionId);
 		else
-			return new ArrayList<SubmissionMatch>();
+			return new ArrayList<>();
 	}
 
 	/**
