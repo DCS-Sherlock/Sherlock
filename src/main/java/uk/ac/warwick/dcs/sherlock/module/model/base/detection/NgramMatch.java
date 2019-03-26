@@ -20,8 +20,11 @@ public class NgramMatch implements Serializable {
     public Tuple<Integer, Integer> reference_lines;
     public Tuple<Integer, Integer> check_lines;
     public float similarity;
+    // TODO change these out for an array pair to allow iteration
     public ISourceFile file1;
     public ISourceFile file2;
+    // used to allow skipping during score methods if the math is considered common
+    public boolean common;
 
 
     /**
@@ -40,6 +43,16 @@ public class NgramMatch implements Serializable {
         this.similarity = similarity;
         this.file1 = file1;
         this.file2 = file2;
+        // default common as false
+        this.common = false;
     }
 
+    /**
+     * Checks if the two stored blocks are the same.
+     * @param pair The match to check for equality.
+     * @return True if the blocks are the same.
+     */
+    public boolean equals(NgramMatch pair) {
+        return this.reference_lines.equals(pair.reference_lines) && this.check_lines.equals(pair.check_lines);
+    }
 }
