@@ -14,12 +14,15 @@ public class NGramScorer {
 
 	private float threshold;
 
-	// Lists to store file info by file index
+	// the list of files in the current match group
 	public ArrayList<ISourceFile> file_list;		// public to allow use in external loops
+	// The scoring info for each file
 	private ArrayList<FileInfo> file_info;
 
 	// List to store file pairs by file index
+	// the list of matched pair object groups (depreciated, was used in general score function)
 	private ArrayList<MatchList> file_matches;
+	// the list of each file the above groups should be attached to (likewise depreciated)
 	private ArrayList<ISourceFile> match_list;
 
 	/**
@@ -37,7 +40,6 @@ public class NGramScorer {
 	 * <p>
 	 *     WARNING: This currently returns a total of ALL matches between the two files, it does not ignore those
 	 *     considered common and removed from final scoring groups. In future this issue will be resolved
-	 *     // TODO: add a filter onto the final group score construction to instruct removal of non-applicable pairs
 	 * </p>
 	 * @param mainFile      the subject of the scoring function.
 	 * @param referenceFile the reference to score the subject against
@@ -57,7 +59,7 @@ public class NGramScorer {
 		if (index == -1) {
 			index = match_list.lastIndexOf(referenceFile);
 			// if not in the list print debug message
-			// TODO: this can be exception handling
+			// DEPTODO: this can be exception handling
 			if (index == -1) {
 				System.out.println("File pair: (" + mainFile.getFileDisplayName() + ", " + referenceFile.getFileDisplayName() + ") cannot be found in list of files:");
 				for (ISourceFile file : match_list ) {
@@ -66,21 +68,21 @@ public class NGramScorer {
 			}
 			// where the match is between the 2 files passed increment the accumulator
 			for (NgramMatch match : file_matches.get(index).matches) {
-				if (match.file1.equals(mainFile) && !match.common) {
-					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+				if (match.files[0].equals(mainFile) && !match.common) {
+					line_multiplier = match.lines.get(1).getKey() - match.lines.get(1).getValue();
 					accumulator += match.similarity * line_multiplier;
 				}
 			}
 		} else {
 			// where the match is between the 2 files passed increment the accumulator
 			for (NgramMatch match : file_matches.get(index).matches) {
-				if (match.file2.equals(referenceFile) && !match.common) {
-					line_multiplier = match.check_lines.getKey() - match.check_lines.getValue();
+				if (match.files[1].equals(referenceFile) && !match.common) {
+					line_multiplier = match.lines.get(1).getKey() - match.lines.get(1).getValue();
 					accumulator += match.similarity * line_multiplier;
 				}
 			}
 		}
-		// TODO: resolve issues with overlapping blocks counting as duplicate lines for the sake of the line count
+		// DEPTODO: resolve issues with overlapping blocks counting as duplicate lines for the sake of the line count
 		// normalise the score by the size of each file
 		accumulator = (accumulator / mainFile.getTotalLineCount()) + (accumulator / referenceFile.getTotalLineCount());
 		// return cumulative score normalised and averaged over the 2 files
@@ -104,34 +106,23 @@ public class NGramScorer {
 	 * @param pair The pair of files and their local match score.
 	 */
 	public void add(NgramMatch pair) {
-		ISourceFile[] files = {pair.file1, pair.file2};
 		// for both files
-		for (ISourceFile file : files) {
+		for (int i = 0 ; i < 2 ; i++) {
 			// check for if the files exist in file_list, if they do add to them, if not make a new object to add to the list
-			if (file_list.contains(file)) {
+			if (file_list.contains(pair.files[i])) {
 				// acquire the respective file_info index and update it with the new similarity score
-				file_info.get(file_list.indexOf(file)).addToFileInfo(pair.similarity);
+				file_info.get(file_list.indexOf(pair.files[i])).addToFileInfo(pair.similarity);
 				// add the pair to the match lists
-				file_matches.get(match_list.indexOf(file)).matches.add(pair);
+//				file_matches.get(match_list.indexOf(file)).matches.add(pair);
 			} else {
 				// add the new file and a respective FileInfo object (ass they are always added in pairs the indexes will always match)
-				file_list.add(file);
-				file_info.add(new FileInfo(pair.similarity, pair.reference_lines));
+				file_list.add(pair.files[i]);
+				file_info.add(new FileInfo(pair.similarity, pair.lines.get(i)));
 				// create a new match list and add the pair to it
-				match_list.add(file);
-				file_matches.add(new MatchList(pair));
+//				match_list.add(file);
+//				file_matches.add(new MatchList(pair));
 			}
 		}
-		// duplicate of above for the second file in the pair.
-		// TODO check if duplicate removal works
-//		if (file_list.contains(pair.file2)) {
-//			// acquire the respective file_info index and update it with the new similarity score
-//			file_info.get(file_list.indexOf(pair.file2)).addToFileInfo(pair.similarity);
-//		} else {
-//			// add the new file and a respective FileInfo object (ass they are always added in pairs the indexes will always match)
-//			file_list.add(pair.file2);
-//			file_info.add(new FileInfo(pair.similarity, pair.check_lines));
-//		}
 	}
 
 	/**
@@ -155,7 +146,12 @@ public class NGramScorer {
 		}
 	}
 
-	public void getScore(ISourceFile file, ICodeBlockGroup out_group) {
+	/**
+	 * Adds a block for the current file to the current groups output data structure along with its score.
+	 * @param file The file that's block is being referenced.
+	 * @param out_group The current block groups output structure.
+	 */
+	public void addScoredBlock(ISourceFile file, ICodeBlockGroup out_group) {
 		// calculate a suitable score for the inputted file based on the available data
 		int index = file_list.indexOf(file);
 		// placeholder score, currently produces an index weighted by rarity and general match strength
@@ -165,12 +161,29 @@ public class NGramScorer {
 		return;
 	}
 
+	/**
+	 * Object used to store cumulative similarity score for a file in a match block.
+	 */
 	class FileInfo {
 
+		/**
+		 * The total of all similarity scores involving this file.
+		 */
 		public float total_similarity;
+		/**
+		 * The number of files that have been matched to this one for this code block.
+		 */
 		public int similar_files;
+		/**
+		 * The position of the block being referenced.
+		 */
 		public Tuple<Integer, Integer> lines;
 
+		/**
+		 * Constructor, adds first match info set and the relevant line position.
+		 * @param similarity The similarity score of the first matched pair.
+		 * @param lines The line positions of the referenced section.
+		 */
 		public FileInfo(float similarity, Tuple<Integer, Integer> lines) {
 			total_similarity = similarity;
 			similar_files = 1;
@@ -178,8 +191,8 @@ public class NGramScorer {
 		}
 
 		/**
-		 * Adds a new similarity score to the total and keeps count of how many times a score has been added
-		 * @param similarity the score to be added
+		 * Adds a new similarity score to the total and keeps count of how many times a score has been added.
+		 * @param similarity the score to be added.
 		 */
 		public void addToFileInfo(float similarity) {
 			total_similarity += similarity;
@@ -187,16 +200,24 @@ public class NGramScorer {
 		}
 	}
 
+	/**
+	 * Used to store the set of matches associated with a file for use in file wide score generation.
+	 */
+	@Deprecated
 	class MatchList {
 
+		/**
+		 * The list of matched pairs. Public to allow external additions.
+		 */
 		public ArrayList<NgramMatch> matches;
 
+		/**
+		 * Constructor, initialises storage and adds first element.
+		 * @param pair
+		 */
 		public MatchList(NgramMatch pair) {
 			matches = new ArrayList<>();
 			matches.add(pair);
 		}
 	}
 }
-
-// TODO List:
-// Change the add method to avoid redundant match adds and change NgramMatch to allow removal of duplicate code.
