@@ -42,13 +42,8 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 					job.getStatus().startJob();
 
-					try {
-						Future f = this.exec.submit(job);
-						f.get();
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
+					Future f = this.exec.submit(job);
+					f.get();
 
 					job.getStatus().finishJob();
 
@@ -71,7 +66,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().getFormattedDuration());
 					}
 				}
-				catch (InterruptedException e) {
+				catch (InterruptedException | ExecutionException e) {
 					break;
 				}
 			}
