@@ -44,7 +44,7 @@ public class SherlockEngine {
 	static Registry registry = null;
 	static String modulesPath = "";
 	static File configDir;
-	
+
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	private File lockFile;
 	private FileChannel lockChannel;
