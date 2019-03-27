@@ -30,7 +30,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		this.queue = new PriorityBlockingQueue(5, Comparator.comparing(PoolExecutorJob::getPriority));
 		this.jobMap = new HashMap<>();
 
-		this.curID = 0;
+		this.curID = 0; //counter for jobstatus ids
 
 		this.execScheduler.execute(() -> {
 			while (true) {
