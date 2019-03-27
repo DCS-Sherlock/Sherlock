@@ -43,14 +43,14 @@ public class SherlockEngine {
 	static EventBus eventBus = null;
 	static Registry registry = null;
 	static String modulesPath = "";
-
-	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	static File configDir;
-
+	
+	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
 	private File lockFile;
 	private FileChannel lockChannel;
 	private FileLock lock;
 	private boolean valid;
+	private boolean initialised = false;
 
 	public SherlockEngine(Side side) {
 		SherlockEngine.classloader = new URLClassLoader(new URL[0], this.getClass().getClassLoader()); // Custom classloader for the modules
@@ -206,6 +206,17 @@ public class SherlockEngine {
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPreInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventInitialisation.class);
 		SherlockEngine.eventBus.removeInvocationsOfEvent(EventPostInitialisation.class);
+
+		this.initialised = true;
+	}
+
+	/**
+	 * is SherlockEngine initialised
+	 *
+	 * @return is SherlockEngine initialised
+	 */
+	public boolean isInitialised() {
+		return initialised;
 	}
 
 	public boolean isValidInstance() {
