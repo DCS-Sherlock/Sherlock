@@ -78,7 +78,8 @@ public class PoolExecutorJob implements Runnable {
 				exServ.invokeAll(detTasks);
 			}
 			catch (InterruptedException e) {
-				e.printStackTrace();
+				job.setStatus(WorkStatus.INTERRUPTED);
+				return;
 			}
 
 			this.status.nextStep();
@@ -87,7 +88,8 @@ public class PoolExecutorJob implements Runnable {
 				exServ.invokeAll(detTasks);
 			}
 			catch (InterruptedException e) {
-				e.printStackTrace();
+				job.setStatus(WorkStatus.INTERRUPTED);
+				return;
 			}
 
 			job.setStatus(WorkStatus.REGEN_RESULTS);
@@ -113,7 +115,8 @@ public class PoolExecutorJob implements Runnable {
 			}
 		}
 		catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			job.setStatus(WorkStatus.INTERRUPTED);
+			return;
 		}
 
 		if (results.size() > 0) {
