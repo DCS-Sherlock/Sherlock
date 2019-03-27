@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.forms;
 
 import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidPassword;
 
+/**
+ * The generic confirm password form
+ */
 public class PasswordForm {
 
     @ValidPassword

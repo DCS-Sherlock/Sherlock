@@ -1,10 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 
 import java.util.*;
 
@@ -16,9 +20,14 @@ import java.util.*;
 public class ReportManager {
 
 	/**
-	 * A list of every files' respective persistentIds. Mainly used for iteration purposes.
+	 * Logger instance
 	 */
-	private List<Long> fileIds;
+	private final Logger logger = LoggerFactory.getLogger(ReportManager.class);
+
+	/**
+	 * Contains all the information needed to generate reports from.
+	 */
+	private IResultJob results;
 
 	/**
 	 * A map of all the individual files according to their persitent ids.
@@ -26,24 +35,25 @@ public class ReportManager {
 	private Map<Long, ISourceFile> fileMap;
 
 	/**
-	 * Contains most necessary information to generate fileReportMap for every file, including DetectionType, score, line numbers, etc.
-	 */
-	private List<ICodeBlockGroup> codeBlockGroups;
-
-	/**
 	 * Maps submission ids to a list of file ids contained by that submission.
 	 */
 	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
-	 * All generated file reports are stored as FileReports. The key is each file's unique id.
-	 */
-	private Map<Long, FileReport> fileReportMap;
-
-	/**
 	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission matches make up the report.
 	 */
 	private Map<Long, List<SubmissionMatch>> submissionReportMap;
+
+
+	/**
+	 * Maps submission ids to their overall scores
+	 */
+	private Map<Long, Float> submissionScores;
+
+	/**
+	 * Maps pairs of file ids to the relative scores between them
+	 */
+	private Map<ITuple<Long, Long>, Float> relativeFileScores;
 
 	/**
 	 * The object used to generate the report information.
@@ -51,150 +61,79 @@ public class ReportManager {
 	private IReportGenerator reportGenerator;
 
 	/**
-	 * Initialises the report manager (default).
+	 * Initialises the report manager with a set of results.
+	 * @param results Contains a full set of results from postprocessing; all useful info is extracted from here
 	 */
-	public ReportManager() {
+	public ReportManager(IResultJob results) {
 		this.reportGenerator = new ReportGenerator();
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.fileReportMap = new HashMap<>();
-		this.fileIds = new ArrayList<>();
-		this.codeBlockGroups = new ArrayList<>();
 		this.submissionReportMap = new HashMap<>();
+		this.results = results;
+		this.submissionScores = new HashMap<>();
+		this.relativeFileScores = new HashMap<>();
+		this.results.getFileResults().forEach(resultFile -> this.fileMap.put(resultFile.getFile().getPersistentId(), resultFile.getFile()));
+		this.results.getFileResults().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new Tuple<Long, Long>(resultFile.getFile().getPersistentId(), file2.getPersistentId()), resultFile.getFileScore(file2))));
+		this.results.getFileResults().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmission().getId(), resultFile.getOverallScore()));
+
+		FillSubmissionFileMap();
+	}
+
+	private List<ICodeBlockGroup> GetCodeBlockGroups() {
+		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
+		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
+				.forEach(task -> codeBlockGroups.addAll(task.getContainingBlocks()));
+		return codeBlockGroups;
+	}
+
+	private List<ISourceFile> GetSourceFiles() {
+		List<ISourceFile> sourceFiles = new ArrayList<>();
+		this.results.getFileResults().forEach(file -> sourceFiles.add(file.getFile()));
+		return sourceFiles;
 	}
 
 	/**
-	 * Initialises the report manager and adds files and code block groups to it immediately.
-	 * @param files The files to generate fileReportMap for (see AddFiles()).
-	 * @param codeBlockGroups The matches that will be used by the Report Generator (see AddCodeBlockGroups()).
+	 * Fill in submissionFileMap based off of the contents of fileMap.
 	 */
-	public ReportManager(List<ISourceFile> files, List<ICodeBlockGroup> codeBlockGroups) {
-		this.reportGenerator = new ReportGenerator();
-
-		this.submissionFileMap = new HashMap<>();
-		this.fileMap = new HashMap<>();
-		this.fileReportMap = new HashMap<>();
-		this.fileIds = new ArrayList<>();
-		this.codeBlockGroups = new ArrayList<>();
-		this.submissionReportMap = new HashMap<>();
-
-		AddFiles(files);
-		AddCodeBlockGroups(codeBlockGroups);
-	}
-
-	/**
-	 * Initialises the report manager (use if different varieties of IReportGenerator are added).
-	 * @param reportGenerator The implementation of IReportGenerator that will generate all fileReportMap for this project.
-	 */
-	public ReportManager(IReportGenerator reportGenerator) {
-		this.reportGenerator = reportGenerator;
-
-		this.submissionFileMap = new HashMap<>();
-		this.fileMap = new HashMap<>();
-		this.fileReportMap = new HashMap<>();
-		this.fileIds = new ArrayList<>();
-		this.codeBlockGroups = new ArrayList<>();
-		this.submissionReportMap = new HashMap<>();
-	}
-
-	/**
-	 * To be called by the Post-Processor.
-	 *
-	 * @param codeBlockGroups All ICodeBlockGroups with relevant information for the Report Generator to work with.
-	 */
-	public void AddCodeBlockGroups(List<ICodeBlockGroup> codeBlockGroups) {
-		this.codeBlockGroups.addAll(codeBlockGroups);
-	}
-
-	/**
-	 * To be called by the Post-Processor. Adds files info to fileIds, fileMap, and submissionFileMap.
-	 *
-	 * @param files A list of the ISourceFiles that have been run through the detector.
-	 */
-	public void AddFiles(List<ISourceFile> files) {
-		for(ISourceFile file : files) {
-			fileIds.add(file.getPersistentId());
-			fileMap.put(file.getPersistentId(), file);
-
+	private void FillSubmissionFileMap() {
+		for(ISourceFile file : this.fileMap.values()) {
 			//If this is the first file of this submission seen, create a new list and put it into submissionFileMap.
 			//otherwise add to the existing list.
-			if(submissionFileMap.get(file.getSubmissionId()) == null) {
+			if(submissionFileMap.get(file.getSubmission().getId()) == null) {
 				ArrayList<Long> idList = new ArrayList<>();
 				idList.add(file.getPersistentId());
-				submissionFileMap.put(file.getSubmissionId(), idList);
+				submissionFileMap.put(file.getSubmission().getId(), idList);
 			} else {
-				submissionFileMap.get(file.getSubmissionId()).add(file.getPersistentId());
+				submissionFileMap.get(file.getSubmission().getId()).add(file.getPersistentId());
 			}
 		}
 	}
 
 	/**
-	 * Generates a report for a single specified file, stores it, and returns it.
-	 *
-	 * @param sourceFile The file to generate a report for.
-	 *
-	 * @return The FileReport object that is generated.
-	 */
-	public FileReport GenerateReport(ISourceFile sourceFile) {
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		//Get all the codeblockgroups which contain the desired file.
-		//this is kind of gross honestly with the current setup
-		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
-			List<? extends ICodeBlock> codeBlocks = codeBlockGroup.getCodeBlocks();
-
-			boolean fileInGroup = false;
-			for (ICodeBlock codeBlock : codeBlocks) {
-				if (codeBlock.getFile().getPersistentId() == sourceFile.getPersistentId()) {
-					fileInGroup = true;
-					break;
-				}
-			}
-
-			relevantGroups.add(codeBlockGroup);
-		}
-
-		FileReport fileReport = reportGenerator.GenerateReport(sourceFile, relevantGroups);
-
-		fileReportMap.put(sourceFile.getPersistentId(), fileReport);
-		return fileReport;
-	}
-
-	/**
-	 * Generates a report for all ISourceFiles in fileMap that don't have a report already generated for them.
-	 */
-	public void GenerateAllReports() {
-		for(Long fileId : fileIds) {
-			if(!fileReportMap.containsKey(fileId))
-				GenerateReport(fileMap.get(fileId));
-		}
-	}
-
-	/**
-	 * To be called by the web report pages. Gets a list of submission summaries, which
+	 * To be called by the web report pages. Gets a list of submission summaries.
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
 	public List<SubmissionSummary> GetMatchingSubmissions() {
 		ArrayList<SubmissionSummary> output = new ArrayList<>();
 
 		for(Long submissionId : submissionFileMap.keySet()) {
-			//TODO: need to get the proper overall score somehow
 			Random tempRandom = new Random();
-			float overallScore = tempRandom.nextFloat();
+			float overallScore = submissionScores.get(submissionId);
 			SubmissionSummary submissionSummary = new SubmissionSummary(submissionId, overallScore);
 			ArrayList<Tuple<Long, Float>> matchingSubs = new ArrayList<>();
 			ArrayList<Long> matchingSubIds = new ArrayList<>();
 
 			//Look through all the code block groups to determine which submissions have been matched with which other submissions.
-			for(ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			for(ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
 				//If this group contains a file for the current submission, add all other submissions in the group to the list, if they aren't already added
 				if(codeBlockGroup.submissionIdPresent(submissionId)) {
 					for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-						long currentId = codeBlock.getFile().getSubmissionId();
+						long currentId = codeBlock.getFile().getSubmission().getId();
 						if(currentId != submissionId && !matchingSubIds.contains(currentId)) {
 							//TODO: need to add the proper relative score somehow
 							float relativeScore = tempRandom.nextFloat();
+							//relativeScore = results.getFileResults().stream().
 							matchingSubs.add(new Tuple<>(currentId, relativeScore));
 							matchingSubIds.add(currentId);
 						}
@@ -216,12 +155,26 @@ public class ReportManager {
 	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
 	public List<SubmissionMatch> GetSubmissionComparison(List<ISubmission> submissions) {
+		if (submissions.stream().anyMatch(ISubmission::hasParent)) {
+			// one of the submissions is not top level, don't make reports on non-top level submission.
+
+			//Either just return null with an error msg
+			logger.error("Cannot generate comparison on a submission which has a parent");
+			return null;
+
+			// or get the parent recursively and generate on that!
+			/*ISubmission sub = ...
+			while (sub.hasParent()) {
+				sub = sub.getParent();
+			}*/
+		}
+
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
 		if(submissions.size() < 2)
 			return null;
 
-		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+		for (ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
 			if(codeBlockGroup.submissionIdPresent(submissions.get(0).getId()) &&
 			codeBlockGroup.submissionIdPresent(submissions.get(1).getId()))
 				relevantGroups.add(codeBlockGroup);
@@ -238,9 +191,23 @@ public class ReportManager {
 	 */
 	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
 
+		if (submission.hasParent()) {
+			// submission is not top level, don't make reports on non-top level submission.
+
+			//Either just return null with an error msg
+			logger.error("Cannot generate report on a submission which has a parent");
+			return null;
+
+			// or get the parent recursively
+			/*ISubmission sub = ...
+			while (sub.hasParent()) {
+				sub = sub.getParent();
+			}*/
+		}
+
 		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
 
-		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+		for (ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
 			if(codeBlockGroup.submissionIdPresent(submission.getId()))
 				relevantGroups.add(codeBlockGroup);
 		}
@@ -261,23 +228,7 @@ public class ReportManager {
 		if (submissionReportMap.containsKey(submissionId))
 			return submissionReportMap.get(submissionId);
 		else
-			return new ArrayList<SubmissionMatch>();
-	}
-
-	/**
-	 * Retrieve a file report which has already been generated.
-	 * TODO: print something to error if exception? idk
-	 *
-	 * @param sourceFile The file to retrieve the report for
-	 * @return a FileReport object that is the report in question
-	 * @throws NullPointerException if there is no report for this file
-	 */
-	public FileReport GetFileReport(ISourceFile sourceFile) throws NullPointerException {
-		try {
-			return fileReportMap.get(sourceFile.getPersistentId());
-		} catch(NullPointerException e) {
-			throw e;
-		}
+			return new ArrayList<>();
 	}
 
 }

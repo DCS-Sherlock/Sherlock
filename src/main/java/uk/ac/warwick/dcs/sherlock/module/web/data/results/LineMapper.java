@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
@@ -71,7 +72,6 @@ public class LineMapper {
         this.fileId = fileId;
         this.maxLineNum = 0;
 
-
         try {
             for (FileMatch match : matches) {
                 this.AddMatch(match);
@@ -101,10 +101,13 @@ public class LineMapper {
         List<CodeBlock> blocks = new ArrayList<>();
 
         //Get the code blocks for this file
-        if (fileId == match.getFile1().getPersistentId()) {
-            blocks = match.getFile1CodeBlocks();
-        } else if (fileId == match.getFile2().getPersistentId()) {
-            blocks = match.getFile2CodeBlocks();
+        for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
+            ISourceFile entryFile = entry.getKey();
+            List<CodeBlock> entryList = entry.getValue();
+
+            if (fileId == entryFile.getPersistentId()) {
+                blocks = entryList;
+            }
         }
 
         //Loop through the code blocks (the list is empty if the match isn't relevant to this file)

@@ -235,6 +235,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		reference.clear();
 		check.clear();
 		//		head = null;
+//		System.out.println("matchFound");
 	}
 
 	/**
@@ -477,7 +478,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	}
 }
 
-// NOTE this will give the one way comparison, to get the other direction it must be ran with the files reversed
+// NOTE this will give the one way comparison, to get the other direction it must be run with the files reversed
 
 // TODO prevent back to peak going bellow min window value
 // TODO finish commenting

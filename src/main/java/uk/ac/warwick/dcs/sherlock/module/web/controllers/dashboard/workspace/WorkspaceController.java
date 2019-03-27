@@ -136,12 +136,14 @@ public class WorkspaceController {
 
         if (!result.hasErrors()) {
             try {
-                workspaceWrapper.addSubmissions(submissionsForm, workspaceWrapper);
+                workspaceWrapper.addSubmissions(submissionsForm);
                 model.addAttribute("success_msg", "workspaces.submissions.uploaded");
             } catch (NoFilesUploaded e) {
                 result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
                 result.reject("error.file.failed");
+            } catch (DuplicateSubmissionNames e) {
+                result.reject("error.file.duplicated");
             } catch (NotImplementedException e) {
                 result.reject("error.not_implemented");
             }
@@ -225,9 +227,9 @@ public class WorkspaceController {
 
         TemplateWrapper templateWrapper = new TemplateWrapper(template_id, account.getAccount(), templateRepository);
 
+        long jobId = 0;
         try {
-            workspaceWrapper.runTemplate(templateWrapper);
-            model.addAttribute("success_msg", "workspaces.analysis.started");
+            jobId = workspaceWrapper.runTemplate(templateWrapper);
         } catch (TemplateContainsNoDetectors e) {
             model.addAttribute("warning_msg", "workspaces.analysis.no_detectors");
         } catch (ClassNotFoundException | DetectorNotFound e) {
@@ -238,8 +240,13 @@ public class WorkspaceController {
             model.addAttribute("warning_msg", "workspaces.analysis.no_files");
         }
 
-        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
-        return "dashboard/workspaces/fragments/run";
+        if (jobId == 0) {
+            model.addAttribute("warning_msg", "workspaces.analysis.failed");
+            model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
+            return "dashboard/workspaces/fragments/run";
+        } else {
+            return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId() + "/results/" + jobId + "?msg=analysis_started";
+        }
     }
 
     /**
@@ -289,7 +296,7 @@ public class WorkspaceController {
     @PostMapping("/dashboard/workspaces/{pathid}/delete")
     public String deletePost(@ModelAttribute("workspace") WorkspaceWrapper workspaceWrapper) {
         workspaceWrapper.delete(workspaceRepository);
-		return "redirect:/dashboard/workspaces?msg=deleted";
+		return "redirect:/dashboard/workspaces?msg=deleted_workspace";
     }
 
     /**

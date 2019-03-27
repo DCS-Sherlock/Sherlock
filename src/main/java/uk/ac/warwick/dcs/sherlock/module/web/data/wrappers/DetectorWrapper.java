@@ -15,17 +15,46 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterReposit
 
 import java.util.*;
 
+/**
+ * The wrapper that manages database detectors
+ */
 public class DetectorWrapper {
+    /**
+     * The detector to manage
+     */
     private TDetector tDetector;
+
+    /**
+     * Whether or not the current account owns the detector
+     */
     private boolean isOwner = false;
 
+    /**
+     * Empty initialiser
+     */
     public DetectorWrapper() {}
 
+    /**
+     * Initialise the wrapper with a template that has already been loaded
+     *
+     * @param tDetector the detector to manage
+     * @param isOwner whether the account owns the detector
+     */
     public DetectorWrapper(TDetector tDetector, boolean isOwner) {
         this.tDetector = tDetector;
         this.isOwner = isOwner;
     }
 
+    /**
+     * Initialise the wrapper by trying to find a detector that is
+     * either owned by the account or is public
+     *
+     * @param id the template id to find
+     * @param account the account of the current user
+     * @param tDetectorRepository the detector database repository
+     *
+     * @throws DetectorNotFound if the detector wasn't found
+     */
     public DetectorWrapper(
             long id,
             Account account,
@@ -47,18 +76,42 @@ public class DetectorWrapper {
         this.isOwner = templateWrapper.isOwner();
     }
 
+    /**
+     * Get the detector
+     * @return the detector
+     */
     public TDetector getDetector() {
         return tDetector;
     }
 
+    /**
+     * Set the detector
+     *
+     * @param tDetector the new detector
+     */
     public void setDetector(TDetector tDetector) {
         this.tDetector = tDetector;
     }
 
+    /**
+     * Get the list of adjustable parameters for this detector
+     *
+     * @return the list of adjustable parameters
+     *
+     * @throws DetectorNotFound if the detector no longer exists
+     */
     public List<AdjustableParameterObj> getEngineParameters() throws DetectorNotFound {
+//        SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(this.getEngineDetector());
         return SherlockRegistry.getDetectorAdjustableParameters(this.getEngineDetector());
     }
 
+    /**
+     * Get the adjustable parameters for this detector as a map
+     *
+     * @return the map of adjustable parameters
+     *
+     * @throws DetectorNotFound if the detector no longer exists
+     */
     public Map<String, AdjustableParameterObj> getEngineParametersMap() throws DetectorNotFound {
 		Map<String, AdjustableParameterObj> map = new HashMap<>();
 		for (AdjustableParameterObj p : this.getEngineParameters()) {
@@ -67,10 +120,22 @@ public class DetectorWrapper {
 		return map;
     }
 
+    /**
+     * Get the id of the detector
+     *
+     * @return the id
+     */
     public long getId() {
         return this.tDetector.getId();
     }
 
+    /**
+     * Get the engine object for this detector
+     *
+     * @return the IDetector
+     *
+     * @throws DetectorNotFound if the engine detector no longer exists
+     */
     public Class<? extends IDetector> getEngineDetector() throws DetectorNotFound {
         Class<? extends IDetector> detector = null;
         try {
@@ -81,6 +146,13 @@ public class DetectorWrapper {
         return detector;
     }
 
+    /**
+     * Get the engine wrapper for this detector
+     *
+     * @return the engine detector wrapper
+     *
+     * @throws DetectorNotFound if the engine detector no longer exists
+     */
     public EngineDetectorWrapper getWrapper() throws DetectorNotFound {
         Class<? extends IDetector> detector = this.getEngineDetector();
 
@@ -91,6 +163,14 @@ public class DetectorWrapper {
         return new EngineDetectorWrapper(detector);
     }
 
+    /**
+     * Get the list of parameters for this detector
+     *
+     * @return the list of parameters
+     *
+     * @throws ParameterNotFound
+     * @throws DetectorNotFound if the engine detector no longer exists
+     */
     public List<ParameterWrapper> getParametersList() throws ParameterNotFound, DetectorNotFound {
         List<ParameterWrapper> list = new ArrayList<>();
 
@@ -101,6 +181,12 @@ public class DetectorWrapper {
         return list;
     }
 
+    /**
+     * Update the parameters for this detector
+     *
+     * @param parameterForm the form to use
+     * @param tParameterRepository the database repository
+     */
     public void updateParameters(ParameterForm parameterForm, TParameterRepository tParameterRepository) {
         List<TParameter> currentParameters = tParameterRepository.findByTDetector(this.tDetector);
         tParameterRepository.deleteAll(currentParameters);

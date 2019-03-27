@@ -5,6 +5,9 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * The form for changing an account name
+ */
 public class AccountNameForm {
 
     @NotNull(message = "{error.name.empty}")

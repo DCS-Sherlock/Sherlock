@@ -116,6 +116,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 					e.printStackTrace();
 				}
 			}
+			task.getJobStatus().incrementProgress();
 		});
 
 		task.addModelDataItem(new ModelDataItem(this.file, map));

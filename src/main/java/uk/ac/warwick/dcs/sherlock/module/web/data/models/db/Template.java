@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The database table storing job templates
+ */
 @Entity
 @Table(name="template")
 public class Template {

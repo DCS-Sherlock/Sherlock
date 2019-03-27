@@ -7,12 +7,17 @@ import java.time.Instant;
 
 public class JobStatus implements Comparable<JobStatus> {
 
-	private static final String[] stdMessages = { "Queued", "Initialising", "Pre-Processing", "Detecting", "Post-Processing", "Finalising Results", "Finished" };
+	private static final String[] stdMessages = { "Queued", "Initialising", "Pre-Processing", "Building Workers", "Detecting", "Post-Processing", "Analysing Results", "Finished" , "Failed"};
+	private static final float[] stageProgCap = { 0f,        0f,            0.06f,            0.12f,              0.7f,        0.8f,              1.0f,                1.0f,        0f };
+
 	private int id;
 	private Instant startTime;
 	private Duration duration;
 	private Priority priority;
-	private float progress;
+
+	private final AtomicFloat progress = new AtomicFloat();
+	private final AtomicFloat progressIncrement = new AtomicFloat();
+
 	private int step;
 	private String message;
 
@@ -23,7 +28,6 @@ public class JobStatus implements Comparable<JobStatus> {
 
 		this.priority = priority;
 
-		this.progress = 0;
 		this.step = 0;
 		this.message = "";
 	}
@@ -51,9 +55,10 @@ public class JobStatus implements Comparable<JobStatus> {
 	}
 
 	public void finishJob() {
-		if (this.startTime != null) {
+		if (this.startTime != null && this.step < 7) {
 			this.duration = Duration.between(this.startTime, Instant.now());
-			this.step = 6;
+			this.setStep(7);
+			this.progress.set(1f);
 			this.startTime = null;
 		}
 	}
@@ -93,7 +98,32 @@ public class JobStatus implements Comparable<JobStatus> {
 	 * @return percentage job complete between 0 and 1
 	 */
 	public float getProgress() {
-		return progress;
+		synchronized (this.progress) {
+			return progress.get();
+		}
+	}
+
+	/**
+	 * Progress int, percentage complete between 0 and 100
+	 *
+	 * @return percentage job complete between 0 and 100
+	 */
+	public int getProgressInt() {
+		synchronized (this.progress) {
+			return Math.round(progress.get() * 100);
+		}
+	}
+
+	public void incrementProgress() {
+		synchronized (this.progress) {
+			this.progress.addTo(this.progressIncrement.get());
+
+			//System.out.println(this.progress.get());
+
+			if (this.progress.get() > 1) {
+				this.progress.set(1);
+			}
+		}
 	}
 
 	public boolean isFinished() {
@@ -107,8 +137,19 @@ public class JobStatus implements Comparable<JobStatus> {
 	}
 
 	public void setStep(int step) {
-		if (step > -1 && step < 7) {
+		if (step > -1 && step < 8) {
 			this.step = step;
+		}
+	}
+
+	public void calculateProgressIncrement(int nextStepTotalIncrements) {
+		synchronized (this.progress) {
+			if (nextStepTotalIncrements > 0) {
+				this.progressIncrement.set((stageProgCap[this.step] - this.progress.get()) / nextStepTotalIncrements);
+			}
+			else {
+				this.progressIncrement.set(0);
+			}
 		}
 	}
 
@@ -116,5 +157,4 @@ public class JobStatus implements Comparable<JobStatus> {
 		this.startTime = Instant.now();
 		this.step = 1;
 	}
-
 }

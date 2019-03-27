@@ -6,7 +6,6 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
-import uk.ac.warwick.dcs.sherlock.module.model.base.scoring.SimpleObjectEqualityScorer;
 
 import java.util.*;
 
@@ -17,10 +16,15 @@ public class SimpleObjectEqualityPostProcessor implements IPostProcessor<SimpleO
 
 	@Override
 	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<SimpleObjectEqualityRawResult> rawResults) {
-		ModelTaskProcessedResults results = new ModelTaskProcessedResults(new SimpleObjectEqualityScorer());
+		ModelTaskProcessedResults results = new ModelTaskProcessedResults();
+		Map<ISourceFile, Integer> totals = new HashMap<>();
+		results.setFileTotals(totals);
 
 		Map<Object, ICodeBlockGroup> map = new HashMap<>();
 		for (SimpleObjectEqualityRawResult res : rawResults) {
+			totals.putIfAbsent(res.getFile1(), res.getFile1NumObjects());
+			totals.putIfAbsent(res.getFile2(), res.getFile2NumObjects());
+
 			for (int i = 0; i < res.getSize(); i++) {
 				Object o = res.getObject(i);
 				ICodeBlockGroup group;

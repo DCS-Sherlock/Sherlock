@@ -223,6 +223,7 @@ bootRun {
     dependsOn minifyJs
     dependsOn sassCompile
     main = 'uk.ac.warwick.dcs.sherlock.launch.SherlockClient'
+    jvmArgs = ["-Dspring.profiles.active=dev", "-Dspring.output.ansi.enabled=ALWAYS"]
 }
 
 test {
@@ -250,6 +251,7 @@ combineJs {
             "${projectDir}/src/main/javascript/loader.js",
             "${projectDir}/src/main/javascript/vis.min.js",
             "${projectDir}/src/main/javascript/prism.js",
+            "${projectDir}/src/main/javascript/js.cookie.js",
             "${projectDir}/src/main/javascript/custom.js"
     ]
     dest = file("${projectDir}/src/main/resources/static/js/default.js")

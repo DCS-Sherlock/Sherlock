@@ -15,9 +15,7 @@
 
 nav {
     margin-bottom: 2rem;
-    //border-radius: 2px;
 }
-
 .navbar {
     padding: 0 0.25rem;
 }
@@ -29,11 +27,8 @@ nav {
 .navbar-dark .navbar-toggler {
   border: none;
 }
-
 .active {
-    //border-radius: 5px;
     background-color: $body-bg;
-    //border: solid 1px $gray-200;
 }
 .navbar-dark .navbar-nav .active > .nav-link {
     color: #f47b2a;
@@ -54,15 +49,14 @@ h2 .btn {
     word-wrap: break-word;
     width: 100%;
 }
-td {
+.fixed-table td {
     word-wrap:break-word;
     word-break:break-all;
 }
-table {
+.fixed-table {
     table-layout:fixed;
     width:100% !important;
 }
-
 
 /* Compare */
 .sticky-matches {

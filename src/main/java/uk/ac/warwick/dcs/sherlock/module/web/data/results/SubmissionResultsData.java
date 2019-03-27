@@ -76,103 +76,31 @@ public class SubmissionResultsData {
         try {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
-            //No results
-//            e.printStackTrace();
+            // No results
+            // e.printStackTrace();
         }
 
         if (report != null) {
-            int i = 0;
             List<SubmissionMatch> list = report.GetSubmissionReport(submission1);
-            for (SubmissionMatch entry : list) {
-                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile1().getPersistentId()).collect(Collectors.toList());
-                if (files.size() != 1) {
-                    break;
-                }
-                ISourceFile file1 = files.get(0);
+            list.forEach(m -> this.matches.add(new FileMatch(m)));
 
-                List<ISubmission> submissions = job.getWorkspace().getSubmissions().stream().filter(s -> s.getId() == file1.getSubmissionId()).collect(Collectors.toList());
-                if (submissions.size() != 1) {
-                    break;
-                }
-                ISubmission sub1 = submissions.get(0);
+            Map<Long, String> idToName = new HashMap<>();
+            job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
-                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile2().getPersistentId()).collect(Collectors.toList());
-                if (files.size() != 1) {
-                    break;
-                }
-                ISourceFile file2 = files.get(0);
+            List<SubmissionSummary> summaryList = report.GetMatchingSubmissions()
+                    .stream().filter(s -> s.getPersistentId() == submission1.getId())
+                    .collect(Collectors.toList());
 
-                submissions = job.getWorkspace().getSubmissions().stream().filter(s -> s.getId() == file2.getSubmissionId()).collect(Collectors.toList());
-                if (submissions.size() != 1) {
-                    break;
-                }
-                ISubmission sub2 = submissions.get(0);
+            if (summaryList.size() == 1) {
+                SubmissionSummary summary = summaryList.get(0);
 
-                List<CodeBlock> blocks1 = new ArrayList<>();
-                entry.getLineNumbers1().stream().forEach(t -> blocks1.add(new CodeBlock(t.getKey(), t.getValue())));
-                List<CodeBlock> blocks2 = new ArrayList<>();
-                entry.getLineNumbers2().stream().forEach(t -> blocks2.add(new CodeBlock(t.getKey(), t.getValue())));
-
-                FileMatch match = new FileMatch(
-                        file1, sub1, blocks1,
-                        file2, sub2, blocks2,
-                        "Reason " + i,
-                        entry.getScore()
-                );
-
-                this.matches.add(match);
-                i++;
-            }
-        }
-
-        Map<Long, String> idToName = new HashMap<>();
-        job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
-
-        for (SubmissionSummary summary : report.GetMatchingSubmissions()) {
-            if (summary.getPersistentId() == submission1.getId()) {
                 for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
-                    String name2 = "Deleted";
-                    if (idToName.containsKey(tuple.getKey())) {
-                        name2 = idToName.get(tuple.getKey());
-                    }
+                    String matchName = idToName.getOrDefault(tuple.getKey(), "Deleted");
 
-                    submissions.add(new SubmissionScore(tuple.getKey(), name2, tuple.getValue()*100));
+                    submissions.add(new SubmissionScore(tuple.getKey(), matchName, tuple.getValue() * 100));
                 }
-
             }
         }
-
-        //Generates fake data
-//        {
-//            IWorkspace workspace = job.getWorkspace();
-//            ISourceFile file1 = submission1.getAllFiles().get(0);
-//            ISubmission submission2 = workspace.getSubmissions().get(0);
-//            if (submission1.getId() == submission2.getId()) {
-//                submission2 = workspace.getSubmissions().get(1);
-//            }
-//            ISourceFile file2 = submission2.getAllFiles().get(0);
-//
-//            for (int i = 1; i < 50; i++) {
-//                List<CodeBlock> list1 = new ArrayList<>();
-//                list1.add(new CodeBlock(this.tempRandomNumberInRange((i*2)*2, (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
-//                List<CodeBlock> list2 = new ArrayList<>();
-//                list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
-//
-//                matches.add(new FileMatch(file1, submission1, list1, file2,submission2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
-//                if (i == 1) {
-//                    matches.add(new FileMatch(file1, submission1, list1, file2,submission2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
-//                }
-//            }
-//
-//            int max = this.tempRandomNumberInRange(0, 10);
-//            for (int count = 0; count <= max; count++) {
-//                int subId = this.tempRandomNumberInRange(1, 10);
-//                if (subId != submission.getId()) {
-//                    submissions.add(new SubmissionScore(subId, "Submission " + subId, this.tempRandomScore()));
-//                }
-//            }
-//            this.score = tempRandomScore();
-//        }
 
         //Loop through the matches, setting the ids
         for (int i = 0; i < matches.size(); i++) {
@@ -206,77 +134,18 @@ public class SubmissionResultsData {
         try {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
-            //No results
-//            e.printStackTrace();
+            // No results
+            // e.printStackTrace();
         }
 
         if (report != null) {
-            int i = 0;
             List<ISubmission> compare = new ArrayList<>();
             compare.add(submission1);
             compare.add(submission2);
 
             List<SubmissionMatch> list = report.GetSubmissionComparison(compare);
-
-            for (SubmissionMatch entry : list) {
-                List<ISourceFile> files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile1().getPersistentId()).collect(Collectors.toList());
-                if (files.size() != 1) {
-                    break;
-                }
-                ISourceFile file1 = files.get(0);
-
-                List<ISubmission> submissions = job.getWorkspace().getSubmissions().stream().filter(s -> s.getId() == file1.getSubmissionId()).collect(Collectors.toList());
-                if (submissions.size() != 1) {
-                    break;
-                }
-                ISubmission sub1 = submissions.get(0);
-
-                files = job.getWorkspace().getFiles().stream().filter(f -> f.getPersistentId() == entry.getFile2().getPersistentId()).collect(Collectors.toList());
-                if (files.size() != 1) {
-                    break;
-                }
-                ISourceFile file2 = files.get(0);
-
-                submissions = job.getWorkspace().getSubmissions().stream().filter(s -> s.getId() == file2.getSubmissionId()).collect(Collectors.toList());
-                if (submissions.size() != 1) {
-                    break;
-                }
-                ISubmission sub2 = submissions.get(0);
-
-                List<CodeBlock> blocks1 = new ArrayList<>();
-                entry.getLineNumbers1().stream().forEach(t -> blocks1.add(new CodeBlock(t.getKey(), t.getValue())));
-                List<CodeBlock> blocks2 = new ArrayList<>();
-                entry.getLineNumbers2().stream().forEach(t -> blocks2.add(new CodeBlock(t.getKey(), t.getValue())));
-
-                FileMatch match = new FileMatch(
-                        file1, sub1, blocks1,
-                        file2, sub2, blocks2,
-                        "Reason " + i,
-                        entry.getScore()
-                );
-
-                this.matches.add(match);
-                i++;
-            }
+            list.forEach(m -> this.matches.add(new FileMatch(m)));
         }
-
-        //Generates fake data
-//        {
-//            ISourceFile file1 = submission1.getAllFiles().get(0);
-//            ISourceFile file2 = submission2.getAllFiles().get(0);
-//
-//            for (int i = 1; i < 50; i++) {
-//                List<CodeBlock> list1 = new ArrayList<>();
-//                list1.add(new CodeBlock(this.tempRandomNumberInRange((i*2)*2, (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
-//                List<CodeBlock> list2 = new ArrayList<>();
-//                list2.add(new CodeBlock(this.tempRandomNumberInRange((i*2), (i*2)+3), this.tempRandomNumberInRange((i*2)+3, (i*2)+6)));
-//
-//                matches.add(new FileMatch(file1, submission1, list1, file2, submission2, list2, "Match "+ i +" Reason", this.tempRandomNumberInRange(0, 100)));
-//                if (i == 1) {
-//                    matches.add(new FileMatch(file1, submission1, list1, file2, submission2, list2, "Match "+ i +" COPY Reason", this.tempRandomNumberInRange(0, 100)));
-//                }
-//            }
-//        }
 
         //Loop through the matches, setting the ids
         for (int i = 0; i < matches.size(); i++) {
@@ -298,6 +167,15 @@ public class SubmissionResultsData {
     }
 
     /**
+     * Get the second submission
+     *
+     * @return the submission
+     */
+    public ISubmission getSubmission2() {
+        return submission2;
+    }
+
+    /**
      * Get the list of matches
      *
      * @return the list
@@ -313,15 +191,6 @@ public class SubmissionResultsData {
      */
     public List<SubmissionScore> getSubmissions() {
         return submissions;
-    }
-
-    /**
-     * Get the second submission
-     *
-     * @return the submission
-     */
-    public ISubmission getSubmission2() {
-        return submission2;
     }
 
     /**
@@ -376,20 +245,18 @@ public class SubmissionResultsData {
         Map<ISubmission, SortedMap<Long, ISourceFile>> map = new HashMap<>();
 
         for (FileMatch match : matches) {
-            ISubmission submission = match.getSubmission1();
-            ISourceFile file = match.getFile1();
+            for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
+                ISourceFile entryFile = entry.getKey();
 
-            if (submission.getId() == submission1.getId()) {
-                submission = match.getSubmission2();
-                file = match.getFile2();
-            }
+                if (!entryFile.getSubmission().equals(this.submission1)) {
+                    if (!map.containsKey(entryFile.getSubmission())) {
+                        map.put(entryFile.getSubmission(), new TreeMap<>());
+                    }
 
-            if (!map.containsKey(submission)) {
-                map.put(submission, new TreeMap<>());
-            }
-
-            if (!map.get(submission).containsKey(file.getPersistentId())) {
-                map.get(submission).put(file.getPersistentId(), file);
+                    if (!map.get(entryFile.getSubmission()).containsKey(entryFile.getPersistentId())) {
+                        map.get(entryFile.getSubmission()).put(entryFile.getPersistentId(), entryFile);
+                    }
+                }
             }
         }
 
@@ -408,22 +275,5 @@ public class SubmissionResultsData {
      */
     public String getHighlightedLines(long fileId) {
         return fileMapper.getHighlightedLines(fileId);
-    }
-
-
-    //TODO: Remove when loading real data
-    private float tempRandomScore() {
-        return this.tempRandomNumberInRange(1, 100);
-    }
-
-    //TODO: Remove when loading real data
-    @SuppressWarnings("Duplicates")
-    private int tempRandomNumberInRange(int min, int max) {
-        if (min >= max) {
-            return max;
-        }
-
-        Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
     }
 }

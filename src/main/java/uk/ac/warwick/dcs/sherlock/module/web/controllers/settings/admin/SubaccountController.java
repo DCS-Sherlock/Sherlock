@@ -192,7 +192,7 @@ public class SubaccountController {
 	) {
 		if (!result.hasErrors()) {
             accountRepository.delete(subAccount.getAccount());
-            return "redirect:/admin?msg=deleted";
+            return "redirect:/admin?msg=deleted_account";
 		}
 
 		return "settings/admin/delete";

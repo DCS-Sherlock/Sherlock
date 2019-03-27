@@ -5,6 +5,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Filters all requests to add the current URL to the http response headers
@@ -36,9 +39,17 @@ public class HeaderFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        //TODO: Add the "msg" parameter to the URI if set
-        httpServletResponse.setHeader("sherlock-url", ((HttpServletRequest)request).getRequestURI());
+        String url = httpServletRequest.getRequestURI();
+        if (httpServletRequest.getParameterMap().containsKey("msg")) {
+            List<String> strings = Arrays.asList(httpServletRequest.getParameterMap().get("msg"));
+            if (strings.size() == 1) {
+                url += "?msg=" + strings.get(0);
+            }
+        }
+
+        httpServletResponse.setHeader("sherlock-url", url);
 
         chain.doFilter(request, response);
     }

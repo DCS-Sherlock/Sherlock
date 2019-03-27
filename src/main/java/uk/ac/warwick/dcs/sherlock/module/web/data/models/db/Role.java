@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.db;
 
 import javax.persistence.*;
 
+/**
+ * The database table storing the roles assigned to each account
+ */
 @Entity
 @Table(name="role")
 public class Role {

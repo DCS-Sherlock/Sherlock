@@ -8,10 +8,12 @@ public class Configuration {
 
 	private String dataPath;
 	private Boolean encryptFiles;
+	private int jobCompleteDismissalTime;
 
 	public Configuration() {
 		this.setDataPath(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
 		this.setEncryptFiles(true);
+		this.setJobCompleteDismissalTime(3);
 	}
 
 	public String getDataPath() {
@@ -28,5 +30,13 @@ public class Configuration {
 
 	public void setEncryptFiles(Boolean encryptFiles) {
 		this.encryptFiles = encryptFiles;
+	}
+
+	public int getJobCompleteDismissalTime() {
+		return jobCompleteDismissalTime;
+	}
+
+	public void setJobCompleteDismissalTime(int jobCompleteDismissalTime) {
+		this.jobCompleteDismissalTime = jobCompleteDismissalTime;
 	}
 }

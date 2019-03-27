@@ -36,7 +36,7 @@ deploy:
     local-dir: "docs/"
     on:
       branch: master
-      jdk: oraclejdk8
+      jdk: oraclejdk11
 #  - provider: releases
 #    skip-cleanup: true
 #    api_key: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable

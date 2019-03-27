@@ -31,25 +31,17 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 * @param second The second match to compare.
 	 * @return A boolean showing if the 2 matches are on the same code block or not.
 	 */
+	// TODO possible add extension for fuzzy matches, e.g. subsets and overlaps
 	private boolean isLinked(NgramMatch first, NgramMatch second) {
-		// TODO resolve to also accept similar line combos, as wells as identical ones (possible future feature)
-		// TODO find a better way to do this
-		// precompute key and value matches. This is slightly more inefficient than doing it post file match check, but improves readability for negligible loss
-		// if the start lines of 2 blocks match up
-		boolean r_key = first.reference_lines.getKey() == second.reference_lines.getKey();
-		boolean c_key = first.check_lines.getKey() == second.check_lines.getKey();
-		// if the end lines of the 2 blocks line up
-		boolean r_val = first.reference_lines.getValue() == second.reference_lines.getValue();
-		boolean c_val = first.check_lines.getValue() == second.check_lines.getValue();
-		// for each possible pair check if they are the same file and the line numbers match up
-		if (first.file1.equals(second.file1)) {
-			return r_key && r_val;
-		} else if (first.file1.equals(second.file2)) {
-			return r_key && c_val;
-		} else if (first.file2.equals(second.file1)) {
-			return c_key && r_val;
-		} else if (first.file2.equals(second.file2)) {
-			return c_key && c_val;
+		// for each file combination
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				// if the files are the same
+				if (first.files[i].equals(second.files[j])) {
+					// return if the block is the same
+					return first.lines.get(i).equals(second.lines.get(j));
+				}
+			}
 		}
 		// if no match is found
 		return false;
@@ -76,14 +68,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		matches.get(matches.size()-1).add(match);
 	}
 
-	// TODO modularise this function as it's essentially the postproccessors main and shouldn't be doing much processing
-	@Override
-	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<NGramRawResult> rawResults) {
-
-		ModelTaskProcessedResults results = new ModelTaskProcessedResults(new NGramScorer(threshold));
-
-		ArrayList<ArrayList<NgramMatch>> matches = new ArrayList<>();
-
+	private void processMatches(List<NGramRawResult> rawResults, ArrayList<ArrayList<NgramMatch>> matches) {
 		// I'd like to apologise for this abomination of code
 		// checks for any link between already seen matches and new ones, then adds them to the structure accordingly
 		for (NGramRawResult result : rawResults ) {			// for each file
@@ -95,41 +80,31 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 				} else {
 					// for each list check for a link in the list by checking all contained objects. Add to any link or make a new list
 					addToMatches(match, matches);
-//					for (ArrayList<NgramMatch> check_list : matches) {
-//						for (NgramMatch check : check_list) {
-//							if (isLinked(match, check)) {
-//								check_list.add(match);
-//							}
-//						}
-//					}
 				}
 				// if nothing in matches add to match, else check isLinked and if true add to relevant list, if false add to new list
 			}
 		}
-		// now all data is in the structure we can filter it
+	}
 
-		/* can check here for if the matches are all connected for each list, if no then you can try and merge lists or cull from them to get
-		a more informative result TODO: Implement this and attach it to a bool setting*/
-
-		// make new group in results
-		ICodeBlockGroup out_group = results.addGroup();
-
-		// once all processing is done make and score each results object
+	private void makeScoreGroups(List<ISourceFile> files, ModelTaskProcessedResults results, ArrayList<ArrayList<NgramMatch>> matches, ICodeBlockGroup out_group, NGramScorer scorer) {
+		// for each matching group of code blocks
 		for (ArrayList<NgramMatch> list : matches) {
 			// make new scorer group
-			((NGramScorer)results.getScorer()).newGroup();
+			scorer.newGroup();
+			// fill the scorer group
 			for (NgramMatch item : list) {
 				// add all matches in a group to the scoring data structure
-				((NGramScorer)results.getScorer()).add(item);
+				scorer.add(item);
 			}
-			// if last group was used make new group in results
+			// if the last group was used, make a new group in results
 			if (out_group.getCodeBlocks().size() != 0) {
 				out_group = results.addGroup();
 			}
 			// if group is bellow the threshold add all items to the group along with a score
-			if (((NGramScorer)results.getScorer()).checkSize(files.size())) {
-				for (ISourceFile file : ((NGramScorer)results.getScorer()).file_list) {
-					((NGramScorer)results.getScorer()).getScore(file, out_group);
+			if (scorer.checkSize(files.size(), list)) {
+				// get the score for each file in the list
+				for (ISourceFile file : scorer.file_list) {
+					scorer.addScoredBlock(file, out_group);
 				}
 				out_group.setComment("N-Gram Match Group");
 				try {
@@ -140,12 +115,37 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 				}
 			}
 		}
+	}
+
+	@Override
+	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<NGramRawResult> rawResults) {
+
+		ModelTaskProcessedResults results = new ModelTaskProcessedResults();
+		NGramScorer scorer = new NGramScorer(threshold);
+
+		// A list of all match block groups
+		// Each group is stored as a sub list and has the same common code block
+		ArrayList<ArrayList<NgramMatch>> matches = new ArrayList<>();
+
+		// checks for any link between already seen matches and new ones, then adds them to the structure accordingly
+		processMatches(rawResults, matches);
+		// now all data is in the structure we can filter it
+
+		/* can check here for if the matches are all connected for each list, if no then you can try and merge lists or cull from them to get
+		a more informative result TODO: Implement this and attach it to a bool setting*/
+
+		// make new group in results
+		ICodeBlockGroup out_group = results.addGroup();
+
+		// once all processing is done make and score each results object
+		makeScoreGroups(files, results, matches, out_group, scorer);
 
 		// if last group is common removed then remove the empty group from results
 		if (out_group.getCodeBlocks().size() == 0) {
 			results.removeGroup(out_group);
 		}
 
+//		System.out.println("processResults");
 		return results;
 	}
 }

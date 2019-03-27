@@ -8,6 +8,9 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The form to add/modify templates
+ */
 public class TemplateForm {
 
     @NotNull(message = "{error.name.empty}")

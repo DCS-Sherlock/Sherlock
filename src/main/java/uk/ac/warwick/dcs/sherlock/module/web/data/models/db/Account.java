@@ -3,6 +3,9 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.db;
 import javax.persistence.*;
 import java.util.Set;
 
+/**
+ * The account database table
+ */
 @Entity
 @Table(name="account")
 public class Account {

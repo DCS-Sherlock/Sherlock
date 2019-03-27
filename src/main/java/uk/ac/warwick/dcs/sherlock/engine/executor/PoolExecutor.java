@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor;
 
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.*;
@@ -7,12 +8,14 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.pool.PoolExecutorJob;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
 public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
+	final Map<IJob, JobStatus> jobMap;
+
 	private final PriorityBlockingQueue<PoolExecutorJob> queue;
-	private final Map<IJob, JobStatus> jobMap;
 	private PriorityWorkScheduler scheduler;
 	private ExecutorService exec;
 	private ExecutorService execScheduler;
@@ -27,7 +30,7 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		this.queue = new PriorityBlockingQueue(5, Comparator.comparing(PoolExecutorJob::getPriority));
 		this.jobMap = new HashMap<>();
 
-		this.curID = 0;
+		this.curID = 0; //counter for jobstatus ids
 
 		this.execScheduler.execute(() -> {
 			while (true) {
@@ -39,8 +42,6 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 						ExecutorUtils.logger.info("Job {} starting", job.getId());
 					}
 
-					this.getAllJobStatuses().forEach(x -> System.out.println(x.getMessage()));
-
 					job.getStatus().startJob();
 
 					Future f = this.exec.submit(job);
@@ -48,20 +49,11 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 					job.getStatus().finishJob();
 
-					//Remove after a minute
-					Runnable runnable = () -> {
-						try {
-							Thread.sleep(60000);
-							synchronized (this.jobMap) {
-								this.jobMap.remove(job.getJob());
-							}
-						}
-						catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					};
-					Thread thread = new Thread(runnable);
-					thread.start();
+					//Remove after some configured time
+					if (job.getJob().getStatus().equals(WorkStatus.COMPLETE) && SherlockEngine.configuration.getJobCompleteDismissalTime() > 0) {
+						Thread thread = new Thread(new JobDismisser(this, job));
+						thread.start();
+					}
 
 					synchronized (ExecutorUtils.logger) {
 						ExecutorUtils.logger.info("Job {} finished, took: {}", job.getId(), job.getStatus().getFormattedDuration());
@@ -78,15 +70,29 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	public List<JobStatus> getAllJobStatuses() {
 		List<JobStatus> res;
 		synchronized (this.jobMap) {
-			 res = new ArrayList<>(this.jobMap.values());
+			res = new ArrayList<>(this.jobMap.values());
 		}
 		res.sort(JobStatus::compareTo);
 		return res;
 	}
 
 	@Override
-	public List<IJob> getWaitingJobs() {
-		return this.queue.stream().map(PoolExecutorJob::getJob).collect(Collectors.toList());
+	public IJob getJob(JobStatus jobStatus) {
+		synchronized (this.jobMap) {
+			if (this.jobMap.containsValue(jobStatus)) {
+				AtomicReference<IJob> ret = new AtomicReference<>(null);
+				this.jobMap.forEach((job, status) -> {
+					if (jobStatus.equals(status)) {
+						ret.set(job);
+					}
+				});
+
+				return ret.get();
+			}
+			else {
+				return null;
+			}
+		}
 	}
 
 	@Override
@@ -94,6 +100,11 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 		synchronized (this.jobMap) {
 			return this.jobMap.getOrDefault(job, null);
 		}
+	}
+
+	@Override
+	public List<IJob> getWaitingJobs() {
+		return this.queue.stream().map(PoolExecutorJob::getJob).collect(Collectors.toList());
 	}
 
 	@Override
@@ -165,7 +176,64 @@ public class PoolExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 	}
 
 	@Override
+	public boolean dismissJob(JobStatus jobStatus) {
+		return this.dismissJob(this.getJob(jobStatus), jobStatus);
+	}
+
+	@Override
+	public boolean dismissJob(IJob job) {
+		return this.dismissJob(job, this.getJobStatus(job));
+	}
+
+	private boolean dismissJob(IJob job, JobStatus jobStatus) {
+		if (this.jobMap.containsKey(job) && jobStatus.isFinished()) {
+			synchronized (this.jobMap) {
+				this.jobMap.remove(job);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean cancelJob(JobStatus jobStatus) {
+		return false;
+	}
+
+	@Override
+	public boolean cancelJob(IJob job) {
+		return false;
+	}
+
+	@Override
 	public void submitWork(PriorityWorkTask work) {
 		this.scheduler.scheduleJob(work);
+	}
+
+	private class JobDismisser implements Runnable {
+
+		private PoolExecutor executor;
+		private PoolExecutorJob job;
+		private long time;
+
+		JobDismisser(PoolExecutor executor, PoolExecutorJob job) {
+			this.executor = executor;
+			this.job = job;
+			this.time = 60000 * SherlockEngine.configuration.getJobCompleteDismissalTime();
+		}
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(this.time);
+				synchronized (this.executor.jobMap) {
+					this.executor.jobMap.remove(this.job.getJob());
+				}
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

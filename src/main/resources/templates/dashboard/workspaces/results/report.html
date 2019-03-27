@@ -141,7 +141,6 @@
         </div>
     </th:block>
 
-
     <div class="row d-none" th:classappend="${printing ? 'd-lg-block- d-print-block' : 'd-lg-block'}">
         <div class="col-12">
             <div class="card border-top-0 shadow-sm">
@@ -202,15 +201,14 @@
                                                 <td>
                                                     <span th:text="${match.getScore()}"></span>
                                                 </td>
-                                                <td class="">
-                                                    <span th:text="#{results.match.file}"></span>
-                                                    <span th:text="${match.getFile1().getPersistentId()}"></span>
-                                                    <span th:text="#{results.match.lines}"></span>
-                                                    <span th:text="${match.getFile1Lines()}"></span>
-                                                    <span th:text="#{results.match.matches}"></span>
-                                                    <span th:text="${match.getFile2().getPersistentId()}"></span>
-                                                    <span th:text="#{results.match.lines}"></span>
-                                                    <span th:text="${match.getFile2Lines()}"></span>
+                                                <td>
+                                                    <th:block th:each="entry : ${match.getMap()}">
+                                                        <span th:text="#{results.match.file}"></span>
+                                                        <span th:text="${entry.key.getPersistentId()}"></span>
+                                                        <span th:text="#{results.match.lines}"></span>
+                                                        <span th:text="${match.getFileLines(entry.key)}"></span>
+                                                        <br />
+                                                    </th:block>
                                                 </td>
                                             </tr>
                                         </th:block>
@@ -238,7 +236,7 @@
                                                 </h5>
                                                 <h2 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#id-' + ${file.getPersistentId()}">
-                                                        <span class="d-none d-print-inline" th:text="${'#'+file.getPersistentId()+':'}"></span>
+                                                        <span th:text="${'#'+file.getPersistentId()+':'}"></span>
                                                         <span th:text="${file.getFileDisplayPath()}"></span>
                                                     </button>
                                                 </h2>
@@ -273,16 +271,8 @@
 
                                         <div class="card-body">
                                             <div class="mb-2">
-                                                <span class="font-italic" id="match-file1"></span>
-                                                <span th:text="#{results.report.match.submission}"></span>
-                                                <span class="font-italic" id="match-sub1"></span>
-                                                <span th:text="#{results.report.match.with}"></span>
-                                                <span class="font-italic" id="match-file2"></span>
-                                                <span th:text="#{results.report.match.submission}"></span>
-                                                <span class="font-italic" id="match-sub2"></span>:
-                                                    <br /><br />
                                                 <span class="font-italic" id="match-reason"></span>
-                                                    <br /><br />
+                                                <br /><br />
                                                 <span th:text="#{results.compare.score}"></span><span id="match-score"></span>
                                             </div>
                                             <div id="match-code" class="mb-3">

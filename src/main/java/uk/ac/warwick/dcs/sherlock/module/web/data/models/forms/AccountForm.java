@@ -9,6 +9,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
+/**
+ * The form for creating a new sub-account
+ */
 public class AccountForm {
     @NotNull(message = "{error.name.empty}")
     @Size.List({

@@ -33,7 +33,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 
 	private String detector;
 	private Map<String, Float> paramMap;
-	private DetectorRank rank;
 
 	private Timestamp timestamp;
 	private String hash;
@@ -54,7 +53,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 		this.job = job;
 		this.detector = detector.getName();
 		this.paramMap = null;
-		this.rank = SherlockRegistry.getDetectorRank(detector);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.hash = null;
 		this.secure = null;
@@ -99,11 +97,6 @@ public class EntityTask implements ITask, IStorable, Serializable {
 	@Override
 	public long getPersistentId() {
 		return this.id;
-	}
-
-	@Override
-	public DetectorRank getRank() {
-		return rank;
 	}
 
 	@Override

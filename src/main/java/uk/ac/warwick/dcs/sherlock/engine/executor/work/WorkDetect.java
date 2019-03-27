@@ -2,11 +2,14 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
 import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 
 import java.util.*;
 import java.util.concurrent.*;
 
 public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> {
+
+	private JobStatus status;
 
 	private List<AbstractDetectorWorker> workers;
 	private int threshold;
@@ -15,12 +18,14 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 
 	private List<AbstractModelTaskRawResult> result;
 
-	public WorkDetect(List<AbstractDetectorWorker> workers, int threshold) {
-		this(workers, threshold, 0, workers.size());
+	public WorkDetect(JobStatus jobStatus, List<AbstractDetectorWorker> workers, int threshold) {
+		this(jobStatus, workers, threshold, 0, workers.size());
 		this.result = Collections.EMPTY_LIST;
 	}
 
-	private WorkDetect(List<AbstractDetectorWorker> workers, int threshold, int begin, int end) {
+	private WorkDetect(JobStatus jobStatus, List<AbstractDetectorWorker> workers, int threshold, int begin, int end) {
+		this.status = jobStatus;
+
 		this.workers = workers;
 		this.threshold = threshold;
 		this.begin = begin;
@@ -44,9 +49,9 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 
 		if (size > this.threshold) {
 			int middle = this.begin + (size / 2);
-			WorkDetect t1 = new WorkDetect(this.workers, this.threshold, this.begin, middle);
+			WorkDetect t1 = new WorkDetect(this.status, this.workers, this.threshold, this.begin, middle);
 			t1.fork();
-			WorkDetect t2 = new WorkDetect(this.workers, this.threshold, middle, this.end);
+			WorkDetect t2 = new WorkDetect(this.status, this.workers, this.threshold, middle, this.end);
 
 			res = t2.compute();
 			res.addAll(t1.join());
@@ -59,6 +64,7 @@ public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> 
 				if (raw != null) {
 					res.add(raw);
 				}
+				this.status.incrementProgress();
 			}
 		}
 

@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.*;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -99,18 +98,6 @@ public class SherlockRegistry {
 	public static Set<String> getDetectorLanguages(Class<? extends IDetector> det) {
 		if (registry != null) {
 			return registry.getDetectorLanguages(det);
-		}
-		return null;
-	}
-
-	/**
-	 * @param det detector class
-	 *
-	 * @return the detector rank
-	 */
-	public static DetectorRank getDetectorRank(Class<? extends IDetector> det) {
-		if (registry != null) {
-			return registry.getDetectorRank(det);
 		}
 		return null;
 	}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+
+<div class="row text-center">
+    <div class="col-md-6">
+        <h5>
+            <span th:text="#{dashboard.statistics.workspaces}"></span>
+        </h5>
+        <p>
+            <span th:text="${workspaces}"></span>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h5>
+            <span th:text="#{dashboard.statistics.submissions}"></span>
+        </h5>
+        <p>
+            <span th:text="${submissions}"></span>
+        </p>
+    </div>
+</div>
+</body>
+</html>

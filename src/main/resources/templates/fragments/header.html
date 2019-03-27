@@ -76,6 +76,15 @@
             </div>
             <p></p>
         </noscript>
+
+        <th:block th:if="${top_message != null && top_message != ''}">
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info"><span th:text="#{${'messages.'+top_message}}"></span></div>
+                </div>
+            </div>
+            <p></p>
+        </th:block>
     </div>
 </body>
 </html>

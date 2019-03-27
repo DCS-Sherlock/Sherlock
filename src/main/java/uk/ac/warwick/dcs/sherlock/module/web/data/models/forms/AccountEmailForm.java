@@ -7,6 +7,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * The form for changing an account email
+ */
 public class AccountEmailForm {
     @Size(min = 1, message = "{error.email.empty}")
     @Email(message = "{error.email.invalid}")

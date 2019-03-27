@@ -3,7 +3,8 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
+import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatchItem;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
 
 import java.util.*;
@@ -18,34 +19,9 @@ public class FileMatch {
     private int id;
 
     /**
-     * The first file
+     * The map of files involved in the match to the matched blocks
      */
-    private ISourceFile file1;
-
-    /**
-     * The second file
-     */
-    private ISourceFile file2;
-
-    /**
-     * The submission of the first file
-     */
-    private ISubmission submission1;
-
-    /**
-     * The submission of the second file
-     */
-    private ISubmission submission2;
-
-    /**
-     * The list of code blocks in the first file, plagiarised from the second
-     */
-    private List<CodeBlock> file1CodeBlocks;
-
-    /**
-     * The list of code blocks in the second file, plagiarised from the first
-     */
-    private List<CodeBlock> file2CodeBlocks;
+    private Map<ISourceFile, List<CodeBlock>> map;
 
     /**
      * The reason this match was detected
@@ -65,93 +41,43 @@ public class FileMatch {
     /**
      * Initialise this match
      *
-     * @param file1 the first file
-     * @param submission1 the submission of the first file
-     * @param file1CodeBlocks the matches from the first file
-     * @param file2 the first file
-     * @param submission2 the submission of the first file
-     * @param file2CodeBlocks the matches from the second file
-     * @param reason the reason text
-     * @param score the score associated with this match
+     * @param match the engine match to initialise this object with
      */
-    public FileMatch(
-            ISourceFile file1,
-            ISubmission submission1,
-            List<CodeBlock> file1CodeBlocks,
-            ISourceFile file2,
-            ISubmission submission2,
-            List<CodeBlock> file2CodeBlocks,
-            String reason,
-            float score) {
-        this.file1 = file1;
-        this.submission1 = submission1;
-        this.file1CodeBlocks = file1CodeBlocks;
+    public FileMatch(SubmissionMatch match) {
+        this.map = new HashMap<>();
+        this.reason = match.getReason();
 
-        this.file2 = file2;
-        this.submission2 = submission2;
-        this.file2CodeBlocks = file2CodeBlocks;
-
-        this.reason = reason;
-        this.score = score;
+        for (SubmissionMatchItem item : match.getItems()) {
+            List<CodeBlock> blocks = new ArrayList<>();
+            item.GetLineNumbers().forEach(t -> blocks.add(new CodeBlock(t.getKey(), t.getValue())));
+            map.put(item.GetFile(), blocks);
+            this.score = item.GetScore();
+        }
+//        this.score = match.getScore();
 
         //Generate a random colour
         this.colour = ResultsHelper.randomColour();
     }
 
     /**
-     * Get the first file
+     * Get the map
      *
-     * @return the file
+     * @return the map
      */
-    public ISourceFile getFile1() {
-        return file1;
+    public Map<ISourceFile, List<CodeBlock>> getMap() {
+        return map;
     }
 
     /**
-     * Get the second file
+     * Get the list of code blocks for a file
      *
-     * @return the file
-     */
-    public ISourceFile getFile2() {
-        return file2;
-    }
-
-    /**
-     * Get the submission of the first file
+     * @param file the file to get the blocks for
      *
-     * @return the submission
+     * @return the list
      */
-    public ISubmission getSubmission1() {
-        return submission1;
+    public List<CodeBlock> getCodeBlocks(ISourceFile file) {
+        return map.getOrDefault(file, new ArrayList<>());
     }
-
-    /**
-     * Get the submission of the second file
-     *
-     * @return the submission
-     */
-    public ISubmission getSubmission2() {
-        return submission2;
-    }
-
-    /**
-     * Get the list of code blocks from the first file
-     *
-     * @return the list of code blocks
-     */
-    public List<CodeBlock> getFile1CodeBlocks() {
-        return file1CodeBlocks;
-    }
-
-    /**
-     * Get the list of code blocks from the second file
-     *
-     * @return the list of code blocks
-     */
-    public List<CodeBlock> getFile2CodeBlocks() {
-        return file2CodeBlocks;
-    }
-
     /**
      * Get the reason for this match
      *
@@ -199,21 +125,14 @@ public class FileMatch {
     }
 
     /**
-     * Get a string listing all the line numbers involved from the first file
+     * Get a string listing all the line numbers involved from the file
+     *
+     * @param file the file to get the list for
      *
      * @return the comma separated list
      */
-    public String getFile1Lines() {
-        return getLines(file1CodeBlocks);
-    }
-
-    /**
-     * Get a string listing all the line numbers involved from the second file
-     *
-     * @return the comma separated list
-     */
-    public String getFile2Lines() {
-        return getLines(file2CodeBlocks);
+    public String getFileLines(ISourceFile file) {
+        return getLines(getCodeBlocks(file));
     }
 
     /**
@@ -229,7 +148,7 @@ public class FileMatch {
     private String getLines(List<CodeBlock> list) {
         List<String> lines = new ArrayList<>();
 
-        for (CodeBlock cb : file1CodeBlocks) {
+        for (CodeBlock cb : list) {
             if (cb.getStartLine() == cb.getEndLine()) {
                 lines.add(cb.getStartLine()+"");
             } else {
@@ -247,28 +166,31 @@ public class FileMatch {
      */
     public JSONObject toJSON() {
         JSONObject result = new JSONObject();
-
-        result.put("file1Id", file1.getPersistentId());
-        result.put("file2Id", file2.getPersistentId());
-        result.put("file1Name", file1.getFileIdentifier());
-        result.put("file2Name", file2.getFileIdentifier());
-        result.put("file1DisplayName", file1.getFileDisplayName());
-        result.put("file2DisplayName", file2.getFileDisplayName());
-        result.put("file1Submission", submission1.getId());
-        result.put("file2Submission", submission2.getId());
-        result.put("file1SubmissionName", submission1.getName());
-        result.put("file2SubmissionName", submission2.getName());
         result.put("reason", reason);
         result.put("score", score);
         result.put("colour", colour);
 
-        Set<Integer> list1 = new LinkedHashSet<>();
-        file1CodeBlocks.forEach(cb -> list1.addAll(cb.toLineNumList()));
-        result.put("file1Lines", new JSONArray(list1));
+        JSONArray matches = new JSONArray();
+        for (Map.Entry<ISourceFile, List<CodeBlock>> entry : map.entrySet()) {
+            ISourceFile entryFile = entry.getKey();
+            List<CodeBlock> entryList = entry.getValue();
 
-        Set<Integer> list2 = new LinkedHashSet<>();
-        file2CodeBlocks.forEach(cb -> list2.addAll(cb.toLineNumList()));
-        result.put("file2Lines", new JSONArray(list2));
+            JSONObject match = new JSONObject();
+
+            match.put("id", entryFile.getPersistentId());
+            match.put("name", entryFile.getFileIdentifier());
+            match.put("displayName", entryFile.getFileDisplayName());
+            match.put("submission", entryFile.getSubmission().getId());
+            match.put("submissionName", entryFile.getSubmission().getName());
+
+            Set<Integer> lines = new LinkedHashSet<>();
+            entryList.forEach(cb -> lines.addAll(cb.toLineNumList()));
+            match.put("lines", new JSONArray(lines));
+
+            matches.put(match);
+        }
+
+        result.put("matches", matches);
 
         return result;
     }

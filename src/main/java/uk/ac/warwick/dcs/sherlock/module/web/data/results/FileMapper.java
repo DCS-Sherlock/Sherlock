@@ -1,6 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
+import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
 
@@ -30,20 +32,19 @@ public class FileMapper {
 
         //Loop through all the matches
         for (FileMatch match : matches) {
-            long file1 = match.getFile1().getPersistentId();
-            long file2 = match.getFile2().getPersistentId();
+            for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
+                ISourceFile entryFile = entry.getKey();
+                List<CodeBlock> entryList = entry.getValue();
 
-            //Ensure that the map contains an entry for both files
-            if (!map.containsKey(file1)) {
-                map.put(file1, new LineMapper(file1));
+                long entryFileId = entryFile.getPersistentId();
+
+                //Ensure that the map contains an entry for both files
+                if (!map.containsKey(entryFileId)) {
+                    map.put(entryFileId, new LineMapper(entryFileId));
+                }
+
+                map.get(entryFileId).AddMatch(match);
             }
-
-            if (!map.containsKey(file2)) {
-                map.put(file2, new LineMapper(file2));
-            }
-
-            map.get(file1).AddMatch(match);
-            map.get(file2).AddMatch(match);
         }
 
         //Loop through all the files and fill the gaps

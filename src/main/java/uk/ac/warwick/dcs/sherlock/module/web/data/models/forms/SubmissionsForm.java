@@ -5,6 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The form to upload submission(s)
+ */
 public class SubmissionsForm {
     @NotEmpty(message = "{error.file.empty}")
     public MultipartFile[] files;
