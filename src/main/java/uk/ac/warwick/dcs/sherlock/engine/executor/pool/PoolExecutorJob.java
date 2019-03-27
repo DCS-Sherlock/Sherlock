@@ -115,7 +115,6 @@ public class PoolExecutorJob implements Runnable {
 			}
 		}
 		catch (InterruptedException | ExecutionException e) {
-			job.setStatus(WorkStatus.INTERRUPTED);
 			return;
 		}
 
