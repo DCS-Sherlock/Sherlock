@@ -41,7 +41,7 @@ public class SherlockEngine {
 
 	static EventBus eventBus = null;
 	static Registry registry = null;
-	static String modulesPath = "";
+	static String overrideModulesPath = "";
 	static File configDir;
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
@@ -81,7 +81,6 @@ public class SherlockEngine {
 
 		if (this.valid) {
 			SherlockEngine.loadConfiguration();
-			modulesPath = SherlockEngine.configuration.getDataPath();
 
 			try {
 				SherlockEngine.eventBus = new EventBus();
@@ -138,8 +137,8 @@ public class SherlockEngine {
 		}
 	}
 
-	public static void setModulesPath(String classpath) {
-		SherlockEngine.modulesPath = classpath;
+	public static void setOverrideModulesPath(String overrideModulesPath) {
+		SherlockEngine.overrideModulesPath = overrideModulesPath;
 	}
 
 	private static void setupConfigDir() {

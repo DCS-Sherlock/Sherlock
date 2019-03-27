@@ -28,11 +28,14 @@ public class AnnotationLoader {
 	private Reflections ref;
 
 	AnnotationLoader() {
-		String modulesPath = SherlockEngine.modulesPath;
+		boolean useDefaultPath = (SherlockEngine.overrideModulesPath == null || SherlockEngine.overrideModulesPath.equals(""));
+		String modulesPath = useDefaultPath ? SherlockEngine.configuration.getDataPath() : SherlockEngine.overrideModulesPath;
 		if (!modulesPath.endsWith("/")) {
 			modulesPath += "/";
 		}
-		modulesPath += "module/";
+		if (useDefaultPath) {
+			modulesPath += "Module/";
+		}
 		modulesPath = FilenameUtils.separatorsToSystem(modulesPath);
 
 		boolean continueFlag = SherlockEngine.configuration.getEnableExternalModules();

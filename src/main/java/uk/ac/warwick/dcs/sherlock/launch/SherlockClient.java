@@ -42,7 +42,7 @@ public class SherlockClient {
 			//If "-Dmodules" is in the JVM arguments, set the path to provided
 			String modulesPath = System.getProperty("modules");
 			if (modulesPath != null && !modulesPath.equals("")) {
-				SherlockEngine.setModulesPath(modulesPath);
+				SherlockEngine.setOverrideModulesPath(modulesPath);
 			}
 
 			//If "-Doverride=True" is in the JVM arguments, make Spring thing it is running as a server
