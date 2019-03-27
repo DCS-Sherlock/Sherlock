@@ -30,7 +30,5 @@ Alternatively, Sherlock can be run directly within the gradle environment using 
 
 `SherlockClient` should be used as the starting class in a development environment.
 
-## CSS
-This project uses Sass (https://sass-lang.com/) to compile the CSS files for the web interface, the Sass files are stored in `src/main/sass`. Please do not edit the CSS files in `src/main/resources/static/css`, any changes you make to these files will be overwritten.
-
-At the moment Gradle does not automatically compile the CSS files, so you will need an external program (see https://sass-lang.com/install) to compile any changes you make. Whatever program you use, set the source/input directory to `src/main/sass/output` and the output to `src/main/resources/static/css`. 
+## CSS and JavaScript
+This project uses Sass (https://sass-lang.com/) to compile the CSS files for the web interface, the Sass files are stored in `src/main/sass`. The original JavaScript files are stored in `src/main/javascript`. Please do not edit the CSS or JavaScript files in `src/main/resources/static`, any changes you make to these files will be overwritten. Gradle will automatically compile the CSS files and minify the Javascript files when you run `gradlew(.bat) build`.

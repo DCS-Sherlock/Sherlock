@@ -32,7 +32,6 @@ import java.nio.channels.OverlappingFileLockException;
 public class SherlockEngine {
 
 	public static final String version = "@VERSION@";
-	public static final Boolean enableExternalModules = true;
 
 	public static Side side = Side.UNKNOWN;
 	public static Configuration configuration = null;
@@ -42,7 +41,7 @@ public class SherlockEngine {
 
 	static EventBus eventBus = null;
 	static Registry registry = null;
-	static String modulesPath = "";
+	static String overrideModulesPath = "";
 	static File configDir;
 
 	private static Logger logger = LoggerFactory.getLogger(SherlockEngine.class);
@@ -138,8 +137,8 @@ public class SherlockEngine {
 		}
 	}
 
-	public static void setModulesPath(String classpath) {
-		SherlockEngine.modulesPath = classpath;
+	public static void setOverrideModulesPath(String overrideModulesPath) {
+		SherlockEngine.overrideModulesPath = overrideModulesPath;
 	}
 
 	private static void setupConfigDir() {

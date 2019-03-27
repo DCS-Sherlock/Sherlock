@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine;
 
+import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -27,20 +28,31 @@ public class AnnotationLoader {
 	private Reflections ref;
 
 	AnnotationLoader() {
-		List<URL> moduleURLS = new LinkedList<>();
-		String modulesPath = (SherlockEngine.modulesPath == null || SherlockEngine.modulesPath.equals("")) ? "module/" : SherlockEngine.modulesPath;
+		boolean useDefaultPath = (SherlockEngine.overrideModulesPath == null || SherlockEngine.overrideModulesPath.equals(""));
+		String modulesPath = useDefaultPath ? SherlockEngine.configuration.getDataPath() : SherlockEngine.overrideModulesPath;
 		if (!modulesPath.endsWith("/")) {
 			modulesPath += "/";
 		}
+		if (useDefaultPath) {
+			modulesPath += "Module/";
+		}
+		modulesPath = FilenameUtils.separatorsToSystem(modulesPath);
 
-		if (SherlockEngine.enableExternalModules) {
-			List<URL> classpathURLs = new LinkedList<>();
-
-			File modules = new File(modulesPath);
+		boolean continueFlag = SherlockEngine.configuration.getEnableExternalModules();
+		File modules = null;
+		if (continueFlag) {
+			modules = new File(modulesPath);
 			if (!modules.exists()) {
-				modules.mkdir();
+				if (!modules.mkdir()) {
+					logger.error("Could not create module directory '{}', modules cannot be loaded", modulesPath);
+					continueFlag = false;
+				}
 			}
+		}
 
+		List<URL> moduleURLS = new LinkedList<>();
+		if (continueFlag) {
+			List<URL> classpathURLs = new LinkedList<>();
 			moduleURLS.addAll(Arrays.stream(Objects.requireNonNull(modules.listFiles())).map(f -> {
 				try {
 					URL url = f.toURI().toURL();
@@ -54,10 +66,11 @@ public class AnnotationLoader {
 			}).collect(Collectors.toList()));
 
 			//Load libs to
-			File libs = new File(modulesPath + "libs/");
+			File libs = new File(FilenameUtils.separatorsToSystem(modulesPath + "libs/"));
 			if (!libs.exists()) {
 				libs.mkdir();
 			}
+
 			Arrays.stream(Objects.requireNonNull(libs.listFiles())).forEach(f -> {
 				try {
 					classpathURLs.add(f.toURI().toURL());
