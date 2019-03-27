@@ -6,7 +6,9 @@
  * The HTML content to replace a div with when reloading the content
  * @type {string}
  */
-loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="75px">';
+var loadingHTML = '<img src="/img/load.gif" class="mx-auto d-block" height="75px">';
+
+var loadedResults = false;
 
 /**
  * Performs multiple functions on the compare and report pages:
@@ -1151,6 +1153,13 @@ $(function () {
     rebindEvents();
 
     submissionResultsPage();
+    $(window).focus(function() {
+        if (loadedResults == false) {
+            $("[data-js='match-hide']").trigger("click");
+            loadedResults = true;
+        }
+    });
+
     networkGraphPage();
 
     // FROM: https://itsolutionstuff.com/post/how-to-remove-query-string-from-urlexample.html
