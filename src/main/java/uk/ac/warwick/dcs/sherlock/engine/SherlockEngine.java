@@ -32,7 +32,6 @@ import java.nio.channels.OverlappingFileLockException;
 public class SherlockEngine {
 
 	public static final String version = "@VERSION@";
-	public static final Boolean enableExternalModules = true;
 
 	public static Side side = Side.UNKNOWN;
 	public static Configuration configuration = null;
@@ -82,6 +81,7 @@ public class SherlockEngine {
 
 		if (this.valid) {
 			SherlockEngine.loadConfiguration();
+			modulesPath = SherlockEngine.configuration.getDataPath();
 
 			try {
 				SherlockEngine.eventBus = new EventBus();
