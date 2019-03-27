@@ -187,6 +187,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//Fixes access to h2 databsae console
 			http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 			http.headers().frameOptions().disable();
+			http.csrf().disable();
 		}
 	}
 
