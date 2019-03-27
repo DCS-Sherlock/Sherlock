@@ -55,9 +55,9 @@ public class JobStatus implements Comparable<JobStatus> {
 	}
 
 	public void finishJob() {
-		if (this.startTime != null && this.step < 6) {
+		if (this.startTime != null && this.step < 7) {
 			this.duration = Duration.between(this.startTime, Instant.now());
-			this.setStep(6);
+			this.setStep(7);
 			this.progress.set(1f);
 			this.startTime = null;
 		}
