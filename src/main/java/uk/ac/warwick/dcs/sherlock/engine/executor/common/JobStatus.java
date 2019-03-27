@@ -103,6 +103,17 @@ public class JobStatus implements Comparable<JobStatus> {
 		}
 	}
 
+	/**
+	 * Progress int, percentage complete between 0 and 100
+	 *
+	 * @return percentage job complete between 0 and 100
+	 */
+	public int getProgressInt() {
+		synchronized (this.progress) {
+			return Math.round(progress.get() * 100);
+		}
+	}
+
 	public void incrementProgress() {
 		synchronized (this.progress) {
 			this.progress.addTo(this.progressIncrement.get());

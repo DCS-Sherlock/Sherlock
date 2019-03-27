@@ -48,7 +48,7 @@ public class ResultsController {
         } else {
             model.addAttribute("finished", (status.getMessage() == "Finished"));
             model.addAttribute("status_message", status.getMessage());
-            model.addAttribute("status_progress", status.getProgress()*100);
+            model.addAttribute("status_progress", status.getProgressInt());
         }
 
         return "dashboard/workspaces/results/view";
@@ -65,10 +65,10 @@ public class ResultsController {
 
         if (status == null) {
             result.put("message", "Finished");
-            result.put("progress", 1);
+            result.put("progress", 100);
         } else {
             result.put("message", status.getMessage());
-            result.put("progress", status.getProgress());
+            result.put("progress", status.getProgressInt());
         }
 
         return result.toString();

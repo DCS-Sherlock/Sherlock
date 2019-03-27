@@ -38,7 +38,7 @@
                                     <span th:text="#{results.status}"></span>
                                 </h4>
                                 <p>
-                                    <span class="badge" th:classappend="#{${results.getStatus()+'.badge'}}" th:text="#{${results.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${results.getStatus()+'.tooltip'}}"></span>
+                                    <span class="badge" th:if="${finished}" th:classappend="#{${results.getStatus()+'.badge'}}" th:text="#{${results.getStatus()}}" data-toggle="tooltip" data-placement="top" th:title="#{${results.getStatus()+'.tooltip'}}"></span>
                                     <span id="job-status" th:unless="${finished}" class="badge badge-primary" th:text="${status_message}"></span>
                                 </p>
                             </div>
@@ -83,7 +83,7 @@
                                 </th:block>
                             </div>
                         </div>
-                        <th:block th:if="${results.getStatus() == 'COMPLETE'}">
+                        <th:block th:if="${finished}">
                             <hr>
                             <div class="row">
                                 <div class="col-lg-12">

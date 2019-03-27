@@ -288,7 +288,7 @@ public class WorkspaceWrapper {
      * @throws DetectorNotFound if the detector no longer exists
      * @throws NoFilesUploaded if no files were uploaded
      */
-    public void runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound, DetectorNotFound, NoFilesUploaded {
+    public long runTemplate(TemplateWrapper templateWrapper) throws TemplateContainsNoDetectors, ClassNotFoundException, ParameterNotFound, DetectorNotFound, NoFilesUploaded {
 		if (templateWrapper.getTemplate().getDetectors().size() == 0)
 		    throw new TemplateContainsNoDetectors("No detectors in chosen template.");
 
@@ -323,6 +323,8 @@ public class WorkspaceWrapper {
         }
 
 		SherlockEngine.executor.submitJob(job);
+
+		return job.getPersistentId();
     }
 
     /**

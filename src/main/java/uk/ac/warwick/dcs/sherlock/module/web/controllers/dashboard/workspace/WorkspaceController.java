@@ -227,9 +227,9 @@ public class WorkspaceController {
 
         TemplateWrapper templateWrapper = new TemplateWrapper(template_id, account.getAccount(), templateRepository);
 
+        long jobId = 0;
         try {
-            workspaceWrapper.runTemplate(templateWrapper);
-            model.addAttribute("success_msg", "workspaces.analysis.started");
+            jobId = workspaceWrapper.runTemplate(templateWrapper);
         } catch (TemplateContainsNoDetectors e) {
             model.addAttribute("warning_msg", "workspaces.analysis.no_detectors");
         } catch (ClassNotFoundException | DetectorNotFound e) {
@@ -240,8 +240,13 @@ public class WorkspaceController {
             model.addAttribute("warning_msg", "workspaces.analysis.no_files");
         }
 
-        model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
-        return "dashboard/workspaces/fragments/run";
+        if (jobId == 0) {
+            model.addAttribute("warning_msg", "workspaces.analysis.failed");
+            model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
+            return "dashboard/workspaces/fragments/run";
+        } else {
+            return "redirect:/dashboard/workspaces/manage/" + workspaceWrapper.getId() + "/results/" + jobId + "?msg=analysis_started";
+        }
     }
 
     /**

@@ -101,6 +101,7 @@ public class DetectorWrapper {
      * @throws DetectorNotFound if the detector no longer exists
      */
     public List<AdjustableParameterObj> getEngineParameters() throws DetectorNotFound {
+//        SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(this.getEngineDetector());
         return SherlockRegistry.getDetectorAdjustableParameters(this.getEngineDetector());
     }
 

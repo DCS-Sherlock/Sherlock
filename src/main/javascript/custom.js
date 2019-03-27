@@ -1171,7 +1171,7 @@ $(function () {
                 $("#job-status").html(data.message);
 
                 // Update the progress bar
-                var percent = (data.progress*100) + "%";
+                var percent = (data.progress) + "%";
                 $("#job-progress").css("width", percent);
                 $("#job-progress span").html(percent);
 

@@ -52,9 +52,9 @@ public class AttributesControllerAdvice {
     @ModelAttribute
     public void addMessage(Model model, HttpServletRequest request) {
         if (request.getParameterMap().containsKey("msg")) {
-            model.addAttribute("message", request.getParameterMap().get("msg"));
+            model.addAttribute("top_message", request.getParameterMap().get("msg"));
         } else {
-            model.addAttribute("message", "");
+            model.addAttribute("top_message", "");
         }
     }
 
