@@ -184,12 +184,12 @@ public class ReportManager {
 	}
 
 	/**
-	 * Generate a report for a single submission, containing all matches for all files within it.
+	 * Generate a report for a single submission, containing all matches for all files within it, and a summary of the report as a string.
 	 *
 	 * @param submission The submission to generate the report for.
-	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
+	 * @return A tuple. The key contains a list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs. The value is the report summary.
 	 */
-	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
+	public ITuple<List<SubmissionMatch>, String> GetSubmissionReport(ISubmission submission) {
 
 		if (submission.hasParent()) {
 			// submission is not top level, don't make reports on non-top level submission.
@@ -213,8 +213,8 @@ public class ReportManager {
 		}
 
 		//Store this report and return it.
-		List<SubmissionMatch> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups);
-		submissionReportMap.put(submission.getId(), submissionReport);
+		ITuple<List<SubmissionMatch>, String> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups, submissionScores.get(submission.getId()));
+		submissionReportMap.put(submission.getId(), submissionReport.getKey());
 		return submissionReport;
 	}
 

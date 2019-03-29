@@ -16,7 +16,7 @@ public class DetectionType {
 
 	public static void addDefaultDetectionTypes() {
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_COMMENT", "Comment", "The specified comments are identical to each other.", 0.4));
-		SherlockRegistry.registerDetectionType(new DetectionType("BASE_VARIABLE_NAME", "Variable Name", "This variable has been used in the same way in each file, but has a different name.", 0.1));
+		SherlockRegistry.registerDetectionType(new DetectionType("BASE_VARIABLE_NAME", "Variable Name", "This variable has been copied between each file.", 0.1));
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_METHOD_NAME", "Method Name", "The methods in each file are identical in content but have different names.", 0.8));
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_COPIED_BLOCK", "Copied Block", "The blocks in these files are completely identical to each other.", 1.0));
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_BODY_REPLACE_CALL", "BASE_BODY_REPLACE_CALL", "BASE_BODY_REPLACE_CALL desc.....", 0.6));
