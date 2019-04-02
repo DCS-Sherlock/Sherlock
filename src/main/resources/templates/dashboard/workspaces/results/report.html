@@ -174,7 +174,16 @@
                                         </a>
                                     </th:block>
                                 </p>
-
+                            </div>
+                            <div class="col-md-12">
+                                <h4>
+                                    <span th:text="#{results.report.summary}"></span>
+                                </h4>
+                                <p>
+                                    <div th:remove="tag" th:utext="${wrapper.getSummary()}"></div>
+                                </p>
+                            </div>
+                            <div class="col-md-12">
                                 <div class="d-none d-print-block">
                                     <h4 th:text="#{results.table.matches}"></h4>
 

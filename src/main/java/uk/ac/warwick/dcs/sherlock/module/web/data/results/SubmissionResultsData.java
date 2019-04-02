@@ -28,6 +28,11 @@ public class SubmissionResultsData {
     private IJob job;
 
     /**
+     * The summary (if it's a report)
+     */
+    private String summary = "";
+
+    /**
      * The first submission
      */
     private ISubmission submission1;
@@ -81,7 +86,9 @@ public class SubmissionResultsData {
         }
 
         if (report != null) {
-            List<SubmissionMatch> list = report.GetSubmissionReport(submission1);
+            ITuple<List<SubmissionMatch>, String> result = report.GetSubmissionReport(submission1);
+            this.summary = result.getValue();
+            List<SubmissionMatch> list = result.getKey();
             list.forEach(m -> this.matches.add(new FileMatch(m)));
 
             Map<Long, String> idToName = new HashMap<>();
@@ -155,6 +162,15 @@ public class SubmissionResultsData {
 
         //Initialise the file mapper using the list of matches
         this.fileMapper = new FileMapper(this.matches);
+    }
+
+    /**
+     * Get the summary for the report, replacing line breaks with <br />
+     *
+     * @return the summary
+     */
+    public String getSummary() {
+        return this.summary.replaceAll("(\r\n|\n)", "<br />");
     }
 
     /**
