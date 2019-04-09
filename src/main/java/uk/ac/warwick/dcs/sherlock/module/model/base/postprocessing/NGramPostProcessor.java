@@ -20,6 +20,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 *     more likely a common code pattern or something given to the students (e.g. skeleton files).
 	 *     This threshold determines the percentage of files over which matches will be ignored, to avoid
 	 *     false detections.
+	 *     Comparison is less than or equal to, so to deactivate set to 1
 	 * </p>
 	 */
 	@AdjustableParameter (name = "Common Threshold", defaultValue = 0.3f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f)
