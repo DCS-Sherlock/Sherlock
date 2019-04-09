@@ -200,6 +200,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		ArrayList<String> string2List = new ArrayList<String>();
 
 		// convert N-gram lists to String lists
+		// this is done for direct comparisons of interior variables to be easier by using libraries
 		for (Ngram ngram : string1) {
 			string1List.add(ngram.getNgram());
 		}
@@ -223,7 +224,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			}
 		}
 
-		// calcualte and return the Jaccard Similarity
+		// calculate and return the Jaccard Similarity
 		return (float) same / ((float) same + (float) dis1 + (float) dis2);
 	}
 
@@ -243,6 +244,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 			res.put(temp, reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber());
 		}
 
+		// empties the lists for next detection
 		reference.clear();
 		check.clear();
 	}
@@ -327,22 +329,28 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 				// get N-gram string
 				ngram_string = substrObj.getNgram();
 
+				// if the previous file has a matching ngram (id references the occurrence of said ngram if there are duplicates)
 				if (storage_map.containsKey(ngram_string + ngram_id) || reference.size() > 0) {
 					// build up a window and threshold similarity
 					// if over threshold keep increasing window by 1 until similarity drops bellow threshold
-					// TODO
-					// if possible when value falls bellow threshold shrink window to last value before value starts to decrease (final peak)
-					// System.out.println(storage_map.get(substr + 0));
+
+					// if head is null we are starting a new comparison check
 					if (head == null) {
+						// set head to the start of the sequence in the reference file
 						head = storage_map.get(ngram_string + ngram_id);
+						// add the reference start to the reference list
 						reference.add(head);
 					}
+					// otherwise we update reference and head
 					else {
+						// get the next ngram in the reference sequence
 						head = head.getNextNgram();
+						// if sequence has ended
 						if (head == null) {
 							// EOF in reference reached, abandon loop and then check for match (post loop check)
 							break;
 						}
+						// add next in sequence to list
 						else {
 							reference.add(head);
 						}
@@ -352,9 +360,12 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					check.add(substrObj);
 
 					// update peak data
+					// this allows retraction to last peak in the case of the similarity falling below the threshold
+					// this prevents detection bleeding
 					since_last_peak++;
+					// compare the two lists
 					sim_val = compare(reference, check);
-					// System.out.println(sim_val);
+					// if the similarity has risen we have a new peak
 					if (sim_val >= last_val) {
 						since_last_peak = 0;
 						last_peak = sim_val;
@@ -364,13 +375,13 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 					// nothing substantial has flagged, reset lists
 					if (reference.size() == minimum_window && sim_val < threshold) {
-//						System.out.println("miss");
 						// if another case of the starting N-gram exists in the other file move to that and reperform the check
 						if (storage_map.containsKey(reference.get(0).getNgram() + (ngram_id + 1))) {
 							// move file position back to appropriate N-gram
 							i -= minimum_window;
 							ngram_id++;
 						}
+						// empty lists
 						reference.clear();
 						check.clear();
 						head = null;
@@ -378,10 +389,11 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 						since_last_peak = 0;
 						last_val = 0.0f;
 					}
-					// if value drops window has reached max useful length
+					// when the window is over the minimum and drops below the threshold
 					else if (reference.size() > minimum_window && sim_val < threshold) {
-//						System.out.println("hit1");
+//						// send the data to construct a match object for the found match
 						matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
+						// reset duplicate ngram ID
 						ngram_id = 0;
 						// set head to null so a new reference can be made
 						head = null;
@@ -391,8 +403,8 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					}
 				}
 			}
-			if (compare(reference, check) > threshold) {
-//				System.out.println("hit2");
+			// performs comparison if EOF for reference is reached
+			if (compare(reference, check) > threshold && reference.size() >= minimum_window) {
 				// if at EOF there is a match then output it
 				matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 			}
@@ -493,4 +505,3 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 // TODO finish commenting
 // TODO clean
-// TODO fix issue with near EOF lines not functioning correctly if short
