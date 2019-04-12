@@ -32,6 +32,8 @@ repositories {
 }
 
 dependencies {
+    compile "org.flywaydb:flyway-core:5.2.4"
+
     antlr 'org.antlr:antlr4:4.7.2'
 
     implementation (

@@ -44,6 +44,7 @@ public class DetectorController {
 	) throws DetectorNotFound {
 		model.addAttribute("parameterForm", new ParameterForm(detectorWrapper));
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());
+		model.addAttribute("postprocessingMap", detectorWrapper.getEnginePostProcessingParametersMap());
 		return "dashboard/templates/parameters";
 	}
 
@@ -66,7 +67,7 @@ public class DetectorController {
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
 	) throws DetectorNotFound {
-    	result = parameterForm.validate(result, detectorWrapper.getEngineParameters());
+		result = parameterForm.validate(result, detectorWrapper.getEngineParameters(), detectorWrapper.getEnginePostProcessingParameters());
 
 		if (!result.hasErrors()) {
 			detectorWrapper.updateParameters(parameterForm, tParameterRepository);
@@ -74,6 +75,7 @@ public class DetectorController {
 		}
 
 		model.addAttribute("parametersMap", detectorWrapper.getEngineParametersMap());
+		model.addAttribute("postprocessingMap", detectorWrapper.getEnginePostProcessingParametersMap());
 		return "dashboard/templates/parameters";
 	}
 

@@ -241,7 +241,9 @@ public class WorkspaceController {
         }
 
         if (jobId == 0) {
-            model.addAttribute("warning_msg", "workspaces.analysis.failed");
+            if (!model.containsAttribute("warning_msg")) {
+                model.addAttribute("warning_msg", "workspaces.analysis.failed");
+            }
             model.addAttribute("templates", TemplateWrapper.findByAccountAndPublic(account.getAccount(), templateRepository));
             return "dashboard/workspaces/fragments/run";
         } else {
