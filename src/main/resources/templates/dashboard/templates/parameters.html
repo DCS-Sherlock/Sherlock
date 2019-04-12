@@ -21,6 +21,8 @@
                         <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
                     </div>
 
+                    <h5 th:text="#{templates.parameters.detector_params}"></h5>
+
                     <th:block th:each="parameter : *{parameters}">
                         <div class="form-row">
                             <div class="form-group col-md-12">
@@ -44,9 +46,39 @@
                             </div>
                         </div>
                     </th:block>
-                    <tr th:if="${parametersMap.empty}">
-                       <span th:text="#{templates.parameters.none}"></span>
-                    </tr>
+                    <th:block th:if="${parametersMap.empty}">
+                        <span th:text="#{templates.parameters.none}"></span>
+                    </th:block>
+
+                    <h5 th:text="#{templates.parameters.postprocessing_params}"></h5>
+
+
+                    <th:block th:each="parameter : *{postprocessing}">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label th:for="|${'postprocessing[''' + parameter.key + ''']'}|">
+                                    <span th:text="${postprocessingMap.get(parameter.key).getDisplayName()}"></span>
+                                    <span
+                                            th:if="${postprocessingMap.get(parameter.key).getDescription().length() > 0}"
+                                            th:text="#{tooltip}"
+                                            data-toggle="tooltip" data-placement="top"
+                                            th:title="${postprocessingMap.get(parameter.key).getDescription()}"
+                                    ></span>
+                                </label>
+                                <input type="number"
+                                       class="form-control"
+                                       th:min="${postprocessingMap.get(parameter.key).getMinimumBound()}"
+                                       th:max="${postprocessingMap.get(parameter.key).getMaximumBound()}"
+                                       th:step="${postprocessingMap.get(parameter.key).getStep()}"
+                                       th:name="|${'postprocessing[''' + parameter.key + ''']'}|"
+                                       th:placeholder="${postprocessingMap.get(parameter.key).getDisplayName()}"
+                                       th:value="${parameter.value}" />
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${postprocessingMap.empty}">
+                        <span th:text="#{templates.parameters.none}"></span>
+                    </th:block>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>

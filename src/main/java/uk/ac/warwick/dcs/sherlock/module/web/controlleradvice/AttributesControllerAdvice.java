@@ -6,8 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
+import uk.ac.warwick.dcs.sherlock.launch.SherlockServer;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.SpringNotInitialised;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -21,6 +25,13 @@ public class AttributesControllerAdvice {
     private AccountRepository accountRepository;
     @Autowired
     private Environment environment;
+
+    @ModelAttribute
+    public void checkLoaded() throws SpringNotInitialised {
+        if (!SherlockServer.engine.isInitialised()) {
+            throw new SpringNotInitialised("Not loaded");
+        }
+    }
 
     /**
      * Gets the account of the currently logged in user using the authentication

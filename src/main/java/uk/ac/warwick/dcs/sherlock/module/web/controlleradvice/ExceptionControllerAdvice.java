@@ -25,6 +25,13 @@ public class ExceptionControllerAdvice {
     @Autowired
     private Environment environment;
 
+    @ExceptionHandler({SpringNotInitialised.class})
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public String notInitialised(Model model, Exception e) {
+        model.addAttribute("msg", e.getClass().getName());
+        return "error";
+    }
+
     /**
      * Handles requests which are only allowed to be ajax requests. Redirects
      * the user to the url supplied in the error message, typically this is
