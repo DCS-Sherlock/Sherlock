@@ -42,6 +42,8 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	EntityFile( EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
 		super();
 		this.archive = archive;
+		this.archive.getFiles_().add(this);
+
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
@@ -198,6 +200,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	String getFilename() {
 		return this.filename;
+	}
+
+	void setArchive(EntityArchive archive) {
+		BaseStorage.instance.filesystem.updateFileArchive(this, archive);
+		this.archive = archive;
 	}
 
 	void remove_() {

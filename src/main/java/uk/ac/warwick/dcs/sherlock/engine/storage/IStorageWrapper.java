@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
@@ -26,17 +27,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param submissionName submission name to show to the user, should identify the file or files
 	 *
 	 * @return the new submission instance, or null if one of the same name already exists for the workspace
-	 */
-	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
-
-	/**
-	 * Merge two submissions into a single submission, can be used to sort out name collisions
-	 * @param submission1 first submission, is left
-	 * @param submission2 second submission, is removed after merge
 	 *
-	 * @return successful
-	 */
-	boolean mergeSubmissions(ISubmission submission1, ISubmission submission2) throws SubmissionUnsupportedException;
+	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;*/
 
 	/**
 	 * Create a new IWorkspace instance
@@ -54,6 +46,15 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @return class for ICodeBlockGroup
 	 */
 	Class<? extends ICodeBlockGroup> getCodeBlockGroupClass();
+
+	/**
+	 * Returns a prepared report manager for the IResultJob, uses cached instances were possible
+	 *
+	 * @param resultJob result to generate reports for
+	 *
+	 * @return instance of ReportManager
+	 */
+	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
 
 	/**
 	 * Fetches a submission for the passed name if one exists, else returns null
@@ -80,11 +81,19 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	List<IWorkspace> getWorkspaces();
 
 	/**
-	 * Returns a prepared report manager for the IResultJob, uses cached instances were possible
-	 * @param resultJob result to generate reports for
-	 * @return instance of ReportManager
+	 * Merge two submissions into a single submission, can be used to sort out name collisions
+	 *
+	 * @param existing first submission, is left, must already exist in the database
+	 * @param pending  second submission, is removed after merge
 	 */
-	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
+	void mergePendingSubmission(ISubmission existing, ISubmission pending) throws SubmissionUnsupportedException;
+
+	/**
+	 * Forget and remove a pending submission, and cleans up after it
+	 *
+	 * @param pendingSubmission pending submission to forget and remove
+	 */
+	void removePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
 	/**
 	 * Stores the passed code block groups to the database
@@ -98,20 +107,33 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	/**
 	 * Store file
 	 *
-	 * @param workspace workspace to upload file to
+	 * @param workspace   workspace to upload file to
 	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
 	 * @param fileContent raw content of the file
+	 *
+	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
 	 */
-	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;
+	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;
 
 	/**
 	 * Store file
 	 *
-	 * @param workspace workspace to upload file to
-	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
-	 * @param fileContent raw content of the file
+	 * @param workspace                          workspace to upload file to
+	 * @param filename                           filename uploaded, used as the identifier to show to the user, identifying the file or files
+	 * @param fileContent                        raw content of the file
 	 * @param archiveContainsMultipleSubmissions are the archive top level directories separate submissions?
+	 *
+	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
+	 * <p>
+	 * Can be handled by
 	 */
-	void storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException;
+	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException;
+
+	/**
+	 * If the submission clashes with an already existing submission, it will be set as pending
+	 * <p>
+	 * IF a submission is pending this method will remove existing submission with the same name and write the pending submission to the database
+	 */
+	void writePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
 }

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
@@ -243,7 +244,18 @@ public class WorkspaceWrapper {
 	    for(MultipartFile file : submissionsForm.getFiles()) {
             if (file.getSize() > 0) {
                 try {
-                	SherlockEngine.storage.storeFile(this.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
+	                List<ITuple<ISubmission, ISubmission>> collisions = SherlockEngine.storage.storeFile(this.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
+
+	                // Each tuple is a collision
+	                // Key is the existing submission in the Database
+	                // Value is the new one
+
+	                /* 3 Options -
+	                    SherlockEngine.storage.removePendingSubmission(value); - remove the new submission, will clean it up and forget about adding it
+	                    SherlockEngine.storage.mergePendingSubmission(key, value); - will combine the two submissions into a single one, merging all files (does NOT check for duplicate files)
+	                    SherlockEngine.storage.writePendingSubmission(value); - will remove the old submission and replace it with the new one
+	                */
+
                 } catch (IOException | WorkspaceUnsupportedException e) {
                     throw new FileUploadFailed(e.getMessage());
                 }

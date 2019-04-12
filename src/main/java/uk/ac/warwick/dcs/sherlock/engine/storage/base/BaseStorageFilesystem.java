@@ -51,6 +51,15 @@ public class BaseStorageFilesystem {
 		return this.loadStorableStr(file, this.computeFileIdentifier(file));
 	}
 
+	boolean updateFileArchive(EntityFile file, EntityArchive newArchive) {
+		String oldIdentifier = this.computeFileIdentifier(file);
+		String newIdentifier = this.computeFileIdentifier(file, newArchive);
+
+		File newFile = this.getFileFromIdentifier(newIdentifier);
+		newFile.getParentFile().mkdirs();
+		return this.getFileFromIdentifier(oldIdentifier).renameTo(newFile);
+	}
+
 	/**
 	 * Loads a tasks raw results from the filesystem
 	 *
@@ -182,7 +191,11 @@ public class BaseStorageFilesystem {
 	}
 
 	private String computeFileIdentifier(EntityFile file) {
-		String str = this.getArchiveName(file.getArchive()) + file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
+		return this.computeFileIdentifier(file, file.getArchive());
+	}
+
+	private String computeFileIdentifier(EntityFile file, EntityArchive archive) {
+		String str = this.getArchiveName(archive) + file.getFilename() + file.getExtension() + file.getTimestamp().getTime();
 		str = StringUtils.rightPad(str, 1024, str);
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
 	}
@@ -198,7 +211,7 @@ public class BaseStorageFilesystem {
 	}
 
 	private String getArchiveName(EntityArchive archive) {
-		return archive != null ? archive.getName() + this.getArchiveName(archive.getParent_()) : "";
+		return archive != null ? this.getArchiveName(archive.getParent_()) + archive.getName() : "";
 	}
 
 	private File getFileFromIdentifier(String fileIdentifier) {
