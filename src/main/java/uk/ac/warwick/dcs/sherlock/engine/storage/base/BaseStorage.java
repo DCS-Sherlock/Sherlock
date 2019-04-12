@@ -1,28 +1,21 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.component.*;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
 import javax.persistence.Query;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.*;
-import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
 
@@ -98,6 +91,11 @@ public class BaseStorage implements IStorageWrapper {
 		this.database.refreshObject(w);
 
 		return submission;
+	}
+
+	@Override
+	public boolean mergeSubmissions(ISubmission submission1, ISubmission submission2) {
+		return false;
 	}
 
 	@Override
@@ -191,34 +189,13 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	@Deprecated
-	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException {
-		EntityArchive sub = (EntityArchive) this.createSubmission(workspace, FilenameUtils.removeExtension(filename));
-		if (sub != null) {
-			this.storeFile(sub, filename, fileContent);
-		}
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException {
+		this.storeFile(workspace, filename, fileContent, false);
 	}
 
 	@Override
-	public void storeFile(ISubmission submission, String filename, byte[] fileContent) throws SubmissionUnsupportedException {
-		if (!(submission instanceof EntityArchive)) {
-			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
-		}
-		EntityArchive s = (EntityArchive) submission;
-
-		//Set all the jobs as outdated
-		for (IJob job : ((EntityArchive) submission).getWorkspace().getJobs()) {
-			job.setStatus(WorkStatus.OUTDATED);
-		}
-
-		if (FilenameUtils.getExtension(filename).equals("zip")) {
-			this.storeArchive(s, fileContent);
-		}
-		else {
-			this.storeIndividualFile(s, filename, fileContent);
-		}
-
-		this.database.refreshObject(s);
+	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException {
+		FileUploadHelper.storeFile(this.database, this.filesystem, workspace, filename, fileContent, archiveContainsMultipleSubmissions);
 	}
 
 	void removeCodeBlockGroups() {
@@ -227,64 +204,5 @@ public class BaseStorage implements IStorageWrapper {
 
 		q = BaseStorage.instance.database.createQuery("DELETE FROM CodeBlock b WHERE b.size = -5");
 		BaseStorage.instance.database.executeUpdate(q);
-	}
-
-	private void storeArchive(EntityArchive submission, byte[] fileContent) {
-		try {
-			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
-			ZipEntry zipEntry = zis.getNextEntry();
-			EntityArchive curArchive = submission;
-
-			while (zipEntry != null) {
-				if (zipEntry.isDirectory()) {
-					String[] dirs = FilenameUtils.separatorsToUnix(zipEntry.getName()).split("/");
-					curArchive = submission;
-					for (String dir : dirs) {
-						EntityArchive nextArchive = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getName().equals(dir)).findAny().orElse(null);
-
-						if (nextArchive == null) {
-							nextArchive = new EntityArchive(dir, curArchive);
-							this.database.storeObject(nextArchive);
-						}
-						curArchive = nextArchive;
-					}
-				}
-				else {
-					this.storeIndividualFile(curArchive, zipEntry.getName(), IOUtils.toByteArray(zis));
-				}
-				zipEntry = zis.getNextEntry();
-			}
-			zis.closeEntry();
-			zis.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void storeIndividualFile(EntityArchive archive, String filename, byte[] fileContent) {
-		int line = 0;
-		int contentLine = 0;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileContent)));
-
-		try {
-			while (reader.ready()) {
-				line++;
-				if (!reader.readLine().equals("")) {
-					contentLine++;
-				}
-			}
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		EntityFile file =
-				new EntityFile(archive, FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), fileContent.length, line, contentLine);
-		if (!this.filesystem.storeFile(file, fileContent)) {
-			return;
-		}
-
-		this.database.storeObject(file);
 	}
 }

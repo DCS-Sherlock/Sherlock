@@ -2,8 +2,8 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
@@ -28,6 +28,15 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @return the new submission instance, or null if one of the same name already exists for the workspace
 	 */
 	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
+
+	/**
+	 * Merge two submissions into a single submission, can be used to sort out name collisions
+	 * @param submission1 first submission, is left
+	 * @param submission2 second submission, is removed after merge
+	 *
+	 * @return successful
+	 */
+	boolean mergeSubmissions(ISubmission submission1, ISubmission submission2) throws SubmissionUnsupportedException;
 
 	/**
 	 * Create a new IWorkspace instance
@@ -87,22 +96,22 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups);
 
 	/**
-	 * Store file in the database
+	 * Store file
 	 *
-	 * @param workspace   workspace to add file to
+	 * @param workspace workspace to upload file to
 	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
 	 * @param fileContent raw content of the file
 	 */
-	@Deprecated
-	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException;
+	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;
 
 	/**
-	 * Store file to a submission
+	 * Store file
 	 *
-	 * @param submission  submission to add file to
+	 * @param workspace workspace to upload file to
 	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
-	 * @param fileContent raw content of the submission file
+	 * @param fileContent raw content of the file
+	 * @param archiveContainsMultipleSubmissions are the archive top level directories separate submissions?
 	 */
-	void storeFile(ISubmission submission, String filename, byte[] fileContent) throws SubmissionUnsupportedException;
+	void storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException;
 
 }
