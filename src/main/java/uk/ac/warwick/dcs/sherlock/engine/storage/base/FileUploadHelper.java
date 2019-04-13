@@ -81,6 +81,7 @@ class FileUploadHelper {
 					archiveInputStream = new TarArchiveInputStream(new ByteArrayInputStream(tarBytes));
 					archiveEntry = archiveInputStream.getNextEntry();
 					break;
+
 				default:
 					BaseStorage.logger.error("Unsupported archive format");
 					return;
@@ -108,7 +109,7 @@ class FileUploadHelper {
 					if (parts.length > (archiveHasManySubmissions ? 1 : 0)) {
 						if (archiveHasManySubmissions) {
 							curArchive = multiSubmissionMap.getOrDefault(parts[0], createSubmission(workspace, parts[0], ret));
-							parts = Arrays.copyOfRange(parts, 1, parts.length-1);
+							parts = Arrays.copyOfRange(parts, 1, parts.length - 1);
 						}
 						else {
 							curArchive = submission;
@@ -158,7 +159,8 @@ class FileUploadHelper {
 			storeArchive(database, filesystem, w, FilenameUtils.removeExtension(filename), ex, fileContent, archiveHasManySubmissions, ret);
 		}
 		else {
-			//storeIndividualFile(database, filesystem, w, FilenameUtils.removeExtension(filename), extension, fileContent);
+			EntityArchive s = createSubmission(w, FilenameUtils.getBaseName(filename), ret);
+			storeIndividualFile(database, filesystem, s, FilenameUtils.getBaseName(filename), ex, fileContent);
 		}
 
 		database.refreshObject(w);
