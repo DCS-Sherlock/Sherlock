@@ -43,6 +43,12 @@ public class BaseStorage implements IStorageWrapper {
 			this.reportManagerCacheQueue.add((long) -1);
 		}
 
+		List<EntityArchive> oldPending = this.database.runQuery("SELECT a from Archive a where a.pending=true", EntityArchive.class);
+		if (oldPending != null && oldPending.size() > 0) {
+			logger.warn("Cleaning up unresolved pending submissions from previous sessions");
+			oldPending.stream().filter(x -> x.getParent().getName() == null).forEach(EntityArchive::remove);
+		}
+
 		//Do a scan of all files in database in background, check they exist and there are no extra files
 		List orphans = this.filesystem.validateFileStore(this.database.runQuery("SELECT f from File f", EntityFile.class), this.database.runQuery("SELECT t from Task t", EntityTask.class));
 		if (orphans != null && orphans.size() > 0) {
@@ -200,6 +206,15 @@ public class BaseStorage implements IStorageWrapper {
 	public List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions)
 			throws WorkspaceUnsupportedException {
 		List<ITuple<ISubmission, ISubmission>> collisions = FileUploadHelper.storeFile(this.database, this.filesystem, workspace, filename, fileContent, archiveContainsMultipleSubmissions);
+
+		collisions.forEach(x -> {
+			try {
+				this.mergePendingSubmission(x.getKey(), x.getValue());
+			}
+			catch (SubmissionUnsupportedException e) {
+				e.printStackTrace();
+			}
+		});
 
 		return collisions;
 	}

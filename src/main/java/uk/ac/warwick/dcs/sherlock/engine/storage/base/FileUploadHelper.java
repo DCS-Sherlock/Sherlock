@@ -114,6 +114,7 @@ class FileUploadHelper {
 						}
 						else {
 							curArchive = submission;
+							parts = Arrays.copyOfRange(parts, 0, parts.length - 1);
 						}
 
 						for (String part : parts) {

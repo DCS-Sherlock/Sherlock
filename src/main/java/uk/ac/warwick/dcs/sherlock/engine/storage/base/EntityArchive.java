@@ -13,21 +13,27 @@ import java.util.*;
 public class EntityArchive implements ISubmission, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@Transient
-	EntityWorkspace pendingWorkspace;
+
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long id;
+
 	private String name;
+	private boolean pending;
+
 	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityWorkspace workspace;
+
+	@Transient
+	EntityWorkspace pendingWorkspace;
+
 	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityArchive parent;
 
-	@OneToMany (mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany (mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityArchive> children = new ArrayList<>();
 
-	@OneToMany (mappedBy = "archive", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany (mappedBy = "archive", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityFile> files = new ArrayList<>();
 
 	EntityArchive() {
@@ -49,12 +55,14 @@ public class EntityArchive implements ISubmission, Serializable {
 	EntityArchive(EntityWorkspace pendingWorkspace, String name, EntityArchive archive) {
 		super();
 		this.name = name;
+		this.pending = pendingWorkspace != null;
 		this.parent = archive;
 		this.workspace = null;
 		this.pendingWorkspace = pendingWorkspace;
 
 		if (archive != null) {
 			archive.getChildren_().add(this);
+			this.pending = archive.pending;
 		}
 	}
 
@@ -195,9 +203,10 @@ public class EntityArchive implements ISubmission, Serializable {
 	}
 
 	void writeToPendingWorkspace() {
-		if (this.pendingWorkspace != null && this.workspace == null) {
+		if (this.pending && this.pendingWorkspace != null && this.workspace == null) {
 			this.pendingWorkspace.getSubmissions().stream().filter(s -> s.getName().equals(this.name)).forEach(ISubmission::remove);
 
+			this.setPendingRecursive(false);
 			this.setSubmissionArchive(this.pendingWorkspace);
 			BaseStorage.instance.database.storeObject(this);
 			BaseStorage.instance.database.refreshObject(this.workspace);
@@ -217,6 +226,11 @@ public class EntityArchive implements ISubmission, Serializable {
 		}
 	}
 
+	private void setPendingRecursive(boolean pending) {
+		this.children.forEach(a -> a.setPendingRecursive(pending));
+		this.pending = pending;
+	}
+
 	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> files) {
 		BaseStorage.instance.database.refreshObject(this);
 		if (this.children != null) {
@@ -225,7 +239,7 @@ public class EntityArchive implements ISubmission, Serializable {
 			}
 		}
 
-		if (this.files != null) {
+		if (this.files != null && this.files.size() > 0) {
 			files.addAll(this.files);
 		}
 
