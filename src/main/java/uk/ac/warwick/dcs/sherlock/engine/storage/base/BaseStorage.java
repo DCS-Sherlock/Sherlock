@@ -207,14 +207,15 @@ public class BaseStorage implements IStorageWrapper {
 			throws WorkspaceUnsupportedException {
 		List<ITuple<ISubmission, ISubmission>> collisions = FileUploadHelper.storeFile(this.database, this.filesystem, workspace, filename, fileContent, archiveContainsMultipleSubmissions);
 
-		collisions.forEach(x -> {
+		//Merge example
+		/*collisions.forEach(x -> {
 			try {
 				this.mergePendingSubmission(x.getKey(), x.getValue());
 			}
 			catch (SubmissionUnsupportedException e) {
 				e.printStackTrace();
 			}
-		});
+		});*/
 
 		return collisions;
 	}
