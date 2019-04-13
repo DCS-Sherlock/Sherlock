@@ -1,5 +1,4 @@
 Predetermining Anomalies
-Installing Backdoors
 Vanquishing Daemons
 Chasing Mice
 Squashing Bugs
@@ -10,7 +9,6 @@ Hunting for Caffeine
 Compiling Cases
 Tricking Rocks
 Refactoring Reports
-Extinguishing Firewalls
 Configuring Errors
 Scheduling Crashes
 Appending Semi-colons

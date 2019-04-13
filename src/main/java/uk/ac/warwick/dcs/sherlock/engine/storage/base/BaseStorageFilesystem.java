@@ -51,15 +51,6 @@ public class BaseStorageFilesystem {
 		return this.loadStorableStr(file, this.computeFileIdentifier(file));
 	}
 
-	boolean updateFileArchive(EntityFile file, EntityArchive newArchive) {
-		String oldIdentifier = this.computeFileIdentifier(file);
-		String newIdentifier = this.computeFileIdentifier(file, newArchive);
-
-		File newFile = this.getFileFromIdentifier(newIdentifier);
-		newFile.getParentFile().mkdirs();
-		return this.getFileFromIdentifier(oldIdentifier).renameTo(newFile);
-	}
-
 	/**
 	 * Loads a tasks raw results from the filesystem
 	 *
@@ -78,19 +69,8 @@ public class BaseStorageFilesystem {
 	}
 
 	/**
-	 * Stores a file on the filesystem
-	 *
-	 * @param file        the file to store
-	 * @param fileContent content of the file
-	 *
-	 * @return successful
-	 */
-	boolean storeFile(EntityFile file, byte[] fileContent) {
-		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
-	}
-
-	/**
 	 * Removes a file from the filesystem
+	 *
 	 * @param file file to remove
 	 */
 	void removeFile(EntityFile file) {
@@ -107,6 +87,7 @@ public class BaseStorageFilesystem {
 
 	/**
 	 * Removes a tasks raw results object from the filesystem
+	 *
 	 * @param task task to remove
 	 */
 	void removeTaskRawResults(EntityTask task) {
@@ -119,6 +100,18 @@ public class BaseStorageFilesystem {
 		if (filesInStore.contains(tmp)) {
 			new File(SherlockEngine.configuration.getDataPath() + File.separator + "Store" + File.separator + tmp).delete();
 		}
+	}
+
+	/**
+	 * Stores a file on the filesystem
+	 *
+	 * @param file        the file to store
+	 * @param fileContent content of the file
+	 *
+	 * @return successful
+	 */
+	boolean storeFile(EntityFile file, byte[] fileContent) {
+		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
 	}
 
 	/**
@@ -141,6 +134,15 @@ public class BaseStorageFilesystem {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	boolean updateFileArchive(EntityFile file, EntityArchive newArchive) {
+		String oldIdentifier = this.computeFileIdentifier(file);
+		String newIdentifier = this.computeFileIdentifier(file, newArchive);
+
+		File newFile = this.getFileFromIdentifier(newIdentifier);
+		newFile.getParentFile().mkdirs();
+		return this.getFileFromIdentifier(oldIdentifier).renameTo(newFile);
 	}
 
 	/**
@@ -208,6 +210,19 @@ public class BaseStorageFilesystem {
 		String str = task.getJob().getPersistentId() + "." + task.getPersistentId() + "-" + task.getTimestamp().getTime();
 		str = StringUtils.rightPad(str, 1024, str);
 		return DigestUtils.sha512Hex(str.substring(0, 1024));
+	}
+
+	private List<String> getAllFiles() {
+		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
+		List<String> filesInStore;
+		try {
+			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
+		}
+		catch (Exception e) {
+			return null;
+		}
+
+		return filesInStore;
 	}
 
 	private String getArchiveName(EntityArchive archive) {
@@ -325,19 +340,6 @@ public class BaseStorageFilesystem {
 		}
 
 		return true;
-	}
-
-	private List<String> getAllFiles() {
-		String parentDir = SherlockEngine.configuration.getDataPath() + File.separator + "Store";
-		List<String> filesInStore;
-		try {
-			filesInStore = FileUtils.listFiles(new File(parentDir), null, true).parallelStream().map(x -> x.getAbsolutePath().substring(parentDir.length() + 1)).collect(Collectors.toList());
-		}
-		catch (Exception e) {
-			return null;
-		}
-
-		return filesInStore;
 	}
 
 	/**

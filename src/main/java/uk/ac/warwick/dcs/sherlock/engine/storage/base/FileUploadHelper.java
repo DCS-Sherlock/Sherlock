@@ -57,7 +57,8 @@ class FileUploadHelper {
 		return null;
 	}
 
-	private static void storeArchive(EmbeddedDatabase database, BaseStorageFilesystem filesystem, EntityWorkspace workspace, String filename, String extension, byte[] fileContent, boolean archiveHasManySubmissions, List<ITuple<ISubmission, ISubmission>> ret) {
+	private static void storeArchive(EmbeddedDatabase database, BaseStorageFilesystem filesystem, EntityWorkspace workspace, String filename, String extension, byte[] fileContent,
+			boolean archiveHasManySubmissions, List<ITuple<ISubmission, ISubmission>> ret) {
 		try {
 			ArchiveInputStream archiveInputStream;
 			ArchiveEntry archiveEntry;

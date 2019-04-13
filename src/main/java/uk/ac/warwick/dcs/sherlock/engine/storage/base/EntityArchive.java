@@ -106,6 +106,16 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent;
 	}
 
+	void setParent(EntityArchive archive) {
+		this.parent = archive;
+		this.parent.getChildren_().add(this);
+
+		BaseStorage.instance.database.storeObject(this);
+
+		List<ISourceFile> children = this.getAllFilesRecursive(new LinkedList<>());
+		children.forEach(f -> BaseStorage.instance.filesystem.updateFileArchive((EntityFile) f, ((EntityFile) f).getArchive()));
+	}
+
 	@Override
 	public int getTotalFileCount() {
 		return this.parent != null ? this.parent.getTotalFileCount() : this.getFileCount();
@@ -140,7 +150,8 @@ public class EntityArchive implements ISubmission, Serializable {
 			BaseStorage.instance.database.refreshObject(this);
 			BaseStorage.instance.database.removeObject(this);
 		}
-		catch (Exception ignored) {}
+		catch (Exception ignored) {
+		}
 	}
 
 	void clean() {
@@ -176,16 +187,6 @@ public class EntityArchive implements ISubmission, Serializable {
 
 	EntityWorkspace getWorkspace() {
 		return this.parent != null ? this.parent.getWorkspace() : this.workspace;
-	}
-
-	void setParent(EntityArchive archive) {
-		this.parent = archive;
-		this.parent.getChildren_().add(this);
-
-		BaseStorage.instance.database.storeObject(this);
-
-		List<ISourceFile> children = this.getAllFilesRecursive(new LinkedList<>());
-		children.forEach(f -> BaseStorage.instance.filesystem.updateFileArchive((EntityFile) f, ((EntityFile) f).getArchive()));
 	}
 
 	void setSubmissionArchive(EntityWorkspace workspace) {
