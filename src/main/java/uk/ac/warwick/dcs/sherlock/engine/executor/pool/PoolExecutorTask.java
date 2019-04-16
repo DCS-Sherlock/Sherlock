@@ -119,7 +119,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 
 		if (this.workers.size() == 0) {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Could not build workers for detector {}. Check that the worker class is not declared within another class as this will cause issues", this.getDetector().getName());
+				ExecutorUtils.logger.error("Could not build workers for detector {}. Ensure that its worker class is not declared within another class and has a nullary constructor", this.getDetector().getName());
 			}
 		}
 

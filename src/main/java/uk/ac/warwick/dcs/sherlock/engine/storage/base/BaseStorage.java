@@ -46,7 +46,7 @@ public class BaseStorage implements IStorageWrapper {
 		List<EntityArchive> oldPending = this.database.runQuery("SELECT a from Archive a where a.pending=true", EntityArchive.class);
 		if (oldPending != null && oldPending.size() > 0) {
 			logger.warn("Cleaning up unresolved pending submissions from previous sessions");
-			oldPending.stream().filter(x -> x.getParent().getName() == null).forEach(EntityArchive::remove);
+			oldPending.stream().filter(x -> x.getParent().getName() == null || !x.getParent_().pending).forEach(EntityArchive::remove);
 		}
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files

@@ -20,7 +20,7 @@ public class EntityArchive implements ISubmission, Serializable {
 	private long id;
 
 	private String name;
-	private boolean pending;
+	boolean pending;
 
 	@ManyToOne (fetch = FetchType.LAZY)
 	private EntityWorkspace workspace;
