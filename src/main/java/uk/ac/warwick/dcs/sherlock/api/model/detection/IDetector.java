@@ -5,11 +5,11 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import java.util.*;
 
 /**
- * Interface for implementing a detection algorithm
+ * Interface for accessing a detection algorithm
  * <br><br>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
-public interface IDetector<T extends AbstractDetectorWorker> {
+public interface IDetector<T extends DetectorWorker> {
 
 	/**
 	 * Builds a set of workers on a passed dataset, these workers are executed in parallel to produce the algorithm result
@@ -21,11 +21,17 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
-	 * Fetches the display name for a detector
+	 * Fetches the display name for the detector
 	 *
 	 * @return the display name
 	 */
 	String getDisplayName();
+
+	/**
+	 * Fetches the description string for the detector
+	 * @return
+	 */
+	String getDescription();
 
 	/**
 	 * Specify the preprocessors required for this detector.
@@ -38,12 +44,4 @@ public interface IDetector<T extends AbstractDetectorWorker> {
 	 * @return a list of the required preprocessing strategies
 	 */
 	List<PreProcessingStrategy> getPreProcessors();
-
-	/**
-	 * Detectors are ranked either PRIMARY or SUPPORTING to indicate to Sherlock how to treat their results when combining multiple detectors to increase the quality of the final results
-	 *
-	 * @return the rank of the detector
-	 */
-	@Deprecated
-	DetectorRank getRank();
 }

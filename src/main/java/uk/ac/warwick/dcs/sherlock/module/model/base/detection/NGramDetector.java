@@ -3,22 +3,16 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetector;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractPairwiseDetectorWorker;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorRank;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NGramDetector.NGramDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.NGramRawResult;
 import uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing.TrimWhitespaceOnly;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 
-public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker> {
-
-	NGramRawResult<NgramMatch> res;
+public class NGramDetector extends PairwiseDetector<NGramDetectorWorker> {
 
 	/**
 	 * The character width of each N-Gram used in the detection.
@@ -28,7 +22,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 */
 	@AdjustableParameter (name = "N-Gram Size", defaultValue = 4, minimumBound = 1, maxumumBound = 10, step = 1)
 	public int ngram_size;
-
 	/**
 	 * The minimum size of a list of N-Grams before checks begin.
 	 * <p>
@@ -38,7 +31,6 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 */
 	@AdjustableParameter (name = "Minimum Window", defaultValue = 5, minimumBound = 0, maxumumBound = 20, step = 1)
 	public int minimum_window;
-
 	/**
 	 * The threshold on the similarity value over which something is considered suspicious.
 	 * <p>
@@ -48,135 +40,10 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	 */
 	@AdjustableParameter (name = "Threshold", defaultValue = 0.8f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f)
 	public float threshold;
+	NGramRawResult<NgramMatch> res;
 
-	// presumably for use in threading (check with james)
-	@Override
-	public NGramDetectorWorker getAbstractPairwiseDetectorWorker() {
-		return new NGramDetectorWorker();
-	}
-
-	/**
-	 * Load the contents of a file into an N-gram map for easy retrival
-	 * <p>
-	 * Each line of the file is taken in and converted into N-grams, then stored in a hash map as an object containing the N-gram, its line number, it's ID and the next N-gram in the file (modeled as
-	 * a linked list).
-	 * </p>
-	 *
-	 * @param storage_map The hashmap used to store the resulting N-grams
-	 * @param file        The file data to be deconstucted into and stored as ordered N-grams
-	 */
-	private void loadNgramMap(HashMap<String, Ngram> storage_map, ArrayList<IndexedString> file) {
-		// the N-gram string
-		String substr;
-		// the new N-gram object
-		Ngram ngram = null;
-		int line_number = 0;
-
-		// variable to extract the string from the indexed container
-		String line;
-		// for each line get the indexed container
-		for (IndexedString lineC : file) {
-			// acquire line
-			line = lineC.getValue();
-			// if line is shorter than the ngram_size pad it with whitespace
-			// this should function without issue as an equivalent lines will also be too short and be padded the same
-			if (line.length() < ngram_size) {
-				// pad to the size of an ngram
-				for (int i = ngram_size - line.length(); i >= 0 ; i--) {
-					line += " ";
-				}
-			}
-			// acquire line number
-			line_number = lineC.getKey();
-
-			// for each N-gram in a line
-			for (int i = 0; i < line.length() - (ngram_size - 1); i++) {
-				// build an N-gram of ngram_size
-				substr = line.substring(i, i + ngram_size);
-				// if the N-gram is the first
-				if (ngram == null) {
-					// build the N-gram as an object with its line number
-					ngram = new Ngram(substr, line_number);
-					// put the ngram into the hash map with the relevent N-gram ID
-					storage_map.put(substr + 0, ngram);
-					// set the N-grams ID
-					ngram.setId(0);
-				}
-				// if at least 1 N-gram already exists
-				else {
-					// create the next N-gram object with its line number
-					Ngram temp = new Ngram(substr, line_number);
-					// set temp as the next N-gram in the order
-					ngram.setNextNgram(temp);
-					// update the current N-gram position
-					ngram = temp;
-					// if the hashmap does not already contain this N-gram
-					if (!storage_map.containsKey(substr + 0)) {
-						// add N-gram to the hashmap
-						storage_map.put(substr + 0, ngram);
-						// set the N-grams ID
-						ngram.setId(0);
-						// if the N-gram already exists in the hashmap
-					}
-					else {
-						// find an id not used by the N-gram
-						// there must be a better way to do this? (might just require building a custom map where each key holds a list)
-						int j = 1;
-						while (storage_map.containsKey(substr + j)) {
-							j++;
-						}
-						// add N-gram to the hashmap
-						storage_map.put(substr + j, ngram);
-						// set N-grams ID
-						ngram.setId(j);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Load the contents of a file into a linked list of N-grams for easy reference
-	 * <p>
-	 * Each line of the file is taken and converted into N-grams which are in turn put into a linked list as N-gram objects containing the N-gram and it's line number
-	 * </p>
-	 *
-	 * @param storage_list The list the N-grams are going to be stored in
-	 * @param file         The list of lines in a file to be converted and stored
-	 */
-	private void loadNgramList(ArrayList<Ngram> storage_list, ArrayList<IndexedString> file) {
-		// the N-gram string
-		String substr;
-		// the new N-gram object
-		Ngram ngram = null;
-		int line_number = 0;
-
-		// variable to extract the string from the indexed container
-		String line;
-		// for each line get the indexed container
-		for (IndexedString lineC : file) {
-			// acquire line
-			line = lineC.getValue();
-			// if line is shorter than the ngram_size pad it with whitespace
-			// this should function without issue as an equivalent lines will also be too short and be padded the same
-			if (line.length() < ngram_size) {
-				// pad to the size of an ngram
-				for (int i = ngram_size - line.length(); i >= 0 ; i--) {
-					line += " ";
-				}
-			}
-			// acquire line number
-			line_number = lineC.getKey();
-			// for each N-gram in a line
-			for (int i = 0; i < line.length() - (ngram_size - 1); i++) {
-				// build an N-gram of ngram_size
-				substr = line.substring(i, i + ngram_size);
-				// create the next N-gram object with its line number
-				ngram = new Ngram(substr, line_number);
-				// add ngram to the list
-				storage_list.add(ngram);
-			}
-		}
+	public NGramDetector() {
+		super("N-Gram Detector", "N-Gram implementation", NGramDetectorWorker.class, PreProcessingStrategy.of("no_whitespace", TrimWhitespaceOnly.class));
 	}
 
 	/**
@@ -238,8 +105,9 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		// if the last peak is before the minimum window size skip the match construction (ignore case)
 		if (reference.size() >= minimum_window) {
 			// build an N-Gram match object to send to the post processor
-			NgramMatch temp = new NgramMatch(reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(),
-					check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber(), last_peak, file1, file2);
+			NgramMatch temp =
+					new NgramMatch(reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber(),
+							last_peak, file1, file2);
 			// put an N-gram match into res along wih the start points of the segment in reference file then checked file.
 			res.put(temp, reference.get(0).getLineNumber(), reference.get(reference.size() - 1).getLineNumber(), check.get(0).getLineNumber(), check.get(check.size() - 1).getLineNumber());
 		}
@@ -250,37 +118,133 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 	}
 
 	/**
-	 * Returns the detectors name for display purposes.
+	 * Load the contents of a file into a linked list of N-grams for easy reference
+	 * <p>
+	 * Each line of the file is taken and converted into N-grams which are in turn put into a linked list as N-gram objects containing the N-gram and it's line number
+	 * </p>
 	 *
-	 * @return A string name for the detector object.
+	 * @param storage_list The list the N-grams are going to be stored in
+	 * @param file         The list of lines in a file to be converted and stored
 	 */
-	@Override
-	public String getDisplayName() {
-		return "N-Gram Detector";
+	private void loadNgramList(ArrayList<Ngram> storage_list, ArrayList<IndexedString> file) {
+		// the N-gram string
+		String substr;
+		// the new N-gram object
+		Ngram ngram = null;
+		int line_number = 0;
+
+		// variable to extract the string from the indexed container
+		String line;
+		// for each line get the indexed container
+		for (IndexedString lineC : file) {
+			// acquire line
+			line = lineC.getValue();
+			// if line is shorter than the ngram_size pad it with whitespace
+			// this should function without issue as an equivalent lines will also be too short and be padded the same
+			if (line.length() < ngram_size) {
+				// pad to the size of an ngram
+				for (int i = ngram_size - line.length(); i >= 0; i--) {
+					line += " ";
+				}
+			}
+			// acquire line number
+			line_number = lineC.getKey();
+			// for each N-gram in a line
+			for (int i = 0; i < line.length() - (ngram_size - 1); i++) {
+				// build an N-gram of ngram_size
+				substr = line.substring(i, i + ngram_size);
+				// create the next N-gram object with its line number
+				ngram = new Ngram(substr, line_number);
+				// add ngram to the list
+				storage_list.add(ngram);
+			}
+		}
 	}
 
 	/**
-	 * Gets the set of preprocessors to be used in detection
+	 * Load the contents of a file into an N-gram map for easy retrival
+	 * <p>
+	 * Each line of the file is taken in and converted into N-grams, then stored in a hash map as an object containing the N-gram, its line number, it's ID and the next N-gram in the file (modeled as
+	 * a linked list).
+	 * </p>
 	 *
-	 * @return A list of preprocessors to be used in detection
+	 * @param storage_map The hashmap used to store the resulting N-grams
+	 * @param file        The file data to be deconstucted into and stored as ordered N-grams
 	 */
-	@Override
-	public List<PreProcessingStrategy> getPreProcessors() {
-		return Collections.singletonList(PreProcessingStrategy.of("no_whitespace", TrimWhitespaceOnly.class));
-	}
+	private void loadNgramMap(HashMap<String, Ngram> storage_map, ArrayList<IndexedString> file) {
+		// the N-gram string
+		String substr;
+		// the new N-gram object
+		Ngram ngram = null;
+		int line_number = 0;
 
-	/**
-	 * @return
-	 */
-	@Override
-	public DetectorRank getRank() {
-		return DetectorRank.PRIMARY;
+		// variable to extract the string from the indexed container
+		String line;
+		// for each line get the indexed container
+		for (IndexedString lineC : file) {
+			// acquire line
+			line = lineC.getValue();
+			// if line is shorter than the ngram_size pad it with whitespace
+			// this should function without issue as an equivalent lines will also be too short and be padded the same
+			if (line.length() < ngram_size) {
+				// pad to the size of an ngram
+				for (int i = ngram_size - line.length(); i >= 0; i--) {
+					line += " ";
+				}
+			}
+			// acquire line number
+			line_number = lineC.getKey();
+
+			// for each N-gram in a line
+			for (int i = 0; i < line.length() - (ngram_size - 1); i++) {
+				// build an N-gram of ngram_size
+				substr = line.substring(i, i + ngram_size);
+				// if the N-gram is the first
+				if (ngram == null) {
+					// build the N-gram as an object with its line number
+					ngram = new Ngram(substr, line_number);
+					// put the ngram into the hash map with the relevent N-gram ID
+					storage_map.put(substr + 0, ngram);
+					// set the N-grams ID
+					ngram.setId(0);
+				}
+				// if at least 1 N-gram already exists
+				else {
+					// create the next N-gram object with its line number
+					Ngram temp = new Ngram(substr, line_number);
+					// set temp as the next N-gram in the order
+					ngram.setNextNgram(temp);
+					// update the current N-gram position
+					ngram = temp;
+					// if the hashmap does not already contain this N-gram
+					if (!storage_map.containsKey(substr + 0)) {
+						// add N-gram to the hashmap
+						storage_map.put(substr + 0, ngram);
+						// set the N-grams ID
+						ngram.setId(0);
+						// if the N-gram already exists in the hashmap
+					}
+					else {
+						// find an id not used by the N-gram
+						// there must be a better way to do this? (might just require building a custom map where each key holds a list)
+						int j = 1;
+						while (storage_map.containsKey(substr + j)) {
+							j++;
+						}
+						// add N-gram to the hashmap
+						storage_map.put(substr + j, ngram);
+						// set N-grams ID
+						ngram.setId(j);
+					}
+				}
+			}
+		}
 	}
 
 	/**
 	 * The main processing method used in the detector
 	 */
-	public class NGramDetectorWorker extends AbstractPairwiseDetectorWorker<NGramRawResult> {
+	public class NGramDetectorWorker extends PairwiseDetectorWorker<NGramRawResult> {
 
 		/**
 		 *
@@ -391,7 +355,7 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 					}
 					// when the window is over the minimum and drops below the threshold
 					else if (reference.size() > minimum_window && sim_val < threshold) {
-//						// send the data to construct a match object for the found match
+						//						// send the data to construct a match object for the found match
 						matchFound(reference, check, head, last_peak, since_last_peak, this.file1.getFile(), this.file2.getFile());
 						// reset duplicate ngram ID
 						ngram_id = 0;
@@ -439,8 +403,9 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 		/**
 		 * Object constructor.
-		 * @param segment The N-Gram being stored.
-		 * @param line_number	The line number the N-Gram starts on.
+		 *
+		 * @param segment     The N-Gram being stored.
+		 * @param line_number The line number the N-Gram starts on.
 		 */
 		public Ngram(String segment, int line_number) {
 			this.segment = segment;
@@ -449,32 +414,13 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 
 		/**
 		 * Checks if 2 N-Grams are the same string.
+		 *
 		 * @param ngram The N-Gram to compare to.
+		 *
 		 * @return True if strings are equal, false otherwise.
 		 */
 		public boolean equals(Ngram ngram) {
 			return this.segment == ngram.getNgram();
-		}
-
-		/**
-		 * @return The N-Gram string.
-		 */
-		public String getNgram() {
-			return segment;
-		}
-
-		/**
-		 * @return The line number at the start of the N-Gram.
-		 */
-		public int getLineNumber() {
-			return line_number;
-		}
-
-		/**
-		 * @param id The ID to allow duplicates to exist.
-		 */
-		public void setId(int id) {
-			this.id = id;
 		}
 
 		/**
@@ -485,10 +431,17 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		}
 
 		/**
-		 * @param ngram The next N-Gram in the file.
+		 * @param id The ID to allow duplicates to exist.
 		 */
-		public void setNextNgram(Ngram ngram) {
-			next_ngram = ngram;
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		/**
+		 * @return The line number at the start of the N-Gram.
+		 */
+		public int getLineNumber() {
+			return line_number;
 		}
 
 		/**
@@ -496,6 +449,20 @@ public class NGramDetector extends AbstractPairwiseDetector<NGramDetectorWorker>
 		 */
 		public Ngram getNextNgram() {
 			return next_ngram;
+		}
+
+		/**
+		 * @param ngram The next N-Gram in the file.
+		 */
+		public void setNextNgram(Ngram ngram) {
+			next_ngram = ngram;
+		}
+
+		/**
+		 * @return The N-Gram string.
+		 */
+		public String getNgram() {
+			return segment;
 		}
 
 	}

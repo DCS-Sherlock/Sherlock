@@ -9,7 +9,7 @@ import uk.ac.warwick.dcs.sherlock.api.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
@@ -339,12 +339,12 @@ public class Registry implements IRegistry {
 		}
 
 		// Check generics for detector
-		Class<? extends AbstractDetectorWorker> workerClass;
+		Class<? extends DetectorWorker> workerClass;
 		try {
-			workerClass = (Class<? extends AbstractDetectorWorker>) getGenericClass(detector.getGenericSuperclass());
+			workerClass = (Class<? extends DetectorWorker>) getGenericClass(detector.getGenericSuperclass());
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
-			logger.error("IDetector '{}' not registered. It has no AbstractDetectorWorker type (its generic parameter), this is not allowed. A generic type MUST be given", detector.getName());
+			logger.error("IDetector '{}' not registered. It has no DetectorWorker type (its generic parameter), this is not allowed. A generic type MUST be given", detector.getName());
 			e.printStackTrace();
 			return false;
 		}
@@ -356,7 +356,7 @@ public class Registry implements IRegistry {
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
 			logger.error(
-					"IDetector '{}' not registered. AbstractDetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
+					"IDetector '{}' not registered. DetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
 					detector.getName(), workerClass.getName());
 			return false;
 		}
