@@ -80,7 +80,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 					ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> t = SherlockRegistry.getAdvancedPostProcessorForLanguage(groupClass, task.getLanguage());
 
 					Lexer lexer = t.getValue().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
-					IAdvancedPreProcessor processor = t.getKey().newInstance();
+					IAdvancedPreProcessor processor = t.getKey().getConstructor().newInstance();
 					map.put(strategy.getName(), processor.process(lexer));
 				}
 				catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IOException | InvocationTargetException e) {
@@ -97,7 +97,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 						List<? extends Token> tokens = new LinkedList<>(tokensMaster);
 						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 							try {
-								IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
+								IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.getConstructor().newInstance();
 								tokens = processor.process(tokens, lexer.getVocabulary(), task.getLanguage());
 							}
 							catch (InstantiationException | IllegalAccessException e) {
