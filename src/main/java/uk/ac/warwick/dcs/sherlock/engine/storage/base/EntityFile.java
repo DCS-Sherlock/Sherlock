@@ -96,9 +96,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	@Override
 	public String getFileDisplayName() {
-		StringBuilder build = new StringBuilder();
-		build.append(this.filename).append(".").append(this.extension);
-		return build.toString();
+		return this.filename + "." + this.extension;
 	}
 
 	@Override

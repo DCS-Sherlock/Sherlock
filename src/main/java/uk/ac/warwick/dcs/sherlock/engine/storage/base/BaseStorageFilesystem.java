@@ -173,9 +173,7 @@ public class BaseStorageFilesystem {
 		// Task check, disabled
 		for (EntityTask t : allTasks) {
 			String tmp = this.computeLocator(this.computeTaskIdentifier(t));
-			if (filesInStore.contains(tmp)) {
-				filesInStore.remove(tmp);
-			}
+			filesInStore.remove(tmp);
 		}
 
 		if (orphanRecords.size() > 0) {

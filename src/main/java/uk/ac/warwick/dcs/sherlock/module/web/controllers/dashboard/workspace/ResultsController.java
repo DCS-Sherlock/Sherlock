@@ -46,7 +46,7 @@ public class ResultsController {
             model.addAttribute("status_message", "Finished");
             model.addAttribute("status_progress", 100);
         } else {
-            model.addAttribute("finished", (status.getMessage() == "Finished"));
+            model.addAttribute("finished", (status.getMessage().equals("Finished")));
             model.addAttribute("status_message", status.getMessage());
             model.addAttribute("status_progress", status.getProgressInt());
         }

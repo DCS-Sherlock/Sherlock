@@ -20,6 +20,7 @@ import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -243,9 +244,9 @@ public class Registry implements IRegistry {
 		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass).proc;
 		if (p != null) {
 			try {
-				return p.newInstance();
+				return p.getConstructor().newInstance();
 			}
-			catch (InstantiationException | IllegalAccessException e) {
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 				logger.error("An error occurred create IPostProcessor instance", e);
 				return null;
 			}
@@ -327,9 +328,9 @@ public class Registry implements IRegistry {
 
 		IDetector tester;
 		try {
-			tester = detector.newInstance();
+			tester = detector.getConstructor().newInstance();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			logger.error("Ensure IDetector '{}' has a nullary constructor", detector.getName());
 			return false;
 		}
@@ -408,7 +409,7 @@ public class Registry implements IRegistry {
 		PreProcessorData data = new PreProcessorData();
 
 		try {
-			ILexerSpecification spec = preProcessor.newInstance().getLexerSpecification();
+			ILexerSpecification spec = preProcessor.getConstructor().newInstance().getLexerSpecification();
 			this.languageRegistry.forEach((k, v) -> {
 				for (Class<? extends Lexer> lex : v.lexers) {
 					try {
@@ -430,7 +431,7 @@ public class Registry implements IRegistry {
 				}
 			});
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		catch (NoClassDefFoundError e) {
@@ -492,9 +493,9 @@ public class Registry implements IRegistry {
 		}
 
 		try {
-			postProcessor.newInstance();
+			postProcessor.getConstructor().newInstance();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			logger.error("Ensure IPostProcessor '{}'has a nullary constructors", postProcessor.getName());
 			return false;
 		}
@@ -651,7 +652,7 @@ public class Registry implements IRegistry {
 		}
 
 		for (int i = 0; i < specification.getChannelNames().length; i++) {
-			if (!lexerChannels[i].equals(specification.getChannelNames()[i]) && !specification.getChannelNames().equals("-")) {
+			if (!lexerChannels[i].equals(specification.getChannelNames()[i]) && !specification.getChannelNames()[i].equals("-")) {
 				return false;
 			}
 		}

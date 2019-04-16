@@ -6,6 +6,7 @@ import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
@@ -67,7 +68,7 @@ public class EntityArchive implements ISubmission, Serializable {
 	}
 
 	@Override
-	public int compareTo(ISubmission o) {
+	public int compareTo(@NotNull ISubmission o) {
 		return this.name.compareTo(o.getName());
 	}
 

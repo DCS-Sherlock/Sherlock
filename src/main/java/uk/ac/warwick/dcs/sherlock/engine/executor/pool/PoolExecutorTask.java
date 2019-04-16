@@ -49,10 +49,10 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		this.workers = null;
 
 		try {
-			IDetector instance = task.getDetector().newInstance();
+			IDetector instance = task.getDetector().getConstructor().newInstance();
 			this.preProcessingStrategies = instance.getPreProcessors();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}

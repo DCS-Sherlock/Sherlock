@@ -64,7 +64,7 @@ class EventBus implements IEventBus {
 		}
 
 		try {
-			Object obj = module.newInstance();
+			Object obj = module.getConstructor().newInstance();
 
 			List<Field> field = Arrays.stream(module.getDeclaredFields()).filter(x -> x.isAnnotationPresent(SherlockModule.Instance.class)).collect(Collectors.toList());
 			if (field.size() == 1) {
@@ -86,7 +86,7 @@ class EventBus implements IEventBus {
 
 			});
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		catch (NoClassDefFoundError e) {

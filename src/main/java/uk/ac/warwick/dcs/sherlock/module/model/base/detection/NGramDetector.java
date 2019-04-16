@@ -420,7 +420,7 @@ public class NGramDetector extends PairwiseDetector<NGramDetectorWorker> {
 		 * @return True if strings are equal, false otherwise.
 		 */
 		public boolean equals(Ngram ngram) {
-			return this.segment == ngram.getNgram();
+			return this.segment.equals(ngram.getNgram());
 		}
 
 		/**

@@ -158,7 +158,6 @@ public class NGramScorer {
 		float score = file_info.get(index).total_similarity / file_list.size();
 
 		out_group.addCodeBlock(file, score, file_info.get(index).lines);
-		return;
 	}
 
 	/**
