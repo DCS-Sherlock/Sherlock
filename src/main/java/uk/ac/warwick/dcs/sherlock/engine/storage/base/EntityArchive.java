@@ -232,18 +232,19 @@ public class EntityArchive implements ISubmission, Serializable {
 		this.pending = pending;
 	}
 
-	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> files) {
+	private List<ISourceFile> getAllFilesRecursive(List<ISourceFile> filesRec) {
 		BaseStorage.instance.database.refreshObject(this);
+
 		if (this.children != null) {
 			for (EntityArchive child : this.children) {
-				child.getAllFilesRecursive(files);
+				child.getAllFilesRecursive(filesRec);
 			}
 		}
 
 		if (this.files != null && this.files.size() > 0) {
-			files.addAll(this.files);
+			filesRec.addAll(this.files);
 		}
 
-		return files;
+		return filesRec;
 	}
 }

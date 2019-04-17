@@ -13,7 +13,7 @@ import java.util.stream.*;
  * More advanced implementations should directly implement the IDetector interface.
  */
 public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector<T> {
-
+	
 	private Class<T> typeArgumentClass;
 
 	public PairwiseDetector(String displayName, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {
@@ -52,7 +52,7 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 
 	@Override
 	public final List<T> buildWorkers(List<ModelDataItem> data) {
-		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker(x.get(0), x.get(1))).filter(Objects::nonNull).collect(Collectors.toList());
+		return combinations(data, 2).filter(x -> !x.get(0).getFile().getSubmission().equals(x.get(1).getFile().getSubmission())).map(x -> this.getAbstractPairwiseDetectorWorker(x.get(0), x.get(1))).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	/**
