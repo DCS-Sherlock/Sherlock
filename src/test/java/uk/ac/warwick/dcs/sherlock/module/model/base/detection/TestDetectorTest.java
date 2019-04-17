@@ -11,14 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestDetectorTest {
 
 	@Test
-	void getAbstractPairwiseDetectorWorker() {
+	void getAbstractPairwiseDetectorWorker() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 		TestDetector t = new TestDetector();
-		try {
-			assertNotNull(t.getAbstractPairwiseDetectorWorker());
-		}
-		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-
-		}
+		assertNotNull(t.getAbstractPairwiseDetectorWorker(null, null));
 	}
 
 	@Test

@@ -115,11 +115,17 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		}
 
 		ExecutorUtils.processAdjustableParameters(this.detector, this.task.getParameterMapping());
-		this.workers = this.detector.buildWorkers(this.dataItems);
+
+		try {
+			this.workers = this.detector.buildWorkers(this.dataItems);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		if (this.workers.size() == 0) {
 			synchronized (ExecutorUtils.logger) {
-				ExecutorUtils.logger.error("Could not build workers for detector {}. Ensure that its worker class is not declared within another class and has a nullary constructor", this.getDetector().getName());
+				ExecutorUtils.logger.error("Error building detector {}, no workers were built", this.getDetector().getName());
 			}
 		}
 

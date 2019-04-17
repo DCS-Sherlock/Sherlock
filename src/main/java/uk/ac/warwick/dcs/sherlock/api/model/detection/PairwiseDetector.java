@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
+import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -51,14 +52,7 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 
 	@Override
 	public final List<T> buildWorkers(List<ModelDataItem> data) {
-		return (List<T>) combinations(data, 2).map(x -> {
-			try {
-				return this.getAbstractPairwiseDetectorWorker().putData(this, x.get(0), x.get(1));
-			}
-			catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList());
+		return combinations(data, 2).map(x -> this.getAbstractPairwiseDetectorWorker(x.get(0), x.get(1))).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	/**
@@ -66,7 +60,20 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 	 *
 	 * @return the new worker instance
 	 */
-	public T getAbstractPairwiseDetectorWorker() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-		return typeArgumentClass.getConstructor().newInstance();
+	public T getAbstractPairwiseDetectorWorker(ModelDataItem file1Data, ModelDataItem file2Data) {
+
+		try {
+			try {
+				return this.typeArgumentClass.getConstructor(IDetector.class, ModelDataItem.class, ModelDataItem.class).newInstance(this, file1Data, file2Data);
+			}
+			catch (NoSuchMethodException e) {
+				return this.typeArgumentClass.getConstructor(this.getClass(), IDetector.class, ModelDataItem.class, ModelDataItem.class).newInstance(this, this, file1Data, file2Data);
+			}
+		}
+		catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
+			ExecutorUtils.logger.error("Could not build workers for detector {}. Ensure that the detector is not an inner class and its worker class {} has a constructor matching constructor(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data)", this.getClass().getName(), this.typeArgumentClass.getName());
+		}
+
+		return null;
 	}
 }

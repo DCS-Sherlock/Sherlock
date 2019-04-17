@@ -1,12 +1,18 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing.SimpleObjectEqualityRawResult;
 
 import java.util.*;
 
 public class TestDetectorWorker extends PairwiseDetectorWorker<SimpleObjectEqualityRawResult<String>> {
+
+	public TestDetectorWorker(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data) {
+		super(parent, file1Data, file2Data);
+	}
 
 	@Override
 	public void execute() {

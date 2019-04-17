@@ -3,6 +3,8 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
@@ -245,6 +247,10 @@ public class NGramDetector extends PairwiseDetector<NGramDetectorWorker> {
 	 * The main processing method used in the detector
 	 */
 	public class NGramDetectorWorker extends PairwiseDetectorWorker<NGramRawResult> {
+
+		public NGramDetectorWorker(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data) {
+			super(parent, file1Data, file2Data);
+		}
 
 		/**
 		 *
