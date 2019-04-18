@@ -13,7 +13,7 @@ import java.util.stream.*;
  * More advanced implementations should directly implement the IDetector interface.
  */
 public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector<T> {
-	
+
 	private Class<T> typeArgumentClass;
 
 	public PairwiseDetector(String displayName, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {

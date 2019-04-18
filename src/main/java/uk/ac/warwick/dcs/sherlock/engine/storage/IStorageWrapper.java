@@ -53,6 +53,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param resultJob result to generate reports for
 	 *
 	 * @return instance of ReportManager
+	 *
+	 * @throws ResultJobUnsupportedException Thrown if IResultJob instance was not created by this IStorageWrapper implementation
 	 */
 	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
 
@@ -63,6 +65,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param submissionName submission name
 	 *
 	 * @return submission if exists, else null
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
 	ISubmission getSubmissionFromName(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
 
@@ -85,6 +89,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 *
 	 * @param existing first submission, is left, must already exist in the database
 	 * @param pending  second submission, is removed after merge
+	 *
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
 	 */
 	void mergePendingSubmission(ISubmission existing, ISubmission pending) throws SubmissionUnsupportedException;
 
@@ -92,6 +98,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * Forget and remove a pending submission, and cleans up after it
 	 *
 	 * @param pendingSubmission pending submission to forget and remove
+	 *
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
 	 */
 	void removePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
@@ -112,6 +120,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param fileContent raw content of the file
 	 *
 	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
 	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;
 
@@ -124,8 +134,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param archiveContainsMultipleSubmissions are the archive top level directories separate submissions?
 	 *
 	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
-	 * <p>
-	 * Can be handled by
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
 	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException;
 
@@ -133,6 +143,9 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * If the submission clashes with an already existing submission, it will be set as pending
 	 * <p>
 	 * IF a submission is pending this method will remove existing submission with the same name and write the pending submission to the database
+	 *
+	 * @param pendingSubmission pending submission to properly write
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
 	 */
 	void writePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
