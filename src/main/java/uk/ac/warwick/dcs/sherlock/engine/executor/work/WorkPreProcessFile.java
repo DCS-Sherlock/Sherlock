@@ -42,18 +42,30 @@ public class WorkPreProcessFile extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		int size = this.end - this.begin;
+		try {
+			int size = this.end - this.begin;
 
-		if (size > 1) {
-			int middle = this.begin + (size / 2);
-			WorkPreProcessFile t1 = new WorkPreProcessFile(this.tasks, this.begin, middle, this.file, this.fileContent);
-			t1.fork();
-			WorkPreProcessFile t2 = new WorkPreProcessFile(this.tasks, middle, this.end, this.file, this.fileContent);
-			t2.compute();
-			t1.join();
+			if (size > 1) {
+				int middle = this.begin + (size / 2);
+				WorkPreProcessFile t1 = new WorkPreProcessFile(this.tasks, this.begin, middle, this.file, this.fileContent);
+				t1.fork();
+				WorkPreProcessFile t2 = new WorkPreProcessFile(this.tasks, middle, this.end, this.file, this.fileContent);
+				t2.compute();
+				t1.join();
+			}
+			else {
+				if (this.tasks != null && !this.tasks.isEmpty()) {
+					this.process(tasks.get(this.begin));
+				}
+				else {
+					synchronized (ExecutorUtils.logger) {
+						ExecutorUtils.logger.error("Strategy could not be preprocessed, no work tasks exist");
+					}
+				}
+			}
 		}
-		else {
-			this.process(tasks.get(this.begin));
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -68,7 +80,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 					ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> t = SherlockRegistry.getAdvancedPostProcessorForLanguage(groupClass, task.getLanguage());
 
 					Lexer lexer = t.getValue().getDeclaredConstructor(CharStream.class).newInstance(CharStreams.fromStream(file.getFileContents()));
-					IAdvancedPreProcessor processor = t.getKey().newInstance();
+					IAdvancedPreProcessor processor = t.getKey().getConstructor().newInstance();
 					map.put(strategy.getName(), processor.process(lexer));
 				}
 				catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IOException | InvocationTargetException e) {
@@ -85,7 +97,7 @@ public class WorkPreProcessFile extends RecursiveAction {
 						List<? extends Token> tokens = new LinkedList<>(tokensMaster);
 						for (Class<? extends IPreProcessor> processorClass : strategy.getPreProcessorClasses()) {
 							try {
-								IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.newInstance();
+								IGeneralPreProcessor processor = (IGeneralPreProcessor) processorClass.getConstructor().newInstance();
 								tokens = processor.process(tokens, lexer.getVocabulary(), task.getLanguage());
 							}
 							catch (InstantiationException | IllegalAccessException e) {

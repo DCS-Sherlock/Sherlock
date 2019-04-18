@@ -18,7 +18,10 @@ public class TParameter {
     private String name;
 
     @Column(name = "value")
-    private float value;
+    private double value;
+
+    @Column(name = "postprocessing")
+    private boolean postprocessing;
 
     @ManyToOne
     @JoinColumn(name = "tDetector")
@@ -26,9 +29,10 @@ public class TParameter {
 
     public TParameter() { }
 
-    public TParameter(String name, float value, TDetector templateDetector) {
+    public TParameter(String name, float value, boolean postprocessing, TDetector templateDetector) {
         this.name = name;
         this.value = value;
+        this.postprocessing = postprocessing;
         this.tDetector = templateDetector;
     }
 
@@ -49,7 +53,7 @@ public class TParameter {
     }
 
     public float getValue() {
-        return value;
+        return (float) value;
     }
 
     public void setValue(float value) {
@@ -62,5 +66,17 @@ public class TParameter {
 
     public void setDetector(TDetector detector) {
         this.tDetector = detector;
+    }
+
+    public boolean getPostprocessing() {
+        return postprocessing;
+    }
+
+    public boolean isPostprocessing() {
+        return postprocessing;
+    }
+
+    public void setPostprocessing(boolean postprocessing) {
+        this.postprocessing = postprocessing;
     }
 }

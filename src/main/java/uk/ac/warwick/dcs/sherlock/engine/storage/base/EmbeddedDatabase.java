@@ -34,10 +34,6 @@ public class EmbeddedDatabase {
 		return em.createQuery(query, xclass);
 	}
 
-	public void refreshObject(Object obj) {
-		this.em.refresh(obj);
-	}
-
 	public int executeUpdate(Query query) {
 		if (query != null) {
 			int count;
@@ -55,6 +51,10 @@ public class EmbeddedDatabase {
 		}
 
 		return -1;
+	}
+
+	public void refreshObject(Object obj) {
+		this.em.refresh(obj);
 	}
 
 	public void removeObject(Object obj) {

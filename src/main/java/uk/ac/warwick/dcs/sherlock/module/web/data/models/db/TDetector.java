@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.db;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The database table storing detectors assigned to a template
@@ -63,5 +64,12 @@ public class TDetector {
 
     public void setParameters(Set<TParameter> parameters) {
         this.tParameters = parameters;
+    }
+
+    public Set<TParameter> getDetectorParameters() {
+        return tParameters.stream().filter(t -> !t.isPostprocessing()).collect(Collectors.toSet());
+    }
+    public Set<TParameter> getPostParameters() {
+        return tParameters.stream().filter(t -> t.isPostprocessing()).collect(Collectors.toSet());
     }
 }

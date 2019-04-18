@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorageFilesystem.IStorable;
 
@@ -39,9 +39,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		super();
 	}
 
-	EntityFile( EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
+	EntityFile(EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
 		super();
 		this.archive = archive;
+		this.archive.getFiles_().add(this);
+
 		this.filename = filename;
 		this.extension = extension;
 		this.timestamp = timestamp;
@@ -55,6 +57,21 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	@Override
 	public boolean equals(ISourceFile file) {
 		return file.getPersistentId() == this.getPersistentId();
+	}
+
+	@Override
+	public long getArchiveId() {
+		return this.archive.getId();
+	}
+
+	public String getDisplayFileSize(boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (this.filesize < unit) {
+			return this.filesize + " B";
+		}
+		int exp = (int) (Math.log(this.filesize) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", this.filesize / Math.pow(unit, exp), pre);
 	}
 
 	@Override
@@ -79,9 +96,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	@Override
 	public String getFileDisplayName() {
-		StringBuilder build = new StringBuilder();
-		build.append(this.filename).append(".").append(this.extension);
-		return build.toString();
+		return this.filename + "." + this.extension;
 	}
 
 	@Override
@@ -102,6 +117,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		}
 		build.append(this.filename).append(".").append(this.extension);
 		return build.toString();
+	}
+
+	@Override
+	public long getFileSize() {
+		return this.filesize;
 	}
 
 	@Override
@@ -135,11 +155,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
-	public long getArchiveId() {
-		return this.archive.getId();
-	}
-
-	@Override
 	public ISubmission getSubmission() {
 		EntityArchive sub = this.archive;
 		while (sub.hasParent()) {
@@ -160,19 +175,6 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 	}
 
 	@Override
-	public long getFileSize() {
-		return this.filesize;
-	}
-
-	public String getDisplayFileSize(boolean si) {
-		int unit = si ? 1000 : 1024;
-		if (this.filesize < unit) return this.filesize + " B";
-		int exp = (int) (Math.log(this.filesize) / Math.log(unit));
-		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-		return String.format("%.1f %sB", this.filesize / Math.pow(unit, exp), pre);
-	}
-
-	@Override
 	public void remove() {
 		//Set all the jobs as having missing files
 		for (IJob job : this.getArchive().getWorkspace().getJobs()) {
@@ -190,6 +192,11 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 
 	EntityArchive getArchive() {
 		return archive;
+	}
+
+	void setArchive(EntityArchive archive) {
+		BaseStorage.instance.filesystem.updateFileArchive(this, archive);
+		this.archive = archive;
 	}
 
 	String getExtension() {

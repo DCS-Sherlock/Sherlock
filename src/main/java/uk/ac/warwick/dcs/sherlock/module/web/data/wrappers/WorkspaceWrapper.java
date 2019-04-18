@@ -1,25 +1,24 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
-import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.TDetector;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Workspace;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.SubmissionsForm;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.WorkspaceForm;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -245,23 +244,19 @@ public class WorkspaceWrapper {
 	    for(MultipartFile file : submissionsForm.getFiles()) {
             if (file.getSize() > 0) {
                 try {
-	                ISubmission submission = SherlockEngine.storage.createSubmission(this.getiWorkspace(), FilenameUtils.removeExtension(file.getOriginalFilename()));
+	                List<ITuple<ISubmission, ISubmission>> collisions = SherlockEngine.storage.storeFile(this.getiWorkspace(), file.getOriginalFilename(), file.getBytes());
 
-	                if (submission == null) {
-	                    duplicates++;
-                    }
+	                // Each tuple is a collision
+	                // Key is the existing submission in the Database
+	                // Value is the new one
 
-	                int attempts = 0;
+	                /* 3 Options -
+	                    SherlockEngine.storage.removePendingSubmission(value); - remove the new submission, will clean it up and forget about adding it
+	                    SherlockEngine.storage.mergePendingSubmission(key, value); - will combine the two submissions into a single one, merging all files (does NOT check for duplicate files)
+	                    SherlockEngine.storage.writePendingSubmission(value); - will remove the old submission and replace it with the new one
+	                */
 
-	                while (submission == null && attempts <= 20) {
-                        attempts++;
-                        submission = SherlockEngine.storage.createSubmission(this.getiWorkspace(), FilenameUtils.removeExtension(file.getOriginalFilename()) + " (" + attempts + ")");
-                    }
-
-	                if (attempts <= 20) {
-                        SherlockEngine.storage.storeFile(submission, file.getOriginalFilename(), file.getBytes());
-                    }
-                } catch (IOException | SubmissionUnsupportedException | WorkspaceUnsupportedException e) {
+                } catch (IOException | WorkspaceUnsupportedException e) {
                     throw new FileUploadFailed(e.getMessage());
                 }
                 count++;

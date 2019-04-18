@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
 import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.AbstractDetectorWorker;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
@@ -35,7 +35,7 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 	private String language;
 	private List<PreProcessingStrategy> preProcessingStrategies;
 
-	private List<AbstractDetectorWorker> workers;
+	private List<DetectorWorker> workers;
 	private IDetector detector;
 
 	PoolExecutorTask(JobStatus jobStatus, IPriorityWorkSchedulerWrapper scheduler, ITask task, String language) {
@@ -49,10 +49,10 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		this.workers = null;
 
 		try {
-			IDetector instance = task.getDetector().newInstance();
+			IDetector instance = task.getDetector().getConstructor().newInstance();
 			this.preProcessingStrategies = instance.getPreProcessors();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
@@ -115,7 +115,19 @@ public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IW
 		}
 
 		ExecutorUtils.processAdjustableParameters(this.detector, this.task.getParameterMapping());
-		this.workers = this.detector.buildWorkers(this.dataItems);
+
+		try {
+			this.workers = this.detector.buildWorkers(this.dataItems);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (this.workers.size() == 0) {
+			synchronized (ExecutorUtils.logger) {
+				ExecutorUtils.logger.error("Error building detector {}, no workers were built", this.getDetector().getName());
+			}
+		}
 
 		this.status.incrementProgress();
 		this.callType = 2;

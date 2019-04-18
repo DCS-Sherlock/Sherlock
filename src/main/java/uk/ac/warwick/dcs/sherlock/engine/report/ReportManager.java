@@ -9,6 +9,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 
 import java.util.*;
 
@@ -40,9 +41,9 @@ public class ReportManager {
 	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
-	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission matches make up the report.
+	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission match groups make up the report.
 	 */
-	private Map<Long, List<SubmissionMatch>> submissionReportMap;
+	private Map<Long, List<SubmissionMatchGroup>> submissionReportMap;
 
 
 	/**
@@ -80,17 +81,39 @@ public class ReportManager {
 		FillSubmissionFileMap();
 	}
 
+	/**
+	 * For the provided submission object, find all the IResultTasks in this.results that contain something with that submission involved.
+	 * @param submission The ISubmission to search for.
+	 * @return A list of relevant IResultTasks.
+	 */
+	private List<IResultTask> GetResultTasks(ISubmission submission) {
+		List<IResultTask> resultTasks = new ArrayList<>();
+		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
+				.filter(task -> task.getContainingBlocks().stream().anyMatch(group -> group.submissionIdPresent(submission.getId()))).forEach(task -> resultTasks.add(task));
+		return resultTasks;
+	}
+
+	/**
+	 * For the provided submission objects, find all the IResultTasks in this.results that contain something with either submission involved.
+	 * @param submissions A tuple containing the ISubmissions to search for.
+	 * @return A list of relevant IResultTasks.
+	 */
+	private List<IResultTask> GetResultTasks(ITuple<ISubmission, ISubmission> submissions) {
+		List<IResultTask> resultTasks = new ArrayList<>();
+		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
+				.filter(task -> task.getContainingBlocks().stream().anyMatch(group -> group.submissionIdPresent(submissions.getKey().getId()) || group.submissionIdPresent(submissions.getValue().getId()))).forEach(task -> resultTasks.add(task));
+		return resultTasks;
+	}
+
+	/**
+	 * Retrieve every ICodeBlockGroup stored in results.
+	 * @return a list of ICodeBlockGroups.
+	 */
 	private List<ICodeBlockGroup> GetCodeBlockGroups() {
 		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
 				.forEach(task -> codeBlockGroups.addAll(task.getContainingBlocks()));
 		return codeBlockGroups;
-	}
-
-	private List<ISourceFile> GetSourceFiles() {
-		List<ISourceFile> sourceFiles = new ArrayList<>();
-		this.results.getFileResults().forEach(file -> sourceFiles.add(file.getFile()));
-		return sourceFiles;
 	}
 
 	/**
@@ -152,9 +175,9 @@ public class ReportManager {
 	 * Compares two submissions, finds all the matches in files they contain between them, and returns all relevant information about them.
 	 *
 	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
-	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
+	 * @return A list of SubmissionMatchGroup objects which contain lists of SubmissionMatch objects; each have ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
-	public List<SubmissionMatch> GetSubmissionComparison(List<ISubmission> submissions) {
+	public List<SubmissionMatchGroup> GetSubmissionComparison(List<ISubmission> submissions) {
 		if (submissions.stream().anyMatch(ISubmission::hasParent)) {
 			// one of the submissions is not top level, don't make reports on non-top level submission.
 
@@ -169,27 +192,21 @@ public class ReportManager {
 			}*/
 		}
 
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
 		if(submissions.size() < 2)
 			return null;
 
-		for (ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
-			if(codeBlockGroup.submissionIdPresent(submissions.get(0).getId()) &&
-			codeBlockGroup.submissionIdPresent(submissions.get(1).getId()))
-				relevantGroups.add(codeBlockGroup);
-		}
+		List<IResultTask> relevantTasks = GetResultTasks(new Tuple<>(submissions.get(0), submissions.get(1)));
 
-		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups);
+		return reportGenerator.GenerateSubmissionComparison(submissions, relevantTasks);
 	}
 
 	/**
-	 * Generate a report for a single submission, containing all matches for all files within it.
+	 * Generate a report for a single submission, containing all matches for all files within it, and a summary of the report as a string.
 	 *
 	 * @param submission The submission to generate the report for.
-	 * @return A list of SubmissionMatch objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
+	 * @return A tuple. The key contains a list of SubmissionMatchGroup objects which contain lists of SubmissionMatch objects; each have objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs. The value is the report summary.
 	 */
-	public List<SubmissionMatch> GetSubmissionReport(ISubmission submission) {
+	public ITuple<List<SubmissionMatchGroup>, String> GetSubmissionReport(ISubmission submission) {
 
 		if (submission.hasParent()) {
 			// submission is not top level, don't make reports on non-top level submission.
@@ -205,16 +222,11 @@ public class ReportManager {
 			}*/
 		}
 
-		List<ICodeBlockGroup> relevantGroups = new ArrayList<>();
-
-		for (ICodeBlockGroup codeBlockGroup : GetCodeBlockGroups()) {
-			if(codeBlockGroup.submissionIdPresent(submission.getId()))
-				relevantGroups.add(codeBlockGroup);
-		}
+		List<IResultTask> relevantTasks = GetResultTasks(submission);
 
 		//Store this report and return it.
-		List<SubmissionMatch> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantGroups);
-		submissionReportMap.put(submission.getId(), submissionReport);
+		ITuple<List<SubmissionMatchGroup>, String> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantTasks, submissionScores.get(submission.getId()));
+		submissionReportMap.put(submission.getId(), submissionReport.getKey());
 		return submissionReport;
 	}
 
@@ -223,7 +235,7 @@ public class ReportManager {
 	 * @param submissionId the id of the submission to get the report for.
 	 * @return The list of submission matches making up the report if it exists; an empty list if there is no such report.
 	 */
-	public List<SubmissionMatch> GetSubmissionReport(long submissionId) {
+	public List<SubmissionMatchGroup> GetSubmissionReport(long submissionId) {
 		//If the report for this submission already exists, return it
 		if (submissionReportMap.containsKey(submissionId))
 			return submissionReportMap.get(submissionId);

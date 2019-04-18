@@ -39,6 +39,18 @@ public class ParameterWrapper {
     }
 
     /**
+     * Get the display name for this parameter
+     * @return the display name
+     */
+    public String getDisplayName() {
+        if (this.tParameter.isPostprocessing()) {
+            return "Post: " + this.parameterObj.getDisplayName();
+        }
+
+        return this.parameterObj.getDisplayName();
+    }
+
+    /**
      * Get the database parameter entity
      *
      * @return the parameter

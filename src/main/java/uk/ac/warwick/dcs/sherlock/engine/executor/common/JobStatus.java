@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -33,7 +34,7 @@ public class JobStatus implements Comparable<JobStatus> {
 	}
 
 	@Override
-	public int compareTo(JobStatus o) {
+	public int compareTo(@NotNull JobStatus o) {
 		int r = Integer.compare(o.step, this.step);
 		if (r == 0) {
 			if (this.startTime != null && o.startTime != null) {

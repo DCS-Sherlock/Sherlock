@@ -62,6 +62,14 @@ public class PoolExecutorJob implements Runnable {
 
 			List<PoolExecutorTask> detTasks = tasks.stream().filter(x -> x.getStatus() != WorkStatus.COMPLETE).collect(Collectors.toList());
 
+			if (detTasks.isEmpty()) {
+				synchronized (ExecutorUtils.logger) {
+					ExecutorUtils.logger.error("Could not generate tasks for job {}, exiting", this.job.getPersistentId());
+				}
+				job.setStatus(WorkStatus.INTERRUPTED);
+				return;
+			}
+
 			RecursiveAction preProcess = new WorkPreProcessFiles(new ArrayList<>(detTasks), this.job.getWorkspace().getFiles());
 			this.scheduler.invokeWork(preProcess, Priority.DEFAULT);
 
@@ -72,10 +80,19 @@ public class PoolExecutorJob implements Runnable {
 				}
 			}).forEach(detTasks::remove);
 
+			if (detTasks.isEmpty()) {
+				synchronized (ExecutorUtils.logger) {
+					ExecutorUtils.logger.error("No detectors with valid preprocessing outputs for job {}, exiting", this.job.getPersistentId());
+				}
+				job.setStatus(WorkStatus.INTERRUPTED);
+				return;
+			}
+
 			this.status.nextStep();
 			this.status.calculateProgressIncrement(detTasks.size());
+
 			try {
-				exServ.invokeAll(detTasks);
+				exServ.invokeAll(detTasks); // build tasks
 			}
 			catch (InterruptedException e) {
 				job.setStatus(WorkStatus.INTERRUPTED);
@@ -84,8 +101,9 @@ public class PoolExecutorJob implements Runnable {
 
 			this.status.nextStep();
 			this.status.calculateProgressIncrement(detTasks.stream().mapToInt(PoolExecutorTask::getWorkerSize).sum());
+
 			try {
-				exServ.invokeAll(detTasks);
+				exServ.invokeAll(detTasks); // run tasks
 			}
 			catch (InterruptedException e) {
 				job.setStatus(WorkStatus.INTERRUPTED);

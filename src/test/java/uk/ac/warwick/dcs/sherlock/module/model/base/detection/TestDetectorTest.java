@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 import org.junit.jupiter.api.Test;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestDetectorTest {
 
 	@Test
-	void getAbstractPairwiseDetectorWorker() {
+	void getAbstractPairwiseDetectorWorker() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 		TestDetector t = new TestDetector();
-		assertNotNull(t.getAbstractPairwiseDetectorWorker());
+		assertNotNull(t.getAbstractPairwiseDetectorWorker(null, null));
 	}
 
 	@Test

@@ -101,8 +101,32 @@ public class DetectorWrapper {
      * @throws DetectorNotFound if the detector no longer exists
      */
     public List<AdjustableParameterObj> getEngineParameters() throws DetectorNotFound {
-//        SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(this.getEngineDetector());
-        return SherlockRegistry.getDetectorAdjustableParameters(this.getEngineDetector());
+        List<AdjustableParameterObj> result = new ArrayList<>();
+
+        List<AdjustableParameterObj> detector = SherlockRegistry.getDetectorAdjustableParameters(this.getEngineDetector());
+        if (detector != null) {
+            result.addAll(detector);
+        }
+
+        return result;
+    }
+
+    /**
+     * Get the list of adjustable postprocessing parameters for this detector
+     *
+     * @return the list of adjustable postprocessing parameters
+     *
+     * @throws DetectorNotFound if the detector no longer exists
+     */
+    public List<AdjustableParameterObj> getEnginePostProcessingParameters() throws DetectorNotFound {
+        List<AdjustableParameterObj> result = new ArrayList<>();
+
+        List<AdjustableParameterObj> post = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(this.getEngineDetector());
+        if (post != null) {
+            result.addAll(post);
+        }
+
+        return result;
     }
 
     /**
@@ -113,11 +137,19 @@ public class DetectorWrapper {
      * @throws DetectorNotFound if the detector no longer exists
      */
     public Map<String, AdjustableParameterObj> getEngineParametersMap() throws DetectorNotFound {
-		Map<String, AdjustableParameterObj> map = new HashMap<>();
-		for (AdjustableParameterObj p : this.getEngineParameters()) {
-			map.put(p.getName(), p);
-		}
-		return map;
+        Map<String, AdjustableParameterObj> map = new HashMap<>();
+        for (AdjustableParameterObj p : this.getEngineParameters()) {
+            map.put(p.getName(), p);
+        }
+        return map;
+    }
+
+    public Map<String, AdjustableParameterObj> getEnginePostProcessingParametersMap() throws DetectorNotFound {
+        Map<String, AdjustableParameterObj> map = new HashMap<>();
+        for (AdjustableParameterObj p : this.getEnginePostProcessingParameters()) {
+            map.put(p.getName(), p);
+        }
+        return map;
     }
 
     /**
@@ -171,11 +203,15 @@ public class DetectorWrapper {
      * @throws ParameterNotFound
      * @throws DetectorNotFound if the engine detector no longer exists
      */
-    public List<ParameterWrapper> getParametersList() throws ParameterNotFound, DetectorNotFound {
+    public List<ParameterWrapper> getParametersList() throws DetectorNotFound, ParameterNotFound {
         List<ParameterWrapper> list = new ArrayList<>();
 
         for (TParameter p : this.tDetector.getParameters()) {
-            list.add(new ParameterWrapper(p, this.getEngineParametersMap()));
+            if (p.isPostprocessing()) {
+                list.add(new ParameterWrapper(p, this.getEnginePostProcessingParametersMap()));
+            } else {
+                list.add(new ParameterWrapper(p, this.getEngineParametersMap()));
+            }
         }
 
         return list;
@@ -191,10 +227,14 @@ public class DetectorWrapper {
         List<TParameter> currentParameters = tParameterRepository.findByTDetector(this.tDetector);
         tParameterRepository.deleteAll(currentParameters);
 
-        for (Map.Entry<String, Float> entry : parameterForm.parameters.entrySet()) {
-            TParameter tParameter = new TParameter(entry.getKey(), entry.getValue(), this.tDetector);
-            tParameterRepository.save(tParameter);
+        for (Map.Entry<String, Float> entry : parameterForm.getParameters().entrySet()) {
+            TParameter parameter = new TParameter(entry.getKey(), entry.getValue(), false, this.tDetector);
+            tParameterRepository.save(parameter);
         }
 
+        for (Map.Entry<String, Float> entry : parameterForm.getPostprocessing().entrySet()) {
+            TParameter postparameter = new TParameter(entry.getKey(), entry.getValue(), true, this.tDetector);
+            tParameterRepository.save(postparameter);
+        }
     }
 }

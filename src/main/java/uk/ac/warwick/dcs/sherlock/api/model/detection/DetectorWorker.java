@@ -5,7 +5,13 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
 /**
  * Top level interface workers are required to implement
  */
-public abstract class AbstractDetectorWorker<K extends AbstractModelTaskRawResult> {
+public abstract class DetectorWorker<K extends AbstractModelTaskRawResult> {
+
+	protected IDetector parent;
+
+	public DetectorWorker(IDetector parent) {
+		this.parent = parent;
+	}
 
 	/**
 	 * Do work and create the results

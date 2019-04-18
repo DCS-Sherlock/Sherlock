@@ -20,6 +20,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 *     more likely a common code pattern or something given to the students (e.g. skeleton files).
 	 *     This threshold determines the percentage of files over which matches will be ignored, to avoid
 	 *     false detections.
+	 *     Comparison is less than or equal to, so to deactivate set to 1
 	 * </p>
 	 */
 	@AdjustableParameter (name = "Common Threshold", defaultValue = 0.3f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f)
@@ -68,6 +69,11 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		matches.get(matches.size()-1).add(match);
 	}
 
+	/**
+	 *	Processes raw results into matched groups from the pairs provided
+	 * @param rawResults	The set of rawResults produced by the IDetector.
+	 * @param matches		The container for group data
+	 */
 	private void processMatches(List<NGramRawResult> rawResults, ArrayList<ArrayList<NgramMatch>> matches) {
 		// I'd like to apologise for this abomination of code
 		// checks for any link between already seen matches and new ones, then adds them to the structure accordingly
@@ -86,6 +92,14 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		}
 	}
 
+	/**
+	 * Creates a group for each segment of code that is duplicated.
+	 * @param files		The list of files covered by the rawResults passed.
+	 * @param results	The container for each group to be inserted into
+	 * @param matches	The groups to be scored and inserted into the container
+	 * @param out_group	The current group being added to by the function
+	 * @param scorer	The scoring object used to assist in score generation and common checks
+	 */
 	private void makeScoreGroups(List<ISourceFile> files, ModelTaskProcessedResults results, ArrayList<ArrayList<NgramMatch>> matches, ICodeBlockGroup out_group, NGramScorer scorer) {
 		// for each matching group of code blocks
 		for (ArrayList<NgramMatch> list : matches) {
@@ -117,6 +131,18 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 		}
 	}
 
+	/**
+	 * The main entrance method for the postprocessor.
+	 * <p>
+	 *     This method takes in the outputs produced by detection and
+	 *     processes them into groups by the duplicate content, instead of file pairs.
+	 * </p>
+	 *
+	 * @param files      The list of files covered by the rawResults passed.
+	 * @param rawResults The set of rawResults produced by the IDetector.
+	 *
+	 * @return
+	 */
 	@Override
 	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<NGramRawResult> rawResults) {
 

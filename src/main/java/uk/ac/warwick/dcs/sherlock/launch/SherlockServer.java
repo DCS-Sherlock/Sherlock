@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 @EntityScan("uk.ac.warwick.dcs.sherlock.module.web")
 public class SherlockServer extends SpringBootServletInitializer {
 
-	static SherlockEngine engine;
+	public static SherlockEngine engine;
 
 	public static void main(String[] args) {
 	}

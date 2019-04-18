@@ -51,12 +51,20 @@ public class TaskWrapper {
         String result = "";
 
         List<AdjustableParameterObj> parameters = SherlockRegistry.getDetectorAdjustableParameters(task.getDetector());
+        List<AdjustableParameterObj> postprocessing = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(task.getDetector());
 
         for (Map.Entry<String, Float> entry : task.getParameterMapping().entrySet()) {
-            List<AdjustableParameterObj> temp = parameters.stream().filter(p -> (task.getDetector().getName() + ":" + p.getName()).equals(entry.getKey())).collect(Collectors.toList());
+            List<AdjustableParameterObj> para = new ArrayList<>();
+            List<AdjustableParameterObj> post = new ArrayList<>();
+            if (parameters != null && postprocessing != null) {
+                para = parameters.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
+                post = postprocessing.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
+            }
 
-            if (temp.size() == 1) {
-                result += temp.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
+            if (para.size() == 1) {
+                result += para.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
+            } else if (post.size() == 1) {
+                result += "Post: " + post.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
             } else {
                 result += entry.getKey() + "=" + entry.getValue() + "<br /><br />";
             }

@@ -1,7 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 
 import java.util.*;
 
@@ -13,17 +14,19 @@ public interface IReportGenerator {
 	 * Compare two submissions and find all the instances of detected plagiarism between all files within them.
 	 *
 	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
-	 * @param codeBlockGroups The ICodeBlockGroups that contain at least one ICodeBlock from a file from each submission. Supplied by the Report Manager.
-	 * @return a list of SubmissionMatch objects, which each contain the ids of the files involved, the score for that match, a reason from DetectionType, and line numbers where the match occurs.
+	 * @param resultTasks The IResultTasks where for each task, at least one ICodeBlockGroup contains either of the two submission's ids.
+	 * @return a list of SubmissionMatchGroup objects, which each contain a list of SubmissionMatches and a score for the corresponding IResultTask.
 	 */
-	public List<SubmissionMatch> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups);
+	List<SubmissionMatchGroup> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends IResultTask> resultTasks);
 
 	/**
-	 * Generate a report for a single submission, containing all matches for all files within it.
+	 * Generate a report for a single submission, containing all matches for all files within it, and creating a summary in the process.
 	 *
 	 * @param submission The submission to generate the report for.
-	 * @param codeBlockGroups The ICodeBlockGroups where at least one ICodeBlock is from a file in the specified submission. Supplied by the Report Manager.
-	 * @return a list of SubmissionMatch objects, which each contain the ids of the files involved, the score for that match, a reason from DetectionType, and line numbers where the match occurs.
+	 * @param resultTasks The IResultTasks where for each task, at least one ICodeBlockGroup contains submission's id.
+	 * @param subScore The overall score for this submission.
+	 * @return a tuple containing a list of SubmissionMatchGroup objects, which each contain a list of SubmissionMatches and a score for the corresponding IResultTask. The tuple also contains a string which serves as a summary of the report.
 	 */
-	public List<SubmissionMatch> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups);
+	ITuple<List<SubmissionMatchGroup>, String> GenerateSubmissionReport(ISubmission submission, List<? extends IResultTask> resultTasks, float subScore);
+
 }

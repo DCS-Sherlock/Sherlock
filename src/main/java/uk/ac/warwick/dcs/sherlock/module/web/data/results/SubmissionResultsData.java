@@ -9,6 +9,7 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
+import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatchGroup;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
@@ -26,6 +27,11 @@ public class SubmissionResultsData {
      * The job showing the results for
      */
     private IJob job;
+
+    /**
+     * The summary (if it's a report)
+     */
+    private String summary = "";
 
     /**
      * The first submission
@@ -81,8 +87,14 @@ public class SubmissionResultsData {
         }
 
         if (report != null) {
-            List<SubmissionMatch> list = report.GetSubmissionReport(submission1);
-            list.forEach(m -> this.matches.add(new FileMatch(m)));
+//            ITuple<List<SubmissionMatch>, String> result = report.GetSubmissionReport(submission1);
+            ITuple<List<SubmissionMatchGroup>, String> result = report.GetSubmissionReport(submission1);
+            this.summary = result.getValue();
+//            List<SubmissionMatch> list = result.getKey();
+//            list.forEach(m -> this.matches.add(new FileMatch(m)));
+            List<SubmissionMatch> list = new ArrayList<>();
+            result.getKey().forEach(group -> group.GetMatches().addAll(list));
+//                    .forEach(m -> list.add(m)));
 
             Map<Long, String> idToName = new HashMap<>();
             job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
@@ -143,8 +155,10 @@ public class SubmissionResultsData {
             compare.add(submission1);
             compare.add(submission2);
 
-            List<SubmissionMatch> list = report.GetSubmissionComparison(compare);
-            list.forEach(m -> this.matches.add(new FileMatch(m)));
+//            List<SubmissionMatch> list = report.GetSubmissionComparison(compare);
+//            list.forEach(m -> this.matches.add(new FileMatch(m)));
+            List<SubmissionMatchGroup> list = report.GetSubmissionComparison(compare);
+            list.forEach(group -> group.GetMatches().forEach(m -> this.matches.add(new FileMatch(m))));
         }
 
         //Loop through the matches, setting the ids
@@ -155,6 +169,15 @@ public class SubmissionResultsData {
 
         //Initialise the file mapper using the list of matches
         this.fileMapper = new FileMapper(this.matches);
+    }
+
+    /**
+     * Get the summary for the report, replacing line breaks with html line breaks
+     *
+     * @return the summary
+     */
+    public String getSummary() {
+        return this.summary.replaceAll("(\r\n|\n)", "<br />");
     }
 
     /**

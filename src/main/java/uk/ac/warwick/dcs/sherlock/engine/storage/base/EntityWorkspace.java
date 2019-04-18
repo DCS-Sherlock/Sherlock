@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 
 import javax.persistence.*;
@@ -56,16 +56,6 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	}
 
 	@Override
-	public List<ISubmission> getSubmissions() {
-		BaseStorage.instance.database.refreshObject(this);
-		if (this.submissions == null) {
-			return null;
-		}
-
-		return new LinkedList<>(this.submissions);
-	}
-
-	@Override
 	public List<IJob> getJobs() {
 		BaseStorage.instance.database.refreshObject(this);
 		if (this.jobs == null) {
@@ -97,6 +87,16 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public long getPersistentId() {
 		return id;
+	}
+
+	@Override
+	public List<ISubmission> getSubmissions() {
+		BaseStorage.instance.database.refreshObject(this);
+		if (this.submissions == null) {
+			return null;
+		}
+
+		return new LinkedList<>(this.submissions);
 	}
 
 	@Override

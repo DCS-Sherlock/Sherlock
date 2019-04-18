@@ -2,8 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.storage;
 
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFileHelper;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
 import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
@@ -26,8 +27,8 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	 * @param submissionName submission name to show to the user, should identify the file or files
 	 *
 	 * @return the new submission instance, or null if one of the same name already exists for the workspace
-	 */
-	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
+	 *
+	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;*/
 
 	/**
 	 * Create a new IWorkspace instance
@@ -47,12 +48,25 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	Class<? extends ICodeBlockGroup> getCodeBlockGroupClass();
 
 	/**
+	 * Returns a prepared report manager for the IResultJob, uses cached instances were possible
+	 *
+	 * @param resultJob result to generate reports for
+	 *
+	 * @return instance of ReportManager
+	 *
+	 * @throws ResultJobUnsupportedException Thrown if IResultJob instance was not created by this IStorageWrapper implementation
+	 */
+	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
+
+	/**
 	 * Fetches a submission for the passed name if one exists, else returns null
 	 *
 	 * @param workspace      workspace to search for submission
 	 * @param submissionName submission name
 	 *
 	 * @return submission if exists, else null
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
 	ISubmission getSubmissionFromName(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException;
 
@@ -71,11 +85,23 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	List<IWorkspace> getWorkspaces();
 
 	/**
-	 * Returns a prepared report manager for the IResultJob, uses cached instances were possible
-	 * @param resultJob result to generate reports for
-	 * @return instance of ReportManager
+	 * Merge two submissions into a single submission, can be used to sort out name collisions
+	 *
+	 * @param existing first submission, is left, must already exist in the database
+	 * @param pending  second submission, is removed after merge
+	 *
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
 	 */
-	ReportManager getReportGenerator(IResultJob resultJob) throws ResultJobUnsupportedException;
+	void mergePendingSubmission(ISubmission existing, ISubmission pending) throws SubmissionUnsupportedException;
+
+	/**
+	 * Forget and remove a pending submission, and cleans up after it
+	 *
+	 * @param pendingSubmission pending submission to forget and remove
+	 *
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
+	 */
+	void removePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
 	/**
 	 * Stores the passed code block groups to the database
@@ -87,22 +113,40 @@ public interface IStorageWrapper extends ISourceFileHelper {
 	boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups);
 
 	/**
-	 * Store file in the database
+	 * Store file
 	 *
-	 * @param workspace   workspace to add file to
+	 * @param workspace   workspace to upload file to
 	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
 	 * @param fileContent raw content of the file
+	 *
+	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
-	@Deprecated
-	void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException;
+	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException;
 
 	/**
-	 * Store file to a submission
+	 * Store file
 	 *
-	 * @param submission  submission to add file to
-	 * @param filename    filename uploaded, used as the identifier to show to the user, identifying the file or files
-	 * @param fileContent raw content of the submission file
+	 * @param workspace                          workspace to upload file to
+	 * @param filename                           filename uploaded, used as the identifier to show to the user, identifying the file or files
+	 * @param fileContent                        raw content of the file
+	 * @param archiveContainsMultipleSubmissions are the archive top level directories separate submissions?
+	 *
+	 * @return list of tuples, which contain any collisions between submission names. The first element is the existing submission, the second is the new
+	 *
+	 * @throws WorkspaceUnsupportedException Thrown if IWorkspace instance was not created by this IStorageWrapper implementation
 	 */
-	void storeFile(ISubmission submission, String filename, byte[] fileContent) throws SubmissionUnsupportedException;
+	List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions) throws WorkspaceUnsupportedException;
+
+	/**
+	 * If the submission clashes with an already existing submission, it will be set as pending
+	 * <p>
+	 * IF a submission is pending this method will remove existing submission with the same name and write the pending submission to the database
+	 *
+	 * @param pendingSubmission pending submission to properly write
+	 * @throws SubmissionUnsupportedException Thrown if ISubmission instance was not created by this IStorageWrapper implementation
+	 */
+	void writePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException;
 
 }

@@ -32,19 +32,22 @@ repositories {
 }
 
 dependencies {
+    compile "org.flywaydb:flyway-core:5.2.4"
+
     antlr 'org.antlr:antlr4:4.7.2'
 
     implementation (
             'org.antlr:antlr4-runtime:4.7.2',
             'com.google.guava:guava:27.0.1-jre',
             'org.reflections:reflections:0.9.11',
+            'org.apache.commons:commons-lang3:3.8.1',
+            'org.apache.commons:commons-compress:1.18',
             'commons-io:commons-io:2.6',
-            'org.apache.commons:commons-lang3',
-            'commons-codec:commons-codec',
+            'commons-codec:commons-codec:1.12',
             'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.4',
             'javax.transaction:jta:1.1',
             'com.objectdb:objectdb:2.7.6',
-            'org.yaml:snakeyaml',
+            'org.yaml:snakeyaml:1.24',
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-mail',

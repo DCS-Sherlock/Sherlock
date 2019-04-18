@@ -1,13 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage.base;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.component.*;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
+import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
 import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.SubmissionUnsupportedException;
 import uk.ac.warwick.dcs.sherlock.engine.exception.WorkspaceUnsupportedException;
@@ -15,14 +16,8 @@ import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
 import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
 
 import javax.persistence.Query;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.*;
-import java.util.zip.*;
 
 public class BaseStorage implements IStorageWrapper {
 
@@ -46,6 +41,12 @@ public class BaseStorage implements IStorageWrapper {
 		this.reportManagerCacheQueue = new ArrayDeque<>(cacheCapacity);
 		for (int i = 0; i < cacheCapacity; i++) {
 			this.reportManagerCacheQueue.add((long) -1);
+		}
+
+		List<EntityArchive> oldPending = this.database.runQuery("SELECT a from Archive a where a.pending=true", EntityArchive.class);
+		if (oldPending != null && oldPending.size() > 0) {
+			logger.warn("Cleaning up unresolved pending submissions from previous sessions");
+			oldPending.stream().filter(x -> x.getParent().getName() == null || !x.getParent_().pending).forEach(EntityArchive::remove);
 		}
 
 		//Do a scan of all files in database in background, check they exist and there are no extra files
@@ -78,26 +79,6 @@ public class BaseStorage implements IStorageWrapper {
 	@Override
 	public void close() {
 		this.database.close();
-	}
-
-	@Override
-	public ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
-		if (!(workspace instanceof EntityWorkspace)) {
-			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
-		}
-		EntityWorkspace w = (EntityWorkspace) workspace;
-
-		if (w.getSubmissions().stream().anyMatch(x -> x.getName().equals(submissionName))) {
-			logger.info("Duplicate submission name: " + submissionName);
-			return null;
-		}
-
-		EntityArchive submission = new EntityArchive(submissionName);
-		submission.setSubmissionArchive(w);
-		this.database.storeObject(submission);
-		this.database.refreshObject(w);
-
-		return submission;
 	}
 
 	@Override
@@ -172,6 +153,32 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
+	public void mergePendingSubmission(ISubmission existing, ISubmission pending) throws SubmissionUnsupportedException {
+		if (!(existing instanceof EntityArchive) || !(pending instanceof EntityArchive)) {
+			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+
+		EntityArchive s1 = (EntityArchive) existing;
+		EntityArchive s2 = (EntityArchive) pending;
+
+		if (s1.pendingWorkspace != null || s1.getWorkspace() == null) {
+			throw new SubmissionUnsupportedException("Existing is pending, it must already exist in the database");
+		}
+
+		this.mergeChildSubmissions(s1, s2);
+	}
+
+	@Override
+	public void removePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException {
+		if (!(pendingSubmission instanceof EntityArchive)) {
+			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityArchive s = (EntityArchive) pendingSubmission;
+
+		s.remove();
+	}
+
+	@Override
 	public boolean storeCodeBlockGroups(List<ICodeBlockGroup> groups) {
 		List<Object> objects = new LinkedList<>();
 		for (ICodeBlockGroup group : groups) {
@@ -191,34 +198,64 @@ public class BaseStorage implements IStorageWrapper {
 	}
 
 	@Override
-	@Deprecated
-	public void storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException, SubmissionUnsupportedException {
-		EntityArchive sub = (EntityArchive) this.createSubmission(workspace, FilenameUtils.removeExtension(filename));
-		if (sub != null) {
-			this.storeFile(sub, filename, fileContent);
-		}
+	public List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent) throws WorkspaceUnsupportedException {
+		return this.storeFile(workspace, filename, fileContent, false);
 	}
 
 	@Override
-	public void storeFile(ISubmission submission, String filename, byte[] fileContent) throws SubmissionUnsupportedException {
-		if (!(submission instanceof EntityArchive)) {
+	public List<ITuple<ISubmission, ISubmission>> storeFile(IWorkspace workspace, String filename, byte[] fileContent, boolean archiveContainsMultipleSubmissions)
+			throws WorkspaceUnsupportedException {
+		List<ITuple<ISubmission, ISubmission>> collisions = FileUploadHelper.storeFile(this.database, this.filesystem, workspace, filename, fileContent, archiveContainsMultipleSubmissions);
+
+		//Merge example
+		/*collisions.forEach(x -> {
+			try {
+				this.mergePendingSubmission(x.getKey(), x.getValue());
+			}
+			catch (SubmissionUnsupportedException e) {
+				e.printStackTrace();
+			}
+		});*/
+
+		return collisions;
+	}
+
+	@Override
+	public void writePendingSubmission(ISubmission pendingSubmission) throws SubmissionUnsupportedException {
+		if (!(pendingSubmission instanceof EntityArchive)) {
 			throw new SubmissionUnsupportedException("ISubmission instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
 		}
-		EntityArchive s = (EntityArchive) submission;
+		EntityArchive s = (EntityArchive) pendingSubmission;
 
-		//Set all the jobs as outdated
-		for (IJob job : ((EntityArchive) submission).getWorkspace().getJobs()) {
-			job.setStatus(WorkStatus.OUTDATED);
+		s.writeToPendingWorkspace();
+	}
+
+	ISubmission createPendingSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
+		if (!(workspace instanceof EntityWorkspace)) {
+			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityWorkspace w = (EntityWorkspace) workspace;
+
+		return new EntityArchive(w, submissionName);
+	}
+
+	ISubmission createSubmission(IWorkspace workspace, String submissionName) throws WorkspaceUnsupportedException {
+		if (!(workspace instanceof EntityWorkspace)) {
+			throw new WorkspaceUnsupportedException("IWorkspace instanced passed is not supported by this IStorageWrapper implementation, only use one implementation at a time");
+		}
+		EntityWorkspace w = (EntityWorkspace) workspace;
+
+		if (w.getSubmissions().stream().anyMatch(x -> x.getName().equals(submissionName))) {
+			logger.info("Duplicate submission name: " + submissionName);
+			return null;
 		}
 
-		if (FilenameUtils.getExtension(filename).equals("zip")) {
-			this.storeArchive(s, fileContent);
-		}
-		else {
-			this.storeIndividualFile(s, filename, fileContent);
-		}
+		EntityArchive submission = new EntityArchive(submissionName);
+		submission.setSubmissionArchive(w);
+		this.database.storeObject(submission);
+		this.database.refreshObject(w);
 
-		this.database.refreshObject(s);
+		return submission;
 	}
 
 	void removeCodeBlockGroups() {
@@ -229,62 +266,29 @@ public class BaseStorage implements IStorageWrapper {
 		BaseStorage.instance.database.executeUpdate(q);
 	}
 
-	private void storeArchive(EntityArchive submission, byte[] fileContent) {
-		try {
-			ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(fileContent));
-			ZipEntry zipEntry = zis.getNextEntry();
-			EntityArchive curArchive = submission;
-
-			while (zipEntry != null) {
-				if (zipEntry.isDirectory()) {
-					String[] dirs = FilenameUtils.separatorsToUnix(zipEntry.getName()).split("/");
-					curArchive = submission;
-					for (String dir : dirs) {
-						EntityArchive nextArchive = curArchive.getChildren() == null ? null : curArchive.getChildren().stream().filter(x -> x.getName().equals(dir)).findAny().orElse(null);
-
-						if (nextArchive == null) {
-							nextArchive = new EntityArchive(dir, curArchive);
-							this.database.storeObject(nextArchive);
-						}
-						curArchive = nextArchive;
-					}
-				}
-				else {
-					this.storeIndividualFile(curArchive, zipEntry.getName(), IOUtils.toByteArray(zis));
-				}
-				zipEntry = zis.getNextEntry();
+	private void mergeChildSubmissions(EntityArchive s1, EntityArchive s2) {
+		s2.getChildren_().forEach(c2 -> {
+			EntityArchive c1 = s1.getChildren().stream().filter(x -> x.getName().equals(c2.getName())).findAny().orElse(null);
+			if (c1 != null) {
+				mergeChildSubmissions(c1, c2);
 			}
-			zis.closeEntry();
-			zis.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+			else {
+				c2.setParent(s1);
+			}
+		});
 
-	private void storeIndividualFile(EntityArchive archive, String filename, byte[] fileContent) {
-		int line = 0;
-		int contentLine = 0;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileContent)));
+		s2.getFiles_().forEach(f -> {
+			f.setArchive(s1);
+			this.database.storeObject(f);
+		});
+
+		this.database.storeObject(s1);
 
 		try {
-			while (reader.ready()) {
-				line++;
-				if (!reader.readLine().equals("")) {
-					contentLine++;
-				}
-			}
+			BaseStorage.instance.database.refreshObject(s2);
+			BaseStorage.instance.database.removeObject(s2);
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		catch (Exception e) {
 		}
-
-		EntityFile file =
-				new EntityFile(archive, FilenameUtils.getBaseName(filename), FilenameUtils.getExtension(filename), new Timestamp(System.currentTimeMillis()), fileContent.length, line, contentLine);
-		if (!this.filesystem.storeFile(file, fileContent)) {
-			return;
-		}
-
-		this.database.storeObject(file);
 	}
 }

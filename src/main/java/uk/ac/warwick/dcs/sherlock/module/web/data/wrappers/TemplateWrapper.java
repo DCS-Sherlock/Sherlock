@@ -243,6 +243,7 @@ public class TemplateWrapper {
                 newParameter.setName(parameter.getName());
                 newParameter.setValue(parameter.getValue());
                 newParameter.setDetector(newDetector);
+                newParameter.setPostprocessing(parameter.isPostprocessing());
 
                 tParameterRepository.save(newParameter);
             }
