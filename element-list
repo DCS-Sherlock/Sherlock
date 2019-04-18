@@ -6,7 +6,6 @@ uk.ac.warwick.dcs.sherlock.api.exception
 uk.ac.warwick.dcs.sherlock.api.model.detection
 uk.ac.warwick.dcs.sherlock.api.model.postprocessing
 uk.ac.warwick.dcs.sherlock.api.model.preprocessing
-uk.ac.warwick.dcs.sherlock.api.model.scoring
 uk.ac.warwick.dcs.sherlock.api.util
 uk.ac.warwick.dcs.sherlock.engine
 uk.ac.warwick.dcs.sherlock.engine.component
