@@ -81,6 +81,11 @@ public class ReportManager {
 		FillSubmissionFileMap();
 	}
 
+	/**
+	 * For the provided submission object, find all the IResultTasks in this.results that contain something with that submission involved.
+	 * @param submission The ISubmission to search for.
+	 * @return A list of relevant IResultTasks.
+	 */
 	private List<IResultTask> GetResultTasks(ISubmission submission) {
 		List<IResultTask> resultTasks = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
@@ -88,6 +93,11 @@ public class ReportManager {
 		return resultTasks;
 	}
 
+	/**
+	 * For the provided submission objects, find all the IResultTasks in this.results that contain something with either submission involved.
+	 * @param submissions A tuple containing the ISubmissions to search for.
+	 * @return A list of relevant IResultTasks.
+	 */
 	private List<IResultTask> GetResultTasks(ITuple<ISubmission, ISubmission> submissions) {
 		List<IResultTask> resultTasks = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
@@ -95,17 +105,15 @@ public class ReportManager {
 		return resultTasks;
 	}
 
+	/**
+	 * Retrieve every ICodeBlockGroup stored in results.
+	 * @return a list of ICodeBlockGroups.
+	 */
 	private List<ICodeBlockGroup> GetCodeBlockGroups() {
 		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
 				.forEach(task -> codeBlockGroups.addAll(task.getContainingBlocks()));
 		return codeBlockGroups;
-	}
-
-	private List<ISourceFile> GetSourceFiles() {
-		List<ISourceFile> sourceFiles = new ArrayList<>();
-		this.results.getFileResults().forEach(file -> sourceFiles.add(file.getFile()));
-		return sourceFiles;
 	}
 
 	/**

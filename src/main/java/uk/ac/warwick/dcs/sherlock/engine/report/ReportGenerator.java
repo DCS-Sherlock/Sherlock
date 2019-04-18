@@ -48,7 +48,7 @@ public class ReportGenerator implements IReportGenerator {
 
 				//Create SubmissionMatchItems for every codeBlock belonging to a file in the submissions being compared.
 				for (ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
-					Long subId = codeBlock.getFile().getSubmission().getId();
+					long subId = codeBlock.getFile().getSubmission().getId();
 					if (submissions.get(0).getId() == subId || submissions.get(1).getId() == subId) {
 						items.add(new SubmissionMatchItem(codeBlock.getFile(), codeBlock.getBlockScore(), codeBlock.getLineNumbers()));
 					}
@@ -73,7 +73,7 @@ public class ReportGenerator implements IReportGenerator {
 		if(subScore < 0.01f)
 			summary = summary + "No plagiarism was detected in this submission.";
 		else if(subScore >= 0.01f && subScore < 0.05f)
-			summary = summary + "Some potential plagiarism was detected, but it is small enough that it may be a false alarm or negligble.";
+			summary = summary + "Some potential plagiarism was detected, but it is small enough that it may be a false alarm or negligible.";
 		else if(subScore >= 0.05f && subScore < 0.2f)
 			summary = summary + "A small amount of plagiarism was detected in this submission.";
 		else if(subScore >= 0.2f && subScore < 0.5f)
