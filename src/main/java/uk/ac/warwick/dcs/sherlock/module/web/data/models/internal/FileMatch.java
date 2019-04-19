@@ -51,7 +51,7 @@ public class FileMatch {
             List<CodeBlock> blocks = new ArrayList<>();
             item.GetLineNumbers().forEach(t -> blocks.add(new CodeBlock(t.getKey(), t.getValue())));
             map.put(item.GetFile(), blocks);
-            this.score = item.GetScore();
+            this.score = item.GetScore() * 100;
         }
 //        this.score = match.getScore();
 

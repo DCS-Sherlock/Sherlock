@@ -87,21 +87,23 @@ public class SubmissionResultsData {
         }
 
         if (report != null) {
-//            ITuple<List<SubmissionMatch>, String> result = report.GetSubmissionReport(submission1);
+            //Get the list of submission match groups and the report summary
             ITuple<List<SubmissionMatchGroup>, String> result = report.GetSubmissionReport(submission1);
+
+            //Set the summary
             this.summary = result.getValue();
-//            List<SubmissionMatch> list = result.getKey();
-//            list.forEach(m -> this.matches.add(new FileMatch(m)));
-            List<SubmissionMatch> list = new ArrayList<>();
-            result.getKey().forEach(group -> group.GetMatches().addAll(list));
-//                    .forEach(m -> list.add(m)));
 
-            Map<Long, String> idToName = new HashMap<>();
-            job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
+            //Loop through the submission groups, adding all the matches
+            result.getKey().forEach(group -> group.GetMatches().forEach(m -> this.matches.add(new FileMatch(m))));
 
+            //Fetch the submission summary for this submission
             List<SubmissionSummary> summaryList = report.GetMatchingSubmissions()
                     .stream().filter(s -> s.getPersistentId() == submission1.getId())
                     .collect(Collectors.toList());
+
+            //Create a map linking submission ids to their names
+            Map<Long, String> idToName = new HashMap<>();
+            job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
             if (summaryList.size() == 1) {
                 SubmissionSummary summary = summaryList.get(0);
@@ -155,8 +157,7 @@ public class SubmissionResultsData {
             compare.add(submission1);
             compare.add(submission2);
 
-//            List<SubmissionMatch> list = report.GetSubmissionComparison(compare);
-//            list.forEach(m -> this.matches.add(new FileMatch(m)));
+            //Loop through the submission groups, adding all the matches
             List<SubmissionMatchGroup> list = report.GetSubmissionComparison(compare);
             list.forEach(group -> group.GetMatches().forEach(m -> this.matches.add(new FileMatch(m))));
         }
