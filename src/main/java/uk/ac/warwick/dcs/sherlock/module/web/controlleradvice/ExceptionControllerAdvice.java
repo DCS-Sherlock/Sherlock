@@ -25,6 +25,14 @@ public class ExceptionControllerAdvice {
     @Autowired
     private Environment environment;
 
+    /**
+     * Handles requests which occur before Spring has finished starting up
+     *
+     * @param model holder for model attributes
+     * @param e the exception object
+     *
+     * @return the path to the error page
+     */
     @ExceptionHandler({SpringNotInitialised.class})
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public String notInitialised(Model model, Exception e) {

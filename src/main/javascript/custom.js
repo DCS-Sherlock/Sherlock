@@ -1200,3 +1200,22 @@ $(function () {
         }, 10000);
     }
 });
+
+window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+        "palette": {
+            "popup": {
+                "background": "#4e5d6c",
+                "text": "#ffffff"
+            },
+            "button": {
+                "background": "#df691a",
+                "text": "#ffffff"
+            }
+        },
+        "position": "top",
+        "static": true,
+        "content": {
+            "href": "/privacy"
+        }
+    })});

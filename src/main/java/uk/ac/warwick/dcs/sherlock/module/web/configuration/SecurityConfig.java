@@ -50,7 +50,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	};
+	}
+
+	/**
+	 * Get the email of the local user
+	 *
+	 * @return the email
+	 */
+	public static String getLocalEmail() {
+		return "local@dcs-sherlock.github.io";
+	}
+
+	/**
+	 * Get the password of the local user
+	 *
+	 * @return the password
+	 */
+	public static String getLocalPassword() {
+		return "local_password";
+	}
 
 	/**
 	 * Configures the web security by configuring the authentication manager to
@@ -65,12 +83,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		//Check if running as a client
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
 			//Try to find the "local user"
-			String email = "local.sherlock@example.com"; //TODO: don't make hardcoded
-			Account account = accountRepository.findByEmail(email);
+			Account account = accountRepository.findByEmail(SecurityConfig.getLocalEmail());
 
 			//Add the "local user" if not found
 			if (account == null) {
-				account = new Account(email, bCryptPasswordEncoder.encode("local_password"), "Local User");
+				account = new Account(
+						SecurityConfig.getLocalEmail(),
+						bCryptPasswordEncoder.encode(SecurityConfig.getLocalPassword()),
+						"Local User");
 				accountRepository.save(account);
 				roleRepository.save(new Role("USER", account));
 				roleRepository.save(new Role("LOCAL_USER", account));

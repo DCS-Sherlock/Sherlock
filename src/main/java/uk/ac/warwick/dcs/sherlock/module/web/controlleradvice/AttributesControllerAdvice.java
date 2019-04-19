@@ -26,6 +26,12 @@ public class AttributesControllerAdvice {
     @Autowired
     private Environment environment;
 
+    /**
+     * Checks that the Spring server has finished initialising and throws an error
+     * if a user attempts to load a page before it has finished
+     *
+     * @throws SpringNotInitialised if the server is still starting up
+     */
     @ModelAttribute
     public void checkLoaded() throws SpringNotInitialised {
         if (!SherlockServer.engine.isInitialised()) {

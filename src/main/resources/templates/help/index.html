@@ -33,7 +33,7 @@
 
                                 <div th:id="${'q' + question.hashCode()}" class="collapse" data-parent="#accordion">
                                     <div class="card-body">
-                                        <span th:text="${question.value}"></span>
+                                        <div th:remove="tag" th:utext="${question.value}"></div>
                                     </div>
                                 </div>
                             </div>

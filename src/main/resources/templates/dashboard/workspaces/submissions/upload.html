@@ -12,10 +12,6 @@
                 <h5 class="modal-title" th:text="#{workspaces.submissions.upload}"></h5>
             </div>
             <div class="modal-body">
-                <!--<div th:if="${#fields.hasAnyErrors()}">-->
-                    <!--<div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>-->
-                <!--</div>-->
-
                 <h6>
                     <span th:text="#{workspaces.submissions.upload.num_submissions}"></span>
                 </h6>
@@ -42,6 +38,20 @@
                                     <div class="form-group col-md-12">
                                         <input type="file" name="files">
                                         <input type="hidden" name="single" value="true">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="duplicate" th:text="#{variable.duplicate}"></label>
+                                        <select class="form-control" name="duplicate" id="duplicate">
+                                            <option th:value="0"
+                                                    th:text="#{variable.duplicate.zero}">
+                                            </option>
+                                            <option th:value="1"
+                                                    th:text="#{variable.duplicate.one}">
+                                            </option>
+                                            <option th:value="2"
+                                                    th:text="#{variable.duplicate.two}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
@@ -74,6 +84,20 @@
                                                 <input type="hidden" name="single" value="true">
                                             </div>
                                             <div class="form-group col-md-12">
+                                                <label for="duplicate2" th:text="#{variable.duplicate}"></label>
+                                                <select class="form-control" name="duplicate" id="duplicate2">
+                                                    <option th:value="0"
+                                                            th:text="#{variable.duplicate.zero}">
+                                                    </option>
+                                                    <option th:value="1"
+                                                            th:text="#{variable.duplicate.one}">
+                                                    </option>
+                                                    <option th:value="2"
+                                                            th:text="#{variable.duplicate.two}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md-12">
                                                 <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
                                             </div>
                                         </div>
@@ -93,6 +117,20 @@
                                             <div class="form-group col-md-12">
                                                 <input type="file" name="files" accept=".zip">
                                                 <input type="hidden" name="single" value="true">
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <label for="duplicate3" th:text="#{variable.duplicate}"></label>
+                                                <select class="form-control" name="duplicate" id="duplicate3">
+                                                    <option th:value="0"
+                                                            th:text="#{variable.duplicate.zero}">
+                                                    </option>
+                                                    <option th:value="1"
+                                                            th:text="#{variable.duplicate.one}">
+                                                    </option>
+                                                    <option th:value="2"
+                                                            th:text="#{variable.duplicate.two}">
+                                                    </option>
+                                                </select>
                                             </div>
                                             <div class="form-group col-md-12">
                                                 <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
@@ -131,6 +169,20 @@
                                         <input type="hidden" name="single" value="true">
                                     </div>
                                     <div class="form-group col-md-12">
+                                        <label for="duplicate4" th:text="#{variable.duplicate}"></label>
+                                        <select class="form-control" name="duplicate" id="duplicate4">
+                                            <option th:value="0"
+                                                    th:text="#{variable.duplicate.zero}">
+                                            </option>
+                                            <option th:value="1"
+                                                    th:text="#{variable.duplicate.one}">
+                                            </option>
+                                            <option th:value="2"
+                                                    th:text="#{variable.duplicate.two}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-12">
                                         <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
                                     </div>
                                 </div>
@@ -152,6 +204,20 @@
                                         <input type="hidden" name="single" value="false">
                                     </div>
                                     <div class="form-group col-md-12">
+                                        <label for="duplicate5" th:text="#{variable.duplicate}"></label>
+                                        <select class="form-control" name="duplicate" id="duplicate5">
+                                            <option th:value="0"
+                                                    th:text="#{variable.duplicate.zero}">
+                                            </option>
+                                            <option th:value="1"
+                                                    th:text="#{variable.duplicate.one}">
+                                            </option>
+                                            <option th:value="2"
+                                                    th:text="#{variable.duplicate.two}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-12">
                                         <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>
                                     </div>
                                 </div>
@@ -171,6 +237,20 @@
                                     <div class="form-group col-md-12">
                                         <input type="file" name="files" accept=".zip" multiple>
                                         <input type="hidden" name="single" value="true">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="duplicate6" th:text="#{variable.duplicate}"></label>
+                                        <select class="form-control" name="duplicate" id="duplicate6">
+                                            <option th:value="0"
+                                                    th:text="#{variable.duplicate.zero}">
+                                            </option>
+                                            <option th:value="1"
+                                                    th:text="#{variable.duplicate.one}">
+                                            </option>
+                                            <option th:value="2"
+                                                    th:text="#{variable.duplicate.two}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <button type="submit" class="btn btn-primary float-right" th:text="#{link.upload}"></button>

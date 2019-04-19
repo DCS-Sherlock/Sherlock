@@ -255,6 +255,7 @@ combineJs {
             "${projectDir}/src/main/javascript/vis.min.js",
             "${projectDir}/src/main/javascript/prism.js",
             "${projectDir}/src/main/javascript/js.cookie.js",
+            "${projectDir}/src/main/javascript/cookieconsent.min.js",
             "${projectDir}/src/main/javascript/custom.js"
     ]
     dest = file("${projectDir}/src/main/resources/static/js/default.js")
