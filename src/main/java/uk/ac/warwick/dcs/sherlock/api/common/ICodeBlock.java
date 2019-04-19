@@ -16,7 +16,7 @@ public interface ICodeBlock {
 	 */
 	float getBlockScore();
 
-	/*
+	/**
 	 * @return the file containing the block
 	 */
 	ISourceFile getFile();

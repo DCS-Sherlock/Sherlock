@@ -1,5 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.event;
 
+/**
+ * Not Used!!! Maybe Future work
+ */
 public class EventPublishResults implements IEvent {
 
 	private String results;

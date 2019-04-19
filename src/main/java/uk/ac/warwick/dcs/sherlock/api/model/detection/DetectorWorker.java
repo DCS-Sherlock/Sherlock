@@ -7,8 +7,15 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
  */
 public abstract class DetectorWorker<K extends AbstractModelTaskRawResult> {
 
+	/**
+	 * {@link IDetector} Instance which built this worker
+	 */
 	protected IDetector parent;
 
+	/**
+	 * Constructor for workers
+	 * @param parent {@link IDetector} instance which built this worker
+	 */
 	public DetectorWorker(IDetector parent) {
 		this.parent = parent;
 	}

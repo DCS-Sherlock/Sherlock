@@ -3,6 +3,9 @@ package uk.ac.warwick.dcs.sherlock.api.common;
 import java.io.InputStream;
 import java.util.*;
 
+/**
+ * Interface for accessing the data from an individual source file from a submission
+ */
 public interface ISourceFile {
 
 	/**

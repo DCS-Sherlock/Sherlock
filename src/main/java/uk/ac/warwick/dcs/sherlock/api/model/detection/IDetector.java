@@ -5,7 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import java.util.*;
 
 /**
- * Interface for accessing a detection algorithm
+ * Low level interface for implementing a detection algorithm. The Abstract {@link Detector} class should be used over this
  * <br><br>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */

@@ -11,6 +11,12 @@ public class IndexedString extends Tuple<Integer, String> {
 		super(index, string);
 	}
 
+	/**
+	 * Static constructor method
+	 * @param index the index value
+	 * @param string the string
+	 * @return new instance of IndexedString
+	 */
 	public static IndexedString of(int index, String string) {
 		return new IndexedString(index, string);
 	}
