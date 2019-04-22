@@ -9,7 +9,6 @@ import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
 
 import java.util.*;
 
@@ -41,12 +40,6 @@ public class ReportManager {
 	private Map<Long, List<Long>> submissionFileMap;
 
 	/**
-	 * A map of reports for an entire submission. The key is the submission's unique id, and the list of submission match groups make up the report.
-	 */
-	private Map<Long, List<SubmissionMatchGroup>> submissionReportMap;
-
-
-	/**
 	 * Maps submission ids to their overall scores
 	 */
 	private Map<Long, Float> submissionScores;
@@ -70,7 +63,6 @@ public class ReportManager {
 
 		this.submissionFileMap = new HashMap<>();
 		this.fileMap = new HashMap<>();
-		this.submissionReportMap = new HashMap<>();
 		this.results = results;
 		this.submissionScores = new HashMap<>();
 		this.relativeFileScores = new HashMap<>();
@@ -82,30 +74,6 @@ public class ReportManager {
 	}
 
 	/**
-	 * For the provided submission object, find all the IResultTasks in this.results that contain something with that submission involved.
-	 * @param submission The ISubmission to search for.
-	 * @return A list of relevant IResultTasks.
-	 */
-	private List<IResultTask> GetResultTasks(ISubmission submission) {
-		List<IResultTask> resultTasks = new ArrayList<>();
-		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
-				.filter(task -> task.getContainingBlocks().stream().anyMatch(group -> group.submissionIdPresent(submission.getId()))).forEach(task -> resultTasks.add(task));
-		return resultTasks;
-	}
-
-	/**
-	 * For the provided submission objects, find all the IResultTasks in this.results that contain something with either submission involved.
-	 * @param submissions A tuple containing the ISubmissions to search for.
-	 * @return A list of relevant IResultTasks.
-	 */
-	private List<IResultTask> GetResultTasks(ITuple<ISubmission, ISubmission> submissions) {
-		List<IResultTask> resultTasks = new ArrayList<>();
-		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
-				.filter(task -> task.getContainingBlocks().stream().anyMatch(group -> group.submissionIdPresent(submissions.getKey().getId()) || group.submissionIdPresent(submissions.getValue().getId()))).forEach(task -> resultTasks.add(task));
-		return resultTasks;
-	}
-
-	/**
 	 * Retrieve every ICodeBlockGroup stored in results.
 	 * @return a list of ICodeBlockGroups.
 	 */
@@ -113,6 +81,30 @@ public class ReportManager {
 		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
 				.forEach(task -> codeBlockGroups.addAll(task.getContainingBlocks()));
+		return codeBlockGroups;
+	}
+
+	/**
+	 * Retrieve every ICodeBlockGroup with a file from the specified submission.
+	 * @param submission the submission to find relevant ICodeBlockGroups for.
+	 * @return a list of relevant ICodeBlockGroups.
+	 */
+	private List<ICodeBlockGroup> GetCodeBlockGroups(ISubmission submission) {
+		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
+		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
+				.flatMap(task -> task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submission.getId()))).forEach(group -> codeBlockGroups.add(group));
+		return codeBlockGroups;
+	}
+
+	/**
+	 * Retrieve every ICodeBlockGroup with a file from at least one of the specified submissions.
+	 * @param submissions the submissions to find relevant ICodeBlockGroups for.
+	 * @return a list of relevant ICodeBlockGroups.
+	 */
+	private List<ICodeBlockGroup> GetCodeBlockGroups(List<ISubmission> submissions) {
+		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
+		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
+				.flatMap(task -> task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submissions.get(0).getId()) || group.submissionIdPresent(submissions.get(0).getId()))).forEach(group -> codeBlockGroups.add(group));
 		return codeBlockGroups;
 	}
 
@@ -195,9 +187,10 @@ public class ReportManager {
 		if(submissions.size() < 2)
 			return null;
 
-		List<IResultTask> relevantTasks = GetResultTasks(new Tuple<>(submissions.get(0), submissions.get(1)));
 
-		return reportGenerator.GenerateSubmissionComparison(submissions, relevantTasks);
+		List<ICodeBlockGroup> relevantGroups = GetCodeBlockGroups(submissions);
+
+		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups);
 	}
 
 	/**
@@ -222,25 +215,10 @@ public class ReportManager {
 			}*/
 		}
 
-		List<IResultTask> relevantTasks = GetResultTasks(submission);
+		List<ICodeBlockGroup> relevantGroups = GetCodeBlockGroups(submission);
 
-		//Store this report and return it.
-		ITuple<List<SubmissionMatchGroup>, String> submissionReport = reportGenerator.GenerateSubmissionReport(submission, relevantTasks, submissionScores.get(submission.getId()));
-		submissionReportMap.put(submission.getId(), submissionReport.getKey());
-		return submissionReport;
-	}
-
-	/**
-	 * Retrieve an already-generated submission report for the specified submission id.
-	 * @param submissionId the id of the submission to get the report for.
-	 * @return The list of submission matches making up the report if it exists; an empty list if there is no such report.
-	 */
-	public List<SubmissionMatchGroup> GetSubmissionReport(long submissionId) {
-		//If the report for this submission already exists, return it
-		if (submissionReportMap.containsKey(submissionId))
-			return submissionReportMap.get(submissionId);
-		else
-			return new ArrayList<>();
+		//Generate and return the report.
+		return reportGenerator.GenerateSubmissionReport(submission, relevantGroups, submissionScores.get(submission.getId()));
 	}
 
 }

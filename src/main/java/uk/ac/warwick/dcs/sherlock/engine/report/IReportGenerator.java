@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
+import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
@@ -14,19 +15,19 @@ public interface IReportGenerator {
 	 * Compare two submissions and find all the instances of detected plagiarism between all files within them.
 	 *
 	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
-	 * @param resultTasks The IResultTasks where for each task, at least one ICodeBlockGroup contains either of the two submission's ids.
+	 * @param codeBlockGroups The ICodeBlockGroups that contain at least one file from either submission.
 	 * @return a list of SubmissionMatchGroup objects, which each contain a list of SubmissionMatches and a score for the corresponding IResultTask.
 	 */
-	List<SubmissionMatchGroup> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends IResultTask> resultTasks);
+	List<SubmissionMatchGroup> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups);
 
 	/**
 	 * Generate a report for a single submission, containing all matches for all files within it, and creating a summary in the process.
 	 *
 	 * @param submission The submission to generate the report for.
-	 * @param resultTasks The IResultTasks where for each task, at least one ICodeBlockGroup contains submission's id.
+	 * @param codeBlockGroups The ICodeBlockGroups that contain at least one file from the submission.
 	 * @param subScore The overall score for this submission.
 	 * @return a tuple containing a list of SubmissionMatchGroup objects, which each contain a list of SubmissionMatches and a score for the corresponding IResultTask. The tuple also contains a string which serves as a summary of the report.
 	 */
-	ITuple<List<SubmissionMatchGroup>, String> GenerateSubmissionReport(ISubmission submission, List<? extends IResultTask> resultTasks, float subScore);
+	ITuple<List<SubmissionMatchGroup>, String> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups, float subScore);
 
 }
