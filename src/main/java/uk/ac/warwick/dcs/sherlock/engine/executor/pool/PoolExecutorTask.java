@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
@@ -9,11 +9,11 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
-import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
-import uk.ac.warwick.dcs.sherlock.engine.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.api.component.ITask;
+import uk.ac.warwick.dcs.sherlock.api.component.WorkStatus;
+import uk.ac.warwick.dcs.sherlock.engine.executor.JobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.Priority;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.IWorkTask;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkDetect;

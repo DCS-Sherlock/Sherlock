@@ -1,11 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
+import uk.ac.warwick.dcs.sherlock.api.report.ISubmissionMatchGroup;
+
 import java.util.List;
 
 /**
  * Object to store SubmissionMatches; every SubmissionMatch within one SubmissionMatchGroup should share the same DetectionType.
  */
-public class SubmissionMatchGroup {
+public class SubmissionMatchGroup implements ISubmissionMatchGroup<SubmissionMatch> {
 	/**
 	 * The SubmissionMatch objects are what contain the actual important information
 	 */
@@ -30,7 +32,8 @@ public class SubmissionMatchGroup {
 	 * Add a SubmissionMatch to the list (used by ReportGenerator)
 	 * @param match the SubmissionMatch to be added
 	 */
-	public void AddMatch(SubmissionMatch match) {
+	@Override
+	public void addMatch(SubmissionMatch match) {
 		this.matches.add(match);
 	}
 
@@ -38,7 +41,8 @@ public class SubmissionMatchGroup {
 	 * Get the matches
 	 * @return The stored list of SubmissionMatch objects.
 	 */
-	public List<SubmissionMatch> GetMatches() {
+	@Override
+	public List<SubmissionMatch> getMatches() {
 		return this.matches;
 	}
 
@@ -47,7 +51,8 @@ public class SubmissionMatchGroup {
 	 * Get the descriptor
 	 * @return The type of plagiarism that was detected for these matches.
 	 */
-	public String GetReason() {
+	@Override
+	public String getReason() {
 		return this.reason;
 	}
 }

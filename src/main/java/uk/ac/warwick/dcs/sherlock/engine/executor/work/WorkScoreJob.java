@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.IResultJob;
 
 import java.util.*;
 import java.util.concurrent.*;

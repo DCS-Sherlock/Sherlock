@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.*;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.intBitsToFloat;
 
-class AtomicFloat extends Number {
+public class AtomicFloat extends Number {
 
 	private AtomicInteger bits;
 

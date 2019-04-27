@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Template;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;

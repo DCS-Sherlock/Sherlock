@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 
 import java.lang.reflect.InvocationTargetException;

@@ -2,13 +2,15 @@ package uk.ac.warwick.dcs.sherlock.engine.report;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.report.IReportGenerator;
+import uk.ac.warwick.dcs.sherlock.api.report.IReportManager;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultJob;
+import uk.ac.warwick.dcs.sherlock.api.component.IResultJob;
 
 import java.util.*;
 
@@ -17,7 +19,7 @@ import java.util.*;
  * <p>
  * It takes all possible inputs that may be relevant from postprocessing, and handles requests for fileReportMap; sending the relevant information to the actual report generator in use.
  */
-public class ReportManager {
+public class ReportManager implements IReportManager<SubmissionMatchGroup, SubmissionSummary> {
 
 	/**
 	 * Logger instance
@@ -129,6 +131,7 @@ public class ReportManager {
 	 * To be called by the web report pages. Gets a list of submission summaries.
 	 * @return a list of the matching SubmissionSummaries, each containing their ids, overall scores, and a list of the submissions that they were matched with.
 	 */
+	@Override
 	public List<SubmissionSummary> GetMatchingSubmissions() {
 		ArrayList<SubmissionSummary> output = new ArrayList<>();
 
@@ -169,6 +172,7 @@ public class ReportManager {
 	 * @param submissions The submissions to compare (should be a list of two submissions only; any submissions beyond the first two are ignored)
 	 * @return A list of SubmissionMatchGroup objects which contain lists of SubmissionMatch objects; each have ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs.
 	 */
+	@Override
 	public List<SubmissionMatchGroup> GetSubmissionComparison(List<ISubmission> submissions) {
 		if (submissions.stream().anyMatch(ISubmission::hasParent)) {
 			// one of the submissions is not top level, don't make reports on non-top level submission.
@@ -190,7 +194,7 @@ public class ReportManager {
 
 		List<ICodeBlockGroup> relevantGroups = GetCodeBlockGroups(submissions);
 
-		return reportGenerator.GenerateSubmissionComparison(submissions, relevantGroups);
+		return reportGenerator.generateSubmissionComparison(submissions, relevantGroups);
 	}
 
 	/**
@@ -199,6 +203,7 @@ public class ReportManager {
 	 * @param submission The submission to generate the report for.
 	 * @return A tuple. The key contains a list of SubmissionMatchGroup objects which contain lists of SubmissionMatch objects; each have objects which contain ids of the two matching files, a score for the match, a reason from the DetectionType, and the line numbers in each file where the match occurs. The value is the report summary.
 	 */
+	@Override
 	public ITuple<List<SubmissionMatchGroup>, String> GetSubmissionReport(ISubmission submission) {
 
 		if (submission.hasParent()) {
@@ -218,7 +223,7 @@ public class ReportManager {
 		List<ICodeBlockGroup> relevantGroups = GetCodeBlockGroups(submission);
 
 		//Generate and return the report.
-		return reportGenerator.GenerateSubmissionReport(submission, relevantGroups, submissionScores.get(submission.getId()));
+		return reportGenerator.generateSubmissionReport(submission, relevantGroups, submissionScores.get(submission.getId()));
 	}
 
 }

@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
@@ -129,7 +129,7 @@ public class LineMapper {
 
     /**
      * This function needs to be called after all the matches have been added
-     * using the "AddMatch" method, it will then fill in the gaps from the start
+     * using the "addMatch" method, it will then fill in the gaps from the start
      * line number to the end line number for each code block.
      *
      * e.g. if there was a match from lines 2-4, the previous method would add

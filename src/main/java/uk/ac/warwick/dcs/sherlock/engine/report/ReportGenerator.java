@@ -1,22 +1,23 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+import uk.ac.warwick.dcs.sherlock.api.report.IReportGenerator;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
 
 import java.util.*;
 
-public class ReportGenerator implements IReportGenerator {
+public class ReportGenerator implements IReportGenerator<SubmissionMatchGroup> {
 
 	ReportGenerator() {
 	}
 
 	@Override
-	public List<SubmissionMatchGroup> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups) {
+	public List<SubmissionMatchGroup> generateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups) {
 		Map<DetectionType, SubmissionMatchGroup> matchGroupMap = new HashMap<>();
 
 		//Create a SubmissionMatch object for each CodeBlockGroup in the task that is relevant to either submission
@@ -47,7 +48,7 @@ public class ReportGenerator implements IReportGenerator {
 
 				//Add the SubmissionMatch to the appropriate SubmissionMatchGroup; create a new one if it doesn't exist.
 				if (matchGroupMap.get(detectionType) != null)
-					matchGroupMap.get(detectionType).AddMatch(new SubmissionMatch(reason, items));
+					matchGroupMap.get(detectionType).addMatch(new SubmissionMatch(reason, items));
 				else {
 					List<SubmissionMatch> matchList = new ArrayList<>();
 					matchList.add(new SubmissionMatch(reason, items));
@@ -62,7 +63,7 @@ public class ReportGenerator implements IReportGenerator {
 	}
 
 	@Override
-	public ITuple<List<SubmissionMatchGroup>, String> GenerateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups, float subScore) {
+	public ITuple<List<SubmissionMatchGroup>, String> generateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups, float subScore) {
 		Map<DetectionType, SubmissionMatchGroup> matchGroupMap = new HashMap<>();
 
 		//The report summary - if there was no plagiarism detected, codeBlockGroups will be empty, and this is the default result in that case.
@@ -124,7 +125,7 @@ public class ReportGenerator implements IReportGenerator {
 
 				//Add the SubmissionMatch to the appropriate SubmissionMatchGroup; create a new one if it doesn't exist.
 				if (matchGroupMap.get(detectionType) != null)
-					matchGroupMap.get(detectionType).AddMatch(new SubmissionMatch(reason, items));
+					matchGroupMap.get(detectionType).addMatch(new SubmissionMatch(reason, items));
 				else {
 					List<SubmissionMatch> matchList = new ArrayList<>();
 					matchList.add(new SubmissionMatch(reason, items));

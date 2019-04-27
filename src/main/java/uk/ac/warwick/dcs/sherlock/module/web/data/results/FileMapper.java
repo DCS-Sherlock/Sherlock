@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;

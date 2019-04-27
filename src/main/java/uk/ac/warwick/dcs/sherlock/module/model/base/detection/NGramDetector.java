@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.PairwiseDetector;

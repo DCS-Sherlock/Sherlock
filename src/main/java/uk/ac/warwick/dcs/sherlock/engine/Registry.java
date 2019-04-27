@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import uk.ac.warwick.dcs.sherlock.api.IRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;

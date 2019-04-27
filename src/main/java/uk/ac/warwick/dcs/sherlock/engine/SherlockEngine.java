@@ -9,17 +9,17 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.util.Side;
-import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
-import uk.ac.warwick.dcs.sherlock.engine.executor.PoolExecutor;
-import uk.ac.warwick.dcs.sherlock.engine.storage.IStorageWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.storage.base.BaseStorage;
+import uk.ac.warwick.dcs.sherlock.api.executor.IExecutor;
+import uk.ac.warwick.dcs.sherlock.engine.executor.BaseExecutor;
+import uk.ac.warwick.dcs.sherlock.api.storage.IStorageWrapper;
+import uk.ac.warwick.dcs.sherlock.engine.storage.BaseStorage;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -176,7 +176,7 @@ public class SherlockEngine {
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
 		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
-		SherlockEngine.executor = new PoolExecutor();
+		SherlockEngine.executor = new BaseExecutor();
 
 		try {
 			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");

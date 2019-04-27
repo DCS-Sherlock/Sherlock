@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 
 import java.util.*;
 

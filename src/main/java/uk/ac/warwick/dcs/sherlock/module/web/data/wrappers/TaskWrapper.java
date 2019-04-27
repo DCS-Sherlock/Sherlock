@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
-import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.api.component.ITask;
 
 import java.util.ArrayList;
 import java.util.List;

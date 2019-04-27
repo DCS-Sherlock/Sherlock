@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 
 /**
  * Class to specify an individual detection type, these are used to mark detected blocks, so that verbose reports can be generated

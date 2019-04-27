@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
+import uk.ac.warwick.dcs.sherlock.engine.executor.JobStatus;
 
 import java.util.*;
 import java.util.concurrent.*;

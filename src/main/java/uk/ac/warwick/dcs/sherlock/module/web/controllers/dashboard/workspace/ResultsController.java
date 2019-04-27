@@ -5,16 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.warwick.dcs.sherlock.api.component.IJob;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.executor.IJobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
-import uk.ac.warwick.dcs.sherlock.module.web.data.results.SubmissionResultsData;
-import uk.ac.warwick.dcs.sherlock.module.web.data.results.JobResultsData;
-import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
-import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
-import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.WorkspaceRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.JobResultsData;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.results.SubmissionResultsData;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.WorkspaceWrapper;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,7 +40,7 @@ public class ResultsController {
             Model model,
             @ModelAttribute("results") JobResultsData results
     ) {
-        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+        IJobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
 
         if (status == null) {
             model.addAttribute("finished", true);
@@ -61,7 +62,7 @@ public class ResultsController {
             @ModelAttribute("results") JobResultsData results
     ) {
         JSONObject result = new JSONObject();
-        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+        IJobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
 
         if (status == null) {
             result.put("message", "Finished");
@@ -109,7 +110,7 @@ public class ResultsController {
             @PathVariable(value="jobid") long jobid,
             @ModelAttribute("results") JobResultsData results
     ) {
-        JobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
+        IJobStatus status = SherlockEngine.executor.getJobStatus(results.getJob());
 
         String msg = "";
         if (status != null) {

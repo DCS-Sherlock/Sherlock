@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.api.model.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 
 import java.util.*;
 

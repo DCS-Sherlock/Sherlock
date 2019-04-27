@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.api.annotation;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
 
 import java.lang.reflect.Field;
 

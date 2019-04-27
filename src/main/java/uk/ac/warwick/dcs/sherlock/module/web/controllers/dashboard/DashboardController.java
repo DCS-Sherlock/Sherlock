@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import uk.ac.warwick.dcs.sherlock.api.component.IWorkspace;
+import uk.ac.warwick.dcs.sherlock.api.executor.IJobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.component.IWorkspace;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  * The controller that deals with the dashboard homepage
@@ -48,11 +48,11 @@ public class DashboardController {
     ) throws NotAjaxRequest {
         if (!isAjax) throw new NotAjaxRequest("/dashboard/index");
 
-        List<JobStatus> list = SherlockEngine.executor.getAllJobStatuses();
+        List<IJobStatus> list = SherlockEngine.executor.getAllJobStatuses();
         list = list.stream().filter(j -> j.getId() == id).collect(Collectors.toList());
 
         if (list.size() == 1) {
-            JobStatus jobStatus = list.get(0);
+            IJobStatus jobStatus = list.get(0);
 
             if (jobStatus.isFinished()) {
                 SherlockEngine.executor.dismissJob(jobStatus);

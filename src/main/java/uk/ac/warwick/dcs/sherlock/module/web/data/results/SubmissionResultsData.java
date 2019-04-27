@@ -1,23 +1,22 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.IJob;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.exception.ResultJobUnsupportedException;
+import uk.ac.warwick.dcs.sherlock.api.report.IReportManager;
+import uk.ac.warwick.dcs.sherlock.api.report.ISubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.exception.ResultJobUnsupportedException;
-import uk.ac.warwick.dcs.sherlock.engine.report.ReportManager;
-import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatchGroup;
-import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.SubmissionScore;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 /**
  * Stores all the data for the compare submissions page or the submission report page
@@ -78,7 +77,7 @@ public class SubmissionResultsData {
         this.matches = new ArrayList<>();
         this.submissions = new ArrayList<>();
 
-        ReportManager report = null;
+        IReportManager report = null;
         try {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
@@ -94,19 +93,18 @@ public class SubmissionResultsData {
             this.summary = result.getValue();
 
             //Loop through the submission groups, adding all the matches
-            result.getKey().forEach(group -> group.GetMatches().forEach(m -> this.matches.add(new FileMatch(m))));
+            result.getKey().forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
 
             //Fetch the submission summary for this submission
-            List<SubmissionSummary> summaryList = report.GetMatchingSubmissions()
-                    .stream().filter(s -> s.getPersistentId() == submission1.getId())
-                    .collect(Collectors.toList());
+            List<ISubmissionSummary> summaryList = report.GetMatchingSubmissions();
+            summaryList = summaryList.stream().filter(s -> s.getPersistentId() == submission1.getId()).collect(Collectors.toList());
 
             //Create a map linking submission ids to their names
             Map<Long, String> idToName = new HashMap<>();
             job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
             if (summaryList.size() == 1) {
-                SubmissionSummary summary = summaryList.get(0);
+                ISubmissionSummary summary = summaryList.get(0);
 
                 for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
                     String matchName = idToName.getOrDefault(tuple.getKey(), "Deleted");
@@ -144,7 +142,7 @@ public class SubmissionResultsData {
         this.submissions = new ArrayList<>();
         this.score = 0;
 
-        ReportManager report = null;
+        IReportManager report = null;
         try {
             report = SherlockEngine.storage.getReportGenerator(job.getLatestResult());
         } catch (ResultJobUnsupportedException e) {
@@ -159,7 +157,7 @@ public class SubmissionResultsData {
 
             //Loop through the submission groups, adding all the matches
             List<SubmissionMatchGroup> list = report.GetSubmissionComparison(compare);
-            list.forEach(group -> group.GetMatches().forEach(m -> this.matches.add(new FileMatch(m))));
+            list.forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
         }
 
         //Loop through the matches, setting the ids

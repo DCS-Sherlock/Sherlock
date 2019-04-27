@@ -2,10 +2,10 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.engine.executor.IExecutor;
+import uk.ac.warwick.dcs.sherlock.api.executor.IExecutor;
 
 import java.lang.reflect.Field;
 import java.util.*;
