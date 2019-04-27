@@ -169,6 +169,10 @@ task deps(type: Copy) {
 }
 
 jar {
+    from sourceSets.main.output
+    include 'uk/ac/warwick/dcs/sherlock/api/**'
+    include 'uk/ac/warwick/dcs/sherlock/module/model/base/**'
+
     enabled = true //enable to build a standard jar
     destinationDir = file("$buildDir/out")
     classifier = 'dev'
