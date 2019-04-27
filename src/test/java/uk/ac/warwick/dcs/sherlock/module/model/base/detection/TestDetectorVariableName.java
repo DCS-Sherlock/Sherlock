@@ -19,7 +19,7 @@ class TestDetectorVariableName {
 	@Test
 	void getDisplayName() {
 		VariableNameDetector t = new VariableNameDetector();
-		assertEquals("Test Detector Base", t.getDisplayName());
+		assertEquals("Variable Name Detector", t.getDisplayName());
 	}
 
 	@Test
