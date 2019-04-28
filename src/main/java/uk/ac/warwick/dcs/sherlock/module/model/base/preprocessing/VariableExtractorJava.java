@@ -33,7 +33,7 @@ public class VariableExtractorJava implements IAdvancedPreProcessor<JavaLexer> {
 			}
 		}, parser.compilationUnit());
 
-		System.out.println("field -> " + fields.toString());
+		//System.out.println("field -> " + fields.toString());
 		return fields;
 	}
 }
