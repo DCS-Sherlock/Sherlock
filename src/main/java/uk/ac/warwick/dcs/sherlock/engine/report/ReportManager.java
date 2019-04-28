@@ -111,6 +111,42 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 	}
 
 	/**
+	 * Calculates the relative score between two submissions, by taking the average of the maximum relative scores between each individual file within them.
+	 * NOTE FOR FUTURE DEVS: This is not necessarily the best way to calculate this score, and it should probably be handled elsewhere, so please consider changing it.
+	 * @param sub_id1 the id of the first submission.
+	 * @param sub_id2 the id of the second submission.
+	 * @return a float relative score between the two submissions.
+	 */
+	private float GetSubmissionRelativeScore(long sub_id1, long sub_id2) {
+		//use to calculate the average of the max relative file scores
+		float total_max_score_tally = 0f;
+		int file_count = 0;
+
+		//Go through all the files in the first submission
+		for(long id1 : submissionFileMap.get(sub_id1)) {
+			//For each file, look at its relative score with each file in the other submission and get the largest
+			float max_score = 0f;
+			for(long id2 : submissionFileMap.get(sub_id2)) {
+				Tuple<Long, Long> id_tuple = new Tuple<>(id1, id2);
+
+				//If there's a relative score between these files, retrieve it, otherwise set it to 0.
+				float score = 0f;
+				if(relativeFileScores.containsKey(id_tuple))
+					score = relativeFileScores.get(id_tuple);
+
+				if(score > max_score)
+					max_score = score;
+			}
+
+			total_max_score_tally += max_score;
+			file_count++;
+		}
+
+		//Return the average maximum score.
+		return total_max_score_tally / file_count;
+	}
+
+	/**
 	 * Fill in submissionFileMap based off of the contents of fileMap.
 	 */
 	private void FillSubmissionFileMap() {
@@ -136,7 +172,6 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 		ArrayList<SubmissionSummary> output = new ArrayList<>();
 
 		for(Long submissionId : submissionFileMap.keySet()) {
-			Random tempRandom = new Random();
 			float overallScore = submissionScores.get(submissionId);
 			SubmissionSummary submissionSummary = new SubmissionSummary(submissionId, overallScore);
 			ArrayList<Tuple<Long, Float>> matchingSubs = new ArrayList<>();
@@ -149,9 +184,9 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 					for(ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
 						long currentId = codeBlock.getFile().getSubmission().getId();
 						if(currentId != submissionId && !matchingSubIds.contains(currentId)) {
-							//TODO: need to add the proper relative score somehow
-							float relativeScore = tempRandom.nextFloat();
-							//relativeScore = results.getFileResults().stream().
+							//Get the relative submission score
+							float relativeScore = GetSubmissionRelativeScore(submissionId, currentId);
+
 							matchingSubs.add(new Tuple<>(currentId, relativeScore));
 							matchingSubIds.add(currentId);
 						}
