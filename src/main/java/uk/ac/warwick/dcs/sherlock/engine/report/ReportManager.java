@@ -120,7 +120,7 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 	private float GetSubmissionRelativeScore(long sub_id1, long sub_id2) {
 		//use to calculate the average of the max relative file scores
 		float total_max_score_tally = 0f;
-		float file_count = 0;
+		int file_count = 0;
 
 		//Go through all the files in the first submission
 		for(long id1 : submissionFileMap.get(sub_id1)) {
@@ -147,7 +147,7 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 			return 0f;
 
 		//Return the average maximum score.
-		return total_max_score_tally / file_count;
+		return total_max_score_tally / (float)file_count;
 	}
 
 	/**
