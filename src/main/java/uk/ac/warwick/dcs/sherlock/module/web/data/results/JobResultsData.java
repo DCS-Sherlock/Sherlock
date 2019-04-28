@@ -133,11 +133,11 @@ public class JobResultsData {
 	}
 
 	/**
-	 * Get the number of submissions in this job
+	 * Get the number of files in this job
 	 *
-	 * @return the number of submissions
+	 * @return the number of files
 	 */
-	public int getSubmissionCount() {
+	public int getFileCount() {
 		return this.job.getFiles().length;
 	}
 
