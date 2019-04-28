@@ -21,17 +21,18 @@ public interface IDetector<T extends DetectorWorker> {
 	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
+	 * Fetches the description string for the detector
+	 *
+	 * @return the description
+	 */
+	String getDescription();
+
+	/**
 	 * Fetches the display name for the detector
 	 *
 	 * @return the display name
 	 */
 	String getDisplayName();
-
-	/**
-	 * Fetches the description string for the detector
-	 * @return
-	 */
-	String getDescription();
 
 	/**
 	 * Specify the preprocessors required for this detector.

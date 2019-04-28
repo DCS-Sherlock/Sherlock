@@ -10,6 +10,6 @@ public class VariableNameDetector extends PairwiseDetector<VariableNameDetectorW
 	public int testParam;*/
 
 	public VariableNameDetector() {
-		super("Variable Name Detector", VariableNameDetectorWorker.class, PreProcessingStrategy.of("variables", VariableExtractor.class));
+		super("Variable Name Detector", "Detector which scores files based on how many variables are exactly duplicated between them", VariableNameDetectorWorker.class, PreProcessingStrategy.of("variables", VariableExtractor.class));
 	}
 }

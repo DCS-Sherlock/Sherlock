@@ -5,6 +5,9 @@ import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Interface for an object which defines a detection job. Stores, files, parameters, tasks (detectors) and the job results
+ */
 public interface IJob {
 
 	/**

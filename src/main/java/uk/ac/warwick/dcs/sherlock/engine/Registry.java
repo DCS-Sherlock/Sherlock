@@ -370,7 +370,7 @@ public class Registry implements IRegistry {
 
 		DetectorData data = new DetectorData();
 		data.name = tester.getDisplayName();
-		data.desc = "NOT YET IMPLEMENTED, SORRY";
+		data.desc = tester.getDescription();
 		data.strategies = tester.getPreProcessors();
 		data.resultClass = resultsClass;
 

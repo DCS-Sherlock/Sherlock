@@ -21,10 +21,10 @@ public class VariableExtractorJava implements IAdvancedPreProcessor<JavaLexer> {
 
 		ParseTreeWalker.DEFAULT.walk(new JavaParserBaseListener() {
 			//globals
-			/*@Override
+			@Override
 			public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
-				fields.add(new IndexedString(ctx.start.getLine(), ctx.getText()));
-			}*/
+				fields.add(new IndexedString(ctx.start.getLine(), ctx.getText().split("=")[0]));
+			}
 
 			//locals
 			@Override
@@ -33,7 +33,7 @@ public class VariableExtractorJava implements IAdvancedPreProcessor<JavaLexer> {
 			}
 		}, parser.compilationUnit());
 
-		//System.out.println("field -> " + fields.toString());
+		System.out.println("field -> " + fields.toString());
 		return fields;
 	}
 }

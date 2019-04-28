@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.api.component;
 
 import java.util.*;
 
+/**
+ * Stores the results of an individual file for an individual task (detector), is used as child of {@link IResultFile}
+ */
 public interface IResultTask {
 
 	void addContainingBlock(ICodeBlockGroup blockGroup);

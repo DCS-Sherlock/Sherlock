@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
@@ -11,8 +10,8 @@ import java.util.*;
 
 public class SimpleObjectEqualityPostProcessor implements IPostProcessor<SimpleObjectEqualityRawResult> {
 
-	@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
-	public int testParam;
+	/*@AdjustableParameter (name = "Test Param", defaultValue = 0, minimumBound = 0, maxumumBound = 10, step = 1)
+	public int testParam;*/
 
 	@Override
 	public ModelTaskProcessedResults processResults(List<ISourceFile> files, List<SimpleObjectEqualityRawResult> rawResults) {
