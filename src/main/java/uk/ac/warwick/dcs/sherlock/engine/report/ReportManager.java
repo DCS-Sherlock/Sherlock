@@ -99,14 +99,14 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 	}
 
 	/**
-	 * Retrieve every ICodeBlockGroup with a file from at least one of the specified submissions.
+	 * Retrieve every ICodeBlockGroup with a file from both of the specified submissions.
 	 * @param submissions the submissions to find relevant ICodeBlockGroups for.
 	 * @return a list of relevant ICodeBlockGroups.
 	 */
 	private List<ICodeBlockGroup> GetCodeBlockGroups(List<ISubmission> submissions) {
 		List<ICodeBlockGroup> codeBlockGroups = new ArrayList<>();
 		this.results.getFileResults().stream().flatMap(file -> file.getTaskResults().stream()).filter(task -> task.getContainingBlocks() != null)
-				.flatMap(task -> task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submissions.get(0).getId()) || group.submissionIdPresent(submissions.get(0).getId()))).forEach(group -> codeBlockGroups.add(group));
+				.flatMap(task -> task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submissions.get(0).getId()) && group.submissionIdPresent(submissions.get(0).getId()))).forEach(group -> codeBlockGroups.add(group));
 		return codeBlockGroups;
 	}
 
