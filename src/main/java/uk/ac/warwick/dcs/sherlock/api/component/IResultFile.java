@@ -8,7 +8,7 @@ import java.util.*;
 public interface IResultFile {
 
 	/**
-	 * Adds a score of the instance file against another file
+	 * Adds an aggregate score from all tasks of the instance file against another file
 	 *
 	 * @param file  file score is against
 	 * @param score score value
@@ -32,7 +32,7 @@ public interface IResultFile {
 	ISourceFile getFile();
 
 	/**
-	 * Gets the score of the instance file vs the passed file, the file must have been registered using {@link #addFileScore(ISourceFile, float)}
+	 * Gets the aggregate score from all tasks of the instance file vs the passed file, the file must have been registered using {@link #addFileScore(ISourceFile, float)}
 	 *
 	 * @param file file score is against
 	 *
@@ -41,14 +41,14 @@ public interface IResultFile {
 	float getFileScore(ISourceFile file);
 
 	/**
-	 * Returns the full map of stored file vs instance file scores
+	 * Returns the full map of stored file vs instance file aggregate score from all tasks
 	 *
 	 * @return map of scores
 	 */
 	Map<ISourceFile, Float> getFileScores();
 
 	/**
-	 * Gets the overall aggregate score for the file
+	 * Gets the overall aggregate score for all tasks and other files for the instance file
 	 *
 	 * @return score
 	 */
