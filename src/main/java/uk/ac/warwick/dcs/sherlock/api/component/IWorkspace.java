@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.api.component;
 
 import java.util.*;
 
+/**
+ * Workspace object groups, submission, jobs, results. Is top level access to all database objects
+ */
 public interface IWorkspace {
 
 	/**

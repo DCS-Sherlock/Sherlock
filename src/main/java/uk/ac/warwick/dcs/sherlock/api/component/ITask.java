@@ -6,18 +6,45 @@ import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawR
 
 import java.util.*;
 
+/**
+ * Interface for object which stores an individual detector used in a detection job, including the parameter mapping for the specific task.
+ */
 public interface ITask {
 
+	/**
+	 * Fetches the detector for this task
+	 * @return detector class
+	 */
 	Class<? extends IDetector> getDetector();
 
+	/**
+	 * Get the job this task is a child of
+	 * @return job instance
+	 */
 	IJob getJob();
 
+	/**
+	 * Gets the mapping of the adjustable parameters for this detector run
+	 * @return mapping of reference string to value
+	 */
 	Map<String, Float> getParameterMapping();
 
+	/**
+	 * Returns the unique id for this task
+	 * @return id
+	 */
 	long getPersistentId();
 
+	/**
+	 * Returns the raw results object produced by the tasks detector
+	 * @return list of the raw results
+	 */
 	List<AbstractModelTaskRawResult> getRawResults();
 
+	/**
+	 * Sets the raw results to be stored and processed
+	 * @param rawResults raw results list
+	 */
 	void setRawResults(List<AbstractModelTaskRawResult> rawResults);
 
 	/**
@@ -27,6 +54,10 @@ public interface ITask {
 	 */
 	WorkStatus getStatus();
 
+	/**
+	 * Does the task have raw results saved?
+	 * @return has results
+	 */
 	boolean hasResults();
 
 	/**

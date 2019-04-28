@@ -45,12 +45,29 @@ public interface IResultTask {
 	 */
 	float getFileScore(ISourceFile file);
 
+	/**
+	 * Returns the full map of stored file vs instance file score for the task
+	 *
+	 * @return map of scores
+	 */
 	Map<ISourceFile, Float> getFileScores();
 
+	/**
+	 * Get the task this objects stores results for
+	 * @return Task instance
+	 */
 	ITask getTask();
 
+	/**
+	 * Fetches the overall aggregate score for the instance file for the task
+	 * @return score
+	 */
 	float getTaskScore();
 
+	/**
+	 * Sets the overall aggregate score for the instance file for the task
+	 * @param score score to set
+	 */
 	void setTaskScore(float score);
 
 }
