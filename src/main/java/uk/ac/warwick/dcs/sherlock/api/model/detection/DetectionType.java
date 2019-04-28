@@ -25,7 +25,7 @@ public class DetectionType {
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_VARIABLE_NAME", "Variable Name", "This variable has been copied between each file.", 0.1));
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_METHOD_NAME", "Method Name", "The methods in each file are identical in content but have different names.", 0.8));
 		SherlockRegistry.registerDetectionType(new DetectionType("BASE_COPIED_BLOCK", "Copied Block", "The blocks in these files are completely identical to each other.", 1.0));
-		SherlockRegistry.registerDetectionType(new DetectionType("BASE_BODY_REPLACE_CALL", "BASE_BODY_REPLACE_CALL", "BASE_BODY_REPLACE_CALL desc.....", 0.6));
+		SherlockRegistry.registerDetectionType(new DetectionType("BASE_BODY_REPLACE_CALL", "Function Body replace Call", "The code in these sections are effectively identical; the function called in one file is identical to the highlighted section in the other.", 0.6));
 	}
 
 	/**
