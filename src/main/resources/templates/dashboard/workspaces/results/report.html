@@ -88,7 +88,13 @@
                     <div id="matches-table-container" class="border border-primary sticky-matches mt-2 d-none">
                         <table class="table table-hover table-borderless mb-0">
                             <tbody>
-                            <th:block th:each="match : ${wrapper.getMatches()}">
+                            <th:block th:each="group : ${wrapper.getMatches()}">
+                                <tr>
+                                    <td colspan="2">
+                                        <strong><span th:text="${group.key}"></span></strong>
+                                    </td>
+                                </tr>
+                                <th:block th:each="match : ${group.value}">
                                 <tr th:id="${'row-'+match.getId()}">
                                     <th class="align-middle">
                                         <div class="match-colour" th:style="${'background-color:'+match.getColour()}"></div>
@@ -100,6 +106,7 @@
                                         <button class="btn btn-primary btn-sm d-none" th:text="#{link.hide}" data-js="match-hide" th:data-js-target="${match.getId()}"></button>
                                     </td>
                                 </tr>
+                                </th:block>
                             </th:block>
                             <tr th:if="${wrapper.getMatches().empty}">
                                 <th>
@@ -202,7 +209,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <th:block th:each="match : ${wrapper.getMatches()}">
+                                        <th:block th:each="group : ${wrapper.getMatches()}">
+                                            <tr>
+                                                <td colspan="3">
+                                                    <strong><span th:text="${group.key}"></span></strong>
+                                                </td>
+                                            </tr>
+                                            <th:block th:each="match : ${group.value}">
                                             <tr>
                                                 <td>
                                                     <span th:text="${match.getReason()}"></span>
@@ -220,6 +233,7 @@
                                                     </th:block>
                                                 </td>
                                             </tr>
+                                            </th:block>
                                         </th:block>
                                         <tr th:if="${wrapper.getMatches().empty}">
                                             <th colspan="3">

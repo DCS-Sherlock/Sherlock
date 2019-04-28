@@ -43,9 +43,9 @@ public class SubmissionResultsData {
     private ISubmission submission2;
 
     /**
-     * The list of matches between the submissions
+     * The list of matches between the submissions, grouped into larger groups
      */
-    private List<FileMatch> matches;
+    private Map<String, List<FileMatch>> matches;
 
     /**
      * The list of submissions matched to this one
@@ -74,8 +74,9 @@ public class SubmissionResultsData {
         this.job = job;
         this.submission1 = submission;
 
-        this.matches = new ArrayList<>();
+        this.matches = new HashMap<>();
         this.submissions = new ArrayList<>();
+        this.score = 0;
 
         IReportManager report = null;
         try {
@@ -93,7 +94,11 @@ public class SubmissionResultsData {
             this.summary = result.getValue();
 
             //Loop through the submission groups, adding all the matches
-            result.getKey().forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
+            for (SubmissionMatchGroup group : result.getKey()){
+                this.matches.put(group.getReason(), new ArrayList<>());
+                group.getMatches().forEach(m -> this.matches.get(group.getReason()).add(new FileMatch(m)));
+            }
+//            result.getKey().forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
 
             //Fetch the submission summary for this submission
             List<ISubmissionSummary> summaryList = report.GetMatchingSubmissions();
@@ -106,6 +111,8 @@ public class SubmissionResultsData {
             if (summaryList.size() == 1) {
                 ISubmissionSummary summary = summaryList.get(0);
 
+                this.score = summary.getScore() * 100;
+
                 for (ITuple<Long, Float> tuple : summary.getMatchingSubmissions()) {
                     String matchName = idToName.getOrDefault(tuple.getKey(), "Deleted");
 
@@ -115,9 +122,12 @@ public class SubmissionResultsData {
         }
 
         //Loop through the matches, setting the ids
-        for (int i = 0; i < matches.size(); i++) {
-            FileMatch match = matches.get(i);
-            match.setId(i);
+        int i = 0;
+        for (Map.Entry<String, List<FileMatch>> entry : this.matches.entrySet()) {
+            for (FileMatch match : entry.getValue()) {
+                match.setId(i);
+                i++;
+            }
         }
 
         //Initialise the file mapper using the list of matches
@@ -138,7 +148,7 @@ public class SubmissionResultsData {
         this.submission1 = submission1;
         this.submission2 = submission2;
 
-        this.matches = new ArrayList<>();
+        this.matches = new HashMap<>();
         this.submissions = new ArrayList<>();
         this.score = 0;
 
@@ -157,13 +167,20 @@ public class SubmissionResultsData {
 
             //Loop through the submission groups, adding all the matches
             List<SubmissionMatchGroup> list = report.GetSubmissionComparison(compare);
-            list.forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
+            for (SubmissionMatchGroup group : list){
+                this.matches.put(group.getReason(), new ArrayList<>());
+                group.getMatches().forEach(m -> this.matches.get(group.getReason()).add(new FileMatch(m)));
+            }
+//            list.forEach(group -> group.getMatches().forEach(m -> this.matches.add(new FileMatch(m))));
         }
 
         //Loop through the matches, setting the ids
-        for (int i = 0; i < matches.size(); i++) {
-            FileMatch match = matches.get(i);
-            match.setId(i);
+        int i = 0;
+        for (Map.Entry<String, List<FileMatch>> entry : this.matches.entrySet()) {
+            for (FileMatch match : entry.getValue()) {
+                match.setId(i);
+                i++;
+            }
         }
 
         //Initialise the file mapper using the list of matches
@@ -202,7 +219,7 @@ public class SubmissionResultsData {
      *
      * @return the list
      */
-    public List<FileMatch> getMatches() {
+    public Map<String,List<FileMatch>> getMatches() {
         return matches;
     }
 
@@ -252,8 +269,10 @@ public class SubmissionResultsData {
     public String getMatchesJSON() {
         JSONObject object = new JSONObject();
 
-        for (FileMatch match : matches) {
-            object.put(""+match.getId(), match.toJSON());
+        for (Map.Entry<String, List<FileMatch>> entry : this.matches.entrySet()) {
+            for (FileMatch match : entry.getValue()) {
+                object.put("" + match.getId(), match.toJSON());
+            }
         }
 
         return object.toString();
@@ -266,17 +285,19 @@ public class SubmissionResultsData {
     public Map<ISubmission, SortedMap<Long, ISourceFile>> getMatchedFiles() {
         Map<ISubmission, SortedMap<Long, ISourceFile>> map = new HashMap<>();
 
-        for (FileMatch match : matches) {
-            for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
-                ISourceFile entryFile = entry.getKey();
+        for (Map.Entry<String, List<FileMatch>> group : this.matches.entrySet()) {
+            for (FileMatch match : group.getValue()) {
+                for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
+                    ISourceFile entryFile = entry.getKey();
 
-                if (!entryFile.getSubmission().equals(this.submission1)) {
-                    if (!map.containsKey(entryFile.getSubmission())) {
-                        map.put(entryFile.getSubmission(), new TreeMap<>());
-                    }
+                    if (!entryFile.getSubmission().equals(this.submission1)) {
+                        if (!map.containsKey(entryFile.getSubmission())) {
+                            map.put(entryFile.getSubmission(), new TreeMap<>());
+                        }
 
-                    if (!map.get(entryFile.getSubmission()).containsKey(entryFile.getPersistentId())) {
-                        map.get(entryFile.getSubmission()).put(entryFile.getPersistentId(), entryFile);
+                        if (!map.get(entryFile.getSubmission()).containsKey(entryFile.getPersistentId())) {
+                            map.get(entryFile.getSubmission()).put(entryFile.getPersistentId(), entryFile);
+                        }
                     }
                 }
             }

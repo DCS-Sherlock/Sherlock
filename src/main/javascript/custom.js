@@ -453,32 +453,32 @@ function submissionResultsPage() {
                     });
                 }
 
-                //Listens for click events on highlighted lines
-                $(".line-highlight").unbind();
-                $(".line-highlight").click(function(e) {
-                    //Only run if there is no active match
-                    if (active < 0) {
-                        var input = $(this);
-
-                        var lineNum = input.attr("data-range"); //fetch the line element
-                        var fileId = input.closest("pre").attr("data-file-id"); //get the file id of the line
-                        var matchId = lineMap[fileId]['visible'][lineNum];  //get the match of the line
-
-                        if (matchId != null) {
-                            showMatch(matchId);
-                        }
-
-                        //Stops the [data-js='comparison'] event being called which
-                        //would undo the effects of this event by hiding the match
-                        //details
-                        e.stopPropagation();
-                    }
-                });
-
                 hideAll();
                 loaded++;
                 printEvent();
             }
+
+            //Listens for click events on highlighted lines
+            $(".line-highlight").unbind();
+            $(".line-highlight").click(function(e) {
+                //Only run if there is no active match
+                if (active < 0) {
+                    var input = $(this);
+
+                    var lineNum = input.attr("data-range"); //fetch the line element
+                    var fileId = input.closest("pre").attr("data-file-id"); //get the file id of the line
+                    var matchId = lineMap[fileId]['visible'][lineNum];  //get the match of the line
+
+                    if (matchId != null) {
+                        showMatch(matchId);
+                    }
+
+                    //Stops the [data-js='comparison'] event being called which
+                    //would undo the effects of this event by hiding the match
+                    //details
+                    e.stopPropagation();
+                }
+            });
         });
 
         bind();
