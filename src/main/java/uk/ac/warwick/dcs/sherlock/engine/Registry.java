@@ -5,16 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import uk.ac.warwick.dcs.sherlock.api.registry.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectorWorker;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
+import uk.ac.warwick.dcs.sherlock.api.registry.IRegistry;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
@@ -80,6 +80,9 @@ public class Registry implements IRegistry {
 		return (ParameterizedType) type;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ITuple<Class<? extends IAdvancedPreProcessor>, Class<? extends Lexer>> getAdvancedPostProcessorForLanguage(Class<? extends IAdvancedPreProcessorGroup> group, String language) {
 		if (this.advPreProcessorRegistry.containsKey(group.getName())) {
@@ -97,15 +100,9 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
-	@Override
-	public String getDetectorDescription(Class<? extends IDetector> det) {
-		if (this.detectorRegistry.containsKey(det)) {
-			return this.detectorRegistry.get(det).desc;
-		}
-
-		return null;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public DetectionType getDetectionType(String identifier) throws UnknownDetectionTypeException {
 		if (identifier != null) {
@@ -121,6 +118,9 @@ public class Registry implements IRegistry {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<AdjustableParameterObj> getDetectorAdjustableParameters(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
@@ -130,6 +130,21 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDetectorDescription(Class<? extends IDetector> det) {
+		if (this.detectorRegistry.containsKey(det)) {
+			return this.detectorRegistry.get(det).desc;
+		}
+
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getDetectorDisplayName(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
@@ -139,6 +154,9 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<String> getDetectorLanguages(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
@@ -148,11 +166,17 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Class<? extends IDetector>> getDetectors() {
 		return this.detectorRegistry.keySet();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Class<? extends IDetector>> getDetectors(String language) {
 		if (this.languageRegistry.containsKey(language.toLowerCase())) {
@@ -162,11 +186,17 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<String> getLanguages() {
 		return this.languageRegistry.values().stream().map(v -> v.dispName).collect(Collectors.toSet());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<? extends Lexer> getLexerForStrategy(PreProcessingStrategy strategy, String language) {
 		if (strategy == null) {
@@ -220,6 +250,9 @@ public class Registry implements IRegistry {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<AdjustableParameterObj> getPostProcessorAdjustableParameters(Class<? extends IPostProcessor> postProcessor) {
 		PostProcessorData data = this.getPostProcessorData(postProcessor);
@@ -230,6 +263,9 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<AdjustableParameterObj> getPostProcessorAdjustableParametersFromDetector(Class<? extends IDetector> det) {
 		if (this.detectorRegistry.containsKey(det)) {
@@ -239,6 +275,9 @@ public class Registry implements IRegistry {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public IPostProcessor getPostProcessorInstance(Class<? extends AbstractModelTaskRawResult> rawClass) {
 		Class<? extends IPostProcessor> p = this.postProcRegistry.get(rawClass).proc;
@@ -257,6 +296,9 @@ public class Registry implements IRegistry {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean registerAdvancedPreProcessorGroup(Class<? extends IAdvancedPreProcessorGroup> preProcessorGroup) {
 		if (preProcessorGroup == null) {
@@ -273,6 +315,9 @@ public class Registry implements IRegistry {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean registerAdvancedPreProcessorImplementation(String groupClassPath, Class<? extends IAdvancedPreProcessor> preProcessor) {
 		if (groupClassPath == null || groupClassPath.equals("")) {
@@ -318,6 +363,27 @@ public class Registry implements IRegistry {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean registerDetectionType(DetectionType detectionType) {
+		if (detectionType == null) {
+			return false;
+		}
+
+		if (this.detectionTypeRegistry.containsKey(detectionType.getIdentifier())) {
+			logger.error("DetectionType object with identifier '{}' already registered", detectionType.getIdentifier());
+			return false;
+		}
+
+		this.detectionTypeRegistry.put(detectionType.getIdentifier(), detectionType);
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean registerDetector(Class<? extends IDetector> detector) {
 
@@ -356,8 +422,7 @@ public class Registry implements IRegistry {
 			resultsClass = (Class<? extends AbstractModelTaskRawResult>) getGenericClass(workerClass.getGenericSuperclass());
 		}
 		catch (ClassCastException | ClassNotFoundException | NullPointerException e) {
-			logger.error(
-					"IDetector '{}' not registered. DetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
+			logger.error("IDetector '{}' not registered. DetectorWorker '{}' has no AbstractModelTaskRawResults type (its generic parameter), this is not allowed. A generic type MUST be given",
 					detector.getName(), workerClass.getName());
 			return false;
 		}
@@ -403,6 +468,9 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean registerGeneralPreProcessor(Class<? extends IGeneralPreProcessor> preProcessor) {
 
@@ -443,6 +511,9 @@ public class Registry implements IRegistry {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean registerLanguage(String name, Class<? extends Lexer> lexer) {
 		if (name != null && !name.equals("") && lexer != null) {
@@ -467,23 +538,9 @@ public class Registry implements IRegistry {
 		return false;
 	}
 
-	@Override
-	public boolean registerDetectionType(DetectionType detectionType) {
-		if (detectionType == null) {
-			return false;
-		}
-
-		if (this.detectionTypeRegistry.containsKey(detectionType.getIdentifier())) {
-			logger.error("DetectionType object with identifier '{}' already registered", detectionType.getIdentifier());
-			return false;
-		}
-
-		this.detectionTypeRegistry.put(detectionType.getIdentifier(), detectionType);
-		return true;
-	}
-
-
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final boolean registerPostProcessor(Class<? extends IPostProcessor> postProcessor, Class<? extends AbstractModelTaskRawResult> handledResultType) {
 
@@ -569,7 +626,11 @@ public class Registry implements IRegistry {
 		return true;
 	}
 
-	//TODO: check the detection type used????????
+	/**
+	 * Analyse the loaded detector types, and compute the supported languages
+	 * <p>
+	 * TODO: consider checking the detection type used
+	 */
 	void analyseDetectors() {
 		this.detectorRegistry.forEach((k, v) -> {
 			Set<String> supportedLanguages = new HashSet<>();
@@ -589,6 +650,9 @@ public class Registry implements IRegistry {
 		});
 	}
 
+	/**
+	 * Load the detection type weightings from the config file
+	 */
 	void loadDetectionTypeWeights() {
 		if (this.detectionTypeRegistry.size() == 0) {
 			return;
@@ -664,6 +728,12 @@ public class Registry implements IRegistry {
 		return this.postProcRegistry.values().stream().filter(x -> x.proc.equals(postProcessor)).findFirst().orElse(null);
 	}
 
+	/**
+	 * Keep only elements from both sets
+	 *
+	 * @param master set1
+	 * @param s2     set2
+	 */
 	private void insersectSets(Set master, Set s2) {
 		if (master.size() == 0) {
 			master.addAll(s2);

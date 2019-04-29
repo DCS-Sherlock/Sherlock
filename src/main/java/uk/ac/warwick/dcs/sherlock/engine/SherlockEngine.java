@@ -175,8 +175,8 @@ public class SherlockEngine {
 
 		logger.info("Starting SherlockEngine on Side.{}", side.name());
 
-		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers if we extend this
-		SherlockEngine.executor = new BaseExecutor();
+		SherlockEngine.storage = new BaseStorage(); //expand to choose wrappers
+		SherlockEngine.executor = new BaseExecutor(); //expand to choose wrappers
 
 		try {
 			Field field = SherlockHelper.class.getDeclaredField("sourceFileHelper");
