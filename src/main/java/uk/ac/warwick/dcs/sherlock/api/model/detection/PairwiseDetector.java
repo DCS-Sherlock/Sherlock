@@ -14,13 +14,16 @@ import java.util.stream.*;
  */
 public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector<T> {
 
+	/**
+	 * Class object for the generic type of this detector's worker
+	 */
 	private Class<T> typeArgumentClass;
 
 	/**
 	 * {@link IDetector} implementation which automatically builds a worker for each possible combination of the source files passed
 	 *
 	 * @param displayName             user facing display name for the detector
-	 * @param typeArgumentClass       class object for the generic type of this detector
+	 * @param typeArgumentClass       class object for the generic type of this detector's worker
 	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
 	 */
 	public PairwiseDetector(String displayName, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {
@@ -32,7 +35,7 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 	 *
 	 * @param displayName             user facing display name for the detector
 	 * @param description             user facing description for the detector
-	 * @param typeArgumentClass       class object for the generic type of this detector
+	 * @param typeArgumentClass       class object for the generic type of this detector's worker
 	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
 	 */
 	public PairwiseDetector(String displayName, String description, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {

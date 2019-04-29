@@ -1,9 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
 import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -19,6 +19,9 @@ public class ModelTaskProcessedResults {
 	private Map<ISourceFile, Integer> totals;
 	private List<ICodeBlockGroup> groups;
 
+	/**
+	 * default constructor
+	 */
 	public ModelTaskProcessedResults() {
 		this.groups = new LinkedList<>();
 		this.totals = null;
