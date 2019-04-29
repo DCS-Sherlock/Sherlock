@@ -16,10 +16,25 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 
 	private Class<T> typeArgumentClass;
 
+	/**
+	 * {@link IDetector} implementation which automatically builds a worker for each possible combination of the source files passed
+	 *
+	 * @param displayName             user facing display name for the detector
+	 * @param typeArgumentClass       class object for the generic type of this detector
+	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
+	 */
 	public PairwiseDetector(String displayName, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {
 		this(displayName, "", typeArgumentClass, preProcessingStrategies);
 	}
 
+	/**
+	 * {@link IDetector} implementation which automatically builds a worker for each possible combination of the source files passed
+	 *
+	 * @param displayName             user facing display name for the detector
+	 * @param description             user facing description for the detector
+	 * @param typeArgumentClass       class object for the generic type of this detector
+	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
+	 */
 	public PairwiseDetector(String displayName, String description, Class<T> typeArgumentClass, PreProcessingStrategy... preProcessingStrategies) {
 		super(displayName, description, preProcessingStrategies);
 
@@ -50,9 +65,13 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 		return newList;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final List<T> buildWorkers(List<ModelDataItem> data) {
-		return combinations(data, 2).filter(x -> !x.get(0).getFile().getSubmission().equals(x.get(1).getFile().getSubmission())).map(x -> this.getAbstractPairwiseDetectorWorker(x.get(0), x.get(1))).filter(Objects::nonNull).collect(Collectors.toList());
+		return combinations(data, 2).filter(x -> !x.get(0).getFile().getSubmission().equals(x.get(1).getFile().getSubmission())).map(x -> this.getAbstractPairwiseDetectorWorker(x.get(0), x.get(1)))
+				.filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	/**
@@ -71,7 +90,9 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 			}
 		}
 		catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
-			ExecutorUtils.logger.error("Could not build workers for detector {}. Ensure that the detector is not an inner class and its worker class {} has a constructor matching constructor(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data)", this.getClass().getName(), this.typeArgumentClass.getName());
+			ExecutorUtils.logger
+					.error("Could not build workers for detector {}. Ensure that the detector is not an inner class and its worker class {} has a constructor matching constructor(IDetector parent, ModelDataItem file1Data, ModelDataItem file2Data)",
+							this.getClass().getName(), this.typeArgumentClass.getName());
 		}
 
 		return null;

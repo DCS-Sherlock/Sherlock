@@ -14,7 +14,7 @@ public abstract class PairwiseDetectorWorker<K extends AbstractModelTaskRawResul
 	/**
 	 * Loads data into the worker
 	 *
-	 * @param parent the owning detector
+	 * @param parent    the owning detector
 	 * @param file1Data preprocessed data for file 1
 	 * @param file2Data preprocessed data for file 2
 	 */
