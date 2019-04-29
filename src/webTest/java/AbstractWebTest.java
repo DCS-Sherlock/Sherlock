@@ -11,6 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+/*
+Class that every E2E web test should inheret from
+Contains many common functionality regarding setting up and executing tests
+ */
 public abstract class AbstractWebTest {
 
     public static String baseURL = "http://localhost:2218/";

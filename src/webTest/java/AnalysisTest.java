@@ -3,18 +3,20 @@ import Utils.AccountUtils;
 import Utils.Sleeper;
 import Utils.TemplateUtils;
 import Utils.WorkspaceUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Workspace;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnalysisTest extends AbstractWebTest {
     String nameOfTemplate = "Analysis Template";
     String nameOfWorkspace = "Analysis Workspace";
+
     @BeforeAll
     public static void setupClass() {
 
@@ -40,6 +42,7 @@ public class AnalysisTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to show that it is possible to run an analysis on uploaded files.
     @Test
     public void uploadAndRunAnalysis() {
         setSubDirectory("UploadAndRunAnalysis");

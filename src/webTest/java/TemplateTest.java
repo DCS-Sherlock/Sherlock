@@ -1,8 +1,10 @@
 import Utils.AccountUtils;
-import Utils.NavigateUtils;
 import Utils.Sleeper;
 import Utils.TemplateUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -33,6 +35,7 @@ public class TemplateTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to show that it is possible to add a template to the Sherlock system.
     @Test
     public void addNewTemplate() {
         setSubDirectory("AddTemplate");
@@ -65,6 +68,7 @@ public class TemplateTest extends AbstractWebTest {
         TemplateUtils.deleteTemplate(getSettings(), templateName);
     }
 
+    //This test is to show that a template that has been set to public is accessible to other accounts.
     @Test
     public void setPublicTemplate() {
         setSubDirectory("SetPublicTemplate");
@@ -96,6 +100,7 @@ public class TemplateTest extends AbstractWebTest {
         TemplateUtils.deleteTemplate(getSettings(), publicTemplate);
     }
 
+    //Test to show that a template can be managed and changed.
     @Test
     public void manageTemplate() {
 
@@ -138,6 +143,7 @@ public class TemplateTest extends AbstractWebTest {
         TemplateUtils.deleteTemplate(getSettings(), templateToManage);
     }
 
+    //Test to show that it is possible to delete a template from the system.
     @Test
     public void deleteTemplate() {
         TemplateUtils.navigateToTemplates(getSettings());

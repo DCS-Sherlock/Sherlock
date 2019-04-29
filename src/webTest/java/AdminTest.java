@@ -29,6 +29,7 @@ public class AdminTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to show that it is possible to add an account to the Sherlock system.
     @Test
     public void addAccount() {
         setSubDirectory("AddAccount");
@@ -69,6 +70,7 @@ public class AdminTest extends AbstractWebTest {
         AccountUtils.deleteAccount(getSettings(), newAccountEmail);
     }
 
+    //Test to shows that adding an account with an email that has already been registered will fail.
     @Test
     public void duplicateAccountFail() {
         setSubDirectory("DuplicateAccountFail");

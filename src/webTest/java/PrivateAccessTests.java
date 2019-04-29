@@ -4,7 +4,6 @@ import Utils.WorkspaceUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Template;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -21,7 +20,7 @@ public class PrivateAccessTests extends AbstractWebTest {
         AccountUtils.loginWithAdmin(getSettings());
         browser.get(baseURL);
         setSubDirectory("");
-        userPassword = AccountUtils.addAccount(getSettings(),username, userEmail);
+        userPassword = AccountUtils.addAccount(getSettings(), username, userEmail);
         browser.get(baseURL);
     }
 
@@ -31,14 +30,15 @@ public class PrivateAccessTests extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to ensure that templates created by an account are private to an account.
     @Test
-    public void templatesArePrivate(){
+    public void templatesArePrivate() {
         setSubDirectory("TemplatesArePrivate");
         String templateName = "privateTemplate";
         TemplateUtils.addTemplate(getSettings(), templateName);
         takeScreenshot("01_CreatePrivateTemplate.jpg");
         AccountUtils.logOut(getSettings());
-        AccountUtils.loginWithDetails(getSettings(),userEmail, userPassword);
+        AccountUtils.loginWithDetails(getSettings(), userEmail, userPassword);
         takeScreenshot("02_LoginAsNew.jpg");
         boolean success = TemplateUtils.selectTemplate(getSettings(), templateName);
         assertFalse(success);
@@ -49,14 +49,15 @@ public class PrivateAccessTests extends AbstractWebTest {
         TemplateUtils.deleteTemplate(getSettings(), templateName);
     }
 
+    //Test to verify that workspaces created by an account are private.
     @Test
-    public void workspacesArePrivate(){
+    public void workspacesArePrivate() {
         setSubDirectory("WorkspacesArePrivate");
         String workspaceName = "privateWorkspace";
         WorkspaceUtils.addWorkspace(getSettings(), workspaceName);
         takeScreenshot("01_CreatePrivateWorkspace.jpg");
         AccountUtils.logOut(getSettings());
-        AccountUtils.loginWithDetails(getSettings(),userEmail, userPassword);
+        AccountUtils.loginWithDetails(getSettings(), userEmail, userPassword);
         takeScreenshot("02_LoginAsNew.jpg");
         boolean success = WorkspaceUtils.selectWorkspace(getSettings(), workspaceName);
         assertFalse(success);

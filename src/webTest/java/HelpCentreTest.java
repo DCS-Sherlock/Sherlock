@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,6 +31,7 @@ public class HelpCentreTest extends AbstractWebTest {
     }
 
 
+    //Test to show that the help centre page is populated with the text from the help.properties resource file.
     @Test
     public void helpQustions() {
         setSubDirectory("HelpCentre");
@@ -47,12 +47,13 @@ public class HelpCentreTest extends AbstractWebTest {
         assertEquals(expectedQuestionText, cardQuestionText);
         Sleeper.sleep();
         String cardAnswerText = card.findElement(By.cssSelector(".answer")).getText();
-        String expectedAnswerText = helpProperties.getProperty(firstProperty+"_answer").replaceAll("\\<[^>]*>","");
+        String expectedAnswerText = helpProperties.getProperty(firstProperty + "_answer").replaceAll("\\<[^>]*>", "");
         assertEquals(expectedAnswerText, cardAnswerText);
         takeScreenshot("02_Answers.jpg");
 
     }
 
+    //The tests confirm that the Help Centre can be navigated. Page 1 is the Terms and Conditions, and Page 2 is the Privacy Policy.
     @Test
     public void navigateHelpCentre() {
         setSubDirectory("Navigate");

@@ -26,6 +26,7 @@ public class ServerTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to shows that a user can successfully login and out of the Sherlock system.
     @Test
     public void canLoginAndOut() {
         setSubDirectory("CanLoginAndOut");
@@ -48,6 +49,7 @@ public class ServerTest extends AbstractWebTest {
         assertEquals(browser.findElement(By.cssSelector("div.alert")).getText(), logoutMessage, "Logout message does not line up with .messageProperties file");
     }
 
+    //Test to show that a login attempt using an incorrect email and password will fail.
     @Test
     public void canFailLogin() {
         setSubDirectory("LoginFailure");

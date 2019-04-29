@@ -1,13 +1,14 @@
 import Utils.AccountUtils;
 import Utils.Sleeper;
 import Utils.WorkspaceUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +32,7 @@ public class WorkspaceTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to show that it is possible to add a new workspace to the Sherlock system.
     @Test
     public void addNewWorkspace() {
         setSubDirectory("AddNewWorkspace");
@@ -58,6 +60,8 @@ public class WorkspaceTest extends AbstractWebTest {
         WorkspaceUtils.deleteWorkspace(getSettings(), workspaceName);
     }
 
+    //Test to show that a workspace can be managed using the Sherlock system's web interface.
+    //Example features of the manage page are the functions to rename the workspace,
     @Test
     public void manageWorkspace() {
         setSubDirectory("ManageWorkspace");
@@ -108,6 +112,7 @@ public class WorkspaceTest extends AbstractWebTest {
         WorkspaceUtils.deleteWorkspace(getSettings(), workspaceName);
     }
 
+    //Test to show that it is possible to delete a workspace from the Sherlock system.
     @Test
     public void deleteWorkspace() {
         WorkspaceUtils.navigateToWorkspaces(getSettings());

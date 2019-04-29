@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled("Was not implemented since pipeline was found to be difficult to isolate components")
 class ModelTaskProcessedResultsTest {
 
     @BeforeEach

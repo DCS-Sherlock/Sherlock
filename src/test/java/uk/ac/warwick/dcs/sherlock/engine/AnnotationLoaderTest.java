@@ -18,7 +18,7 @@ class AnnotationLoaderTest {
     void tearDown() {
     }
 
-    @Disabled
+    @Disabled("Did not fully understand how loader was implemented")
     @Test
     void registerModules() {
         se.initialise();

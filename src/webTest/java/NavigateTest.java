@@ -23,6 +23,7 @@ public class NavigateTest extends AbstractWebTest {
         browser.close();
     }
 
+    //Test to shows that the navigation bar that is used when the user is logged out works.
     @Test
     public void testLoggedOutNavBar() {
         setSubDirectory("LoggedOutNavBar");
@@ -49,7 +50,7 @@ public class NavigateTest extends AbstractWebTest {
         assertTrue(browser.getTitle().contains(loginTitle));
     }
 
-
+    //Test to shows that the navigation bar that the user is presented when they have logged in works.
     @Test
     public void testLoggedInNavBar() {
         setSubDirectory("LoggedInNavBar");
@@ -86,6 +87,4 @@ public class NavigateTest extends AbstractWebTest {
         assertEquals(expectedURL, browser.getCurrentUrl());
         assertTrue(browser.getTitle().contains(helpTitle));
     }
-
-
 }
