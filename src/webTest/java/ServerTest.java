@@ -31,8 +31,8 @@ public class ServerTest extends AbstractWebTest {
         setSubDirectory("CanLoginAndOut");
         AccountUtils.navigateToLogin(getSettings());
         // Enter Username and Password
-        browser.findElement(By.id("username")).sendKeys(AccountUtils.getDefaultUsername());
-        browser.findElement(By.id("password")).sendKeys(AccountUtils.getDefaultPassword());
+        browser.findElement(By.id("username")).sendKeys(AccountUtils.getAdminEmail(getSettings()));
+        browser.findElement(By.id("password")).sendKeys(AccountUtils.getAdminPassword(getSettings()));
         takeScreenshot("01_LoginPage.jpg");
         // Click the login button
         browser.findElement(By.cssSelector(".btn.btn-lg.btn-primary.btn-block")).click();

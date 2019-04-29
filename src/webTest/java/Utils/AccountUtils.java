@@ -38,10 +38,10 @@ public class AccountUtils {
         // GoTo Login Page
         navigateToLogin(settings);
         // Enter Username and Password
-        //settings.browser.findElement(By.id("username")).sendKeys(getAdminEmail(settings));
-        //settings.browser.findElement(By.id("password")).sendKeys(getAdminPassword(settings));
-        settings.browser.findElement(By.id("username")).sendKeys(getDefaultUsername());
-        settings.browser.findElement(By.id("password")).sendKeys(getDefaultPassword());
+        settings.browser.findElement(By.id("username")).sendKeys(getAdminEmail(settings));
+        settings.browser.findElement(By.id("password")).sendKeys(getAdminPassword(settings));
+        //settings.browser.findElement(By.id("username")).sendKeys(getDefaultUsername());
+        //settings.browser.findElement(By.id("password")).sendKeys(getDefaultPassword());
 
         // Click the login button
         settings.browser.findElement(By.cssSelector(".btn.btn-lg.btn-primary.btn-block")).click();
@@ -74,7 +74,7 @@ public class AccountUtils {
         WebElement modal = settings.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#modal")));
         modal.findElement(By.cssSelector("#name")).sendKeys(newAccountName);
         modal.findElement(By.cssSelector("#email")).sendKeys(newAccountEmail);
-        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(getDefaultPassword());
+        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(getAdminPassword(settings));
         modal.findElement(By.cssSelector(".btn.btn-primary")).click();
 
         Sleeper.sleep();
@@ -101,7 +101,7 @@ public class AccountUtils {
 
                 row.findElement(By.cssSelector("a.dropdown-item.delete")).click();
                 WebElement modal = settings.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#modal")));
-                modal.findElement(By.cssSelector("#confirmPassword")).sendKeys(getDefaultPassword());
+                modal.findElement(By.cssSelector("#confirmPassword")).sendKeys(getAdminPassword(settings));
                 modal.findElement(By.cssSelector(".modal-footer .btn.btn-primary")).click();
                 break;
             }

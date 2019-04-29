@@ -70,7 +70,7 @@ public abstract class AbstractWebTest {
 
     public static void setDefaultTestSettings() {
         browser = getChromeDriver();
-        wait = new WebDriverWait(browser, 10);
+        wait = new WebDriverWait(browser, 30);
         messageProperties = loadPropertiesFromFile(defaultMessagePropertiesPath);
         applicationServerProperties = loadPropertiesFromFile(defaultApplicationServerPropertiesPath);
     }

@@ -40,7 +40,7 @@ public class AdminTest extends AbstractWebTest {
         WebElement modal = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#modal")));
         modal.findElement(By.cssSelector("#name")).sendKeys(newAccountName);
         modal.findElement(By.cssSelector("#email")).sendKeys(newAccountEmail);
-        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(AccountUtils.getDefaultPassword());
+        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(AccountUtils.getAdminPassword(getSettings()));
         takeScreenshot("01_userAccountDetails.jpg");
         modal.findElement(By.cssSelector(".btn.btn-primary")).click();
 
@@ -86,7 +86,7 @@ public class AdminTest extends AbstractWebTest {
         WebElement modal = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#modal")));
         modal.findElement(By.cssSelector("#name")).sendKeys(copyAccountName);
         modal.findElement(By.cssSelector("#email")).sendKeys(sharedAccountEmail);
-        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(AccountUtils.getDefaultPassword());
+        modal.findElement(By.cssSelector("#oldPassword")).sendKeys(AccountUtils.getAdminPassword(getSettings()));
         takeScreenshot("02_duplicateAccountDetails.jpg");
         modal.findElement(By.cssSelector(".btn.btn-primary")).click();
 
