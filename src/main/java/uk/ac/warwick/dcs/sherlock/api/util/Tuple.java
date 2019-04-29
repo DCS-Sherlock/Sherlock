@@ -2,6 +2,11 @@ package uk.ac.warwick.dcs.sherlock.api.util;
 
 import java.io.Serializable;
 
+/**
+ * Basic tuple implementation
+ * @param <K> key type
+ * @param <V> value type
+ */
 public class Tuple<K, V> implements ITuple<K, V>, Serializable {
 
 	private K key;

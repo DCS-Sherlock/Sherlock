@@ -9,6 +9,9 @@ import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
 
+/**
+ * Storage module interface, defines a storage implementation, should be self contained and fully manage stored data
+ */
 public interface IStorageWrapper extends ISourceFileHelper {
 
 	/**

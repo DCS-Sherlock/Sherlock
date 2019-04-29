@@ -15,6 +15,9 @@ import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
 import java.util.*;
 
+/**
+ * Interface to define API access to the registry via the static wrapper
+ */
 public interface IRegistry {
 
 	/**
