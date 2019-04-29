@@ -49,7 +49,7 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 	/**
 	 * Maps pairs of file ids to the relative scores between them
 	 */
-	private Map<ITuple<Long, Long>, Float> relativeFileScores;
+	private Map<List<Long>, Float> relativeFileScores;
 
 	/**
 	 * The object used to generate the report information.
@@ -69,7 +69,7 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 		this.submissionScores = new HashMap<>();
 		this.relativeFileScores = new HashMap<>();
 		this.results.getFileResults().forEach(resultFile -> this.fileMap.put(resultFile.getFile().getPersistentId(), resultFile.getFile()));
-		this.results.getFileResults().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new Tuple<Long, Long>(resultFile.getFile().getPersistentId(), file2.getPersistentId()), resultFile.getFileScore(file2))));
+		this.results.getFileResults().forEach(resultFile -> resultFile.getFileScores().keySet().forEach(file2 -> this.relativeFileScores.put(new ArrayList<Long>(Arrays.asList(resultFile.getFile().getPersistentId(), file2.getPersistentId())), resultFile.getFileScore(file2))));
 		this.results.getFileResults().forEach(resultFile -> this.submissionScores.put(resultFile.getFile().getSubmission().getId(), resultFile.getOverallScore()));
 
 		FillSubmissionFileMap();
@@ -123,11 +123,11 @@ public class ReportManager implements IReportManager<SubmissionMatchGroup, Submi
 		int file_count = 0;
 
 		//Go through all the files in the first submission
-		for(long id1 : submissionFileMap.get(sub_id1)) {
+		for(Long id1 : submissionFileMap.get(sub_id1)) {
 			//For each file, look at its relative score with each file in the other submission and get the largest
 			float max_score = 0f;
-			for(long id2 : submissionFileMap.get(sub_id2)) {
-				Tuple<Long, Long> id_tuple = new Tuple<>(id1, id2);
+			for(Long id2 : submissionFileMap.get(sub_id2)) {
+				List<Long> id_tuple = new ArrayList<>(Arrays.asList(id1, id2));
 
 				//If there's a relative score between these files, retrieve it, otherwise set it to 0.
 				float score = 0f;
