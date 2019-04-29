@@ -14,6 +14,7 @@ plugins {
 }
 
 apply plugin: 'project-report'
+apply from: 'web-test.gradle'
 
 /*buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
@@ -68,6 +69,10 @@ dependencies {
     if (project.getGradle().startParameter.taskNames.contains("bootWar")) {
         providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     }
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.14.0'
+    testCompile(
+            "io.github.bonigarcia:webdrivermanager:3.3.0"
+    )
 
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
@@ -99,6 +104,7 @@ idea {
 
         testSourceDirs = new LinkedHashSet<File>()
         testSourceDirs += file("src/test/java")
+        testSourceDirs += file("src/webTest/java")
 
         resourceDirs += file("src/main/resources")
 

@@ -36,7 +36,7 @@ public class BaseStorageFilesystem {
 	 *
 	 * @return inputstream of the file content
 	 */
-	InputStream loadFile(EntityFile file) {
+	public InputStream loadFile(EntityFile file) {
 		return this.loadStorableIS(file, this.computeFileIdentifier(file));
 	}
 
@@ -47,7 +47,7 @@ public class BaseStorageFilesystem {
 	 *
 	 * @return string of the file content
 	 */
-	String loadFileAsString(EntityFile file) {
+	public String loadFileAsString(EntityFile file) {
 		return this.loadStorableStr(file, this.computeFileIdentifier(file));
 	}
 
@@ -110,7 +110,7 @@ public class BaseStorageFilesystem {
 	 *
 	 * @return successful
 	 */
-	boolean storeFile(EntityFile file, byte[] fileContent) {
+	public boolean storeFile(EntityFile file, byte[] fileContent) {
 		return this.storeStorable(file, this.computeFileIdentifier(file), fileContent);
 	}
 
@@ -121,7 +121,7 @@ public class BaseStorageFilesystem {
 	 *
 	 * @return successful
 	 */
-	boolean storeTaskRawResults(EntityTask task) {
+	public boolean storeTaskRawResults(EntityTask task) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -153,7 +153,7 @@ public class BaseStorageFilesystem {
 	 *
 	 * @return Objects to be removed from the database (files and tasks)
 	 */
-	List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
+	public List<Object> validateFileStore(List<EntityFile> allFiles, List<EntityTask> allTasks) {
 		List<String> filesInStore = this.getAllFiles();
 		if (filesInStore == null) {
 			return null;

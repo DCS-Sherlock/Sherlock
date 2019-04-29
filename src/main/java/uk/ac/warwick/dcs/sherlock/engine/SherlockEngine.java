@@ -72,7 +72,8 @@ public class SherlockEngine {
 				}
 			}
 			catch (OverlappingFileLockException e) {
-				this.valid = false;
+				System.out.println("Overlap");
+				//this.valid = false;
 			}
 		}
 		catch (IOException e) {

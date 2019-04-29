@@ -37,11 +37,11 @@ public class EntityArchive implements ISubmission, Serializable {
 	@OneToMany (mappedBy = "archive", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EntityFile> files = new ArrayList<>();
 
-	EntityArchive() {
+	public EntityArchive() {
 		super();
 	}
 
-	EntityArchive(String name) {
+	public EntityArchive(String name) {
 		this(null, name, null);
 	}
 
@@ -198,7 +198,7 @@ public class EntityArchive implements ISubmission, Serializable {
 		return this.parent != null ? this.parent.getWorkspace() : this.workspace;
 	}
 
-	void setSubmissionArchive(EntityWorkspace workspace) {
+	public void setSubmissionArchive(EntityWorkspace workspace) {
 		this.workspace = workspace;
 		this.parent = null;
 	}

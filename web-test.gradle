@@ -1,0 +1,43 @@
+sourceSets {
+    webTest {
+        java.srcDir file('src/webTest/java')
+        resources.srcDir file('src/webTest/resources')
+        compileClasspath +=  sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath +=  sourceSets.main.output + compileClasspath
+    }
+}
+
+dependencies {
+    webTestCompile(
+            "io.github.bonigarcia:webdrivermanager:3.3.0"
+    )
+
+    webTestImplementation(
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.security:spring-security-test',
+            'org.junit.jupiter:junit-jupiter-api:5.3.1',
+            'org.junit.jupiter:junit-jupiter-params:5.3.1'
+    )
+    webTestRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    )
+}
+
+task generateWebTestSources(type: Copy) {
+    from("src/webTest/java")
+    exclude "**/sherlock/deprecated/**"
+    into "$buildDir/tmp/src/webTest/java"
+}
+sourceSets.webTest.java.srcDirs = ["$buildDir/tmp/src/webTest/java"]
+compileWebTestJava.dependsOn generateWebTestSources
+
+task webTest(type: Test){
+    delete 'screenshots'
+    useJUnitPlatform()
+    description = 'Runs web tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.webTest.output.classesDirs
+    classpath = sourceSets.webTest.runtimeClasspath
+    shouldRunAfter test
+}
