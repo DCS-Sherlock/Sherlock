@@ -1,5 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.model.preprocessing;
 
+/**
+ * Defines a list of channel names, used to identify and catagorise tokens, specified in the lexer.
+ */
 public interface ILexerSpecification {
 
 	/**
