@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
@@ -14,7 +15,7 @@ import uk.ac.warwick.dcs.sherlock.module.client.Splash;
 
 import javax.swing.*;
 
-@SherlockModule (side = Side.CLIENT)
+@SherlockModule(side = Side.CLIENT)
 public class SherlockClient {
 
 	@Instance

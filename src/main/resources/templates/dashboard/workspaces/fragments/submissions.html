@@ -22,7 +22,7 @@
             </th>
             <td>
                 <div class="btn-group btn-group-sm float-right">
-                    <a type="button" class="btn btn-primary"
+                    <a type="button" class="btn btn-primary view-file"
                        th:href="@{/dashboard/workspaces/manage/{id}/submission/{file_id}(id=${workspace.getId()},file_id=${submission.getId()})}"
                        th:text="#{link.view}"></a>
                     <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,7 +50,7 @@
 </table>
 
 <div class="text-right mt-2">
-    <a class="btn btn-primary" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" th:text="#{workspaces.submissions.upload}"></a>
+    <a class="btn btn-primary upload-new-submission" data-js='modal' th:href="@{/dashboard/workspaces/manage/{id}/submissions/upload(id=${workspace.getId()})}" th:text="#{workspaces.submissions.upload}"></a>
 </div>
 
 </body>

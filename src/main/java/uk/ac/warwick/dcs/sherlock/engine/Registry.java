@@ -440,7 +440,7 @@ public class Registry implements IRegistry {
 		}
 
 		this.preProcessorRegistry.put(preProcessor, data);
-		return false;
+		return true;
 	}
 
 	@Override

@@ -266,6 +266,10 @@ public class BaseStorage implements IStorageWrapper {
 		BaseStorage.instance.database.executeUpdate(q);
 	}
 
+	public EmbeddedDatabase getDatabase(){
+		return database;
+	}
+
 	private void mergeChildSubmissions(EntityArchive s1, EntityArchive s2) {
 		s2.getChildren_().forEach(c2 -> {
 			EntityArchive c1 = s1.getChildren().stream().filter(x -> x.getName().equals(c2.getName())).findAny().orElse(null);

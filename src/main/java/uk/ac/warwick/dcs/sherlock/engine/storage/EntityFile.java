@@ -39,7 +39,7 @@ public class EntityFile implements ISourceFile, IStorable, Serializable {
 		super();
 	}
 
-	EntityFile(EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
+	public EntityFile(EntityArchive archive, String filename, String extension, Timestamp timestamp, long size, int line, int contentLine) {
 		super();
 		this.archive = archive;
 		this.archive.getFiles_().add(this);
