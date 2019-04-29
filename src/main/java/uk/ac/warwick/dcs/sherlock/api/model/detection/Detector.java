@@ -8,6 +8,7 @@ import java.util.*;
  * Abstract implementation of the IDetector interface, this should be used as the base to construct all detectors
  * <br><br>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
+ *
  * @param <T> {@link DetectorWorker} implementation used by this detector
  */
 public abstract class Detector<T extends DetectorWorker> implements IDetector<T> {
@@ -18,7 +19,8 @@ public abstract class Detector<T extends DetectorWorker> implements IDetector<T>
 
 	/**
 	 * {@link IDetector} implementation without description
-	 * @param displayName user facing display name for the detector
+	 *
+	 * @param displayName             user facing display name for the detector
 	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
 	 */
 	public Detector(String displayName, PreProcessingStrategy... preProcessingStrategies) {
@@ -27,8 +29,9 @@ public abstract class Detector<T extends DetectorWorker> implements IDetector<T>
 
 	/**
 	 * {@link IDetector} implementation with description
-	 * @param displayName user facing display name for the detector
-	 * @param description user facing description for the detector
+	 *
+	 * @param displayName             user facing display name for the detector
+	 * @param description             user facing description for the detector
 	 * @param preProcessingStrategies preprocessing strategies to use for this detector, can be one of many.
 	 */
 	public Detector(String displayName, String description, PreProcessingStrategy... preProcessingStrategies) {
@@ -38,9 +41,15 @@ public abstract class Detector<T extends DetectorWorker> implements IDetector<T>
 		Collections.addAll(this.strategies, preProcessingStrategies);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public abstract List<T> buildWorkers(List<ModelDataItem> data);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final String getDescription() {
 		return this.description;
@@ -48,17 +57,24 @@ public abstract class Detector<T extends DetectorWorker> implements IDetector<T>
 
 	/**
 	 * Sets the user facing description
+	 *
 	 * @param description description string
 	 */
 	public final void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final String getDisplayName() {
 		return this.name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final List<PreProcessingStrategy> getPreProcessors() {
 		return this.strategies;

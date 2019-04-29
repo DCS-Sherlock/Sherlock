@@ -30,6 +30,7 @@ public class DetectionType {
 
 	/**
 	 * Display name getter
+	 *
 	 * @return the types display name
 	 */
 	public String getDisplayName() {
@@ -38,6 +39,7 @@ public class DetectionType {
 
 	/**
 	 * Display name setter
+	 *
 	 * @param displayName end user readable name
 	 */
 	public void setDisplayName(String displayName) {
@@ -46,6 +48,7 @@ public class DetectionType {
 
 	/**
 	 * Unique string identifier getter
+	 *
 	 * @return Unique string identifier for the type
 	 */
 	public String getIdentifier() {
@@ -54,6 +57,7 @@ public class DetectionType {
 
 	/**
 	 * Unique string identifier setter
+	 *
 	 * @param identifier unique string identifier
 	 */
 	public void setIdentifier(String identifier) {
@@ -62,6 +66,7 @@ public class DetectionType {
 
 	/**
 	 * Verbose reason blocks was detected getter
+	 *
 	 * @return reason
 	 */
 	public String getReason() {
@@ -70,6 +75,7 @@ public class DetectionType {
 
 	/**
 	 * Verbose reason block was detected setter
+	 *
 	 * @param reason reason string
 	 */
 	public void setReason(String reason) {
@@ -78,6 +84,7 @@ public class DetectionType {
 
 	/**
 	 * Getter - Weighting of the type for overall scoring, tuned to adjust the impact of each type to give a balanced overall result and report
+	 *
 	 * @return weighting
 	 */
 	public double getWeighting() {
@@ -95,6 +102,7 @@ public class DetectionType {
 
 	/**
 	 * Constructs string representation of this type
+	 *
 	 * @return string representation
 	 */
 	@Override

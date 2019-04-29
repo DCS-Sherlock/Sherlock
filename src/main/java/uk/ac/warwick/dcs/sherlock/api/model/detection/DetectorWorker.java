@@ -14,6 +14,7 @@ public abstract class DetectorWorker<K extends AbstractModelTaskRawResult> {
 
 	/**
 	 * Constructor for workers
+	 *
 	 * @param parent {@link IDetector} instance which built this worker
 	 */
 	public DetectorWorker(IDetector parent) {
