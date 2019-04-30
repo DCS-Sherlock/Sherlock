@@ -17,7 +17,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
-//TODO: switch to logger
+/**
+ * Recursive task to preprocess a list of files for a single task
+ */
 public class WorkPreProcessFile extends RecursiveAction {
 
 	private List<IWorkTask> tasks;

@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * ICodeBlock object for base storage implementation
+ */
 @Entity (name = "CodeBlock")
 public class EntityCodeBlock implements ICodeBlock, Serializable {
 

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -22,11 +21,17 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * Responsible for all classloading and reflection
+ */
 public class AnnotationLoader {
 
 	static final Logger logger = LoggerFactory.getLogger(AnnotationLoader.class);
 	private Reflections ref;
 
+	/**
+	 * Load modules from directory, and initialise the reflection
+	 */
 	AnnotationLoader() {
 		boolean useDefaultPath = (SherlockEngine.overrideModulesPath == null || SherlockEngine.overrideModulesPath.equals(""));
 		String modulesPath = useDefaultPath ? SherlockEngine.configuration.getDataPath() : SherlockEngine.overrideModulesPath;
@@ -106,19 +111,10 @@ public class AnnotationLoader {
 		this.ref = new Reflections(config);
 	}
 
+	/**
+	 * Register external modules found to the event bus, ready for initialisation events
+	 */
 	void registerModules() {
 		this.ref.getTypesAnnotatedWith(SherlockModule.class).stream().peek(x -> logger.info("Registering Sherlock module: {}", x.getName())).forEach(SherlockEngine.eventBus::registerModule);
-	}
-
-	static void replaceSystemClassLoader() {
-		try {
-			Field scl = ClassLoader.class.getDeclaredField("scl");
-			scl.setAccessible(true);
-			scl.set(null, new URLClassLoader(new URL[0]));
-			Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], ClassLoader.getSystemClassLoader()));
-		}
-		catch (IllegalAccessException | NoSuchFieldException e) {
-			e.printStackTrace();
-		}
 	}
 }

@@ -17,6 +17,9 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * ITask object for base storage implementation
+ */
 @Entity (name = "Task")
 public class EntityTask implements ITask, IStorable, Serializable {
 

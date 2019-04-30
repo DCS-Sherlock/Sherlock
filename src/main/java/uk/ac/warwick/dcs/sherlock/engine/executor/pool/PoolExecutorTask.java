@@ -23,6 +23,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
+/**
+ * executor which handles task wide stuff
+ */
 public class PoolExecutorTask implements Callable<ModelTaskProcessedResults>, IWorkTask {
 
 	List<ModelDataItem> dataItems;

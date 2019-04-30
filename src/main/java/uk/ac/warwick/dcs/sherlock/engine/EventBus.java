@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
+/**
+ * Event bus API implementation, publishes events to listeners
+ */
 class EventBus implements IEventBus {
 
 	final Logger logger = LoggerFactory.getLogger(EventBus.class);

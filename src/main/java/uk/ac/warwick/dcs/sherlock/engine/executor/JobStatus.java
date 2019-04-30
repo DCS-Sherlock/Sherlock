@@ -9,6 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 
+/**
+ * Basic job status implementation
+ */
 public class JobStatus implements IJobStatus {
 
 	private static final String[] stdMessages = { "Queued", "Initialising", "Pre-Processing", "Building Workers", "Detecting", "Post-Processing", "Analysing Results", "Finished", "Failed" };

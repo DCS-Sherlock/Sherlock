@@ -5,6 +5,9 @@ import java.util.concurrent.atomic.*;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.intBitsToFloat;
 
+/**
+ * Implementation of an AtomicFloat class, using intBitsToFloat to get and floatToIntBits to set
+ */
 public class AtomicFloat extends Number {
 
 	private AtomicInteger bits;

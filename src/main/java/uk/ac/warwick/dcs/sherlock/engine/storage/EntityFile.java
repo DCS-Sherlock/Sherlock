@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * ISourceFile object for base storage implementation
+ */
 @Entity (name = "File")
 public class EntityFile implements ISourceFile, IStorable, Serializable {
 

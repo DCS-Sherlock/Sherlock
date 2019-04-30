@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Database access stuff
+ */
 public class EmbeddedDatabase {
 
 	private EntityManagerFactory dbFactory;

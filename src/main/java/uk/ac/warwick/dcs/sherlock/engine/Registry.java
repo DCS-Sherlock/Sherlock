@@ -27,6 +27,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
+/**
+ * Registry implementation, verifies and registers external and internal model components, languages, detection types.
+ * <p>
+ * Caches data about these classes which is provided to the UI for display
+ */
 public class Registry implements IRegistry {
 
 	private final Logger logger = LoggerFactory.getLogger(Registry.class);

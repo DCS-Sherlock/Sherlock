@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * ISubmission object for base storage implementation
+ */
 @Entity (name = "Archive")
 public class EntityArchive implements ISubmission, Serializable {
 
