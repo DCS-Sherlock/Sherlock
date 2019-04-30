@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.scoring;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NgramMatch;
 

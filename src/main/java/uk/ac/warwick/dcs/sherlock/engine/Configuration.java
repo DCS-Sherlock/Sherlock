@@ -4,6 +4,9 @@ import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 
+/**
+ * Mapping for the configuration file
+ */
 public class Configuration {
 
 	private String dataPath;

@@ -14,7 +14,7 @@ import uk.ac.warwick.dcs.sherlock.module.client.Splash;
 
 import javax.swing.*;
 
-@SherlockModule (side = Side.CLIENT)
+@SherlockModule(side = Side.CLIENT)
 public class SherlockClient {
 
 	@Instance
@@ -24,7 +24,7 @@ public class SherlockClient {
 	private static Splash splash;
 
 	public static void main(String[] args) {
-		System.setProperty("spring.devtools.restart.enabled", "false");
+		System.setProperty("spring.devtools.restart.enabled", "false"); // fix stupid double instance bug
 
 		SherlockClient.splash = new Splash();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);

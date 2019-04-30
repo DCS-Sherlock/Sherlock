@@ -1,44 +1,58 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
+import uk.ac.warwick.dcs.sherlock.api.report.ISubmissionMatchGroup;
+
 import java.util.List;
 
 /**
- * Object to store SubmissionMatches, organised by the IResultTasks they come from (i.e. one SubmissionMatchGroup should have all relevant SubmissionMatch objects from one IResultTask)
+ * Object to store SubmissionMatches; every SubmissionMatch within one SubmissionMatchGroup should share the same DetectionType.
  */
-public class SubmissionMatchGroup {
+public class SubmissionMatchGroup implements ISubmissionMatchGroup<SubmissionMatch> {
 	/**
 	 * The SubmissionMatch objects are what contain the actual important information
 	 */
 	private List<SubmissionMatch> matches;
 
 	/**
-	 * The overall score for this IResultTask.
+	 * The descriptor for this group of matches.
 	 */
-	private float groupScore;
+	private String reason;
 
 	/**
 	 * Create a new SubmissionMatchGroup
 	 * @param matches A list of all SubmissionMatch objects that were generated based off of a single IResultTask.
-	 * @param score the overall score of the IResultTask.
+	 * @param reason A string that describes why these matches were flagged for plagiarism.
 	 */
-	public SubmissionMatchGroup(List<SubmissionMatch> matches, float score) {
+	public SubmissionMatchGroup(List<SubmissionMatch> matches, String reason) {
 		this.matches = matches;
-		this.groupScore = score;
+		this.reason = reason;
+	}
+
+	/**
+	 * Add a SubmissionMatch to the list (used by ReportGenerator)
+	 * @param match the SubmissionMatch to be added
+	 */
+	@Override
+	public void addMatch(SubmissionMatch match) {
+		this.matches.add(match);
 	}
 
 	/**
 	 * Get the matches
-	 * @return The stored list of SubmissionMatch obejcts.
+	 * @return The stored list of SubmissionMatch objects.
 	 */
-	public List<SubmissionMatch> GetMatches() {
+	@Override
+	public List<SubmissionMatch> getMatches() {
 		return this.matches;
 	}
 
+
 	/**
-	 * Get the score
-	 * @return The overall score for this group.
+	 * Get the descriptor
+	 * @return The type of plagiarism that was detected for these matches.
 	 */
-	public float GetScore() {
-		return this.groupScore;
+	@Override
+	public String getReason() {
+		return this.reason;
 	}
 }

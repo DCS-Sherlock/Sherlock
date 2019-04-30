@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.detection;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 
 import java.io.Serializable;

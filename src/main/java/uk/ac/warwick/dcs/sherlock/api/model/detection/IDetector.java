@@ -5,7 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy;
 import java.util.*;
 
 /**
- * Interface for accessing a detection algorithm
+ * Low level interface for implementing a detection algorithm. The Abstract {@link Detector} class should be used over this
  * <br><br>
  * Supports adjustable parameters see {@link uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter}
  */
@@ -21,17 +21,18 @@ public interface IDetector<T extends DetectorWorker> {
 	List<T> buildWorkers(List<ModelDataItem> data);
 
 	/**
+	 * Fetches the description string for the detector
+	 *
+	 * @return the description
+	 */
+	String getDescription();
+
+	/**
 	 * Fetches the display name for the detector
 	 *
 	 * @return the display name
 	 */
 	String getDisplayName();
-
-	/**
-	 * Fetches the description string for the detector
-	 * @return
-	 */
-	String getDescription();
 
 	/**
 	 * Specify the preprocessors required for this detector.

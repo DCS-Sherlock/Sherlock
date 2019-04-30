@@ -2,6 +2,11 @@ package uk.ac.warwick.dcs.sherlock.api.model.postprocessing;
 
 import java.io.Serializable;
 
+/**
+ * Raw results storage class, acts a stored cache. Data structure from this can be directly accessed in post-processing
+ * <p>
+ * Must be serializable!!!
+ */
 public abstract class AbstractModelTaskRawResult implements Serializable {
 
 	private static final long serialVersionUID = 24L;

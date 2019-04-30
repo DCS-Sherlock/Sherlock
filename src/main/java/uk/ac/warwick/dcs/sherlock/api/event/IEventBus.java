@@ -1,5 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.api.event;
 
+/**
+ * Event bus interface, used to publish and subscrib to events
+ */
 public interface IEventBus {
 
 	/**

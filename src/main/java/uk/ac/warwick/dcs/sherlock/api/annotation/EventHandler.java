@@ -14,6 +14,10 @@ import java.lang.annotation.*;
 @Target (ElementType.METHOD)
 public @interface EventHandler {
 
+	/**
+	 * Is SherlockEngine running locally (Side.CLIENT) or on a server (Side.SERVER)
+	 * @return side
+	 */
 	Side side() default Side.UNKNOWN;
 
 }

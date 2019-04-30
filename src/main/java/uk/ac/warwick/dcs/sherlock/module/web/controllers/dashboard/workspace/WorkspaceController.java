@@ -5,8 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.engine.component.IJob;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
+import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import uk.ac.warwick.dcs.sherlock.api.component.IJob;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.SubmissionsForm;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.*;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.WorkspaceForm;
@@ -136,16 +138,24 @@ public class WorkspaceController {
 
         if (!result.hasErrors()) {
             try {
-                workspaceWrapper.addSubmissions(submissionsForm);
-                model.addAttribute("success_msg", "workspaces.submissions.uploaded");
+                List<ITuple<ISubmission, ISubmission>> collisions = workspaceWrapper.addSubmissions(submissionsForm);
+                model.addAttribute("collisions", collisions);
+
+                if (collisions.size() == 0) {
+                    model.addAttribute("success_msg", "workspaces.submissions.uploaded.no_dups");
+                } else {
+                    if (submissionsForm.getDuplicate() == 0) { //replace
+                        model.addAttribute("success_msg", "workspaces.submissions.uploaded.replaced");
+                    } else if (submissionsForm.getDuplicate() == 1) { //keep
+                        model.addAttribute("success_msg", "workspaces.submissions.uploaded.kept");
+                    } else { //merge
+                        model.addAttribute("success_msg", "workspaces.submissions.uploaded.merged");
+                    }
+                }
             } catch (NoFilesUploaded e) {
                 result.reject("error.file.empty");
             } catch (FileUploadFailed e) {
                 result.reject("error.file.failed");
-            } catch (DuplicateSubmissionNames e) {
-                result.reject("error.file.duplicated");
-            } catch (NotImplementedException e) {
-                result.reject("error.not_implemented");
             }
         }
 

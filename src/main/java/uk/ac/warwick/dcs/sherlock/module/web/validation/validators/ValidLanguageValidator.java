@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.validation.validators;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.validation.annotations.ValidLanguage;
 
 import javax.validation.ConstraintValidator;

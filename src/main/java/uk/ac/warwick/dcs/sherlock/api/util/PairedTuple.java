@@ -2,6 +2,14 @@ package uk.ac.warwick.dcs.sherlock.api.util;
 
 import java.io.Serializable;
 
+/**
+ * Implementation of a pair of tuples in a single object
+ *
+ * @param <W> Point 1 Key
+ * @param <X> Point 1 Value
+ * @param <Y> Point 2 Key
+ * @param <Z> Point 2 Value
+ */
 public class PairedTuple<W, X, Y, Z> implements Serializable {
 
 	Tuple<W, X> point1;

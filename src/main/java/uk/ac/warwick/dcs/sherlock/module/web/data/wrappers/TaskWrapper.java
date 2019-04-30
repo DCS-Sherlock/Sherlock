@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
-import uk.ac.warwick.dcs.sherlock.engine.component.ITask;
+import uk.ac.warwick.dcs.sherlock.api.component.ITask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,22 +53,27 @@ public class TaskWrapper {
         List<AdjustableParameterObj> parameters = SherlockRegistry.getDetectorAdjustableParameters(task.getDetector());
         List<AdjustableParameterObj> postprocessing = SherlockRegistry.getPostProcessorAdjustableParametersFromDetector(task.getDetector());
 
-        for (Map.Entry<String, Float> entry : task.getParameterMapping().entrySet()) {
-            List<AdjustableParameterObj> para = new ArrayList<>();
-            List<AdjustableParameterObj> post = new ArrayList<>();
-            if (parameters != null && postprocessing != null) {
-                para = parameters.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
-                post = postprocessing.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
-            }
+        if (task.getParameterMapping() != null) {
+            for (Map.Entry<String, Float> entry : task.getParameterMapping().entrySet()) {
+                List<AdjustableParameterObj> para = new ArrayList<>();
+                List<AdjustableParameterObj> post = new ArrayList<>();
+                if (parameters != null && postprocessing != null) {
+                    para = parameters.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
+                    post = postprocessing.stream().filter(p -> (p.getReference()).equals(entry.getKey())).collect(Collectors.toList());
+                }
 
-            if (para.size() == 1) {
-                result += para.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
-            } else if (post.size() == 1) {
-                result += "Post: " + post.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
-            } else {
-                result += entry.getKey() + "=" + entry.getValue() + "<br /><br />";
+                if (para.size() == 1) {
+                    result += para.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
+                } else if (post.size() == 1) {
+                    result += "Post: " + post.get(0).getDisplayName() + " = " + entry.getValue() + "<br /><br />";
+                } else {
+                    result += entry.getKey() + "=" + entry.getValue() + "<br /><br />";
+                }
             }
         }
+
+        if (result.length() < 12)
+            return "None";
 
         return result.substring(0, result.length() - 12);
     }

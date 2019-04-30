@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.model.base.preprocessing;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.IAdvancedPreProcessor;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaLexer;
 import uk.ac.warwick.dcs.sherlock.module.model.base.lang.JavaParser;
@@ -21,10 +21,10 @@ public class VariableExtractorJava implements IAdvancedPreProcessor<JavaLexer> {
 
 		ParseTreeWalker.DEFAULT.walk(new JavaParserBaseListener() {
 			//globals
-			/*@Override
+			@Override
 			public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
-				fields.add(new IndexedString(ctx.start.getLine(), ctx.getText()));
-			}*/
+				fields.add(new IndexedString(ctx.start.getLine(), ctx.getText().split("=")[0]));
+			}
 
 			//locals
 			@Override

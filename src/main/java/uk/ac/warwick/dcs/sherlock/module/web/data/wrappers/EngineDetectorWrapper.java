@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.wrappers;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 
 import java.util.ArrayList;

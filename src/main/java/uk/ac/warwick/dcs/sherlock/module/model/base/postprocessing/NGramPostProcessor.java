@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
 import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameter;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.module.model.base.detection.NgramMatch;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.IPostProcessor;
@@ -23,7 +23,7 @@ public class NGramPostProcessor implements IPostProcessor<NGramRawResult> {
 	 *     Comparison is less than or equal to, so to deactivate set to 1
 	 * </p>
 	 */
-	@AdjustableParameter (name = "Common Threshold", defaultValue = 0.3f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f)
+	@AdjustableParameter (name = "Common Threshold", defaultValue = 0.3f, minimumBound = 0.0f, maxumumBound = 1.0f, step = 0.001f, description = "If a section of code appears in more than this % of the files it will be ignored. Used to remove skeleton and common code.")
 	public float threshold;
 
 	/**

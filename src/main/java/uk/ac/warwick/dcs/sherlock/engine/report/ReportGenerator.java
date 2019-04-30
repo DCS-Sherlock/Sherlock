@@ -1,50 +1,41 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+import uk.ac.warwick.dcs.sherlock.api.report.IReportGenerator;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
-import uk.ac.warwick.dcs.sherlock.api.common.ISubmission;
-import uk.ac.warwick.dcs.sherlock.engine.component.IResultTask;
+import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class ReportGenerator implements IReportGenerator {
+public class ReportGenerator implements IReportGenerator<SubmissionMatchGroup> {
 
 	ReportGenerator() {
 	}
 
 	@Override
-	public List<SubmissionMatchGroup> GenerateSubmissionComparison(List<ISubmission> submissions, List<? extends IResultTask> resultTasks) {
-		List<SubmissionMatchGroup> matchGroups = new ArrayList<>();
+	public List<SubmissionMatchGroup> generateSubmissionComparison(List<ISubmission> submissions, List<? extends ICodeBlockGroup> codeBlockGroups) {
+		Map<DetectionType, SubmissionMatchGroup> matchGroupMap = new HashMap<>();
 
-		//For each task, a new SubmissionMatchGroup is created and populated with SubmissionMatches, and added to matchGroups
-		for (IResultTask task : resultTasks) {
-			List<SubmissionMatch> matches = new ArrayList<>();
-			//Create a SubmissionMatch object for each CodeBlockGroup in the task that is relevant to either submission
-			for (ICodeBlockGroup codeBlockGroup : task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submissions.get(0).getId()) || group.submissionIdPresent(submissions.get(1).getId())).collect(Collectors.toList())) {
-				String reason = "";
-				List<SubmissionMatchItem> items = new ArrayList<>();
+		//Create a SubmissionMatch object for each CodeBlockGroup in the task that is relevant to either submission
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			String reason;
+			List<SubmissionMatchItem> items = new ArrayList<>();
 
-				//Try to get the detection type and use it to get the string reason
-				DetectionType detectionType = null;
-				try {
-					detectionType = codeBlockGroup.getDetectionType();
-				} catch (UnknownDetectionTypeException e) {
-					e.printStackTrace();
-				}
+			//Try to get the detection type and use it to get the string reason
+			DetectionType detectionType = null;
+			try {
+				detectionType = codeBlockGroup.getDetectionType();
+			} catch (UnknownDetectionTypeException e) {
+				e.printStackTrace();
+			}
 
-				if (detectionType != null) {
-					try {
-						reason = detectionType.getReason();
-					} catch (NullPointerException e) {
-						e.printStackTrace();
-					}
-				}
+			//If detectionType is null, something is wrong with the results; don't try anything further
+			if (detectionType != null) {
+				reason = detectionType.getReason();
 
 				//Create SubmissionMatchItems for every codeBlock belonging to a file in the submissions being compared.
 				for (ICodeBlock codeBlock : codeBlockGroup.getCodeBlocks()) {
@@ -55,21 +46,28 @@ public class ReportGenerator implements IReportGenerator {
 
 				}
 
-				//Add the SubmissionMatch to the list
-				matches.add(new SubmissionMatch(reason, items));
+				//Add the SubmissionMatch to the appropriate SubmissionMatchGroup; create a new one if it doesn't exist.
+				if (matchGroupMap.get(detectionType) != null)
+					matchGroupMap.get(detectionType).addMatch(new SubmissionMatch(reason, items));
+				else {
+					List<SubmissionMatch> matchList = new ArrayList<>();
+					matchList.add(new SubmissionMatch(reason, items));
+					String group_reason = detectionType.getDisplayName();
+					matchGroupMap.put(detectionType, new SubmissionMatchGroup(matchList, group_reason));
+				}
 			}
-			matchGroups.add(new SubmissionMatchGroup(matches, task.getTaskScore()));
 		}
 
-		return matchGroups;
+		//Convert the map into a list to return
+		return new ArrayList<>(matchGroupMap.values());
 	}
 
 	@Override
-	public ITuple<List<SubmissionMatchGroup>, String> GenerateSubmissionReport(ISubmission submission, List<? extends IResultTask> resultTasks, float subScore) {
-		List<SubmissionMatchGroup> matchGroups = new ArrayList<>();
+	public ITuple<List<SubmissionMatchGroup>, String> generateSubmissionReport(ISubmission submission, List<? extends ICodeBlockGroup> codeBlockGroups, float subScore) {
+		Map<DetectionType, SubmissionMatchGroup> matchGroupMap = new HashMap<>();
 
 		//The report summary - if there was no plagiarism detected, codeBlockGroups will be empty, and this is the default result in that case.
-		String summary = "Overall score: " + (subScore * 100f) + "\n";
+		String summary = "";
 		if(subScore < 0.01f)
 			summary = summary + "No plagiarism was detected in this submission.";
 		else if(subScore >= 0.01f && subScore < 0.05f)
@@ -90,31 +88,25 @@ public class ReportGenerator implements IReportGenerator {
 		//Track how many ICodeBlockGroups there are
 		int group_count = 0;
 
-		//For each task, a new SubmissionMatchGroup is created and populated with SubmissionMatches, and added to matchGroups
-		for (IResultTask task : resultTasks) {
-			List<SubmissionMatch> matches = new ArrayList<>();
-			//Create a SubmissionMatch object for each CodeBlockGroup in the task that is relevant to this submission
-			for (ICodeBlockGroup codeBlockGroup : task.getContainingBlocks().stream().filter(group -> group.submissionIdPresent(submission.getId())).collect(Collectors.toList())) {
-				group_count++;
+		//Create a SubmissionMatch object for each CodeBlockGroup in the task that is relevant to this submission
+		for (ICodeBlockGroup codeBlockGroup : codeBlockGroups) {
+			group_count++;
 
-				String reason = "";
-				List<SubmissionMatchItem> items = new ArrayList<>();
+			String reason;
+			List<SubmissionMatchItem> items = new ArrayList<>();
 
-				//Try to get the detection type and use it to get the string reason
-				DetectionType detectionType = null;
-				try {
-					detectionType = codeBlockGroup.getDetectionType();
-				} catch (UnknownDetectionTypeException e) {
-					e.printStackTrace();
-				}
+			//Try to get the detection type and use it to get the string reason
+			DetectionType detectionType = null;
+			try {
+				detectionType = codeBlockGroup.getDetectionType();
+			} catch (UnknownDetectionTypeException e) {
+				e.printStackTrace();
+			}
 
-				if (detectionType != null) {
-					try {
-						reason = detectionType.getReason();
-					} catch (NullPointerException e) {
-						e.printStackTrace();
-					}
-				}
+			//If detectionType is null, something has gone wrong; don't try any further
+			if (detectionType != null) {
+				reason = detectionType.getReason();
+
 
 				//Tally how many of each plagiarism type there is
 				if (reasonCounts.get(detectionType) != null)
@@ -131,10 +123,16 @@ public class ReportGenerator implements IReportGenerator {
 						subIdsConnected.add(codeBlock.getFile().getSubmission().getId());
 				}
 
-				//Add the SubmissionMatch to the list
-				matches.add(new SubmissionMatch(reason, items));
+				//Add the SubmissionMatch to the appropriate SubmissionMatchGroup; create a new one if it doesn't exist.
+				if (matchGroupMap.get(detectionType) != null)
+					matchGroupMap.get(detectionType).addMatch(new SubmissionMatch(reason, items));
+				else {
+					List<SubmissionMatch> matchList = new ArrayList<>();
+					matchList.add(new SubmissionMatch(reason, items));
+					String group_reason = detectionType.getDisplayName();
+					matchGroupMap.put(detectionType, new SubmissionMatchGroup(matchList, group_reason));
+				}
 			}
-			matchGroups.add(new SubmissionMatchGroup(matches, task.getTaskScore()));
 		}
 
 		//Add to the summary strings showing the results from reasonCounts.
@@ -150,6 +148,8 @@ public class ReportGenerator implements IReportGenerator {
 			builder.append("\nIn total, this submission has content that may be plagiarised from up to ").append(subIdsConnected.size()).append(" other submissions.");
 		summary = builder.toString();
 
+		//Convert the map into a list to return
+		List<SubmissionMatchGroup> matchGroups = new ArrayList<>(matchGroupMap.values());
 		return new Tuple<>(matchGroups, summary);
 	}
 }

@@ -1,14 +1,13 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import java.util.*;
+import uk.ac.warwick.dcs.sherlock.api.report.ISubmissionMatch;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
+import java.util.*;
 
 /**
  * Object to be sent to web report pages, detailing a particular match between files in different submissions.
  */
-public class SubmissionMatch {
+public class SubmissionMatch implements ISubmissionMatch<SubmissionMatchItem> {
 	/**
 	 * The description of the type of plagiarism for this match (from DetectionType)
 	 */
@@ -32,6 +31,7 @@ public class SubmissionMatch {
 	/**
 	 * @return the description for this match
 	 */
+	@Override
 	public String getReason() {
 		return this.reason;
 	}
@@ -40,6 +40,7 @@ public class SubmissionMatch {
 	/**
 	 * @return a list of SubmissionMatchItems, each containing an ISourceFile, a score, and a set of line numbers.
 	 */
+	@Override
 	public List<SubmissionMatchItem> getItems() {
 		return this.items;
 	}

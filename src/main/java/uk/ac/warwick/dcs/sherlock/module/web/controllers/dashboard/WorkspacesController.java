@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotAjaxRequest;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.forms.WorkspaceForm;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;

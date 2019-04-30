@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.web.data.results;
 
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.CodeBlock;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.internal.FileMatch;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.MapperException;
@@ -27,23 +27,25 @@ public class FileMapper {
      *
      * @throws MapperException if add match was called after fill
      */
-    public FileMapper(List<FileMatch> matches) throws MapperException {
+    public FileMapper(Map<String, List<FileMatch>> matches) throws MapperException {
         this.map = new HashMap<>();
 
         //Loop through all the matches
-        for (FileMatch match : matches) {
-            for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
-                ISourceFile entryFile = entry.getKey();
-                List<CodeBlock> entryList = entry.getValue();
+        for (Map.Entry<String, List<FileMatch>> group : matches.entrySet()) {
+            for (FileMatch match : group.getValue()) {
+                for (Map.Entry<ISourceFile, List<CodeBlock>> entry : match.getMap().entrySet()) {
+                    ISourceFile entryFile = entry.getKey();
+                    List<CodeBlock> entryList = entry.getValue();
 
-                long entryFileId = entryFile.getPersistentId();
+                    long entryFileId = entryFile.getPersistentId();
 
-                //Ensure that the map contains an entry for both files
-                if (!map.containsKey(entryFileId)) {
-                    map.put(entryFileId, new LineMapper(entryFileId));
+                    //Ensure that the map contains an entry for both files
+                    if (!map.containsKey(entryFileId)) {
+                        map.put(entryFileId, new LineMapper(entryFileId));
+                    }
+
+                    map.get(entryFileId).AddMatch(match);
                 }
-
-                map.get(entryFileId).AddMatch(match);
             }
         }
 

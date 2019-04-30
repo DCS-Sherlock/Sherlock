@@ -1,18 +1,18 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.pool;
 
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlock;
-import uk.ac.warwick.dcs.sherlock.api.common.ICodeBlockGroup;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlock;
+import uk.ac.warwick.dcs.sherlock.api.component.ICodeBlockGroup;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.exception.UnknownDetectionTypeException;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.ModelTaskProcessedResults;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 import uk.ac.warwick.dcs.sherlock.api.util.Tuple;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
-import uk.ac.warwick.dcs.sherlock.engine.component.*;
+import uk.ac.warwick.dcs.sherlock.api.component.*;
+import uk.ac.warwick.dcs.sherlock.engine.executor.JobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.ExecutorUtils;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.IPriorityWorkSchedulerWrapper;
-import uk.ac.warwick.dcs.sherlock.engine.executor.common.JobStatus;
 import uk.ac.warwick.dcs.sherlock.engine.executor.common.Priority;
 import uk.ac.warwick.dcs.sherlock.engine.executor.work.WorkPreProcessFiles;
 
@@ -22,6 +22,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
+/**
+ * Executor which handles job wide tasks, uses 1 task executor per task
+ */
 public class PoolExecutorJob implements Runnable {
 
 	private IPriorityWorkSchedulerWrapper scheduler;
@@ -55,6 +58,7 @@ public class PoolExecutorJob implements Runnable {
 		List<PoolExecutorTask> tasks = job.getTasks().stream().map(x -> new PoolExecutorTask(this.status, scheduler, x, job.getWorkspace().getLanguage())).collect(Collectors.toList());
 		ExecutorService exServ = Executors.newFixedThreadPool(tasks.size());
 
+		// is job not already run, if so skip and only postprocess
 		if (!(job.getStatus() == WorkStatus.COMPLETE || job.getStatus() == WorkStatus.REGEN_RESULTS) && tasks.size() > 0) {
 			job.setStatus(WorkStatus.ACTIVE);
 			this.status.nextStep();
@@ -136,6 +140,7 @@ public class PoolExecutorJob implements Runnable {
 			return;
 		}
 
+		// score
 		if (results.size() > 0) {
 			this.status.nextStep();
 			this.status.calculateProgressIncrement(((this.job.getWorkspace().getFiles().size() * results.size()) * 2) + this.job.getWorkspace().getFiles().size());
@@ -227,7 +232,7 @@ public class PoolExecutorJob implements Runnable {
 					return 0;
 				}
 			}).sum();
-			methodTotal.invoke(obj, /*s > 1 ? 1 : s*/ s); // cap to 100%
+			methodTotal.invoke(obj, s > 1 ? 1 : s); // cap to 100%
 
 			// Score each file for the task from relative weightings
 			for (ISourceFile fileComp : this.job.getWorkspace().getFiles()) {
@@ -241,7 +246,7 @@ public class PoolExecutorJob implements Runnable {
 							return 0;
 						}
 					}).sum();
-					methodPerFile.invoke(obj, fileComp, /*s > 1 ? 1 : s*/ s);  // cap to 100%
+					methodPerFile.invoke(obj, fileComp, s > 1 ? 1 : s);  // cap to 100%
 				}
 			}
 		}

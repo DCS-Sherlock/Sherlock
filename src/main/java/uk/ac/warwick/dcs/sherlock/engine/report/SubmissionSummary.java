@@ -1,9 +1,11 @@
 package uk.ac.warwick.dcs.sherlock.engine.report;
 
-import java.util.*;
+import uk.ac.warwick.dcs.sherlock.api.report.ISubmissionSummary;
 import uk.ac.warwick.dcs.sherlock.api.util.ITuple;
 
-public class SubmissionSummary {
+import java.util.*;
+
+public class SubmissionSummary implements ISubmissionSummary {
 
 	/**
 	 * The persistent id of the submission
@@ -47,6 +49,7 @@ public class SubmissionSummary {
 	 *
 	 * @return the persistent id of this submission.
 	 */
+	@Override
 	public long getPersistentId() {
 		return persistentId;
 	}
@@ -56,6 +59,7 @@ public class SubmissionSummary {
 	 *
 	 * @return the overall score for this submission.
 	 */
+	@Override
 	public float getScore() {
 		return score;
 	}
@@ -65,6 +69,7 @@ public class SubmissionSummary {
 	 *
 	 * @return the list of matching submissions and their relative scores.
 	 */
+	@Override
 	public List<ITuple<Long, Float>> getMatchingSubmissions() {
 		return matchingSubmissions;
 	}

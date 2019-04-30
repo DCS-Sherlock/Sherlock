@@ -3,6 +3,9 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Scheduler which does work in priority order
+ */
 public class PriorityWorkScheduler {
 
 	private final PriorityBlockingQueue<PriorityWorkTask> priorityQueue;

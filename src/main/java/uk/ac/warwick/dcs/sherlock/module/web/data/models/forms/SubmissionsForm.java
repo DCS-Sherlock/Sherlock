@@ -2,6 +2,8 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.forms;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -14,6 +16,11 @@ public class SubmissionsForm {
 
     @NotNull(message = "{error.single.empty}")
     public boolean single;
+
+    @NotNull(message = "{error.duplicate}")
+    @Min(value=0, message = "{error.duplicate}")
+    @Max(value=2, message = "{error.duplicate}")
+    public int duplicate;
 
     public SubmissionsForm() { }
 
@@ -40,5 +47,13 @@ public class SubmissionsForm {
 
     public void setSingle(boolean single) {
         this.single = single;
+    }
+
+    public int getDuplicate() {
+        return duplicate;
+    }
+
+    public void setDuplicate(int duplicate) {
+        this.duplicate = duplicate;
     }
 }

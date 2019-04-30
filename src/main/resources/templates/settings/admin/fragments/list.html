@@ -37,8 +37,8 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" th:if="${account.getId() == acc.getId() ? 'disabled' : ''}">
-                        <a class="dropdown-item" data-js='modal'  th:href="@{/admin/password/{id}(id=${acc.getId()})}" th:text="#{link.password}"></a>
-                        <a class="dropdown-item" data-js='modal' th:href="@{/admin/delete/{id}(id=${acc.getId()})}" th:text="#{link.delete}"></a>
+                        <a class="dropdown-item change-password" data-js='modal'  th:href="@{/admin/password/{id}(id=${acc.getId()})}" th:text="#{link.password}"></a>
+                        <a class="dropdown-item delete" data-js='modal' th:href="@{/admin/delete/{id}(id=${acc.getId()})}" th:text="#{link.delete}"></a>
                     </div>
                 </div>
             </td>

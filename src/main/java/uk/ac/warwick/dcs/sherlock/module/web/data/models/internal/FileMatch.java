@@ -2,7 +2,7 @@ package uk.ac.warwick.dcs.sherlock.module.web.data.models.internal;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatch;
 import uk.ac.warwick.dcs.sherlock.engine.report.SubmissionMatchItem;
 import uk.ac.warwick.dcs.sherlock.module.web.data.results.ResultsHelper;
@@ -49,9 +49,9 @@ public class FileMatch {
 
         for (SubmissionMatchItem item : match.getItems()) {
             List<CodeBlock> blocks = new ArrayList<>();
-            item.GetLineNumbers().forEach(t -> blocks.add(new CodeBlock(t.getKey(), t.getValue())));
-            map.put(item.GetFile(), blocks);
-            this.score = item.GetScore();
+            item.getLineNumbers().forEach(t -> blocks.add(new CodeBlock(t.getKey(), t.getValue())));
+            map.put(item.getFile(), blocks);
+            this.score = item.getScore() * 100;
         }
 //        this.score = match.getScore();
 

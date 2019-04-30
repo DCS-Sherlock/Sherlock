@@ -6,8 +6,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.launch.SherlockServer;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.AccountRepository;
@@ -26,6 +24,12 @@ public class AttributesControllerAdvice {
     @Autowired
     private Environment environment;
 
+    /**
+     * Checks that the Spring server has finished initialising and throws an error
+     * if a user attempts to load a page before it has finished
+     *
+     * @throws SpringNotInitialised if the server is still starting up
+     */
     @ModelAttribute
     public void checkLoaded() throws SpringNotInitialised {
         if (!SherlockServer.engine.isInitialised()) {

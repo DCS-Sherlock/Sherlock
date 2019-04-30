@@ -11,9 +11,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.exceptions.LoadingHelpFailed;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * The controller that deals with the help pages (help centre, terms and privacy policy)
@@ -42,7 +40,7 @@ public class HelpController {
 			properties = this.loadProperties("");
 		}
 
-		Map<String, String> questions = new HashMap<>();
+		Map<String, String> questions = new TreeMap<>();
 		for (String s : properties.stringPropertyNames()) {
 			if (!s.endsWith("_answer")) {
 				questions.put(

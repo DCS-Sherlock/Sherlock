@@ -1,9 +1,9 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.work;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.SherlockRegistry;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.ModelDataItem;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.*;
 import uk.ac.warwick.dcs.sherlock.api.model.preprocessing.PreProcessingStrategy.GenericGeneralPreProcessingStrategy;
@@ -17,7 +17,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
-//TODO: switch to logger
+/**
+ * Recursive task to preprocess a list of files for a single task
+ */
 public class WorkPreProcessFile extends RecursiveAction {
 
 	private List<IWorkTask> tasks;

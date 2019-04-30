@@ -12,10 +12,10 @@
                     <h4 class="float-left mt-1" th:text="#{help.title}"></h4>
                     <div class="btn-toolbar float-right">
                         <div class="btn-group mr-3">
-                            <a class="btn btn-primary" th:href="@{/terms}" th:text="#{terms.link}"></a>
+                            <a class="btn btn-primary terms" th:href="@{/terms}" th:text="#{terms.link}"></a>
                         </div>
                         <div class="btn-group">
-                            <a class="btn btn-primary" th:href="@{/privacy}" th:text="#{privacy.link}"></a>
+                            <a class="btn btn-primary privacy" th:href="@{/privacy}" th:text="#{privacy.link}"></a>
                         </div>
                     </div>
                 </div>
@@ -32,8 +32,8 @@
                                 </div>
 
                                 <div th:id="${'q' + question.hashCode()}" class="collapse" data-parent="#accordion">
-                                    <div class="card-body">
-                                        <span th:text="${question.value}"></span>
+                                    <div class="card-body answer">
+                                        <div th:remove="tag" th:utext="${question.value}"></div>
                                     </div>
                                 </div>
                             </div>

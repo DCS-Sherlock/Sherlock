@@ -1,5 +1,10 @@
 package uk.ac.warwick.dcs.sherlock.api.util;
 
+/**
+ * Basic tuple interface
+ * @param <K> key type
+ * @param <V> value type
+ */
 public interface ITuple<K, V> {
 
 	ITuple clone();

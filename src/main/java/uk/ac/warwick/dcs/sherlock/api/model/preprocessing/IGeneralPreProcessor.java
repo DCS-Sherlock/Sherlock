@@ -4,6 +4,9 @@ import org.antlr.v4.runtime.*;
 
 import java.util.*;
 
+/**
+ * General preprocessor interface, used to filer a set of tokens from a lexer which conforms to the provided spec
+ */
 public interface IGeneralPreProcessor extends IPreProcessor {
 
 	/**

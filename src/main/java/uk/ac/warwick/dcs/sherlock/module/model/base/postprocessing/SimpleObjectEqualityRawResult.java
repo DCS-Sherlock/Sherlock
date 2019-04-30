@@ -1,7 +1,7 @@
 package uk.ac.warwick.dcs.sherlock.module.model.base.postprocessing;
 
-import uk.ac.warwick.dcs.sherlock.api.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.common.ISourceFile;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.model.postprocessing.AbstractModelTaskRawResult;
 import uk.ac.warwick.dcs.sherlock.api.util.PairedTuple;
 

@@ -5,6 +5,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import uk.ac.warwick.dcs.sherlock.module.web.configuration.SecurityConfig;
 
 import java.util.Arrays;
 
@@ -28,8 +29,8 @@ public class SecurityController {
 	public String login(Model model) {
 		//Automatically login if running locally
 		if (Arrays.asList(environment.getActiveProfiles()).contains("client")) {
-            model.addAttribute("local_username", "local.sherlock@example.com");
-            model.addAttribute("local_password", "local_password");
+            model.addAttribute("local_username", SecurityConfig.getLocalEmail());
+            model.addAttribute("local_password", SecurityConfig.getLocalPassword());
             return "security/loginLocal";
 		}
 

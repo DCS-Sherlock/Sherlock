@@ -1,10 +1,14 @@
 package uk.ac.warwick.dcs.sherlock.api.model.preprocessing;
 
 import org.antlr.v4.runtime.*;
-import uk.ac.warwick.dcs.sherlock.api.common.IndexedString;
+import uk.ac.warwick.dcs.sherlock.api.util.IndexedString;
 
 import java.util.*;
 
+/**
+ * Advanced preprocessor implementation, used to directly access and preprocess from a specific lexer
+ * @param <T> Antlr lexer implementation (compiled)
+ */
 public interface IAdvancedPreProcessor<T extends Lexer> {
 
 	/**

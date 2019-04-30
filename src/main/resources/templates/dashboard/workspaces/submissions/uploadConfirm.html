@@ -24,6 +24,12 @@
                     <div th:if="${success_msg}">
                         <div class="alert alert-info"><span th:text="#{${success_msg}}"></span></div>
                     </div>
+
+                    <ul>
+                        <th:block th:each="collision : ${collisions}">
+                            <li><span th:text="${collision.key.getName()}"></span></li>
+                        </th:block>
+                    </ul>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.close}"></button>
