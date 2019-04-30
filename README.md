@@ -8,8 +8,8 @@
 The latest built documentation can be found at: https://dcs-sherlock.github.io/Sherlock/
 
 ## Requirements
-  - JDK 1.8 or above
-  - Gradle (4.10.2 included in repo)
+  - JDK 1.8, 1.9 or 11
+  - Gradle (5.4.1 included in repo)
 
 
 ## IDEA support
