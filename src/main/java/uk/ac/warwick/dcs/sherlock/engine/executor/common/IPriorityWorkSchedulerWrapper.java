@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
 import java.util.concurrent.*;
 
+/**
+ * Interface for the Priority Work Scheduler wrapper, which owns the scheduler ({@link uk.ac.warwick.dcs.sherlock.engine.executor.BaseExecutor})
+ */
 public interface IPriorityWorkSchedulerWrapper {
 
 	/**

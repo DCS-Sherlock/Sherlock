@@ -25,6 +25,9 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * Handles file system access stuff, encryption etc
+ */
 public class BaseStorageFilesystem {
 
 	private static Logger logger = LoggerFactory.getLogger(BaseStorageFilesystem.class);

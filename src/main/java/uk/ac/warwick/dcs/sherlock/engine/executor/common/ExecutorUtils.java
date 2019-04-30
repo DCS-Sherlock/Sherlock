@@ -10,14 +10,28 @@ import uk.ac.warwick.dcs.sherlock.api.executor.IExecutor;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * Various executor utilities
+ */
 public class ExecutorUtils {
 
 	public static final Logger logger = LoggerFactory.getLogger(IExecutor.class);
 
+	/**
+	 * does average of list
+	 * @param scores list to average
+	 * @return average
+	 */
 	public static float aggregateScores(Collection<Float> scores) {
 		return (float) scores.stream().mapToDouble(x -> x).average().orElse(-1);
 	}
 
+	/**
+	 * Populates the adjustables in an object
+	 * @param instance object to populate
+	 * @param params list of param references and values
+	 * @param <T> type of the object to populate
+	 */
 	public static <T> void processAdjustableParameters(T instance, Map<String, Float> params) {
 		Arrays.stream(instance.getClass().getDeclaredFields()).map(f -> new Tuple<>(f, f.getDeclaredAnnotationsByType(AdjustableParameter.class))).filter(x -> x.getValue().length == 1).forEach(x -> {
 			String ref = SherlockHelper.buildFieldReference(x.getKey());

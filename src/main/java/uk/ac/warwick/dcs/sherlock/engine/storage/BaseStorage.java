@@ -19,6 +19,9 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * Basic storage implementation
+ */
 public class BaseStorage implements IStorageWrapper {
 
 	static BaseStorage instance;

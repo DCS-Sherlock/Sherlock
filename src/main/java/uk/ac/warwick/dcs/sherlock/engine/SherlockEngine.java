@@ -9,16 +9,16 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
-import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
-import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.event.EventInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPostInitialisation;
 import uk.ac.warwick.dcs.sherlock.api.event.EventPreInitialisation;
-import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
-import uk.ac.warwick.dcs.sherlock.api.util.Side;
 import uk.ac.warwick.dcs.sherlock.api.executor.IExecutor;
-import uk.ac.warwick.dcs.sherlock.engine.executor.BaseExecutor;
+import uk.ac.warwick.dcs.sherlock.api.model.detection.DetectionType;
+import uk.ac.warwick.dcs.sherlock.api.registry.SherlockRegistry;
 import uk.ac.warwick.dcs.sherlock.api.storage.IStorageWrapper;
+import uk.ac.warwick.dcs.sherlock.api.util.SherlockHelper;
+import uk.ac.warwick.dcs.sherlock.api.util.Side;
+import uk.ac.warwick.dcs.sherlock.engine.executor.BaseExecutor;
 import uk.ac.warwick.dcs.sherlock.engine.storage.BaseStorage;
 
 import java.io.*;
@@ -29,6 +29,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 
+/**
+ * Main engine class, creates a new instance of Sherlock
+ */
 public class SherlockEngine {
 
 	public static final String version = "@VERSION@";
@@ -51,6 +54,11 @@ public class SherlockEngine {
 	private boolean valid;
 	private boolean initialised = false;
 
+	/**
+	 * Initial setup
+	 *
+	 * @param side Client or Server
+	 */
 	public SherlockEngine(Side side) {
 		SherlockEngine.classloader = new URLClassLoader(new URL[0], this.getClass().getClassLoader()); // Custom classloader for the modules
 
@@ -117,6 +125,9 @@ public class SherlockEngine {
 		}
 	}
 
+	/**
+	 * Load the config file from the user directory
+	 */
 	private static void loadConfiguration() {
 		File configFile = new File(SherlockEngine.configDir.getAbsolutePath() + File.separator + "Sherlock.yaml");
 		if (!configFile.exists()) {
@@ -138,10 +149,18 @@ public class SherlockEngine {
 		}
 	}
 
+	/**
+	 * Set the module override location
+	 *
+	 * @param overrideModulesPath new path for modules
+	 */
 	public static void setOverrideModulesPath(String overrideModulesPath) {
 		SherlockEngine.overrideModulesPath = overrideModulesPath;
 	}
 
+	/**
+	 * Setup the dir locations
+	 */
 	private static void setupConfigDir() {
 		SherlockEngine.configDir = new File(SystemUtils.IS_OS_WINDOWS ? System.getenv("APPDATA") + File.separator + "Sherlock" : System.getProperty("user.home") + File.separator + ".Sherlock");
 
@@ -153,6 +172,11 @@ public class SherlockEngine {
 		}
 	}
 
+	/**
+	 * Write the config file to the disk
+	 *
+	 * @param configFile file to write to
+	 */
 	private static void writeConfiguration(File configFile) {
 		try {
 			Representer representer = new Representer();
@@ -168,6 +192,9 @@ public class SherlockEngine {
 		}
 	}
 
+	/**
+	 * Initialise Sherlock!, must be called for Sherlock to work
+	 */
 	public void initialise() {
 		if (!this.valid) {
 			logger.error("Cannot initialise SherlockEngine, is not valid. Likely an instance of Sherlock is already running");
@@ -219,10 +246,18 @@ public class SherlockEngine {
 		return initialised;
 	}
 
+	/**
+	 * is SherlockEngine valid
+	 *
+	 * @return is valid
+	 */
 	public boolean isValidInstance() {
 		return this.valid;
 	}
 
+	/**
+	 * Shutdown hook
+	 */
 	private void shutdown() {
 		logger.info("Stopping SherlockEngine");
 		try {

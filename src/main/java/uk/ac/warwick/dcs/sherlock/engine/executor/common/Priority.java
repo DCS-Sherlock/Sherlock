@@ -1,9 +1,10 @@
 package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
+/**
+ * Priority enum
+ * <p>
+ * Highest to lowest
+ */
 public enum Priority {
-	//highest
-	//...
-	//lowest
-
 	HIGH, MEDIUM, LOW, DEFAULT
 }

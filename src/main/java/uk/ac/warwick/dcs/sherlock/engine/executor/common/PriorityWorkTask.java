@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.sherlock.engine.executor.common;
 
 import java.util.concurrent.*;
 
+/**
+ * Work task wrapper object
+ */
 public class PriorityWorkTask {
 
 	private ForkJoinTask topAction;

@@ -7,6 +7,9 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.JobStatus;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Recursive task to run detectors
+ */
 public class WorkDetect extends RecursiveTask<List<AbstractModelTaskRawResult>> {
 
 	private JobStatus status;

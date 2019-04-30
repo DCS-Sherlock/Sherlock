@@ -13,6 +13,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
+/**
+ * Basic executor implementation
+ */
 public class BaseExecutor implements IExecutor, IPriorityWorkSchedulerWrapper {
 
 	final Map<IJob, JobStatus> jobMap;

@@ -7,6 +7,9 @@ import uk.ac.warwick.dcs.sherlock.engine.executor.JobStatus;
 
 import java.util.*;
 
+/**
+ * Access interface for work tasks
+ */
 public interface IWorkTask {
 
 	void addModelDataItem(ModelDataItem item);

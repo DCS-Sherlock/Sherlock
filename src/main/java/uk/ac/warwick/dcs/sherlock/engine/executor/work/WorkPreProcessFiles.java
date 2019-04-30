@@ -5,6 +5,9 @@ import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * recursive task to preprocess a list of tasks for a list of files
+ */
 public class WorkPreProcessFiles extends RecursiveAction {
 
 	private List<IWorkTask> tasks;

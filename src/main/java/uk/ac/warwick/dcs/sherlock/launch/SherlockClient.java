@@ -1,6 +1,5 @@
 package uk.ac.warwick.dcs.sherlock.launch;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import uk.ac.warwick.dcs.sherlock.api.annotation.EventHandler;
 import uk.ac.warwick.dcs.sherlock.api.annotation.SherlockModule;
@@ -25,7 +24,7 @@ public class SherlockClient {
 	private static Splash splash;
 
 	public static void main(String[] args) {
-		System.setProperty("spring.devtools.restart.enabled", "false");
+		System.setProperty("spring.devtools.restart.enabled", "false"); // fix stupid double instance bug
 
 		SherlockClient.splash = new Splash();
 		SherlockServer.engine = new SherlockEngine(Side.CLIENT);
