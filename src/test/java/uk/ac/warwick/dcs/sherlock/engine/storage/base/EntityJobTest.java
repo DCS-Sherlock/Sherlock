@@ -15,12 +15,14 @@ import uk.ac.warwick.dcs.sherlock.module.model.base.detection.VariableNameDetect
 
 import java.lang.reflect.Field;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EntityJobTest {
     SherlockEngine se;
     BaseStorage bs;
     EntityJob ej;
+    EntityWorkspace ws;
 
     @BeforeEach
     void setUp() {
@@ -28,12 +30,13 @@ class EntityJobTest {
         SherlockRegistry.registerDetector(VariableNameDetector.class);
         SherlockRegistry.registerDetector(NGramDetector.class);
         bs = new BaseStorage();
-        EntityWorkspace ws = (EntityWorkspace) bs.createWorkspace("test", "Java");
+        ws = (EntityWorkspace) bs.createWorkspace("test", "Java");
         ej = new EntityJob(ws);
     }
 
     @AfterEach
     void tearDown() {
+        bs.getDatabase().removeObject(ws);
     }
 
     @Disabled("Only returns true")
@@ -50,17 +53,12 @@ class EntityJobTest {
     }
 
     @Test
-    void failAddDetectorWhenPrepared() {
-        try {
-            Field f = ej.getClass().getDeclaredField("prepared");
-            f.setAccessible(true);
-            f.set(ej, true);
-            boolean success = ej.addDetector(NGramDetector.class);
-            assertFalse(success);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+    void failAddDetectorWhenPrepared() throws NoSuchFieldException, IllegalAccessException {
+        Field f = ej.getClass().getDeclaredField("prepared");
+        f.setAccessible(true);
+        f.set(ej, true);
+        boolean success = ej.addDetector(NGramDetector.class);
+        assertFalse(success);
     }
 
     @Test
@@ -71,17 +69,14 @@ class EntityJobTest {
     }
 
     @Test
-    void failRemoveDetectorWhenPrepared() {
+    void failRemoveDetectorWhenPrepared() throws IllegalAccessException, NoSuchFieldException {
         ej.addDetector(NGramDetector.class);
-        try {
-            Field f = ej.getClass().getDeclaredField("prepared");
-            f.setAccessible(true);
-            f.set(ej, true);
-            boolean success = ej.removeDetector(NGramDetector.class);
-            assertFalse(success);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Field f = ej.getClass().getDeclaredField("prepared");
+        f.setAccessible(true);
+        f.set(ej, true);
+        boolean success = ej.removeDetector(NGramDetector.class);
+        assertFalse(success);
+
     }
 
 }

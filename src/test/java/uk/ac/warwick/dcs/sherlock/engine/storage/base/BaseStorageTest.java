@@ -24,6 +24,8 @@ class BaseStorageTest {
     BaseStorage bs;
     static SherlockEngine se;
     String language = "Java";
+    IWorkspace ws1, ws2, ws3;
+    int initialSize;
 
     @BeforeAll
     static void setupAll() {
@@ -33,10 +35,17 @@ class BaseStorageTest {
     @BeforeEach
     void setUp() {
         bs = new BaseStorage();
+        initialSize = bs.getWorkspaces().size();
+        ws1 = bs.createWorkspace("Test1", language);
+        ws2 = bs.createWorkspace("Test2", language);
+        ws3 = bs.createWorkspace("Test3", language);
     }
 
     @AfterEach
     void tearDown() {
+        bs.getDatabase().removeObject(ws1);
+        bs.getDatabase().removeObject(ws2);
+        bs.getDatabase().removeObject(ws3);
     }
 
     @Test
@@ -44,17 +53,14 @@ class BaseStorageTest {
         IWorkspace ws = bs.createWorkspace("Test", language);
         assertNotNull(ws);
         assertTrue(ws instanceof EntityWorkspace, "Workspace is not of type EntityWorkspace ");
-
+        bs.getDatabase().removeObject(ws);
     }
 
     @Test
     void getWorkspacesFromIds() {
         List<Long> ids = new ArrayList<Long>();
-        IWorkspace ws1 = bs.createWorkspace("Test1", language);
         ids.add(ws1.getPersistentId());
-        IWorkspace ws2 = bs.createWorkspace("Test2", language);
         ids.add(ws2.getPersistentId());
-        IWorkspace ws3 = bs.createWorkspace("Test3", language);
         List<IWorkspace> listWs = bs.getWorkspaces(ids);
         assertAll(
                 () -> assertEquals(2, listWs.size(), "Did not retrieve just workspaces 1 and 2"),
@@ -65,10 +71,6 @@ class BaseStorageTest {
 
     @Test
     void getAllWorkspaces() {
-        int initialSize = bs.getWorkspaces().size();
-        IWorkspace ws1 = bs.createWorkspace("Test1", language);
-        IWorkspace ws2 = bs.createWorkspace("Test2", language);
-        IWorkspace ws3 = bs.createWorkspace("Test3", language);
         List<IWorkspace> listWs = bs.getWorkspaces();
         assertAll(
                 () -> assertEquals(initialSize + 3, listWs.size(), "The three workspaces have not been addded successfully"),
@@ -82,7 +84,6 @@ class BaseStorageTest {
     @Disabled("loading a file is not working on travis")
     @Test
     void storeFile() {
-        EntityWorkspace ws1 = (EntityWorkspace) bs.createWorkspace("Test1", language);
         MultipartFile file = null;
         try {
             String filePath = System.getProperty("user.dir") + "\\src\\main\\java\\uk\\ac\\warwick\\dcs\\sherlock\\engine\\EventBus.java";
@@ -93,21 +94,20 @@ class BaseStorageTest {
         }
 
         EntityArchive submission = new EntityArchive("Archive");
-        submission.setSubmissionArchive(ws1);
+        submission.setSubmissionArchive((EntityWorkspace) ws1);
         bs.getDatabase().storeObject(submission);
         try {
             bs.storeFile(ws1, "testFile", file.getBytes());
-        } catch ( IOException e) {
+        } catch (IOException e) {
             throw new AssertionError(e);
         } catch (WorkspaceUnsupportedException e) {
             throw new AssertionError(e);
         }
-
         long id = ws1.getFiles().get(0).getPersistentId();
         ISourceFile sf = bs.getSourceFile(id);
         assertNotNull(sf);
         assertEquals("testFile.", sf.getFileDisplayName());
-
+        bs.getDatabase().removeObject(submission);
     }
 
     @Disabled("loading a file is not working on travis")
@@ -121,10 +121,10 @@ class BaseStorageTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         IWorkspace ws = new TestWorkspace();
         final MultipartFile finalFile = file;
         assertThrows(WorkspaceUnsupportedException.class, () -> bs.storeFile(ws, "testFile", finalFile.getBytes()));
+        bs.getDatabase().removeObject(ws);
     }
 }
 
