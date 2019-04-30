@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * IResultTask object for base storage implementation
+ */
 @Entity (name = "ResultTask")
 public class EntityResultTask implements IResultTask, Serializable {
 

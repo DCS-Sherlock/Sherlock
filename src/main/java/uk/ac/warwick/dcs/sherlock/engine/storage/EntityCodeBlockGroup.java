@@ -12,6 +12,9 @@ import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * ICodeBlockGroup object for base storage implementation
+ */
 @SuppressWarnings ("Duplicates")
 @Entity (name = "CodeBlockGroup")
 public class EntityCodeBlockGroup implements ICodeBlockGroup, Serializable {

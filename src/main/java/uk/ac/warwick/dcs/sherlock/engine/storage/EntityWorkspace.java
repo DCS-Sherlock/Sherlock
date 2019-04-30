@@ -1,8 +1,8 @@
 package uk.ac.warwick.dcs.sherlock.engine.storage;
 
+import uk.ac.warwick.dcs.sherlock.api.component.IJob;
 import uk.ac.warwick.dcs.sherlock.api.component.ISourceFile;
 import uk.ac.warwick.dcs.sherlock.api.component.ISubmission;
-import uk.ac.warwick.dcs.sherlock.api.component.IJob;
 import uk.ac.warwick.dcs.sherlock.api.component.IWorkspace;
 
 import javax.persistence.*;
@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * IWorkspace object for base storage implementation
+ */
 @Entity (name = "Workspace")
 public class EntityWorkspace implements IWorkspace, Serializable {
 

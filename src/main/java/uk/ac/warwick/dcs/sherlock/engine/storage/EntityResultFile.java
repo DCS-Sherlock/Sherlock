@@ -9,6 +9,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * IResultFile object for base storage implementation
+ */
 @Entity (name = "ResultFile")
 public class EntityResultFile implements IResultFile, Serializable {
 

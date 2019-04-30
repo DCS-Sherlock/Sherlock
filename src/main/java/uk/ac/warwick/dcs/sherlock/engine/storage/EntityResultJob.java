@@ -8,6 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * IResultJob object for base storage implementation
+ */
 @Entity (name = "ResultJob")
 public class EntityResultJob implements IResultJob, Serializable {
 

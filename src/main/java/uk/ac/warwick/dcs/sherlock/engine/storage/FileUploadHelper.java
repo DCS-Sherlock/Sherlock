@@ -17,6 +17,9 @@ import java.io.*;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * Helper class for file uploading
+ */
 class FileUploadHelper {
 
 	private static String[] archiveExs = { "zip", "tar", "tgz" };

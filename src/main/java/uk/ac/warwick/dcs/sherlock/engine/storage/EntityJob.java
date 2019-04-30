@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * IJob object for base storage implementation
+ */
 @Entity (name = "Job")
 public class EntityJob implements IJob, Serializable {
 
