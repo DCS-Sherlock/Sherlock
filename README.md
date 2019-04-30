@@ -7,6 +7,8 @@
 ## Documentation
 The latest built documentation can be found at: https://dcs-sherlock.github.io/Sherlock/
 
+User guide can be found at: https://github.com/DCS-Sherlock/Sherlock/wiki
+
 ## Requirements
   - JDK 1.8, 1.9 or 11
   - Gradle (5.4.1 included in repo)
