@@ -80,6 +80,9 @@ public class PairwiseDetector<T extends PairwiseDetectorWorker> extends Detector
 	/**
 	 * Fetches a new instance of the worker for this implementation
 	 *
+	 * @param file1Data ModelDataItem for file 1
+	 * @param file2Data ModelFataItem for file 2
+	 *
 	 * @return the new worker instance
 	 */
 	public T getAbstractPairwiseDetectorWorker(ModelDataItem file1Data, ModelDataItem file2Data) {

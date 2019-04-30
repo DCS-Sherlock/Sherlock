@@ -91,7 +91,7 @@ public interface ICodeBlockGroup {
 
 	/**
 	 * Check whether the group covers at least two files
-	 * @return
+	 * @return isPopulated
 	 */
 	boolean isPopulated();
 }
