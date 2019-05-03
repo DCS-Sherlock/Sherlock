@@ -37,6 +37,7 @@
                                 </label>
                                 <input type="number"
                                        class="form-control"
+                                       th:disabled="${!detector.isOwner() ? true : false}"
                                        th:min="${parametersMap.get(parameter.key).getMinimumBound()}"
                                        th:max="${parametersMap.get(parameter.key).getMaximumBound()}"
                                        th:step="${parametersMap.get(parameter.key).getStep()}"
@@ -67,6 +68,7 @@
                                 </label>
                                 <input type="number"
                                        class="form-control"
+                                       th:disabled="${!detector.isOwner() ? true : false}"
                                        th:min="${postprocessingMap.get(parameter.key).getMinimumBound()}"
                                        th:max="${postprocessingMap.get(parameter.key).getMaximumBound()}"
                                        th:step="${postprocessingMap.get(parameter.key).getStep()}"
@@ -83,7 +85,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary d-none js-cancel" data-dismiss="modal" th:text="#{link.cancel}"></button>
                     <a class="btn btn-secondary js-cancel" th:href="@{/dashboard/workspaces}" th:text="#{link.cancel}"></a>
-                    <button type="submit" class="btn btn-primary" th:text="#{link.save}"></button>
+                    <button th:if="${detector.isOwner()}" type="submit" class="btn btn-primary" th:text="#{link.save}"></button>
                 </div>
             </form>
         </div>
