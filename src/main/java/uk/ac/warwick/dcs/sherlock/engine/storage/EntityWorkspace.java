@@ -75,6 +75,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public void setLanguage(String lang) {
 		this.lang = lang;
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 	@Override
@@ -85,6 +86,7 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 	@Override
 	public void setName(String name) {
 		this.storeName(name);
+		BaseStorage.instance.database.storeObject(this);
 	}
 
 	@Override
