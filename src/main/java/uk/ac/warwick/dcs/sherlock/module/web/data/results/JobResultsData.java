@@ -196,6 +196,7 @@ public class JobResultsData {
 		Map<Long, String> idToName = new HashMap<>();
 		job.getWorkspace().getSubmissions().forEach(s -> idToName.put(s.getId(), s.getName()));
 
+		Comparator<SubmissionScore> compare = (SubmissionScore s1, SubmissionScore s2) -> ((Float) s1.getScore()).compareTo(s2.getScore() );
 		List<ISubmissionSummary> summaries = report.GetMatchingSubmissions();
 		for (ISubmissionSummary summary : summaries) {
 			String name = idToName.getOrDefault(summary.getPersistentId(), "Deleted");
@@ -206,6 +207,8 @@ public class JobResultsData {
 				String matchName = idToName.getOrDefault(tuple.getKey(), "Deleted");
 				list.add(new SubmissionScore(tuple.getKey(), matchName, tuple.getValue() * 100));
 			}
+
+			list.sort(compare.reversed());
 
 			resultsMap.put(score, list);
 		}
