@@ -71,7 +71,7 @@
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <label for="isPublic">
-                        <input type="checkbox" name="isPublic" id="isPublic" th:checked="*{isPublic}" />
+                        <input type="checkbox" th:disabled="${!template.isOwner() ? true : false}" name="isPublic" id="isPublic" th:checked="*{isPublic}" />
                         <span th:text="#{variable.public_msg}"></span>
                     </label>
                 </div>

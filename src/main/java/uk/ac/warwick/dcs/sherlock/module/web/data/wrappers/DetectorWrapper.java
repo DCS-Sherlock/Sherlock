@@ -5,6 +5,7 @@ import uk.ac.warwick.dcs.sherlock.api.annotation.AdjustableParameterObj;
 import uk.ac.warwick.dcs.sherlock.api.model.detection.IDetector;
 import uk.ac.warwick.dcs.sherlock.engine.SherlockEngine;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.DetectorNotFound;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
 import uk.ac.warwick.dcs.sherlock.module.web.exceptions.ParameterNotFound;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.Account;
 import uk.ac.warwick.dcs.sherlock.module.web.data.models.db.TDetector;
@@ -74,6 +75,15 @@ public class DetectorWrapper {
             throw new DetectorNotFound("Detector not found.");
 
         this.isOwner = templateWrapper.isOwner();
+    }
+
+    /**
+     *  Whether or not the template is owned by the current user
+     *
+     * @return the result
+     */
+    public boolean isOwner() {
+        return isOwner;
     }
 
     /**
@@ -223,7 +233,10 @@ public class DetectorWrapper {
      * @param parameterForm the form to use
      * @param tParameterRepository the database repository
      */
-    public void updateParameters(ParameterForm parameterForm, TParameterRepository tParameterRepository) {
+    public void updateParameters(ParameterForm parameterForm, TParameterRepository tParameterRepository) throws NotTemplateOwner {
+        if (!this.isOwner)
+            throw new NotTemplateOwner("You are not the owner of this template.");
+
         List<TParameter> currentParameters = tParameterRepository.findByTDetector(this.tDetector);
         tParameterRepository.deleteAll(currentParameters);
 

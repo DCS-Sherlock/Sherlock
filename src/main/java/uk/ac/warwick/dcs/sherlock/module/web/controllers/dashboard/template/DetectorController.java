@@ -14,6 +14,7 @@ import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.AccountWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.wrappers.DetectorWrapper;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TDetectorRepository;
 import uk.ac.warwick.dcs.sherlock.module.web.data.repositories.TParameterRepository;
+import uk.ac.warwick.dcs.sherlock.module.web.exceptions.NotTemplateOwner;
 
 import javax.validation.Valid;
 
@@ -66,7 +67,7 @@ public class DetectorController {
 			BindingResult result,
 			@ModelAttribute("detector") DetectorWrapper detectorWrapper,
 			Model model
-	) throws DetectorNotFound {
+	) throws DetectorNotFound, NotTemplateOwner {
 		result = parameterForm.validate(result, detectorWrapper.getEngineParameters(), detectorWrapper.getEnginePostProcessingParameters());
 
 		if (!result.hasErrors()) {
