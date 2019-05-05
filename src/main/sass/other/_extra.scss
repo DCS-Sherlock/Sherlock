@@ -162,6 +162,7 @@ table .min {
 
 /* Printing */
 @media print {
+    * { background: transparent !important; }
     @page {
         size: auto;
         margin: 1.6cm 0 1.6cm 0
@@ -228,5 +229,8 @@ table .min {
         content: none !important;
         background: none !important;
         border: none !important;
+    }
+    p, span, code[class*=language-], pre[class*=language-] {
+        color: #000000 !important;
     }
 }
