@@ -11,8 +11,8 @@
             <div class="modal-header">
                 <h5 class="modal-title" th:text="#{admin.accounts.manage.title}"></h5>
             </div>
-            <div class="modal-body">
-                <form th:action="@{/admin/manage/{id}(id=${subAccount.getId()})}" data-js='form' data-js-target="#modify-parent" id="add-form" th:object="${accountForm}" method="post">
+            <form th:action="@{/admin/manage/{id}(id=${subAccount.getId()})}" data-js='form' data-js-target="#modify-parent" id="modify-form" th:object="${accountForm}" method="post">
+                <div class="modal-body">
                     <div th:if="${#fields.hasAnyErrors()}">
                         <div class="alert alert-warning" role="alert" th:each="err : ${#fields.allErrors()}" th:text="${err}">...</div>
                     </div>
@@ -56,13 +56,14 @@
                             <input type="password" class="form-control" id="oldPassword" name="oldPassword" th:placeholder="#{variable.current_password}" th:value="*{oldPassword}" />
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary d-none js-cancel" th:text="#{link.close}" data-js="triggerAreaLink" data-js-target="#list-parent"></button>
-                <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link.cancel}"></a>
-                <button class="btn btn-primary" data-js="formSubmit" data-js-target="#add-form" th:text="#{link.update}"></button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-none js-cancel" th:text="#{link.close}" data-js="triggerAreaLink" data-js-target="#list-parent"></button>
+                    <a class="btn btn-secondary js-cancel" th:href="@{/admin}" th:text="#{link.cancel}"></a>
+                    <button class="btn btn-primary" th:text="#{link.update}"></button>
+                    <!--data-js="formSubmit" data-js-target="#add-form"-->
+                </div>
+            </form>
         </div>
     </div>
 </div>
