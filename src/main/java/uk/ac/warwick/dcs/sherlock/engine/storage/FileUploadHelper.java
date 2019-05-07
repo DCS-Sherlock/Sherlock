@@ -112,7 +112,11 @@ class FileUploadHelper {
 
 					if (parts.length > (archiveHasManySubmissions ? 1 : 0)) {
 						if (archiveHasManySubmissions) {
-							curArchive = multiSubmissionMap.getOrDefault(parts[0], createSubmission(workspace, parts[0], ret));
+							curArchive = multiSubmissionMap.get(parts[0]);
+							if (curArchive == null) {
+								curArchive = createSubmission(workspace, parts[0], ret);
+								multiSubmissionMap.put(parts[0], curArchive);
+							}
 							parts = Arrays.copyOfRange(parts, 1, parts.length - 1);
 						}
 						else {
