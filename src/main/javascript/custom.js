@@ -1189,7 +1189,7 @@ $(function () {
                     location.reload();
                 }
             });
-        }, 10000);
+        }, 5000);
     }
 
     if ($("#queue-parent").length) {
@@ -1197,7 +1197,7 @@ $(function () {
             submitGetAjax("/dashboard/index/queue", function(result, status, xhr) {
                 $("#queue-parent").html(result);
             }, $("#modal"))
-        }, 10000);
+        }, 5000);
     }
 });
 
