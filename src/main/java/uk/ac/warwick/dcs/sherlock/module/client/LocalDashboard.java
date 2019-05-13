@@ -29,7 +29,12 @@ public class LocalDashboard extends JFrame {
 		openButton.addActionListener((ActionEvent event) -> {
 			try {
 				if (Desktop.isDesktopSupported()) {
-					Desktop.getDesktop().browse(new URI("http://localhost:2218"));
+					try {
+						Desktop.getDesktop().browse(new URI("http://localhost:2218"));
+					}
+					catch (UnsupportedOperationException e) {
+						JOptionPane.showMessageDialog(this, "Automatic browser opening not support on this platform, please navigate to: \"http://localhost:2218\"");
+					}
 				}
 			}
 			catch (Exception e) {
