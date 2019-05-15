@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private Environment environment;
 	@Autowired
@@ -41,16 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private SetupProperties setupProperties;
 	@Autowired
 	private UserDetailsService userDetailsService;
-
-	/**
-	 * Create a password encoder bean that uses the BCrypt strong hashing function
-	 *
-	 * @return the PasswordEncoder implementation
-	 */
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 
 	/**
 	 * Get the email of the local user
@@ -89,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			if (account == null) {
 				account = new Account(
 						SecurityConfig.getLocalEmail(),
-						bCryptPasswordEncoder.encode(SecurityConfig.getLocalPassword()),
+						passwordEncoder.encode(SecurityConfig.getLocalPassword()),
 						"Local User");
 				accountRepository.save(account);
 				roleRepository.save(new Role("USER", account));
@@ -101,7 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				//No accounts so create the default one using the settings from the application.properties file
 				Account account = new Account(
 						setupProperties.getEmail(),
-						bCryptPasswordEncoder.encode(setupProperties.getPassword()),
+						passwordEncoder.encode(setupProperties.getPassword()),
 						setupProperties.getName()
 				);
 				accountRepository.save(account);
@@ -111,7 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 
 		//Make the authentication manager use the custom user details service
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 
 	/**

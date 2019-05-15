@@ -27,7 +27,7 @@ public class AdminController {
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -101,7 +101,7 @@ public class AdminController {
 
                 Account newAccount = new Account(
                         accountForm.getEmail(),
-                        bCryptPasswordEncoder.encode(newPassword),
+                        passwordEncoder.encode(newPassword),
                         accountForm.getName()
                 );
 

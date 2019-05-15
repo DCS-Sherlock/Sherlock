@@ -31,7 +31,7 @@ public class SubaccountController {
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -147,7 +147,7 @@ public class SubaccountController {
             //Generate a random password
             String newPassword = SecurityConfig.generateRandomPassword();
 
-            subAccount.getAccount().setPassword(bCryptPasswordEncoder.encode(newPassword));
+            subAccount.getAccount().setPassword(passwordEncoder.encode(newPassword));
             accountRepository.save(subAccount.getAccount());
 
             model.addAttribute("success_msg", "admin.accounts.change_password.updated");
