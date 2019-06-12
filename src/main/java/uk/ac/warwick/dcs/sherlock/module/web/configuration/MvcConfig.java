@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
@@ -29,6 +30,17 @@ import java.util.Locale;
         WebmasterProperties.class
 })
 public class MvcConfig implements WebMvcConfigurer {
+
+    /**
+     * Create a password encoder bean that uses the BCrypt strong hashing function
+     *
+     * @return the PasswordEncoder implementation
+     */
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     /**
      * Used to determine which locale is currently being used and sets the default
      *

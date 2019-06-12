@@ -20,7 +20,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     public ValidPasswordValidator() { }
 
@@ -44,7 +44,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
 
         Account account = accountRepository.findByEmail(authentication.getName());
 
-        if (bCryptPasswordEncoder.matches(password, account.getPassword())) {
+        if (passwordEncoder.matches(password, account.getPassword())) {
             return true;
         }
 

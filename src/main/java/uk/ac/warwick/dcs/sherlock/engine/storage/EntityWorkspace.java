@@ -106,12 +106,16 @@ public class EntityWorkspace implements IWorkspace, Serializable {
 
 	@Override
 	public void remove() {
-		for (EntityArchive a : this.submissions) {
-			a.remove();
+		if (this.submissions != null) {
+			for (EntityArchive a : this.submissions) {
+				a.remove();
+			}
 		}
 
-		for (EntityJob j : this.jobs) {
-			j.remove();
+		if (this.jobs != null) {
+			for (EntityJob j : this.jobs) {
+				j.remove();
+			}
 		}
 
 		BaseStorage.instance.database.refreshObject(this);
